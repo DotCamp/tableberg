@@ -1,4 +1,8 @@
-import { registerBlockType } from "@wordpress/blocks";
+import {
+    BlockEditProps,
+    BlockSaveProps,
+    registerBlockType,
+} from "@wordpress/blocks";
 
 import { TextControl } from "@wordpress/components";
 import { useBlockProps } from "@wordpress/block-editor";
@@ -9,7 +13,16 @@ import "./editor.scss";
 
 import metadata from "./block.json";
 
-function edit({ attributes, setAttributes }) {
+interface TablebergBlockAttrs {
+    rows: number;
+    cols: number;
+    data: Array<Array<any>>;
+}
+
+function edit({
+    attributes,
+    setAttributes,
+}: BlockEditProps<TablebergBlockAttrs>) {
     const blockProps = useBlockProps();
 
     const [data, setData] = useState(
@@ -21,7 +34,7 @@ function edit({ attributes, setAttributes }) {
     const rows = Array.from({ length: attributes.rows }, (_, i) => i);
     const cols = Array.from({ length: attributes.cols }, (_, i) => i);
 
-    const updateData = (value, row, col) => {
+    const updateData = (value: string, row: number, col: number) => {
         const newData = data.slice();
         newData[row][col] = value;
 
@@ -35,7 +48,7 @@ function edit({ attributes, setAttributes }) {
                 <td>
                     <TextControl
                         value={data[row][col]}
-                        onChange={(value) => {
+                        onChange={(value: string) => {
                             updateData(value, row, col);
                         }}
                     />
@@ -59,7 +72,9 @@ function edit({ attributes, setAttributes }) {
     );
 }
 
-export default function save({ attributes }) {
+export default function save({
+    attributes,
+}: BlockSaveProps<TablebergBlockAttrs>) {
     const rows = Array.from({ length: attributes.rows }, (_, i) => i);
     const cols = Array.from({ length: attributes.cols }, (_, i) => i);
 
@@ -82,6 +97,22 @@ export default function save({ attributes }) {
 }
 
 registerBlockType(metadata.name, {
+    title: metadata.title,
+    category: metadata.category,
+    attributes: {
+        cols: {
+            type: "number",
+            default: 5,
+        },
+        rows: {
+            type: "number",
+            default: 3,
+        },
+        data: {
+            type: "array",
+            default: [],
+        },
+    },
     example: {
         attributes: {
             cols: 2,

@@ -15,6 +15,17 @@
         "start": "wp-scripts start"
     },
     "devDependencies": {
-        "@wordpress/scripts": "^26.6.0"
+        "@types/react": "^18.2.14",
+        "@types/react-dom": "^18.2.6",
+        "@types/wordpress__block-editor": "^11.5.1",
+        "@types/wordpress__blocks": "^12.5.0",
+        "@types/wordpress__components": "^23.0.1",
+        "@wordpress/scripts": "^26.6.0",
+        "ts-loader": "^9.4.4",
+        "typescript": "^5.1.6"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
     }
 }
