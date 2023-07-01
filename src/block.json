@@ -25,7 +25,7 @@
         "html": false
     },
     "textdomain": "tableberg",
-    "editorScript": "file:./index.js",
+    "editorScript": "file:./index.tsx",
     "editorStyle": "file:./index.css",
     "style": "file:./style-index.css"
 }

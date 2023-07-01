@@ -31,12 +31,6 @@ devDependencies:
   '@wordpress/scripts':
     specifier: ^26.6.0
     version: 26.6.0(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)
-  ts-loader:
-    specifier: ^9.4.4
-    version: 9.4.4(typescript@5.1.6)(webpack@5.88.1)
-  typescript:
-    specifier: ^5.1.6
-    version: 5.1.6
 
 packages:
 
@@ -9420,21 +9414,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       escape-string-regexp: 1.0.5
-    dev: true
-
-  /ts-loader@9.4.4(typescript@5.1.6)(webpack@5.88.1):
-    resolution: {integrity: sha512-MLukxDHBl8OJ5Dk3y69IsKVFRA/6MwzEqBgh+OXMPB/OD01KQuWPFd1WAQP8a5PeSCAxfnkhiuWqfmFJzJQt9w==}
-    engines: {node: '>=12.0.0'}
-    peerDependencies:
-      typescript: '*'
-      webpack: ^5.0.0
-    dependencies:
-      chalk: 4.1.2
-      enhanced-resolve: 5.15.0
-      micromatch: 4.0.5
-      semver: 7.5.3
-      typescript: 5.1.6
-      webpack: 5.88.1(webpack-cli@4.10.0)
     dev: true
 
   /tsconfig-paths@3.14.2:
