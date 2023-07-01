@@ -1,22 +1,14 @@
 {
     "compilerOptions": {
-        // Note: Webpack config overrides this anyways
         "outDir": "./dist",
-        // React compatibility
-        "jsx": "react-jsx",
-        // We want ESM supported in the output, because WebPack is going to bundle this anyways,
-        // and we want the tree-shaking support and some other benefits
-        "module": "ESNext",
         "target": "ES2015",
-        // == Now for some settings that are not *strictly* required, but I recommend:
-        // Embrace strong-typing!
+        "jsx": "react-jsx",
+        "module": "ESNext",
         "strict": true,
-        // Not strictly necessary, but nice
-        "allowSyntheticDefaultImports": true,
-        // Recommended
         "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
         
-        "esModuleInterop": true, // Enables interoperability between CommonJS and ES Modules.
+        "esModuleInterop": true,
         "resolveJsonModule": true
     }
 }
