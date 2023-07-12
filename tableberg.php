@@ -13,8 +13,8 @@
  *
  */
 
-function create_block_tableberg_block_init()
+function tableberg_register_block_types()
 {
 	register_block_type(__DIR__ . '/build');
 }
-add_action('init', 'create_block_tableberg_block_init');
+add_action('init', 'tableberg_register_block_types');

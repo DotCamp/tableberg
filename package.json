@@ -23,6 +23,11 @@
         "@wordpress/scripts": "^26.6.0"
     },
     "dependencies": {
+        "@wordpress/blob": "^3.37.0",
+        "@wordpress/data": "^9.7.0",
+        "@wordpress/i18n": "^4.37.0",
+        "@wordpress/icons": "^9.28.0",
+        "classnames": "^2.3.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
     }
