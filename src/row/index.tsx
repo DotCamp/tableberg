@@ -1,4 +1,4 @@
-import { registerBlockType } from "@wordpress/blocks";
+import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 
 import {
     useBlockProps,
@@ -8,7 +8,11 @@ import {
 
 import metadata from "./block.json";
 
-function edit() {
+interface TBRowAttrs {
+    cols: number;
+}
+
+function edit({ attributes: { cols } }: BlockEditProps<TBRowAttrs>) {
     const blockProps = useBlockProps();
 
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
@@ -25,7 +29,12 @@ export default function save() {
 registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
-    attributes: {},
+    attributes: {
+        cols: {
+            type: "number",
+            default: 2,
+        },
+    },
     example: {},
     edit,
     save,
