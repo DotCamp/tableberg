@@ -25,8 +25,6 @@ import { FormEvent, useState } from "react";
 
 interface TablebergBlockAttrs {
     rows: number;
-    cols: number;
-    data: Array<Array<any>>;
 }
 
 function edit({ clientId }: BlockEditProps<TablebergBlockAttrs>) {
@@ -119,27 +117,14 @@ registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
     attributes: {
-        cols: {
-            type: "number",
-            default: 5,
-        },
         rows: {
             type: "number",
-            default: 3,
-        },
-        data: {
-            type: "array",
-            default: [],
+            default: 2,
         },
     },
     example: {
         attributes: {
-            cols: 2,
-            rows: 2,
-            data: [
-                ["1x1", "1x2"],
-                ["2x1", "2x2"],
-            ],
+            rows: 3,
         },
     },
     edit,

@@ -7,22 +7,14 @@
     "category": "table",
     "icon": "table-row-after",
     "description": "Tableberg: table builder Gutenberg block",
-    "attributes": {
-        "cols": {
-            "type": "number",
-            "default": 5
-        },
-        "rows": {
-            "type": "number",
-            "default": 3
-        },
-        "data": {
-            "type": "array",
-            "default": []
-        }
-    },
     "supports": {
         "html": false
+    },
+    "attributes": {
+        "rows": {
+            "type": "number",
+            "default": 2
+        }
     },
     "textdomain": "tableberg",
     "editorScript": "file:./index.tsx",
