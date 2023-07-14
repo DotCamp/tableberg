@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "tableberg/row",
+    "version": "0.0.0",
+    "title": "Row",
+    "category": "design",
+    "icon": "table-row-after",
+    "description": "Tableberg Row: Individual row of a tableberg table",
+    "attributes": {
+        "cols": {
+            "type": "number",
+            "default": "2"
+        }
+    },
+    "supports": {
+        "html": false
+    },
+    "textdomain": "tableberg",
+    "editorScript": "file:./index.tsx"
+}
