@@ -34,8 +34,7 @@ function edit({ attributes, clientId }: BlockEditProps<TablebergBlockAttrs>) {
     const { replaceInnerBlocks } = useDispatch(blockEditorStore);
 
     const { innerBlocks } = useSelect((select) => {
-        // @ts-ignore
-        const { getBlocks } = select(blockEditorStore);
+        const { getBlocks } = select(blockEditorStore) as any;
         return { innerBlocks: getBlocks(clientId) };
     }, []);
 
