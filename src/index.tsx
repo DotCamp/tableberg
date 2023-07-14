@@ -2,23 +2,26 @@ import {
     BlockEditProps,
     BlockSaveProps,
     createBlock,
+    // @ts-ignore createBlocksFromInnerBlocksTemplate obviously exists as it is used by wordpress in their own blocks. Need to make a pr to @types/wordpress__blocks.
+    createBlocksFromInnerBlocksTemplate,
     registerBlockType,
 } from "@wordpress/blocks";
 
-import { ToolbarButton, ToolbarGroup } from "@wordpress/components";
+import { Placeholder, TextControl, Button } from "@wordpress/components";
 import {
-    BlockControls,
     useBlockProps,
     useInnerBlocksProps,
     store as blockEditorStore,
+    BlockIcon,
 } from "@wordpress/block-editor";
-import { quote, list, image } from "@wordpress/icons";
-import { useDispatch, useSelect } from "@wordpress/data";
+import { blockTable } from "@wordpress/icons";
+import { useDispatch } from "@wordpress/data";
 
 import "./style.scss";
 import "./editor.scss";
 
 import metadata from "./block.json";
+import { FormEvent, useState } from "react";
 
 interface TablebergBlockAttrs {
     rows: number;
@@ -26,61 +29,90 @@ interface TablebergBlockAttrs {
     data: Array<Array<any>>;
 }
 
-function edit({ attributes, clientId }: BlockEditProps<TablebergBlockAttrs>) {
+function edit({ clientId }: BlockEditProps<TablebergBlockAttrs>) {
     const blockProps = useBlockProps();
 
-    const innerBlocksProps = useInnerBlocksProps(blockProps);
+    const innerBlocksProps = useInnerBlocksProps(blockProps, {
+        // @ts-ignore false can obviously be assigned to renderAppender as does wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
+        renderAppender: false,
+    });
 
     const { replaceInnerBlocks } = useDispatch(blockEditorStore);
 
-    const { innerBlocks } = useSelect((select) => {
-        const { getBlocks } = select(blockEditorStore) as any;
-        return { innerBlocks: getBlocks(clientId) };
-    }, []);
+    const [initialRowCount, setInitialRowCount] = useState(2);
+    const [initialColumnCount, setInitialColumnCount] = useState(2);
+    const [hasTableCreated, setHasTableCreated] = useState(false);
 
-    function addRow(block: string) {
-        console.log(innerBlocks);
+    function onCreateTable(event: FormEvent) {
+        event.preventDefault();
 
-        innerBlocks.push(createBlock(block));
+        const initialInnerBlocks = [];
+        for (let i = 0; i < initialRowCount; i++) {
+            initialInnerBlocks.push([
+                "tableberg/row",
+                { cols: initialColumnCount },
+            ]);
+        }
 
-        replaceInnerBlocks(clientId, innerBlocks);
+        replaceInnerBlocks(
+            clientId,
+            createBlocksFromInnerBlocksTemplate(initialInnerBlocks)
+        );
+        setHasTableCreated(true);
     }
 
-    return (
-        <>
-            <BlockControls>
-                <ToolbarGroup>
-                    <ToolbarButton
-                        onClick={() => addRow("core/list")}
-                        label="Add list block"
-                        icon={list}
-                    />
-                    <ToolbarButton
-                        onClick={() => addRow("core/quote")}
-                        label="Add quote block"
-                        icon={quote}
-                    />
-                    <ToolbarButton
-                        onClick={() => addRow("core/image")}
-                        label="Add image block"
-                        icon={image}
-                    />
-                </ToolbarGroup>
-            </BlockControls>
-            <table {...innerBlocksProps} />
-        </>
+    function onChangeInitialColumnCount(count: string) {
+        setInitialColumnCount(parseInt(count, 10) || 2);
+    }
+
+    function onChangeInitialRowCount(count: string) {
+        setInitialRowCount(parseInt(count, 10) || 2);
+    }
+
+    const placeholder = (
+        <Placeholder
+            label={"Create Tableberg Table"}
+            icon={<BlockIcon icon={blockTable} showColors />}
+            instructions={"Create a complex table with all types of element"}
+        >
+            <form
+                className="blocks-table__placeholder-form"
+                onSubmit={onCreateTable}
+            >
+                <TextControl
+                    __nextHasNoMarginBottom
+                    type="number"
+                    label={"Column count"}
+                    value={initialColumnCount}
+                    onChange={onChangeInitialColumnCount}
+                    min="1"
+                    className="blocks-table__placeholder-input"
+                />
+                <TextControl
+                    __nextHasNoMarginBottom
+                    type="number"
+                    label={"Row count"}
+                    value={initialRowCount}
+                    onChange={onChangeInitialRowCount}
+                    min="1"
+                    className="blocks-table__placeholder-input"
+                />
+                <Button
+                    className="blocks-table__placeholder-button"
+                    variant="primary"
+                    type="submit"
+                >
+                    {"Create Table"}
+                </Button>
+            </form>
+        </Placeholder>
     );
+
+    return hasTableCreated ? <table {...innerBlocksProps} /> : placeholder;
 }
 
-export default function save({
-    attributes,
-}: BlockSaveProps<TablebergBlockAttrs>) {
-    const blockProps = useBlockProps.save();
-    return (
-        <div {...blockProps}>
-            <table></table>
-        </div>
-    );
+export default function save() {
+    return <table></table>;
 }
 
 registerBlockType(metadata.name, {
