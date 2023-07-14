@@ -31,19 +31,6 @@ function edit({ attributes, clientId }: BlockEditProps<TablebergBlockAttrs>) {
 
     const innerBlocksProps = useInnerBlocksProps(blockProps);
 
-    const debug = (
-        <>
-            <div>{JSON.stringify(attributes)}</div>
-            <button
-                onClick={() => {
-                    console.log(attributes);
-                }}
-            >
-                Print Attrs
-            </button>
-        </>
-    );
-
     const { replaceInnerBlocks } = useDispatch(blockEditorStore);
 
     const { innerBlocks } = useSelect((select) => {
