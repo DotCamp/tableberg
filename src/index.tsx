@@ -18,7 +18,6 @@ import { blockTable } from "@wordpress/icons";
 import { useDispatch } from "@wordpress/data";
 
 import "./style.scss";
-import "./editor.scss";
 
 import metadata from "./block.json";
 import { FormEvent, useState } from "react";

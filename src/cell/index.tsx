@@ -7,6 +7,9 @@ import {
 } from "@wordpress/block-editor";
 import { useSelect } from "@wordpress/data";
 
+import "./style.scss";
+import "./editor.scss";
+
 import metadata from "./block.json";
 
 const ALLOWED_BLOCKS = [
