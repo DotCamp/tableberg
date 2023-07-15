@@ -47,13 +47,10 @@ function edit({ clientId }: BlockEditProps<TablebergBlockAttrs>) {
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
 
-        const initialInnerBlocks = [];
-        for (let i = 0; i < initialRowCount; i++) {
-            initialInnerBlocks.push([
-                "tableberg/row",
-                { cols: initialColumnCount },
-            ]);
-        }
+        const initialInnerBlocks = Array.from(
+            { length: initialRowCount },
+            () => ["tableberg/row", { cols: initialColumnCount }]
+        );
 
         replaceInnerBlocks(
             clientId,
