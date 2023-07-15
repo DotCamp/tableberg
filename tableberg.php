@@ -17,5 +17,6 @@ function tableberg_register_block_types()
 {
 	register_block_type(__DIR__ . '/build');
 	register_block_type(__DIR__ . '/build/row');
+	register_block_type(__DIR__ . '/build/cell');
 }
 add_action('init', 'tableberg_register_block_types');
