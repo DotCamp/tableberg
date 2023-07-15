@@ -1,14 +1,22 @@
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 import { store as blockEditorStore } from "@wordpress/block-editor";
-
 import {
     useBlockProps,
     useInnerBlocksProps,
     InnerBlocks,
 } from "@wordpress/block-editor";
+import { useSelect } from "@wordpress/data";
 
 import metadata from "./block.json";
-import { useSelect } from "@wordpress/data";
+
+const ALLOWED_BLOCKS = [
+    "core/image",
+    "core/list",
+    "core/buttons",
+    "core/heading",
+    "core/code",
+    "core/social-links",
+];
 
 function edit({ clientId }: BlockEditProps<{}>) {
     const blockProps = useBlockProps();
@@ -23,6 +31,7 @@ function edit({ clientId }: BlockEditProps<{}>) {
         renderAppender: hasInnerBlocks
             ? undefined
             : InnerBlocks.ButtonBlockAppender,
+        allowedBlocks: ALLOWED_BLOCKS,
     });
 
     return <td {...innerBlocksProps} />;
