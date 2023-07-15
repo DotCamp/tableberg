@@ -4,7 +4,7 @@
     "version": "0.0.0",
     "name": "tableberg/table",
     "title": "Tableberg",
-    "category": "table",
+    "category": "design",
     "icon": "table-row-after",
     "description": "Tableberg: table builder Gutenberg block",
     "supports": {
