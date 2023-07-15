@@ -39,16 +39,18 @@ function edit({ clientId }: BlockEditProps<TablebergBlockAttrs>) {
 
     const { replaceInnerBlocks } = useDispatch(blockEditorStore);
 
-    const [initialRowCount, setInitialRowCount] = useState(2);
-    const [initialColumnCount, setInitialColumnCount] = useState(2);
+    const [initialRowCount, setInitialRowCount] = useState<number | "">(2);
+    const [initialColCount, setInitialColCount] = useState<number | "">(2);
     const [hasTableCreated, setHasTableCreated] = useState(false);
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
 
+        if (initialRowCount === "" || initialColCount === "") return;
+
         const initialInnerBlocks = Array.from(
             { length: initialRowCount },
-            () => ["tableberg/row", { cols: initialColumnCount }]
+            () => ["tableberg/row", { cols: initialColCount }]
         );
 
         replaceInnerBlocks(
@@ -58,12 +60,14 @@ function edit({ clientId }: BlockEditProps<TablebergBlockAttrs>) {
         setHasTableCreated(true);
     }
 
-    function onChangeInitialColumnCount(count: string) {
-        setInitialColumnCount(parseInt(count, 10) || 2);
+    function onChangeInitialColCount(count: string) {
+        const value = count === "" ? "" : parseInt(count, 10) || 2;
+        setInitialColCount(value);
     }
 
     function onChangeInitialRowCount(count: string) {
-        setInitialRowCount(parseInt(count, 10) || 2);
+        const value = count === "" ? "" : parseInt(count, 10) || 2;
+        setInitialRowCount(value);
     }
 
     const placeholder = (
@@ -80,8 +84,8 @@ function edit({ clientId }: BlockEditProps<TablebergBlockAttrs>) {
                     __nextHasNoMarginBottom
                     type="number"
                     label={"Column count"}
-                    value={initialColumnCount}
-                    onChange={onChangeInitialColumnCount}
+                    value={initialColCount}
+                    onChange={onChangeInitialColCount}
                     min="1"
                     className="blocks-table__placeholder-input"
                 />
