@@ -27,12 +27,15 @@ interface TablebergBlockAttrs {
     rows: number;
 }
 
+const ALLOWED_BLOCKS = ["tableberg/row"];
+
 function edit({ clientId }: BlockEditProps<TablebergBlockAttrs>) {
     const blockProps = useBlockProps();
 
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
         // @ts-ignore false can obviously be assigned to renderAppender as does wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
         renderAppender: false,
+        allowedBlocks: ALLOWED_BLOCKS,
     });
 
     const { replaceInnerBlocks } = useDispatch(blockEditorStore);
