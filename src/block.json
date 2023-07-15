@@ -1,8 +1,8 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "name": "dotcamp/tableberg",
     "version": "0.0.0",
+    "name": "tableberg/table",
     "title": "Tableberg",
     "category": "table",
     "icon": "table-row-after",
