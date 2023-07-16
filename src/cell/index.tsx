@@ -40,8 +40,10 @@ function edit({ clientId }: BlockEditProps<{}>) {
     return <td {...innerBlocksProps} />;
 }
 
-export default function save() {
-    return <td></td>;
+function save() {
+    const blockProps = useBlockProps.save();
+    const innerBlocksProps = useInnerBlocksProps.save(blockProps);
+    return <td {...innerBlocksProps} />;
 }
 
 registerBlockType(metadata.name, {

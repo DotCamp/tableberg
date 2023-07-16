@@ -114,8 +114,10 @@ function edit({
     return hasTableCreated ? <table {...innerBlocksProps} /> : placeholder;
 }
 
-export default function save() {
-    return <table></table>;
+function save() {
+    const blockProps = useBlockProps.save();
+    const innerBlocksProps = useInnerBlocksProps.save(blockProps);
+    return <table {...innerBlocksProps} />;
 }
 
 registerBlockType(metadata.name, {

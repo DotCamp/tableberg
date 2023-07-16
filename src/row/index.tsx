@@ -57,8 +57,10 @@ function edit({ attributes: { cols }, clientId }: BlockEditProps<TBRowAttrs>) {
     return <tr {...innerBlocksProps} />;
 }
 
-export default function save() {
-    return <tr></tr>;
+function save() {
+    const blockProps = useBlockProps.save();
+    const innerBlocksProps = useInnerBlocksProps.save(blockProps);
+    return <tr {...innerBlocksProps} />;
 }
 
 registerBlockType(metadata.name, {
