@@ -41,6 +41,10 @@ function edit({ attributes: { cols }, clientId }: BlockEditProps<TBRowAttrs>) {
     const { replaceInnerBlocks } = useDispatch(blockEditorStore);
 
     useEffect(() => {
+        if (hasInnerBlocks) {
+            return;
+        }
+
         const newInnerBlocksTmpl = Array.from({ length: cols }, () => [
             "tableberg/cell",
         ]);
