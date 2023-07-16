@@ -1,7 +1,5 @@
 import {
     BlockEditProps,
-    BlockSaveProps,
-    createBlock,
     // @ts-ignore createBlocksFromInnerBlocksTemplate obviously exists as it is used by wordpress in their own blocks. Need to make a pr to @types/wordpress__blocks.
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
@@ -24,11 +22,16 @@ import { FormEvent, useState } from "react";
 
 interface TablebergBlockAttrs {
     rows: number;
+    hasTableCreated: boolean;
 }
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 
-function edit({ clientId }: BlockEditProps<TablebergBlockAttrs>) {
+function edit({
+    attributes: { hasTableCreated },
+    setAttributes,
+    clientId,
+}: BlockEditProps<TablebergBlockAttrs>) {
     const blockProps = useBlockProps();
 
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
@@ -41,7 +44,6 @@ function edit({ clientId }: BlockEditProps<TablebergBlockAttrs>) {
 
     const [initialRowCount, setInitialRowCount] = useState<number | "">(2);
     const [initialColCount, setInitialColCount] = useState<number | "">(2);
-    const [hasTableCreated, setHasTableCreated] = useState(false);
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
@@ -57,7 +59,7 @@ function edit({ clientId }: BlockEditProps<TablebergBlockAttrs>) {
             clientId,
             createBlocksFromInnerBlocksTemplate(initialInnerBlocks)
         );
-        setHasTableCreated(true);
+        setAttributes({ hasTableCreated: true });
     }
 
     function onChangeInitialColCount(count: string) {
@@ -124,10 +126,9 @@ registerBlockType(metadata.name, {
             type: "number",
             default: 2,
         },
-    },
-    example: {
-        attributes: {
-            rows: 3,
+        hasTableCreated: {
+            type: "boolean",
+            default: false,
         },
     },
     edit,

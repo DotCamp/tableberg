@@ -14,6 +14,10 @@
         "rows": {
             "type": "number",
             "default": 2
+        },
+        "hasTableCreated": {
+            "type": "boolean",
+            "default": false
         }
     },
     "textdomain": "tableberg",
