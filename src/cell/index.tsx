@@ -19,6 +19,7 @@ const ALLOWED_BLOCKS = [
     "core/heading",
     "core/code",
     "core/social-links",
+    "core/paragraph",
 ];
 
 function edit({ clientId }: BlockEditProps<{}>) {
@@ -31,10 +32,8 @@ function edit({ clientId }: BlockEditProps<{}>) {
     );
 
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
-        renderAppender: hasInnerBlocks
-            ? undefined
-            : InnerBlocks.ButtonBlockAppender,
         allowedBlocks: ALLOWED_BLOCKS,
+        template: [["core/paragraph"]],
     });
 
     return <td {...innerBlocksProps} />;
