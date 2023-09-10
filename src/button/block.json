@@ -13,6 +13,9 @@
             "type": "string",
             "source": "html",
             "selector": "a"
+        },
+        "width": {
+            "type": "number"
         }
     },
     "supports": {

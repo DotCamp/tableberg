@@ -1,14 +1,25 @@
+import classnames from "classnames";
+
 import {
     BlockEditProps,
     BlockSaveProps,
     registerBlockType,
 } from "@wordpress/blocks";
 
+import { Button, ButtonGroup, PanelBody } from "@wordpress/components";
+
 import metadata from "./block.json";
-import { RichText, useBlockProps } from "@wordpress/block-editor";
+import {
+    RichText,
+    useBlockProps,
+    InspectorControls,
+} from "@wordpress/block-editor";
+
+import "./style.scss";
 
 interface ButtonElementBlockAttrs {
     text: string;
+    width: number | undefined;
 }
 
 function edit({
@@ -16,14 +27,61 @@ function edit({
     setAttributes,
 }: BlockEditProps<ButtonElementBlockAttrs>) {
     const blockProps = useBlockProps();
+
+    function WidthPanel({
+        selectedWidth,
+        setAttributes,
+    }: {
+        selectedWidth: number | undefined;
+        setAttributes: (attrs: Partial<ButtonElementBlockAttrs>) => void;
+    }) {
+        function handleChange(newWidth: number) {
+            // Check if we are toggling the width off
+            const width = selectedWidth === newWidth ? undefined : newWidth;
+
+            // Update attributes.
+            setAttributes({ width });
+        }
+
+        return (
+            <PanelBody title={"Width settings"}>
+                <ButtonGroup aria-label={"Button width"}>
+                    {[25, 50, 75, 100].map((widthValue) => {
+                        return (
+                            <Button
+                                key={widthValue}
+                                isSmall
+                                variant={
+                                    widthValue === selectedWidth
+                                        ? "primary"
+                                        : undefined
+                                }
+                                onClick={() => handleChange(widthValue)}
+                            >
+                                {widthValue}%
+                            </Button>
+                        );
+                    })}
+                </ButtonGroup>
+            </PanelBody>
+        );
+    }
+
+    const { text, width } = attributes;
+
     return (
         <>
-            <div {...blockProps}>
+            <div
+                {...blockProps}
+                className={classnames(blockProps.className, {
+                    [`has-custom-width wp-block-button__width-${width}`]: width,
+                })}
+            >
                 <RichText
                     className="wp-block-button__link wp-element-button"
                     aria-label="Button text"
                     placeholder="Add text…"
-                    value={attributes.text}
+                    value={text}
                     allowedFormats={["core/bold", "core/italic"]}
                     onChange={(value: string) =>
                         setAttributes({
@@ -35,6 +93,12 @@ function edit({
                     identifier="text"
                 />
             </div>
+            <InspectorControls>
+                <WidthPanel
+                    selectedWidth={width}
+                    setAttributes={setAttributes}
+                />
+            </InspectorControls>
         </>
     );
 }
@@ -60,6 +124,9 @@ registerBlockType(metadata.name, {
             type: "string",
             source: "html",
             selector: "a",
+        },
+        width: {
+            type: "number",
         },
     },
     example: {},
