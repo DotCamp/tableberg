@@ -17,6 +17,7 @@ function edit({ attributes, setAttributes }: BlockEditProps<{}>) {
                     aria-label="Button text"
                     placeholder="Add text…"
                     value={"abcd"}
+                    allowedFormats={["core/bold", "core/italic"]}
                     onChange={(value: string) => console.log(value)}
                     // @ts-ignore
                     withoutInteractiveFormatting
