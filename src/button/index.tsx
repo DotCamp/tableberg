@@ -13,7 +13,7 @@ function edit({ attributes, setAttributes }: BlockEditProps<{}>) {
         <>
             <div {...blockProps}>
                 <RichText
-                    className="wp-block-button__link"
+                    className="wp-block-button__link wp-element-button"
                     aria-label="Button text"
                     placeholder="Add text…"
                     value={"abcd"}
@@ -33,7 +33,7 @@ function save(props: BlockSaveProps<{}>) {
         <div {...blockProps}>
             <RichText.Content
                 tagName="a"
-                className="wp-block-button__link"
+                className="wp-block-button__link wp-element-button"
                 value={""}
             />
         </div>
