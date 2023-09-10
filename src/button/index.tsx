@@ -7,7 +7,14 @@ import {
 import metadata from "./block.json";
 import { RichText, useBlockProps } from "@wordpress/block-editor";
 
-function edit({ attributes, setAttributes }: BlockEditProps<{}>) {
+interface ButtonElementBlockAttrs {
+    text: string;
+}
+
+function edit({
+    attributes,
+    setAttributes,
+}: BlockEditProps<ButtonElementBlockAttrs>) {
     const blockProps = useBlockProps();
     return (
         <>
@@ -16,9 +23,13 @@ function edit({ attributes, setAttributes }: BlockEditProps<{}>) {
                     className="wp-block-button__link wp-element-button"
                     aria-label="Button text"
                     placeholder="Add text…"
-                    value={"abcd"}
+                    value={attributes.text}
                     allowedFormats={["core/bold", "core/italic"]}
-                    onChange={(value: string) => console.log(value)}
+                    onChange={(value: string) =>
+                        setAttributes({
+                            text: value.replace(/<\/?a[^>]*>/g, ""),
+                        })
+                    }
                     // @ts-ignore
                     withoutInteractiveFormatting
                     identifier="text"
@@ -28,14 +39,14 @@ function edit({ attributes, setAttributes }: BlockEditProps<{}>) {
     );
 }
 
-function save(props: BlockSaveProps<{}>) {
+function save({ attributes }: BlockSaveProps<ButtonElementBlockAttrs>) {
     const blockProps = useBlockProps.save();
     return (
         <div {...blockProps}>
             <RichText.Content
                 tagName="a"
                 className="wp-block-button__link wp-element-button"
-                value={""}
+                value={attributes.text}
             />
         </div>
     );
@@ -44,7 +55,13 @@ function save(props: BlockSaveProps<{}>) {
 registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
-    attributes: {},
+    attributes: {
+        text: {
+            type: "string",
+            source: "html",
+            selector: "a",
+        },
+    },
     example: {},
     edit,
     save,
