@@ -16,10 +16,25 @@
         },
         "width": {
             "type": "number"
+        },
+        "backgroundColor": {
+            "type": "string"
+        },
+        "textColor": {
+            "type": "string"
         }
     },
     "supports": {
-        "html": false
+        "html": false,
+        "anchor": true,
+        "color": {
+            "__experimentalSkipSerialization": true,
+            "gradients": true,
+            "__experimentalDefaultControls": {
+                "background": true,
+                "text": true
+            }
+        }
     },
     "textdomain": "tableberg",
     "editorScript": "file:./index.tsx",

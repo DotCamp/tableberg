@@ -13,6 +13,8 @@ import {
     RichText,
     useBlockProps,
     InspectorControls,
+    // @ts-ignore experimental API is not documented in types
+    __experimentalUseColorProps as useColorProps,
 } from "@wordpress/block-editor";
 
 import "./style.scss";
@@ -20,6 +22,8 @@ import "./style.scss";
 interface ButtonElementBlockAttrs {
     text: string;
     width: number | undefined;
+    backgroundColor: string;
+    textColor: string;
 }
 
 function edit({
@@ -69,6 +73,8 @@ function edit({
 
     const { text, width } = attributes;
 
+    const colorProps = useColorProps(attributes);
+
     return (
         <>
             <div
@@ -78,7 +84,11 @@ function edit({
                 })}
             >
                 <RichText
-                    className="wp-block-button__link wp-element-button"
+                    className={classnames(
+                        "wp-block-button__link",
+                        "wp-element-button",
+                        colorProps.className
+                    )}
                     aria-label="Button text"
                     placeholder="Add text…"
                     value={text}
@@ -88,12 +98,15 @@ function edit({
                             text: value.replace(/<\/?a[^>]*>/g, ""),
                         })
                     }
+                    style={{
+                        ...colorProps.style,
+                    }}
                     // @ts-ignore
                     withoutInteractiveFormatting
                     identifier="text"
                 />
             </div>
-            <InspectorControls>
+            <InspectorControls key="setting">
                 <WidthPanel
                     selectedWidth={width}
                     setAttributes={setAttributes}
@@ -127,6 +140,12 @@ registerBlockType(metadata.name, {
         },
         width: {
             type: "number",
+        },
+        backgroundColor: {
+            type: "string",
+        },
+        textColor: {
+            type: "string",
         },
     },
     example: {},
