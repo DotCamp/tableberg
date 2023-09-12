@@ -152,6 +152,7 @@ function edit({
                                     colorValue: attributes.textColor,
                                     label: "Text",
                                     onColorChange: changeTextColor,
+                                    clearable: true,
                                     resetAllFilter: () =>
                                         setAttributes({ textColor: undefined }),
                                 },
@@ -165,6 +166,7 @@ function edit({
                                     colorValue: attributes.backgroundColor,
                                     label: "Background",
                                     onColorChange: changeBackgroundColor,
+                                    clearable: true,
                                     resetAllFilter: () =>
                                         setAttributes({
                                             backgroundColor: undefined,
@@ -191,6 +193,7 @@ function edit({
                                     colorValue: attributes.textHoverColor,
                                     label: "Text",
                                     onColorChange: changeTextHoverColor,
+                                    clearable: true,
                                     resetAllFilter: () =>
                                         setAttributes({
                                             textHoverColor: undefined,
@@ -206,6 +209,7 @@ function edit({
                                     colorValue: attributes.backgroundHoverColor,
                                     label: "Background",
                                     onColorChange: changeBackgroundHoverColor,
+                                    clearable: true,
                                     resetAllFilter: () =>
                                         setAttributes({
                                             backgroundHoverColor: undefined,
