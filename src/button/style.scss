@@ -1,6 +1,11 @@
 $blocks-block__margin: 0.5em;
 
 .wp-block-tableberg-button {
+    .wp-block-button__link:hover {
+        color: var(--text-hover-color) !important;
+        background-color: var(--background-hover-color) !important;
+    }
+
     &.has-custom-width {
         max-width: none;
         .wp-block-button__link {

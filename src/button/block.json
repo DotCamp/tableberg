@@ -22,6 +22,12 @@
         },
         "textColor": {
             "type": "string"
+        },
+        "backgroundHoverColor": {
+            "type": "string"
+        },
+        "textHoverColor": {
+            "type": "string"
         }
     },
     "supports": {

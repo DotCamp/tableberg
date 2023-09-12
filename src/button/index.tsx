@@ -23,7 +23,7 @@ import {
     // @ts-ignore
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 } from "@wordpress/block-editor";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import "./style.scss";
 
@@ -32,6 +32,8 @@ interface ButtonElementBlockAttrs {
     width: number | undefined;
     backgroundColor: string;
     textColor: string;
+    backgroundHoverColor: string | undefined;
+    textHoverColor: string | undefined;
 }
 
 function edit({
@@ -82,15 +84,34 @@ function edit({
     const [buttonStyle, setButtonStyle] = useState<{
         color?: string;
         backgroundColor?: string;
+        "--text-hover-color"?: string;
+        "--background-hover-color"?: string;
     }>({
         color: attributes.textColor,
         backgroundColor: attributes.backgroundColor,
+        "--text-hover-color":
+            attributes.textHoverColor ??
+            attributes.textColor ??
+            "var(--wp--preset--color--base)",
+        "--background-hover-color":
+            attributes.backgroundHoverColor ??
+            attributes.backgroundColor ??
+            "var(--wp--preset--color--primary)",
     });
 
     function ColorsPanel() {
         const resetAll = () => {
             setAttributes({ textColor: undefined, backgroundColor: undefined });
-            setButtonStyle({});
+            setButtonStyle({
+                ...buttonStyle,
+                color: undefined,
+                backgroundColor: undefined,
+            });
+        };
+
+        const resetAllHover = () => {
+            changeTextHoverColor(undefined);
+            changeBackgroundHoverColor(undefined);
         };
 
         const changeTextColor = (val: string) => {
@@ -101,6 +122,14 @@ function edit({
         const changeBackgroundColor = (val: string) => {
             setAttributes({ backgroundColor: val });
             setButtonStyle({ ...buttonStyle, backgroundColor: val });
+        };
+
+        const changeTextHoverColor = (val: string | undefined) => {
+            setAttributes({ textHoverColor: val });
+        };
+
+        const changeBackgroundHoverColor = (val: string | undefined) => {
+            setAttributes({ backgroundHoverColor: val });
         };
 
         const colorGradientSettings = useMultipleOriginColorsAndGradients();
@@ -146,9 +175,76 @@ function edit({
                         />
                     </div>
                 </ToolsPanel>
+                <ToolsPanel
+                    label={"Hover Color"}
+                    resetAll={resetAllHover}
+                    hasInnerWrapper
+                    className="color-block-support-panel"
+                    __experimentalFirstVisibleItemClass="first"
+                    __experimentalLastVisibleItemClass="last"
+                >
+                    <div className="color-block-support-panel__inner-wrapper">
+                        <ColorGradientSettingsDropdown
+                            __experimentalIsRenderedInSidebar
+                            settings={[
+                                {
+                                    colorValue: attributes.textHoverColor,
+                                    label: "Text",
+                                    onColorChange: changeTextHoverColor,
+                                    resetAllFilter: () =>
+                                        setAttributes({
+                                            textHoverColor: undefined,
+                                        }),
+                                },
+                            ]}
+                            {...colorGradientSettings}
+                        />
+                        <ColorGradientSettingsDropdown
+                            __experimentalIsRenderedInSidebar
+                            settings={[
+                                {
+                                    colorValue: attributes.backgroundHoverColor,
+                                    label: "Background",
+                                    onColorChange: changeBackgroundHoverColor,
+                                    resetAllFilter: () =>
+                                        setAttributes({
+                                            backgroundHoverColor: undefined,
+                                        }),
+                                },
+                            ]}
+                            {...colorGradientSettings}
+                        />
+                    </div>
+                </ToolsPanel>
             </>
         );
     }
+
+    useEffect(() => {
+        setButtonStyle({
+            ...buttonStyle,
+            "--background-hover-color":
+                attributes.backgroundHoverColor ??
+                attributes.backgroundColor ??
+                "var(--wp--preset--color--primary)",
+        });
+
+        console.log(
+            attributes.backgroundHoverColor,
+            attributes.backgroundColor,
+            buttonStyle
+        );
+    }, [attributes.backgroundColor, attributes.backgroundHoverColor]);
+
+    useEffect(() => {
+        setButtonStyle({
+            ...buttonStyle,
+            "--text-hover-color":
+                attributes.textHoverColor ??
+                attributes.textColor ??
+                "var(--wp--preset--color--base)",
+        });
+    }, [attributes.textColor, attributes.textHoverColor]);
 
     const { text, width } = attributes;
 
@@ -222,6 +318,12 @@ registerBlockType(metadata.name, {
             type: "string",
         },
         textColor: {
+            type: "string",
+        },
+        backgroundHoverColor: {
+            type: "string",
+        },
+        textHoverColor: {
             type: "string",
         },
     },
