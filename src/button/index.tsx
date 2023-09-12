@@ -6,16 +6,24 @@ import {
     registerBlockType,
 } from "@wordpress/blocks";
 
-import { Button, ButtonGroup, PanelBody } from "@wordpress/components";
+import {
+    Button,
+    ButtonGroup,
+    PanelBody,
+    __experimentalToolsPanel as ToolsPanel,
+} from "@wordpress/components";
 
 import metadata from "./block.json";
 import {
     RichText,
     useBlockProps,
     InspectorControls,
-    // @ts-ignore experimental API is not documented in types
-    __experimentalUseColorProps as useColorProps,
+    // @ts-ignore
+    __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
+    // @ts-ignore
+    __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 } from "@wordpress/block-editor";
+import { useState } from "react";
 
 import "./style.scss";
 
@@ -71,9 +79,78 @@ function edit({
         );
     }
 
-    const { text, width } = attributes;
+    const [buttonStyle, setButtonStyle] = useState<{
+        color?: string;
+        backgroundColor?: string;
+    }>({
+        color: attributes.textColor,
+        backgroundColor: attributes.backgroundColor,
+    });
 
-    const colorProps = useColorProps(attributes);
+    function ColorsPanel() {
+        const resetAll = () => {
+            setAttributes({ textColor: undefined, backgroundColor: undefined });
+            setButtonStyle({});
+        };
+
+        const changeTextColor = (val: string) => {
+            setAttributes({ textColor: val });
+            setButtonStyle({ ...buttonStyle, color: val });
+        };
+
+        const changeBackgroundColor = (val: string) => {
+            setAttributes({ backgroundColor: val });
+            setButtonStyle({ ...buttonStyle, backgroundColor: val });
+        };
+
+        const colorGradientSettings = useMultipleOriginColorsAndGradients();
+
+        return (
+            <>
+                <ToolsPanel
+                    label={"Color"}
+                    resetAll={resetAll}
+                    hasInnerWrapper
+                    className="color-block-support-panel"
+                    __experimentalFirstVisibleItemClass="first"
+                    __experimentalLastVisibleItemClass="last"
+                >
+                    <div className="color-block-support-panel__inner-wrapper">
+                        <ColorGradientSettingsDropdown
+                            __experimentalIsRenderedInSidebar
+                            settings={[
+                                {
+                                    colorValue: attributes.textColor,
+                                    label: "Text",
+                                    onColorChange: changeTextColor,
+                                    resetAllFilter: () =>
+                                        setAttributes({ textColor: undefined }),
+                                },
+                            ]}
+                            {...colorGradientSettings}
+                        />
+                        <ColorGradientSettingsDropdown
+                            __experimentalIsRenderedInSidebar
+                            settings={[
+                                {
+                                    colorValue: attributes.backgroundColor,
+                                    label: "Background",
+                                    onColorChange: changeBackgroundColor,
+                                    resetAllFilter: () =>
+                                        setAttributes({
+                                            backgroundColor: undefined,
+                                        }),
+                                },
+                            ]}
+                            {...colorGradientSettings}
+                        />
+                    </div>
+                </ToolsPanel>
+            </>
+        );
+    }
+
+    const { text, width } = attributes;
 
     return (
         <>
@@ -86,8 +163,7 @@ function edit({
                 <RichText
                     className={classnames(
                         "wp-block-button__link",
-                        "wp-element-button",
-                        colorProps.className
+                        "wp-element-button"
                     )}
                     aria-label="Button text"
                     placeholder="Add text…"
@@ -98,14 +174,15 @@ function edit({
                             text: value.replace(/<\/?a[^>]*>/g, ""),
                         })
                     }
-                    style={{
-                        ...colorProps.style,
-                    }}
                     // @ts-ignore
                     withoutInteractiveFormatting
                     identifier="text"
+                    style={{ ...buttonStyle }}
                 />
             </div>
+            <InspectorControls group="styles">
+                <ColorsPanel />
+            </InspectorControls>
             <InspectorControls key="setting">
                 <WidthPanel
                     selectedWidth={width}

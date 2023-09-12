@@ -26,15 +26,7 @@
     },
     "supports": {
         "html": false,
-        "anchor": true,
-        "color": {
-            "__experimentalSkipSerialization": true,
-            "gradients": true,
-            "__experimentalDefaultControls": {
-                "background": true,
-                "text": true
-            }
-        }
+        "anchor": true
     },
     "textdomain": "tableberg",
     "editorScript": "file:./index.tsx",
