@@ -232,12 +232,6 @@ function edit({
                 attributes.backgroundColor ??
                 "var(--wp--preset--color--primary)",
         });
-
-        console.log(
-            attributes.backgroundHoverColor,
-            attributes.backgroundColor,
-            buttonStyle
-        );
     }, [attributes.backgroundColor, attributes.backgroundHoverColor]);
 
     useEffect(() => {
