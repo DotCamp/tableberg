@@ -6,6 +6,12 @@ $blocks-block__margin: 0.5em;
         background-color: var(--background-hover-color) !important;
     }
 
+    &.has-custom-font-size {
+        .wp-block-button__link {
+            font-size: inherit;
+        }
+    }
+
     &.has-custom-width {
         max-width: none;
         .wp-block-button__link {

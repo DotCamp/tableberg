@@ -32,7 +32,10 @@
     },
     "supports": {
         "html": false,
-        "anchor": true
+        "anchor": true,
+        "typography": {
+            "fontSize": true
+        }
     },
     "textdomain": "tableberg",
     "editorScript": "file:./index.tsx",
