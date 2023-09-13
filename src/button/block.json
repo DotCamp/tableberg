@@ -35,6 +35,9 @@
         "anchor": true,
         "typography": {
             "fontSize": true
+        },
+        "__experimentalBorder": {
+            "radius": true
         }
     },
     "textdomain": "tableberg",

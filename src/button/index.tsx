@@ -22,6 +22,8 @@ import {
     __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
     // @ts-ignore
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
+    // @ts-ignore
+    __experimentalUseBorderProps as useBorderProps,
 } from "@wordpress/block-editor";
 import { useEffect, useState } from "react";
 
@@ -245,6 +247,7 @@ function edit({
     }, [attributes.textColor, attributes.textHoverColor]);
 
     const { text, width } = attributes;
+    const borderProps = useBorderProps(attributes);
 
     return (
         <>
@@ -258,7 +261,8 @@ function edit({
                 <RichText
                     className={classnames(
                         "wp-block-button__link",
-                        "wp-element-button"
+                        "wp-element-button",
+                        borderProps.className
                     )}
                     aria-label="Button text"
                     placeholder="Add text…"
@@ -272,7 +276,7 @@ function edit({
                     // @ts-ignore
                     withoutInteractiveFormatting
                     identifier="text"
-                    style={{ ...buttonStyle }}
+                    style={{ ...buttonStyle, ...borderProps.style }}
                 />
             </div>
             <InspectorControls group="styles">
