@@ -15,6 +15,8 @@ import {
 
 import metadata from "./block.json";
 import {
+    // @ts-ignore
+    AlignmentControl,
     RichText,
     useBlockProps,
     InspectorControls,
@@ -24,6 +26,7 @@ import {
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
     // @ts-ignore
     __experimentalUseBorderProps as useBorderProps,
+    BlockControls,
 } from "@wordpress/block-editor";
 import { useEffect, useState } from "react";
 
@@ -36,6 +39,7 @@ interface ButtonElementBlockAttrs {
     textColor: string;
     backgroundHoverColor: string | undefined;
     textHoverColor: string | undefined;
+    textAlign: string;
 }
 
 function edit({
@@ -246,7 +250,7 @@ function edit({
         });
     }, [attributes.textColor, attributes.textHoverColor]);
 
-    const { text, width } = attributes;
+    const { text, width, textAlign } = attributes;
     const borderProps = useBorderProps(attributes);
 
     return (
@@ -262,7 +266,10 @@ function edit({
                     className={classnames(
                         "wp-block-button__link",
                         "wp-element-button",
-                        borderProps.className
+                        borderProps.className,
+                        {
+                            [`has-text-align-${textAlign}`]: textAlign,
+                        }
                     )}
                     aria-label="Button text"
                     placeholder="Add text…"
@@ -279,6 +286,15 @@ function edit({
                     style={{ ...buttonStyle, ...borderProps.style }}
                 />
             </div>
+            {/* @ts-ignore */}
+            <BlockControls group="block">
+                <AlignmentControl
+                    value={textAlign}
+                    onChange={(nextAlign: string) => {
+                        setAttributes({ textAlign: nextAlign });
+                    }}
+                />
+            </BlockControls>
             <InspectorControls group="styles">
                 <ColorsPanel />
             </InspectorControls>
@@ -327,6 +343,9 @@ registerBlockType(metadata.name, {
             type: "string",
         },
         textHoverColor: {
+            type: "string",
+        },
+        textAlign: {
             type: "string",
         },
     },
