@@ -8,7 +8,11 @@
     "category": "design",
     "icon": "table-row-after",
     "description": "Tableberg Cell: Individual cell of a tableberg table",
-    "attributes": {},
+    "attributes": {
+        "align": {
+            "type": "string"
+        }
+    },
     "supports": {
         "html": false
     },
