@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "version": "0.0.1",
+    "title": "Tableberg Button",
+    "name": "tableberg/button",
+    "parent": ["tableberg/cell"],
+    "category": "design",
+    "icon": "button",
+    "description": "Tableberg Button: Add a button to your tableberg table",
+    "attributes": {
+        "text": {
+            "type": "string",
+            "source": "html",
+            "selector": "a"
+        },
+        "width": {
+            "type": "number"
+        },
+        "backgroundColor": {
+            "type": "string"
+        },
+        "textColor": {
+            "type": "string"
+        },
+        "backgroundHoverColor": {
+            "type": "string"
+        },
+        "textHoverColor": {
+            "type": "string"
+        },
+        "textAlign": {
+            "type": "string"
+        }
+    },
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "typography": {
+            "fontSize": true
+        },
+        "__experimentalBorder": {
+            "radius": true
+        }
+    },
+    "textdomain": "tableberg",
+    "editorScript": "file:./index.tsx",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css"
+}

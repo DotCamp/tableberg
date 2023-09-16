@@ -18,5 +18,6 @@ function tableberg_register_block_types()
 	register_block_type(__DIR__ . '/build');
 	register_block_type(__DIR__ . '/build/row');
 	register_block_type(__DIR__ . '/build/cell');
+	register_block_type(__DIR__ . '/build/button');
 }
 add_action('init', 'tableberg_register_block_types');
