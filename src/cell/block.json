@@ -10,7 +10,12 @@
     "description": "Tableberg Cell: Individual cell of a tableberg table",
     "attributes": {
         "align": {
-            "type": "string"
+            "type": "string",
+            "default": "left"
+        },
+        "vAlign": {
+            "type": "string",
+            "default": "top"
         }
     },
     "supports": {

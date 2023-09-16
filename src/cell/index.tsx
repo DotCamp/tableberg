@@ -1,7 +1,7 @@
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 import {
-    // @ts-ignore
-    AlignmentControl,
+    BlockAlignmentToolbar,
+    BlockVerticalAlignmentToolbar,
     BlockControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
@@ -11,7 +11,7 @@ import {
     InnerBlocks,
 } from "@wordpress/block-editor";
 import { useSelect } from "@wordpress/data";
-import { alignLeft, alignRight, alignCenter } from "@wordpress/icons";
+import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
 
 import "./style.scss";
 import "./editor.scss";
@@ -20,7 +20,8 @@ import metadata from "./block.json";
 import classNames from "classnames";
 
 interface TablebergCellBlockAttrs {
-    align: string;
+    align: "left" | "right" | "center";
+    vAlign: "bottom" | "center" | "top";
 }
 
 const ALLOWED_BLOCKS = [
@@ -44,10 +45,19 @@ function edit({
         [clientId]
     );
 
-    const { align } = attributes;
+    const { align, vAlign } = attributes;
+
+    const hAlignChange = (newValue: "left" | "right" | "center") => {
+        setAttributes({ align: newValue });
+    };
+
+    const vAlignChange = (newValue: "bottom" | "center" | "top") => {
+        setAttributes({ vAlign: newValue });
+    };
 
     const className = classNames({
-        [`has-text-align-${align}`]: align,
+        [`justify-${align}`]: align,
+        [`justify-v-${vAlign}`]: vAlign,
     });
 
     const blockProps = useBlockProps({ className });
@@ -63,29 +73,14 @@ function edit({
             <td {...innerBlocksProps} />
             {/* @ts-ignore */}
             <BlockControls group="block">
-                <AlignmentControl
+                <BlockAlignmentToolbar
                     value={align}
-                    onChange={(nextAlign: string) => {
-                        setAttributes({ align: nextAlign });
-                    }}
-                    label="Align Content"
-                    alignmentControls={[
-                        {
-                            icon: alignLeft,
-                            title: "Align content left",
-                            align: "left",
-                        },
-                        {
-                            icon: alignCenter,
-                            title: "Align content center",
-                            align: "center",
-                        },
-                        {
-                            icon: alignRight,
-                            title: "Align content right",
-                            align: "right",
-                        },
-                    ]}
+                    onChange={hAlignChange}
+                    controls={["left", "center", "right"]}
+                />
+                <BlockVerticalAlignmentToolbar
+                    value={vAlign}
+                    onChange={vAlignChange}
                 />
             </BlockControls>
         </>
@@ -104,6 +99,11 @@ registerBlockType(metadata.name, {
     attributes: {
         align: {
             type: "string",
+            default: "left",
+        },
+        vAlign: {
+            type: "string",
+            default: "top",
         },
     },
     example: {},

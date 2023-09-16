@@ -1,12 +1,32 @@
-/**
- * The following styles get applied both on the front of your site
- * and in the editor.
- *
- * Replace them with your own styles or remove the file completely.
- */
-
 td.wp-block-tableberg-cell {
     border: 1px solid black;
     border-collapse: collapse;
     padding: 8px;
+
+    &.justify-left > * {
+        float: left;
+        text-align: left;
+    }
+
+    &.justify-right > * {
+        float: right;
+        text-align: right;
+    }
+
+    &.justify-center > * {
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    &.justify-v-top {
+        vertical-align: top;
+    }
+
+    &.justify-v-center {
+        vertical-align: middle;
+    }
+
+    &.justify-v-bottom {
+        vertical-align: bottom;
+    }
 }
