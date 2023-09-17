@@ -31,6 +31,9 @@
         },
         "textAlign": {
             "type": "string"
+        },
+        "id": {
+            "type": "string"
         }
     },
     "supports": {
