@@ -301,7 +301,7 @@ function edit({
             <InspectorControls group="styles">
                 <ColorsPanel />
             </InspectorControls>
-            <InspectorControls key="setting">
+            <InspectorControls>
                 <WidthPanel
                     selectedWidth={width}
                     setAttributes={setAttributes}
