@@ -4,17 +4,17 @@ td.wp-block-tableberg-cell {
     padding: 8px;
 
     &.justify-left > * {
-        float: left;
+        margin-right: auto;
         text-align: left;
     }
 
     &.justify-right > * {
-        float: right;
+        margin-left: auto;
         text-align: right;
     }
 
     &.justify-center > * {
-        margin: 0 auto;
+        margin-inline: auto;
         text-align: center;
     }
 
