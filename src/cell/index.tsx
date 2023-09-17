@@ -5,13 +5,8 @@ import {
     BlockControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import {
-    useBlockProps,
-    useInnerBlocksProps,
-    InnerBlocks,
-} from "@wordpress/block-editor";
+import { useBlockProps, useInnerBlocksProps } from "@wordpress/block-editor";
 import { useSelect } from "@wordpress/data";
-import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
 
 import "./style.scss";
 import "./editor.scss";
