@@ -56,8 +56,8 @@ function edit({
     };
 
     const className = classNames({
-        [`justify-${align}`]: align,
-        [`justify-v-${vAlign}`]: vAlign,
+        [`align-${align}`]: align,
+        [`align-v-${vAlign}`]: vAlign,
     });
 
     const blockProps = useBlockProps({ className });

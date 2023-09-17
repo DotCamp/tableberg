@@ -3,30 +3,30 @@ td.wp-block-tableberg-cell {
     border-collapse: collapse;
     padding: 8px;
 
-    &.justify-left > * {
+    &.align-left > * {
         margin-right: auto;
         text-align: left;
     }
 
-    &.justify-right > * {
+    &.align-right > * {
         margin-left: auto;
         text-align: right;
     }
 
-    &.justify-center > * {
+    &.align-center > * {
         margin-inline: auto;
         text-align: center;
     }
 
-    &.justify-v-top {
+    &.align-v-top {
         vertical-align: top;
     }
 
-    &.justify-v-center {
+    &.align-v-center {
         vertical-align: middle;
     }
 
-    &.justify-v-bottom {
+    &.align-v-bottom {
         vertical-align: bottom;
     }
 }
