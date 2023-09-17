@@ -10,6 +10,7 @@ import {
     Button,
     ButtonGroup,
     PanelBody,
+    TextControl,
     __experimentalToolsPanel as ToolsPanel,
 } from "@wordpress/components";
 
@@ -40,6 +41,7 @@ interface ButtonElementBlockAttrs {
     backgroundHoverColor: string | undefined;
     textHoverColor: string | undefined;
     textAlign: string;
+    id: string;
 }
 
 function edit({
@@ -250,7 +252,7 @@ function edit({
         });
     }, [attributes.textColor, attributes.textHoverColor]);
 
-    const { text, width, textAlign } = attributes;
+    const { text, width, textAlign, id } = attributes;
     const borderProps = useBorderProps(attributes);
 
     return (
@@ -261,6 +263,7 @@ function edit({
                     [`has-custom-width wp-block-button__width-${width}`]: width,
                     [`has-custom-font-size`]: blockProps.style.fontSize,
                 })}
+                id={id}
             >
                 <RichText
                     className={classnames(
@@ -302,6 +305,15 @@ function edit({
                 <WidthPanel
                     selectedWidth={width}
                     setAttributes={setAttributes}
+                />
+            </InspectorControls>
+            <InspectorControls group="advanced">
+                <TextControl
+                    label="HTML ID"
+                    onChange={(value: string) => {
+                        setAttributes({ id: value });
+                    }}
+                    value={id}
                 />
             </InspectorControls>
         </>
@@ -346,6 +358,9 @@ registerBlockType(metadata.name, {
             type: "string",
         },
         textAlign: {
+            type: "string",
+        },
+        id: {
             type: "string",
         },
     },
