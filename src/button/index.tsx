@@ -5,12 +5,18 @@ import {
     BlockSaveProps,
     registerBlockType,
 } from "@wordpress/blocks";
+// @ts-ignore
+import { prependHTTP } from "@wordpress/url";
+// @ts-ignore
+import { useMergeRefs } from "@wordpress/compose";
 
 import {
     Button,
     ButtonGroup,
     PanelBody,
+    Popover,
     TextControl,
+    ToolbarButton,
     __experimentalToolsPanel as ToolsPanel,
 } from "@wordpress/components";
 
@@ -27,11 +33,14 @@ import {
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
     // @ts-ignore
     __experimentalUseBorderProps as useBorderProps,
+    // @ts-ignore
+    __experimentalLinkControl as LinkControl,
     BlockControls,
 } from "@wordpress/block-editor";
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import "./style.scss";
+import { link, linkOff } from "@wordpress/icons";
 
 interface ButtonElementBlockAttrs {
     text: string;
@@ -42,14 +51,18 @@ interface ButtonElementBlockAttrs {
     textHoverColor: string | undefined;
     textAlign: string;
     id: string;
+    url: string | undefined;
+    linkTarget: "_blank" | undefined;
+    rel: string | undefined;
 }
+
+const NEW_TAB_REL = "noreferrer noopener";
 
 function edit({
     attributes,
     setAttributes,
+    isSelected,
 }: BlockEditProps<ButtonElementBlockAttrs>) {
-    const blockProps = useBlockProps();
-
     function WidthPanel({
         selectedWidth,
         setAttributes,
@@ -252,8 +265,62 @@ function edit({
         });
     }, [attributes.textColor, attributes.textHoverColor]);
 
-    const { text, width, textAlign, id } = attributes;
+    const { text, width, textAlign, id, url, rel, linkTarget } = attributes;
+    const ref = useRef();
+    const richTextRef = useRef<HTMLDivElement>();
+    const isURLSet = !!url;
+    const opensInNewTab = linkTarget === "_blank";
     const borderProps = useBorderProps(attributes);
+
+    const [isEditingURL, setIsEditingURL] = useState(false);
+    const [popoverAnchor, setPopoverAnchor] = useState(null);
+
+    const blockProps = useBlockProps({
+        ref: useMergeRefs([setPopoverAnchor, ref]),
+    });
+
+    const onToggleOpenInNewTab = (value: boolean) => {
+        const newLinkTarget = value ? "_blank" : undefined;
+
+        let updatedRel = rel;
+        if (newLinkTarget && !rel) {
+            updatedRel = NEW_TAB_REL;
+        } else if (!newLinkTarget && rel === NEW_TAB_REL) {
+            updatedRel = undefined;
+        }
+
+        setAttributes({
+            linkTarget: newLinkTarget,
+            rel: updatedRel,
+        });
+    };
+
+    const startEditing = (event: MouseEvent) => {
+        event.preventDefault();
+        setIsEditingURL(true);
+    };
+
+    const unlink = () => {
+        setAttributes({
+            url: undefined,
+            linkTarget: undefined,
+            rel: undefined,
+        });
+        setIsEditingURL(false);
+    };
+
+    useEffect(() => {
+        if (!isSelected) {
+            setIsEditingURL(false);
+        }
+    }, [isSelected]);
+
+    // Memoize link value to avoid overriding the LinkControl's internal state.
+    // This is a temporary fix. See https://github.com/WordPress/gutenberg/issues/51256.
+    const linkValue = useMemo(
+        () => ({ url, opensInNewTab }),
+        [url, opensInNewTab]
+    );
 
     return (
         <>
@@ -266,6 +333,8 @@ function edit({
                 id={id}
             >
                 <RichText
+                    // @ts-ignore
+                    ref={richTextRef}
                     className={classnames(
                         "wp-block-button__link",
                         "wp-element-button",
@@ -297,7 +366,49 @@ function edit({
                         setAttributes({ textAlign: nextAlign });
                     }}
                 />
+                <ToolbarButton
+                    icon={isURLSet ? linkOff : link}
+                    title={isURLSet ? "Unlink" : "Link"}
+                    onClick={isURLSet ? unlink : startEditing}
+                    isActive={isURLSet}
+                />
+                {isSelected && (isEditingURL || isURLSet) && (
+                    <Popover
+                        placement="bottom"
+                        onClose={() => {
+                            setIsEditingURL(false);
+                            richTextRef.current?.focus();
+                        }}
+                        anchor={popoverAnchor}
+                        focusOnMount={isEditingURL ? "firstElement" : false}
+                        __unstableSlotName={"__unstable-block-tools-after"}
+                        shift
+                    >
+                        <LinkControl
+                            value={linkValue}
+                            onChange={({
+                                url: newURL = "",
+                                opensInNewTab: newOpensInNewTab,
+                            }: {
+                                url: string;
+                                opensInNewTab: boolean;
+                            }) => {
+                                setAttributes({ url: prependHTTP(newURL) });
+
+                                if (opensInNewTab !== newOpensInNewTab) {
+                                    onToggleOpenInNewTab(newOpensInNewTab);
+                                }
+                            }}
+                            onRemove={() => {
+                                unlink();
+                                richTextRef.current?.focus();
+                            }}
+                            forceIsEditingLink={isEditingURL}
+                        />
+                    </Popover>
+                )}
             </BlockControls>
+            {/* @ts-ignore */}
             <InspectorControls group="styles">
                 <ColorsPanel />
             </InspectorControls>
@@ -307,6 +418,7 @@ function edit({
                     setAttributes={setAttributes}
                 />
             </InspectorControls>
+            {/* @ts-ignore */}
             <InspectorControls group="advanced">
                 <TextControl
                     label="HTML ID"
@@ -314,6 +426,15 @@ function edit({
                         setAttributes({ id: value });
                     }}
                     value={id}
+                />
+            </InspectorControls>
+            {/* @ts-ignore */}
+            <InspectorControls group="advanced">
+                <TextControl
+                    __nextHasNoMarginBottom
+                    label={"Link rel"}
+                    value={rel || ""}
+                    onChange={(newRel) => setAttributes({ rel: newRel })}
                 />
             </InspectorControls>
         </>
@@ -361,6 +482,15 @@ registerBlockType(metadata.name, {
             type: "string",
         },
         id: {
+            type: "string",
+        },
+        url: {
+            type: "string",
+        },
+        linkTarget: {
+            type: "string",
+        },
+        rel: {
             type: "string",
         },
     },

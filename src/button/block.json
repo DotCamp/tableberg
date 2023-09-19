@@ -34,6 +34,15 @@
         },
         "id": {
             "type": "string"
+        },
+        "url": {
+            "type": "string"
+        },
+        "linkTarget": {
+            "type": "string"
+        },
+        "rel": {
+            "type": "string"
         }
     },
     "supports": {
