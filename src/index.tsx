@@ -1,6 +1,6 @@
 import {
     BlockEditProps,
-    // @ts-ignore createBlocksFromInnerBlocksTemplate obviously exists as it is used by wordpress in their own blocks. Need to make a pr to @types/wordpress__blocks.
+    InnerBlockTemplate,
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
 } from "@wordpress/blocks";
@@ -50,7 +50,7 @@ function edit({
 
         if (initialRowCount === "" || initialColCount === "") return;
 
-        const initialInnerBlocks = Array.from(
+        const initialInnerBlocks: InnerBlockTemplate[] = Array.from(
             { length: initialRowCount },
             () => ["tableberg/row", { cols: initialColCount }]
         );

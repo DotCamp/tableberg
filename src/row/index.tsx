@@ -1,8 +1,8 @@
 import {
     BlockEditProps,
     registerBlockType,
-    // @ts-ignore
     createBlocksFromInnerBlocksTemplate,
+    InnerBlockTemplate,
 } from "@wordpress/blocks";
 
 import {
@@ -45,9 +45,10 @@ function edit({ attributes: { cols }, clientId }: BlockEditProps<TBRowAttrs>) {
             return;
         }
 
-        const newInnerBlocksTmpl = Array.from({ length: cols }, () => [
-            "tableberg/cell",
-        ]);
+        const newInnerBlocksTmpl: InnerBlockTemplate[] = Array.from(
+            { length: cols },
+            () => ["tableberg/cell"]
+        );
         replaceInnerBlocks(
             clientId,
             createBlocksFromInnerBlocksTemplate(newInnerBlocksTmpl)
