@@ -19,15 +19,7 @@ interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
 }
 
-const ALLOWED_BLOCKS = [
-    "core/image",
-    "core/list",
-    "core/buttons",
-    "core/heading",
-    "core/code",
-    "core/social-links",
-    "core/paragraph",
-];
+const ALLOWED_BLOCKS = ["core/paragraph", "tableberg/button"];
 
 function edit({
     clientId,

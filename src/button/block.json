@@ -2,7 +2,7 @@
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
     "version": "0.0.1",
-    "title": "Tableberg Button",
+    "title": "Button",
     "name": "tableberg/button",
     "parent": ["tableberg/cell"],
     "category": "design",
