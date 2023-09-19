@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Tableberg
  * Description:       Tableberg: table builder Gutenberg block
- * Version:           0.0.1
+ * Version:           0.0.2
  * Requires at least: 6.1
  * Requires PHP:      7.0
  * Author:            Dotcamp
