@@ -1,4 +1,10 @@
+# Directories
 node_modules/
 build/
 dist/
+.vscode
+vendor
+# Files
 tableberg.zip
+
+

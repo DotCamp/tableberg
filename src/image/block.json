@@ -1,0 +1,66 @@
+{
+     "$schema": "https://schemas.wp.org/trunk/block.json",
+     "apiVersion": 3,
+     "version": "0.0.1",
+     "title": "Tableberg Image",
+     "name": "tableberg/image",
+     "category": "design",
+     "description": "Tableberg Image",
+     "attributes": {
+          "media": {
+               "type": "object"
+          },
+          "height": {
+               "type": "string"
+          },
+          "width": {
+               "type": "string"
+          },
+          "alt": {
+               "type": "string"
+          },
+          "aspectRatio": {
+               "type": "string",
+               "default": ""
+          },
+          "scale": {
+               "type": "string"
+          },
+          "sizeSlug": {
+               "type": "string"
+          },
+          "caption": {
+               "type": "string"
+          }
+     },
+     "supports": {
+          "anchor": true,
+          "color": {
+               "text": false,
+               "background": false
+          },
+          "filter": {
+               "duotone": true
+          },
+          "__experimentalBorder": {
+               "color": true,
+               "radius": true,
+               "width": true,
+               "__experimentalDefaultControls": {
+                    "color": true,
+                    "radius": true,
+                    "width": true
+               }
+          },
+          "selectors": {
+               "border": ".wp-block-tableberg-image img, .wp-block-tableberg-image .wp-block-tableberg-image__crop-area, .wp-block-tableberg-image .components-placeholder",
+               "filter": {
+                    "duotone": ".wp-block-tableberg-image img, .wp-block-tableberg-image .components-placeholder"
+               }
+          }
+     },
+     "textdomain": "tableberg",
+     "editorScript": "file:./index.tsx",
+     "editorStyle": "file:./index.css",
+     "style": "file:./style-index.css"
+}

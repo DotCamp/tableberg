@@ -1,0 +1,22 @@
+.wp-block-tableberg-image {
+  line-height: 1;
+  &.is-selected {
+    .components-placeholder {
+      &.has-illustration {
+        border-radius: 2px;
+        box-shadow: inset 0 0 0 1px #1e1e1e;
+        &::before {
+          opacity: 0;
+        }
+      }
+    }
+    .components-placeholder__illustration {
+      display: none;
+    }
+  }
+}
+.tableberg-width-height-control {
+  display: flex;
+  gap: 10px;
+  grid-column: 1 / -1;
+}
