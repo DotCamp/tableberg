@@ -75,8 +75,18 @@ export interface AttributesTypes {
   scale: string;
   sizeSlug: string;
   caption: string;
+  href: string;
+  linkClass: string;
+  linkDestination: string;
+  rel: string;
+  linkTarget: string;
 }
 export interface MainPropTypes {
   attributes: AttributesTypes;
   setAttributes: (attrs: object) => void;
+}
+export interface ExtendMainPropTypes extends MainPropTypes {
+  showCaption: boolean;
+  setShowCaption: (showCaption: boolean) => void;
+  setIsEditingImage: (isImageEditing: boolean) => void;
 }

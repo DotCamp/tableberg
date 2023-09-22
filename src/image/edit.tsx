@@ -1,14 +1,22 @@
 // @ts-ignore
-import { has, get, isEmpty } from "lodash";
-import { BlockEditProps } from "@wordpress/blocks";
-import { useBlockProps } from "@wordpress/block-editor";
-import CustomMediaPlaceholder from "./media-placeholder";
-import type { AttributesTypes } from "./types";
-import Image from "./image";
-import { ResizableBox } from "@wordpress/components";
+import { isEmpty } from "lodash";
+import { __ } from "@wordpress/i18n";
+// @ts-ignore
+import { useState } from "@wordpress/element";
 import { useDispatch } from "@wordpress/data";
-import BlockControls from "./block-controls";
+import { BlockEditProps } from "@wordpress/blocks";
+import CustomMediaPlaceholder from "./media-placeholder";
+import { ResizableBox } from "@wordpress/components";
+import {
+  RichText,
+  useBlockProps,
+  // @ts-ignore
+  __experimentalGetElementClassName,
+} from "@wordpress/block-editor";
+import Image from "./image";
 import Inspector from "./inspector";
+import BlockControls from "./block-controls";
+import type { AttributesTypes } from "./types";
 
 export interface EditProps {
   attributes: AttributesTypes;
@@ -17,9 +25,12 @@ export interface EditProps {
 }
 
 function Edit(props: BlockEditProps<AttributesTypes>) {
-  const blockProps = useBlockProps();
   const { attributes, setAttributes, isSelected } = props;
-  const { media, height, width } = attributes;
+  const { media, height, width, caption } = attributes;
+  const [showCaption, setShowCaption] = useState(!!caption);
+  const [isImageEditor, setIsEditingImage] = useState(false);
+
+  const blockProps = useBlockProps();
   const hasImage = !isEmpty(media);
   const { toggleSelection } = useDispatch("core/block-editor");
 
@@ -34,11 +45,17 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
     <figure {...blockProps}>
       {hasImage && (
         <>
-          <BlockControls />
+          <BlockControls
+            setIsEditingImage={setIsEditingImage}
+            showCaption={showCaption}
+            setShowCaption={setShowCaption}
+            attributes={attributes}
+            setAttributes={setAttributes}
+          />
           <ResizableBox
             size={{
-              width: width,
-              height: height,
+              width,
+              height,
             }}
             showHandle={isSelected}
             minWidth={"50"}
@@ -63,6 +80,18 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
             }}
           >
             <Image attributes={attributes} setAttributes={setAttributes} />
+            {showCaption && (!RichText.isEmpty(caption) || isSelected) && (
+              <RichText
+                identifier="caption"
+                className={__experimentalGetElementClassName("caption")}
+                tagName="figcaption"
+                aria-label={__("Image caption text", "tableberg")}
+                placeholder={__("Add caption", "tableberg")}
+                value={caption}
+                onChange={(value: string) => setAttributes({ caption: value })}
+                inlineToolbar
+              />
+            )}
           </ResizableBox>
           <Inspector attributes={attributes} setAttributes={setAttributes} />
         </>

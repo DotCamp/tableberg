@@ -1,45 +1,83 @@
 //@ts-ignore
 import { get } from "lodash";
-import { useSelect, useDispatch } from "@wordpress/data";
+import { __ } from "@wordpress/i18n";
+//@ts-ignore
+import { useEffect } from "@wordpress/element";
+import { caption as captionIcon } from "@wordpress/icons";
 import {
   BlockControls as WPBlockControls,
   //@ts-ignore
   MediaReplaceFlow,
-  //@ts-ignore
-  useBlockEditContext,
+  // @ts-ignore
+  __experimentalImageURLInputUI as ImageURLInputUI,
 } from "@wordpress/block-editor";
-import { __ } from "@wordpress/i18n";
-import { ToolbarGroup } from "@wordpress/components";
+//@ts-ignore
+import { usePrevious } from "@wordpress/compose";
+import { ToolbarButton, ToolbarGroup } from "@wordpress/components";
+import type { ExtendMainPropTypes } from "./types";
 
-function BlockControls() {
-  const { clientId } = useBlockEditContext();
-  //@ts-ignore
-  const block = useSelect((select) =>
-    //@ts-ignore
-    select("core/block-editor").getBlock(clientId)
-  );
-  const { updateBlockAttributes } = useDispatch("core/block-editor");
-  const setAttributes = (newAttributes: object) => {
-    updateBlockAttributes(clientId, newAttributes);
-  };
-  const attributes = block.attributes;
-  const imageUrl = get(attributes.media, "url", "");
-  const mediaId = get(attributes.media, "id", -1);
+function BlockControls(props: ExtendMainPropTypes) {
+  const {
+    attributes,
+    setAttributes,
+    setShowCaption,
+    showCaption,
+    setIsEditingImage,
+  } = props;
+  const { media, caption, linkClass, linkDestination, linkTarget, href, rel } =
+    attributes;
+  const prevCaption = usePrevious(caption);
 
+  useEffect(() => {
+    if (caption && !prevCaption) {
+      setShowCaption(true);
+    }
+  }, [caption, prevCaption]);
+  const imageUrl = get(media, "url", "");
+  const mediaId = get(media, "id", -1);
+  const imageLink = get(media, "link", "");
+  function onSetHref(props: any) {
+    setAttributes(props);
+  }
   return (
-    //@ts-ignore
-    <WPBlockControls>
-      <ToolbarGroup>
-        <MediaReplaceFlow
-          mediaURL={imageUrl}
-          mediaId={mediaId}
-          onSelect={(newMedia: any) =>
-            setAttributes({ media: newMedia, alt: newMedia.alt })
-          }
-          name={__("Replace", "tableberg")}
+    <>
+      {/* @ts-ignore */}
+      <WPBlockControls group={"block"}>
+        <ToolbarButton
+          onClick={() => {
+            setShowCaption(!showCaption);
+            if (showCaption && caption) {
+              setAttributes({ caption: undefined });
+            }
+          }}
+          icon={captionIcon}
+          isPressed={showCaption}
+          label={showCaption ? __("Remove caption") : __("Add caption")}
         />
-      </ToolbarGroup>
-    </WPBlockControls>
+        <ImageURLInputUI
+          url={href || ""}
+          onChangeUrl={onSetHref}
+          linkDestination={linkDestination}
+          mediaUrl={imageUrl}
+          mediaLink={imageLink}
+          linkTarget={linkTarget}
+          linkClass={linkClass}
+          rel={rel}
+        />
+      </WPBlockControls>
+      <WPBlockControls>
+        <ToolbarGroup>
+          <MediaReplaceFlow
+            mediaURL={imageUrl}
+            mediaId={mediaId}
+            onSelect={(newMedia: any) =>
+              setAttributes({ media: newMedia, alt: newMedia.alt })
+            }
+            name={__("Replace", "tableberg")}
+          />
+        </ToolbarGroup>
+      </WPBlockControls>
+    </>
   );
 }
 export default BlockControls;

@@ -31,9 +31,31 @@
           },
           "caption": {
                "type": "string"
+          },
+          "href": {
+               "type": "string"
+          },
+          "linkClass": {
+               "type": "string"
+          },
+          "linkDestination": {
+               "type": "string"
+          },
+          "rel": {
+               "type": "string"
+          },
+          "linkTarget": {
+               "type": "string"
+          },
+          "border": {
+               "type": "object"
+          },
+          "borderRadius": {
+               "type": "object"
           }
      },
      "supports": {
+          "align": true,
           "anchor": true,
           "color": {
                "text": false,
@@ -42,18 +64,7 @@
           "filter": {
                "duotone": true
           },
-          "__experimentalBorder": {
-               "color": true,
-               "radius": true,
-               "width": true,
-               "__experimentalDefaultControls": {
-                    "color": true,
-                    "radius": true,
-                    "width": true
-               }
-          },
           "selectors": {
-               "border": ".wp-block-tableberg-image img, .wp-block-tableberg-image .wp-block-tableberg-image__crop-area, .wp-block-tableberg-image .components-placeholder",
                "filter": {
                     "duotone": ".wp-block-tableberg-image img, .wp-block-tableberg-image .components-placeholder"
                }
