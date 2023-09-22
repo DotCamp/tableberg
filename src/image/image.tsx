@@ -1,16 +1,20 @@
 // @ts-ignore
 import { get } from "lodash";
-import { MainPropTypes } from "./types";
+import type { ImageTypes } from "./types";
 import {
   getBorderCSS,
   getSingleSideBorderValue,
 } from "../utils/styling-helpers";
 
-function Image(props: MainPropTypes) {
-  const { attributes } = props;
+function Image(props: ImageTypes) {
+  const { attributes, imageRef } = props;
 
   const sizeSlug = get(attributes, "sizeSlug", "large");
-  const imageSrc = get(attributes, `media.sizes.${sizeSlug}.url`, "");
+  const imageSrc = get(
+    attributes,
+    `media.sizes.${sizeSlug}.url`,
+    attributes.media?.url ?? ""
+  );
   const mediaAlt = get(attributes, "alt", "");
   const aspectRatio = get(attributes, "aspectRatio", "");
   const scale = get(attributes, "scale", "");
@@ -22,6 +26,8 @@ function Image(props: MainPropTypes) {
 
   return (
     <img
+      // @ts-ignore
+      ref={imageRef}
       style={{
         aspectRatio,
         objectFit: scale,

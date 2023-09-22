@@ -3,7 +3,7 @@ import { get } from "lodash";
 import { __ } from "@wordpress/i18n";
 //@ts-ignore
 import { useEffect } from "@wordpress/element";
-import { caption as captionIcon } from "@wordpress/icons";
+import { caption as captionIcon, crop } from "@wordpress/icons";
 import {
   BlockControls as WPBlockControls,
   //@ts-ignore
@@ -63,6 +63,11 @@ function BlockControls(props: ExtendMainPropTypes) {
           linkTarget={linkTarget}
           linkClass={linkClass}
           rel={rel}
+        />
+        <ToolbarButton
+          onClick={() => setIsEditingImage(true)}
+          icon={crop}
+          label={__("Crop", "tableberg")}
         />
       </WPBlockControls>
       <WPBlockControls>

@@ -1,3 +1,16 @@
+interface MediaSize {
+  height: number;
+  width: number;
+  url: string;
+  orientation: string;
+}
+interface MediaSizes {
+  thumbnail?: MediaSize;
+  medium?: MediaSize;
+  large?: MediaSize;
+  full?: MediaSize;
+}
+
 interface media {
   id: number;
   title: string;
@@ -34,32 +47,7 @@ interface media {
   height: number;
   width: number;
   orientation: string;
-  sizes: {
-    thumbnail: {
-      height: number;
-      width: number;
-      url: string;
-      orientation: string;
-    };
-    medium: {
-      height: number;
-      width: number;
-      url: string;
-      orientation: string;
-    };
-    large: {
-      height: number;
-      width: number;
-      url: string;
-      orientation: string;
-    };
-    full: {
-      url: string;
-      height: number;
-      width: number;
-      orientation: string;
-    };
-  };
+  sizes: MediaSizes;
   compat: {
     item: string;
     meta: string;
@@ -89,4 +77,7 @@ export interface ExtendMainPropTypes extends MainPropTypes {
   showCaption: boolean;
   setShowCaption: (showCaption: boolean) => void;
   setIsEditingImage: (isImageEditing: boolean) => void;
+}
+export interface ImageTypes extends MainPropTypes {
+  imageRef: HTMLImageElement | null;
 }
