@@ -49,16 +49,17 @@ function edit({
 
     const blockProps = useBlockProps({ className });
 
-    // @ts-ignore
-    const innerBlocksProps = useInnerBlocksProps(blockProps, {
-        allowedBlocks: ALLOWED_BLOCKS,
-        template: [["core/paragraph"]],
-    });
+    const innerBlocksProps = useInnerBlocksProps(
+        { ...blockProps },
+        {
+            allowedBlocks: ALLOWED_BLOCKS,
+            template: [["core/paragraph"]],
+        }
+    );
 
     return (
         <>
             <td {...innerBlocksProps} />
-            {/* @ts-ignore */}
             <BlockControls group="block">
                 <BlockAlignmentToolbar
                     value={align}
