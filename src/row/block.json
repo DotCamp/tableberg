@@ -8,12 +8,7 @@
     "category": "design",
     "icon": "table-row-after",
     "description": "Tableberg Row: Individual row of a tableberg table",
-    "attributes": {
-        "cols": {
-            "type": "number",
-            "default": "2"
-        }
-    },
+    "attributes": {},
     "supports": {
         "html": false
     },

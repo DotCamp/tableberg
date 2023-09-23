@@ -52,7 +52,13 @@ function edit({
 
         const initialInnerBlocks: InnerBlockTemplate[] = Array.from(
             { length: initialRowCount },
-            () => ["tableberg/row", { cols: initialColCount }]
+            () => [
+                "tableberg/row",
+                {},
+                Array.from({ length: initialColCount }, () => [
+                    "tableberg/cell",
+                ]),
+            ]
         );
 
         replaceInnerBlocks(
