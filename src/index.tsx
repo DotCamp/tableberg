@@ -22,6 +22,7 @@ import { FormEvent, useState } from "react";
 
 interface TablebergBlockAttrs {
     rows: number;
+    cols: number;
     hasTableCreated: boolean;
 }
 
@@ -65,7 +66,11 @@ function edit({
             clientId,
             createBlocksFromInnerBlocksTemplate(initialInnerBlocks)
         );
-        setAttributes({ hasTableCreated: true });
+        setAttributes({
+            hasTableCreated: true,
+            rows: initialColCount,
+            cols: initialColCount,
+        });
     }
 
     function onChangeInitialColCount(count: string) {
@@ -131,6 +136,10 @@ registerBlockType(metadata.name, {
     category: metadata.category,
     attributes: {
         rows: {
+            type: "number",
+            default: 2,
+        },
+        cols: {
             type: "number",
             default: 2,
         },
