@@ -14,7 +14,11 @@ import {
 import { useBlockProps, useInnerBlocksProps } from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { Button } from "@wordpress/components";
-import { tableRowBefore, tableRowAfter } from "@wordpress/icons";
+import {
+    tableRowBefore,
+    tableRowAfter,
+    tableRowDelete,
+} from "@wordpress/icons";
 
 import "./style.scss";
 import "./editor.scss";
@@ -57,31 +61,30 @@ function edit({
         template: [["core/paragraph"]],
     });
 
-    const { insertBlock, updateBlockAttributes } =
+    const { insertBlock, updateBlockAttributes, removeBlock } =
         useDispatch(blockEditorStore);
 
-    const [insertRow] = useSelect(
+    const [insertRow, deleteRowFromTable] = useSelect(
         (select) => {
             const storeSelect = select(blockEditorStore) as any;
 
+            const parentBlocks = storeSelect.getBlockParents(clientId);
+
+            const tableBlockId = parentBlocks.find(
+                (parentId: string) =>
+                    storeSelect.getBlockName(parentId) === "tableberg/table"
+            );
+
+            const currentRowBlockId = parentBlocks.find(
+                (parentId: string) =>
+                    storeSelect.getBlockName(parentId) === "tableberg/row"
+            );
+
+            const { rows, cols } = storeSelect.getBlockAttributes(tableBlockId);
+
+            const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
+
             const insertRow = async (after = false) => {
-                const parentBlocks = storeSelect.getBlockParents(clientId);
-
-                const tableBlockId = parentBlocks.find(
-                    (parentId: string) =>
-                        storeSelect.getBlockName(parentId) === "tableberg/table"
-                );
-
-                const currentRowBlockId = parentBlocks.find(
-                    (parentId: string) =>
-                        storeSelect.getBlockName(parentId) === "tableberg/row"
-                );
-
-                const { rows, cols } =
-                    storeSelect.getBlockAttributes(tableBlockId);
-
-                const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
-
                 const newRowIndex = after ? rowIndex + 1 : rowIndex;
                 const newRowBlock = createBlocksFromInnerBlocksTemplate([
                     [
@@ -94,7 +97,12 @@ function edit({
                 await insertBlock(newRowBlock, newRowIndex, tableBlockId, true);
                 await updateBlockAttributes(tableBlockId, { rows: rows + 1 });
             };
-            return [insertRow];
+
+            const deleteRow = async () => {
+                await removeBlock(currentRowBlockId, true);
+                await updateBlockAttributes(tableBlockId, { rows: rows - 1 });
+            };
+            return [insertRow, deleteRow];
         },
         [clientId]
     );
@@ -104,6 +112,9 @@ function edit({
     };
     const addRowAfter = async () => {
         await insertRow(true);
+    };
+    const deleteRow = async () => {
+        deleteRowFromTable();
     };
 
     return (
@@ -128,6 +139,11 @@ function edit({
                     label="Add Row After"
                     icon={tableRowAfter}
                     onClick={addRowAfter}
+                />
+                <Button
+                    label="Delete Row"
+                    icon={tableRowDelete}
+                    onClick={deleteRow}
                 />
             </BlockControls>
         </>
