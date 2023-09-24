@@ -18,6 +18,7 @@ import {
     TextControl,
     ToolbarButton,
     __experimentalToolsPanel as ToolsPanel,
+    CheckboxControl,
 } from "@wordpress/components";
 
 import metadata from "./block.json";
@@ -56,6 +57,7 @@ interface ButtonElementBlockAttrs {
     rel: string | undefined;
 }
 
+const ALL_REL = ["sponsored", "nofollow", "noreferrer", "noopener"];
 const NEW_TAB_REL = "noreferrer noopener";
 
 function edit({
@@ -282,16 +284,12 @@ function edit({
     const onToggleOpenInNewTab = (value: boolean) => {
         const newLinkTarget = value ? "_blank" : undefined;
 
-        let updatedRel = rel;
         if (newLinkTarget && !rel) {
-            updatedRel = NEW_TAB_REL;
-        } else if (!newLinkTarget && rel === NEW_TAB_REL) {
-            updatedRel = undefined;
+            handleRelChange(NEW_TAB_REL);
         }
 
         setAttributes({
             linkTarget: newLinkTarget,
-            rel: updatedRel,
         });
     };
 
@@ -321,6 +319,27 @@ function edit({
         () => ({ url, opensInNewTab }),
         [url, opensInNewTab]
     );
+
+    const handleRelChange = (relOpt: string, state = true) => {
+        if (state && rel === undefined) {
+            setAttributes({ rel: relOpt });
+            return;
+        }
+
+        if (state && rel?.includes(relOpt)) {
+            return;
+        }
+
+        if (state) {
+            setAttributes({ rel: rel + ` ${relOpt}` });
+            return;
+        }
+
+        if (rel?.includes(relOpt)) {
+            setAttributes({ rel: rel.replace(relOpt, "").trim() });
+            return;
+        }
+    };
 
     return (
         <>
@@ -428,15 +447,23 @@ function edit({
                     value={id}
                 />
             </InspectorControls>
-            {/* @ts-ignore */}
-            <InspectorControls group="advanced">
-                <TextControl
-                    __nextHasNoMarginBottom
-                    label={"Link rel"}
-                    value={rel || ""}
-                    onChange={(newRel) => setAttributes({ rel: newRel })}
-                />
-            </InspectorControls>
+            {isURLSet && (
+                <InspectorControls>
+                    <PanelBody title="Link rel">
+                        {ALL_REL.map((relOpt) => (
+                            <>
+                                <CheckboxControl
+                                    onChange={(val) =>
+                                        handleRelChange(relOpt, val)
+                                    }
+                                    label={relOpt}
+                                    checked={rel?.includes(relOpt)}
+                                />
+                            </>
+                        ))}
+                    </PanelBody>
+                </InspectorControls>
+            )}
         </>
     );
 }
