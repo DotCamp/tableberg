@@ -13,7 +13,7 @@ import {
 } from "@wordpress/block-editor";
 import { useBlockProps, useInnerBlocksProps } from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
-import { Button } from "@wordpress/components";
+import { Button, ToolbarDropdownMenu } from "@wordpress/components";
 import {
     tableRowBefore,
     tableRowAfter,
@@ -21,6 +21,7 @@ import {
     tableColumnAfter,
     tableColumnBefore,
     tableColumnDelete,
+    table,
 } from "@wordpress/icons";
 
 import "./style.scss";
@@ -67,123 +68,145 @@ function edit({
     const { insertBlock, updateBlockAttributes, removeBlock } =
         useDispatch(blockEditorStore);
 
-    const [insertRow, deleteRowFromTable, insertColumn, deleteColumnFromTable] =
-        useSelect(
-            (select) => {
-                const storeSelect = select(blockEditorStore) as any;
+    const [
+        insertRowToTable,
+        deleteRowFromTable,
+        insertColumnToTable,
+        deleteColumnFromTable,
+    ] = useSelect(
+        (select) => {
+            const storeSelect = select(blockEditorStore) as any;
 
-                const parentBlocks = storeSelect.getBlockParents(clientId);
+            const parentBlocks = storeSelect.getBlockParents(clientId);
 
-                const tableBlockId = parentBlocks.find(
-                    (parentId: string) =>
-                        storeSelect.getBlockName(parentId) === "tableberg/table"
-                );
+            const tableBlockId = parentBlocks.find(
+                (parentId: string) =>
+                    storeSelect.getBlockName(parentId) === "tableberg/table"
+            );
 
-                const currentRowBlockId = parentBlocks.find(
-                    (parentId: string) =>
-                        storeSelect.getBlockName(parentId) === "tableberg/row"
-                );
+            const currentRowBlockId = parentBlocks.find(
+                (parentId: string) =>
+                    storeSelect.getBlockName(parentId) === "tableberg/row"
+            );
 
-                const { rows, cols } =
-                    storeSelect.getBlockAttributes(tableBlockId);
+            const { rows, cols } = storeSelect.getBlockAttributes(tableBlockId);
 
-                const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
+            const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
 
-                const insertRow = async (after = false) => {
-                    const newRowIndex = after ? rowIndex + 1 : rowIndex;
-                    const newRowBlock = createBlocksFromInnerBlocksTemplate([
-                        [
-                            "tableberg/row",
-                            {},
-                            Array.from({ length: cols }, () => [
-                                "tableberg/cell",
-                            ]),
-                        ],
-                    ])[0];
+            const insertRow = async (after = false) => {
+                const newRowIndex = after ? rowIndex + 1 : rowIndex;
+                const newRowBlock = createBlocksFromInnerBlocksTemplate([
+                    [
+                        "tableberg/row",
+                        {},
+                        Array.from({ length: cols }, () => ["tableberg/cell"]),
+                    ],
+                ])[0];
 
-                    await insertBlock(
-                        newRowBlock,
-                        newRowIndex,
-                        tableBlockId,
-                        true
-                    );
-                    await updateBlockAttributes(tableBlockId, {
-                        rows: rows + 1,
+                await insertBlock(newRowBlock, newRowIndex, tableBlockId, true);
+                await updateBlockAttributes(tableBlockId, {
+                    rows: rows + 1,
+                });
+            };
+
+            const deleteRow = async () => {
+                await removeBlock(currentRowBlockId, true);
+                await updateBlockAttributes(tableBlockId, {
+                    rows: rows - 1,
+                });
+            };
+
+            const insertColumn = async (after = false) => {
+                const colIndex = storeSelect.getBlockIndex(clientId);
+                const newColIndex = after ? colIndex + 1 : colIndex;
+
+                await storeSelect
+                    .getBlocks(tableBlockId)
+                    .forEach(async (row: BlockInstance) => {
+                        await insertBlock(
+                            createBlock("tableberg/cell"),
+                            newColIndex,
+                            row.clientId,
+                            false
+                        );
                     });
-                };
 
-                const deleteRow = async () => {
-                    await removeBlock(currentRowBlockId, true);
-                    await updateBlockAttributes(tableBlockId, {
-                        rows: rows - 1,
+                await updateBlockAttributes(tableBlockId, {
+                    cols: cols + 1,
+                });
+            };
+
+            const deleteColumnFromTable = async () => {
+                const colIndex = storeSelect.getBlockIndex(clientId);
+
+                await storeSelect
+                    .getBlocks(tableBlockId)
+                    .forEach(async (row: BlockInstance) => {
+                        const cells = storeSelect.getBlockOrder(row.clientId);
+                        await removeBlock(cells[colIndex]);
                     });
-                };
 
-                const insertColumn = async (after = false) => {
-                    const colIndex = storeSelect.getBlockIndex(clientId);
-                    const newColIndex = after ? colIndex + 1 : colIndex;
+                await updateBlockAttributes(tableBlockId, {
+                    cols: cols - 1,
+                });
+            };
 
-                    await storeSelect
-                        .getBlocks(tableBlockId)
-                        .forEach(async (row: BlockInstance) => {
-                            await insertBlock(
-                                createBlock("tableberg/cell"),
-                                newColIndex,
-                                row.clientId,
-                                false
-                            );
-                        });
+            return [insertRow, deleteRow, insertColumn, deleteColumnFromTable];
+        },
+        [clientId]
+    );
 
-                    await updateBlockAttributes(tableBlockId, {
-                        cols: cols + 1,
-                    });
-                };
-
-                const deleteColumnFromTable = async () => {
-                    const colIndex = storeSelect.getBlockIndex(clientId);
-
-                    await storeSelect
-                        .getBlocks(tableBlockId)
-                        .forEach(async (row: BlockInstance) => {
-                            const cells = storeSelect.getBlockOrder(
-                                row.clientId
-                            );
-                            await removeBlock(cells[colIndex]);
-                        });
-
-                    await updateBlockAttributes(tableBlockId, {
-                        cols: cols - 1,
-                    });
-                };
-
-                return [
-                    insertRow,
-                    deleteRow,
-                    insertColumn,
-                    deleteColumnFromTable,
-                ];
-            },
-            [clientId]
-        );
-
-    const addRowBefore = async () => {
-        await insertRow();
+    const onInsertRowBefore = async () => {
+        await insertRowToTable();
     };
-    const addRowAfter = async () => {
-        await insertRow(true);
+    const onInsertRowAfter = async () => {
+        await insertRowToTable(true);
     };
-    const deleteRow = async () => {
+    const onDeleteRow = async () => {
         deleteRowFromTable();
     };
-    const addColumnBefore = async () => {
-        await insertColumn();
+    const onInsertColumnBefore = async () => {
+        await insertColumnToTable();
     };
-    const addColumnAfter = async () => {
-        await insertColumn(true);
+    const onInsertColumnAfter = async () => {
+        await insertColumnToTable(true);
     };
-    const deleteColumn = async () => {
+    const onDeleteColumn = async () => {
         await deleteColumnFromTable();
     };
+
+    const tableControls = [
+        {
+            icon: tableRowBefore,
+            title: "Insert row before",
+            onClick: onInsertRowBefore,
+        },
+        {
+            icon: tableRowAfter,
+            title: "Insert row after",
+            onClick: onInsertRowAfter,
+        },
+        {
+            icon: tableRowDelete,
+            title: "Delete row",
+            onClick: onDeleteRow,
+        },
+        {
+            icon: tableColumnBefore,
+            title: "Insert column before",
+            onClick: onInsertColumnBefore,
+        },
+        {
+            icon: tableColumnAfter,
+            title: "Insert column after",
+            onClick: onInsertColumnAfter,
+        },
+        {
+            icon: tableColumnDelete,
+            title: "Delete column",
+            onClick: onDeleteColumn,
+        },
+    ];
 
     return (
         <>
@@ -198,35 +221,13 @@ function edit({
                     value={vAlign}
                     onChange={vAlignChange}
                 />
-                <Button
-                    label="Add Row Before"
-                    icon={tableRowBefore}
-                    onClick={addRowBefore}
-                />
-                <Button
-                    label="Add Row After"
-                    icon={tableRowAfter}
-                    onClick={addRowAfter}
-                />
-                <Button
-                    label="Delete Row"
-                    icon={tableRowDelete}
-                    onClick={deleteRow}
-                />
-                <Button
-                    label="Add Column Before"
-                    icon={tableColumnBefore}
-                    onClick={addColumnBefore}
-                />
-                <Button
-                    label="Add Column After"
-                    icon={tableColumnAfter}
-                    onClick={addColumnAfter}
-                />
-                <Button
-                    label="Delete Column"
-                    icon={tableColumnDelete}
-                    onClick={deleteColumn}
+            </BlockControls>
+            <BlockControls group="other">
+                <ToolbarDropdownMenu
+                    hasArrowIndicator
+                    icon={table}
+                    label={"Edit table"}
+                    controls={tableControls}
                 />
             </BlockControls>
         </>
