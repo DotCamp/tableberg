@@ -19,7 +19,8 @@
         }
     },
     "supports": {
-        "html": false
+        "html": false,
+        "__experimentalExposeControlsToChildren": true
     },
     "textdomain": "tableberg",
     "editorScript": "file:./index.tsx",

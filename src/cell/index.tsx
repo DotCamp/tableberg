@@ -222,7 +222,7 @@ function edit({
                     onChange={vAlignChange}
                 />
             </BlockControls>
-            <BlockControls group="other">
+            <BlockControls group="other" __experimentalShareWithChildBlocks>
                 <ToolbarDropdownMenu
                     hasArrowIndicator
                     icon={table}
