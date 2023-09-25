@@ -52,8 +52,6 @@ if (!class_exists('Tableberg')) {
 			register_block_type(__DIR__ . '/build');
 			register_block_type(__DIR__ . '/build/row');
 			register_block_type(__DIR__ . '/build/cell');
-			register_block_type(__DIR__ . '/build/button');
-			register_block_type(__DIR__ . '/build/image');
 		}
 	}
 
