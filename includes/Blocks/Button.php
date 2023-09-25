@@ -71,13 +71,14 @@ class Button
         $link_target = isset($attributes['linkTarget']) ? $attributes['linkTarget'] : '';
         $rel = isset($attributes['rel']) ? $attributes['rel'] : '';
         $style = isset($attributes['style']) ? $attributes['style'] : '';
+        $font_size = isset($attributes['fontSize']) ? $attributes['fontSize'] : '';
 
         $classes = trim(join(
             ' ',
             [
                 'wp-block-tableberg-button',
                 ($width) ? "has-custom-width wp-block-button__width-{$width}" : '',
-                $style['fontSize'] ? 'has-custom-font-size' : '',
+                $font_size ? 'has-custom-font-size' : '',
             ]
         ));
 
