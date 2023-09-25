@@ -26,6 +26,8 @@ if (!defined('TABLEBERG_URL')) {
 	define('TABLEBERG_URL', plugin_dir_url(__FILE__));
 }
 
+require_once __DIR__ . '/vendor/autoload.php';
+
 if (!class_exists('Tableberg')) {
 	/**
 	 * External Query Block main class.
@@ -40,8 +42,8 @@ if (!class_exists('Tableberg')) {
 		 */
 		public function __construct()
 		{
-			require_once TABLEBERG_DIR_PATH . 'includes/blocks/class-tableberg-button.php';
-			require_once TABLEBERG_DIR_PATH . 'includes/blocks/class-tableberg-image.php';
+			new Tableberg\Blocks\Button();
+			new Tableberg\Blocks\Image();
 			add_action('init', array($this, 'tableberg_register_block_types'));
 		}
 		/**

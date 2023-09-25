@@ -8,9 +8,9 @@ import edit from "./edit";
 import metadata from "./block.json";
 
 registerBlockType(metadata, {
-  icon: image,
-  title: metadata.title,
-  category: metadata.category,
-  edit,
-  save: () => null,
+    icon: image,
+    title: metadata.title,
+    category: metadata.category,
+    edit,
+    save: () => null,
 });

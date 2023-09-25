@@ -1,34 +1,34 @@
 .wp-block-tableberg-image {
-  line-height: 1;
-  &.aligncenter {
-    width: fit-content;
-  }
-  figcaption {
-    margin-bottom: 1em;
-    margin-top: 0.5em;
-  }
-  &.is-selected {
-    .components-placeholder {
-      &.has-illustration {
-        border-radius: 2px;
-        box-shadow: inset 0 0 0 1px #1e1e1e;
-        &::before {
-          opacity: 0;
+    line-height: 1;
+    &.aligncenter {
+        width: fit-content;
+    }
+    figcaption {
+        margin-bottom: 1em;
+        margin-top: 0.5em;
+    }
+    &.is-selected {
+        .components-placeholder {
+            &.has-illustration {
+                border-radius: 2px;
+                box-shadow: inset 0 0 0 1px #1e1e1e;
+                &::before {
+                    opacity: 0;
+                }
+            }
         }
-      }
+        .components-placeholder__illustration {
+            display: none;
+        }
     }
-    .components-placeholder__illustration {
-      display: none;
-    }
-  }
 }
 .tableberg-width-height-control {
-  display: flex;
-  gap: 10px;
-  grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+    grid-column: 1 / -1;
 }
 .tableberg-custom-border-radius-control {
-  .components-base-control__label {
-    display: none;
-  }
+    .components-base-control__label {
+        display: none;
+    }
 }

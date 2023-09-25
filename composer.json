@@ -1,16 +1,21 @@
 {
-     "name": "dotcamp/tableberg",
-     "description": "Tableberg plugin by Dotcamp.",
-     "scripts": {
-          "lint": "vendor/bin/phpcs tableberg.php includes/",
-          "lint:fix": "vendor/bin/phpcbf tableberg.php includes/ --standard=./ruleset.xml",
-          "post-install-cmd": "vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs",
-          "post-update-cmd": "vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs"
-     },
-     "require": {},
-     "require-dev": {
-          "wp-coding-standards/wpcs": "^2.3",
-          "phpcompatibility/php-compatibility": "^9.3",
-          "squizlabs/php_codesniffer": "^3.7"
-     }
+    "name": "dotcamp/tableberg",
+    "description": "Tableberg plugin by Dotcamp.",
+    "scripts": {
+        "lint": "vendor/bin/phpcs tableberg.php includes/",
+        "lint:fix": "vendor/bin/phpcbf tableberg.php includes/ --standard=./ruleset.xml",
+        "post-install-cmd": "vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs",
+        "post-update-cmd": "vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs"
+    },
+    "require": {},
+    "require-dev": {
+        "wp-coding-standards/wpcs": "^2.3",
+        "phpcompatibility/php-compatibility": "^9.3",
+        "squizlabs/php_codesniffer": "^3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tableberg\\": "includes/"
+        }
+    }
 }
