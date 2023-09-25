@@ -18,9 +18,9 @@ class Button {
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		 add_action( 'init', array( $this, 'block_registration' ) );
-	}
+public function __construct() {
+	 add_action( 'init', array( $this, 'block_registration' ) );
+}
 
 	/**
 	 * Get border CSS styles from border style array
@@ -28,18 +28,10 @@ class Button {
 	 * @param array $border_style - border style array
 	 * @return string   border CSS inline style string
 	 */
-	public function get_border_style( $border_style ) {
-		 $radius = $border_style['radius'];
-		if ( ! is_array( $radius ) ) {
-			return "border-radius: {$radius};";
-		}
-
-		if ( is_array( $radius ) && count( $border_style['radius'] ) === 4 ) {
-			return "border-top-left-radius: {$border_style['radius']['topLeft']};" .
-				"border-bottom-left-radius: {$border_style['radius']['bottomLeft']};" .
-				"border-bottom-right-radius: {$border_style['radius']['bottomRight']};" .
-				"border-top-right-radius: {$border_style['radius']['topRight']};";
-		}
+public function get_border_style( $border_style ) {
+	 $radius = $border_style['radius'];
+	if ( ! is_array( $radius ) ) {
+		return "border-radius: {$radius};";
 	}
 
 	/**
@@ -69,6 +61,18 @@ class Button {
 		$link_target            = isset( $attributes['linkTarget'] ) ? $attributes['linkTarget'] : '';
 		$rel                    = isset( $attributes['rel'] ) ? $attributes['rel'] : '';
 		$style                  = isset( $attributes['style'] ) ? $attributes['style'] : '';
+		$font_size              = isset( $attributes['fontSize'] ) ? $attributes['fontSize'] : '';
+
+		$classes = trim(
+			join(
+				' ',
+				array(
+					'wp-block-tableberg-button',
+					( $width ) ? "has-custom-width wp-block-button__width-{$width}" : '',
+					$font_size ? 'has-custom-font-size' : '',
+				)
+			)
+		);
 
 		$classes = trim(
 			join(
