@@ -5,55 +5,70 @@
     "title": "Tableberg Image",
     "name": "tableberg/image",
     "category": "design",
-    "parent": ["tableberg/cell"],
+    "parent": [
+        "tableberg/cell"
+    ],
     "description": "Tableberg Image",
     "attributes": {
         "media": {
-            "type": "object"
+            "type": "object",
+            "default": {}
         },
         "height": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "width": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "alt": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "aspectRatio": {
             "type": "string",
             "default": ""
         },
         "scale": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "sizeSlug": {
             "type": "string",
             "default": "large"
         },
         "caption": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "href": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "linkClass": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "linkDestination": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "rel": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "linkTarget": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "border": {
-            "type": "object"
+            "type": "object",
+            "default": {}
         },
         "borderRadius": {
-            "type": "object"
+            "type": "object",
+            "default": {}
         }
     },
     "supports": {

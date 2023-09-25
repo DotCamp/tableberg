@@ -4,7 +4,9 @@
     "version": "0.0.2",
     "title": "Cell",
     "name": "tableberg/cell",
-    "parent": ["tableberg/row"],
+    "parent": [
+        "tableberg/row"
+    ],
     "category": "design",
     "icon": "table-row-after",
     "description": "Tableberg Cell: Individual cell of a tableberg table",

@@ -1,6 +1,7 @@
 import {
     BlockEditProps,
     registerBlockType,
+    //@ts-ignore
     createBlocksFromInnerBlocksTemplate,
     createBlock,
     BlockInstance,
@@ -35,7 +36,11 @@ interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
 }
 
-const ALLOWED_BLOCKS = ["core/paragraph", "tableberg/button"];
+const ALLOWED_BLOCKS = [
+    "core/paragraph",
+    "tableberg/button",
+    "tableberg/image",
+];
 
 function edit({
     clientId,
