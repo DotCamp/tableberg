@@ -89,7 +89,7 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                                 // is reached.
                                 setAttributes({
                                     width: `${elt.offsetWidth}px`,
-                                    height: "auto",
+                                    height: `${elt.offsetHeight}px`,
                                 });
                             }}
                         >
