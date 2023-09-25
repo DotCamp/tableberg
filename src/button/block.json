@@ -10,9 +10,7 @@
     "description": "Tableberg Button: Add a button to your tableberg table",
     "attributes": {
         "text": {
-            "type": "string",
-            "source": "html",
-            "selector": "a"
+            "type": "string"
         },
         "width": {
             "type": "number"

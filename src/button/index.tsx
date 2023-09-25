@@ -468,27 +468,12 @@ function edit({
     );
 }
 
-function save({ attributes }: BlockSaveProps<ButtonElementBlockAttrs>) {
-    const blockProps = useBlockProps.save();
-    return (
-        <div {...blockProps}>
-            <RichText.Content
-                tagName="a"
-                className="wp-block-button__link wp-element-button"
-                value={attributes.text}
-            />
-        </div>
-    );
-}
-
 registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
     attributes: {
         text: {
             type: "string",
-            source: "html",
-            selector: "a",
         },
         width: {
             type: "number",
@@ -523,5 +508,4 @@ registerBlockType(metadata.name, {
     },
     example: {},
     edit,
-    save,
 });

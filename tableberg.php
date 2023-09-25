@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name:       Tableberg
  * Description:       Tableberg: table builder Gutenberg block
@@ -13,44 +14,47 @@
  * @package Tableberg
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-if ( ! defined( 'TABLEBERG_DIR_PATH' ) ) {
-	define( 'TABLEBERG_DIR_PATH', plugin_dir_path( __FILE__ ) );
+if (!defined('TABLEBERG_DIR_PATH')) {
+	define('TABLEBERG_DIR_PATH', plugin_dir_path(__FILE__));
 }
 
-if ( ! defined( 'TABLEBERG_URL' ) ) {
-	define( 'TABLEBERG_URL', plugin_dir_url( __FILE__ ) );
+if (!defined('TABLEBERG_URL')) {
+	define('TABLEBERG_URL', plugin_dir_url(__FILE__));
 }
 
-if ( ! class_exists( 'Tableberg' ) ) {
+if (!class_exists('Tableberg')) {
 	/**
 	 * External Query Block main class.
 	 */
-	class Tableberg {
+	class Tableberg
+	{
 
 		/**
 		 * Constructor.
 		 *
 		 * @return void
 		 */
-		public function __construct() {
+		public function __construct()
+		{
+			require_once TABLEBERG_DIR_PATH . 'includes/blocks/class-tableberg-button.php';
 			require_once TABLEBERG_DIR_PATH . 'includes/blocks/class-tableberg-image.php';
-			add_action( 'init', array( $this, 'tableberg_register_block_types' ) );
+			add_action('init', array($this, 'tableberg_register_block_types'));
 		}
 		/**
 		 * Register Blocks on server side
 		 */
-		public function tableberg_register_block_types() {
-			register_block_type( __DIR__ . '/build' );
-			register_block_type( __DIR__ . '/build/row' );
-			register_block_type( __DIR__ . '/build/cell' );
-			register_block_type( __DIR__ . '/build/button' );
-			register_block_type( __DIR__ . '/build/image' );
+		public function tableberg_register_block_types()
+		{
+			register_block_type(__DIR__ . '/build');
+			register_block_type(__DIR__ . '/build/row');
+			register_block_type(__DIR__ . '/build/cell');
+			register_block_type(__DIR__ . '/build/button');
+			register_block_type(__DIR__ . '/build/image');
 		}
-
 	}
 
 	new Tableberg();
