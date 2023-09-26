@@ -28,6 +28,10 @@ class Button {
 	 * @return string   border CSS inline style string
 	 */
 	public function get_border_style( $border_style ) {
+		if (!is_array($border_style)) {
+			return;
+		}
+
 		$radius = $border_style['radius'];
 		if ( ! is_array( $radius ) ) {
 			return "border-radius: {$radius};";
@@ -69,6 +73,7 @@ class Button {
 		$rel                    = isset( $attributes['rel'] ) ? $attributes['rel'] : '';
 		$style                  = isset( $attributes['style'] ) ? $attributes['style'] : '';
 		$font_size              = isset( $attributes['fontSize'] ) ? $attributes['fontSize'] : '';
+		$border					= isset( $style['border'] ) ? $style['border'] : '';
 
 		$classes = trim(
 			join(
@@ -99,7 +104,7 @@ class Button {
 				$background_color ? "background-color: {$background_color};" : '',
 				"--text-hover-color: {$text_hover_color};",
 				"--background-hover-color: {$background_hover_color};",
-				$this->get_border_style( $style['border'] ),
+				$this->get_border_style( $border ),
 			)
 		);
 
