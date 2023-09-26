@@ -255,7 +255,7 @@ registerBlockType(metadata.name, {
         },
         vAlign: {
             type: "string",
-            default: "top",
+            default: "center",
         },
     },
     example: {},

@@ -42,7 +42,7 @@ class Defaults {
 				),
 				'vAlign' => array(
 					'type'    => 'string',
-					'default' => 'top',
+					'default' => 'center',
 				),
 			),
 		),
