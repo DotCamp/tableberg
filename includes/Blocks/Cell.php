@@ -8,6 +8,7 @@
 namespace Tableberg\Blocks;
 
 use Tableberg;
+use \WP_HTML_Tag_Processor;
 
 /**
  * Handle the block registration on server side and rendering.
@@ -32,7 +33,15 @@ class Cell {
 	 * @return string Returns the HTML content for the custom cell block.
 	 */
 	public function render_tableberg_cell_block( $attributes, $content, $block ) {
-		return $content;
+		$vertical_align = $attributes['vAlign'] ?? '';
+
+		$td = new WP_HTML_Tag_Processor($content);
+
+		if ( $td->next_tag('td') && $vertical_align ) {
+			$td->add_class( "align-v-{$vertical_align}" );
+		}
+
+		return $td;
 	}
 
 	/**
