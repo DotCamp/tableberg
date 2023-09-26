@@ -3,21 +3,6 @@ td.wp-block-tableberg-cell {
     border-collapse: collapse;
     padding: 8px;
 
-    &.align-left > * {
-        margin-right: auto;
-        text-align: left;
-    }
-
-    &.align-right > * {
-        margin-left: auto;
-        text-align: right;
-    }
-
-    &.align-center > * {
-        margin-inline: auto;
-        text-align: center;
-    }
-
     &.align-v-top {
         vertical-align: top;
     }

@@ -36,10 +36,6 @@ class Defaults {
 		),
 		'tableberg/cell'  => array(
 			'attributes' => array(
-				'align'  => array(
-					'type'    => 'string',
-					'default' => 'left',
-				),
 				'vAlign' => array(
 					'type'    => 'string',
 					'default' => 'center',

@@ -7,7 +7,6 @@ import {
     BlockInstance,
 } from "@wordpress/blocks";
 import {
-    BlockAlignmentToolbar,
     BlockVerticalAlignmentToolbar,
     BlockControls,
     store as blockEditorStore,
@@ -32,7 +31,6 @@ import metadata from "./block.json";
 import classNames from "classnames";
 
 interface TablebergCellBlockAttrs {
-    align: "left" | "right" | "center";
     vAlign: "bottom" | "center" | "top";
 }
 
@@ -47,18 +45,13 @@ function edit({
     attributes,
     setAttributes,
 }: BlockEditProps<TablebergCellBlockAttrs>) {
-    const { align, vAlign } = attributes;
-
-    const hAlignChange = (newValue: "left" | "right" | "center") => {
-        setAttributes({ align: newValue });
-    };
+    const { vAlign } = attributes;
 
     const vAlignChange = (newValue: "bottom" | "center" | "top") => {
         setAttributes({ vAlign: newValue });
     };
 
     const className = classNames({
-        [`align-${align}`]: align,
         [`align-v-${vAlign}`]: vAlign,
     });
 
@@ -217,11 +210,6 @@ function edit({
         <>
             <td {...innerBlocksProps} />
             <BlockControls group="block">
-                <BlockAlignmentToolbar
-                    value={align}
-                    onChange={hAlignChange}
-                    controls={["left", "center", "right"]}
-                />
                 <BlockVerticalAlignmentToolbar
                     value={vAlign}
                     onChange={vAlignChange}
@@ -249,10 +237,6 @@ registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
     attributes: {
-        align: {
-            type: "string",
-            default: "left",
-        },
         vAlign: {
             type: "string",
             default: "center",

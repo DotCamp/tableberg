@@ -9,10 +9,6 @@
     "icon": "table-row-after",
     "description": "Tableberg Cell: Individual cell of a tableberg table",
     "attributes": {
-        "align": {
-            "type": "string",
-            "default": "left"
-        },
         "vAlign": {
             "type": "string",
             "default": "center"
