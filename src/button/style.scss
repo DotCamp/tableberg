@@ -8,6 +8,21 @@ $blocks-block__margin: 0.5em;
         background-color: var(--background-hover-color) !important;
     }
 
+    &.block-align-left {
+        text-align: left;
+        margin-right: auto;
+    }
+
+    &.block-align-center {
+        text-align: center;
+        margin-inline: auto;
+    }
+
+    &.block-align-right {
+        text-align: right;
+        margin-left: auto;
+    }
+
     &.has-custom-font-size {
         .wp-block-button__link {
             font-size: inherit;

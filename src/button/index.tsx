@@ -37,6 +37,7 @@ import {
     // @ts-ignore
     __experimentalLinkControl as LinkControl,
     BlockControls,
+    BlockAlignmentToolbar,
 } from "@wordpress/block-editor";
 import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 
@@ -45,6 +46,7 @@ import { link, linkOff } from "@wordpress/icons";
 
 interface ButtonElementBlockAttrs {
     text: string;
+    align: "left" | "right" | "center";
     width: number | undefined;
     backgroundColor: string;
     textColor: string;
@@ -267,7 +269,8 @@ function edit({
         });
     }, [attributes.textColor, attributes.textHoverColor]);
 
-    const { text, width, textAlign, id, url, rel, linkTarget } = attributes;
+    const { text, align, width, textAlign, id, url, rel, linkTarget } =
+        attributes;
     const ref = useRef();
     const richTextRef = useRef<HTMLDivElement>();
     const isURLSet = !!url;
@@ -280,6 +283,10 @@ function edit({
     const blockProps = useBlockProps({
         ref: useMergeRefs([setPopoverAnchor, ref]),
     });
+
+    const blockAlignChange = (newValue: "left" | "right" | "center") => {
+        setAttributes({ align: newValue });
+    };
 
     const onToggleOpenInNewTab = (value: boolean) => {
         const newLinkTarget = value ? "_blank" : undefined;
@@ -348,6 +355,7 @@ function edit({
                 className={classnames(blockProps.className, {
                     [`has-custom-width wp-block-button__width-${width}`]: width,
                     [`has-custom-font-size`]: blockProps.style.fontSize,
+                    [`block-align-${align}`]: align,
                 })}
                 id={id}
             >
@@ -379,6 +387,11 @@ function edit({
             </div>
             {/* @ts-ignore */}
             <BlockControls group="block">
+                <BlockAlignmentToolbar
+                    value={align}
+                    onChange={blockAlignChange}
+                    controls={["left", "center", "right"]}
+                />
                 <AlignmentControl
                     value={textAlign}
                     onChange={(nextAlign: string) => {
@@ -473,6 +486,9 @@ registerBlockType(metadata.name, {
     category: metadata.category,
     attributes: {
         text: {
+            type: "string",
+        },
+        align: {
             type: "string",
         },
         width: {

@@ -55,6 +55,7 @@ class Button {
 	 */
 	public function render_tableberg_button_block( $attributes, $content, $block ) {
 		$text                   = isset( $attributes['text'] ) ? $attributes['text'] : '';
+		$align					= isset( $attributes['align'] ) ? $attributes['align'] : '';
 		$width                  = isset( $attributes['width'] ) ? $attributes['width'] : '';
 		$background_color       = isset( $attributes['backgroundColor'] ) ? $attributes['backgroundColor'] : '';
 		$text_color             = isset( $attributes['textColor'] ) ? $attributes['textColor'] : '';
@@ -80,7 +81,8 @@ class Button {
 				' ',
 				array(
 					'wp-block-tableberg-button',
-					( $width ) ? "has-custom-width wp-block-button__width-{$width}" : '',
+					$align ? "block-align-{$align}" : '',
+					$width  ? "has-custom-width wp-block-button__width-{$width}" : '',
 					$font_size ? 'has-custom-font-size' : '',
 				)
 			)
