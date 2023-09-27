@@ -102,9 +102,7 @@ function BorderControl({
                     hasValue={() => !isEmpty(attributes[attrBorderRadiusKey])}
                     onDeselect={() => {
                         setAttributes({ [attrBorderRadiusKey]: {} });
-                        // @ts-ignore
                     }}
-                    // @ts-ignore
                 >
                     <BaseControl.VisualLabel as="legend">
                         {borderRadiusLabel}
@@ -126,8 +124,6 @@ function BorderControl({
             )}
         </>
     );
-    // @ts-ignore
 }
-// @ts-ignore
 
 export default BorderControl;

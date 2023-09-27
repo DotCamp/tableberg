@@ -4,11 +4,18 @@
     "version": "0.0.2",
     "title": "Row",
     "name": "tableberg/row",
-    "parent": ["tableberg/table"],
+    "parent": [
+        "tableberg/table"
+    ],
     "category": "design",
     "icon": "table-row-after",
     "description": "Tableberg Row: Individual row of a tableberg table",
-    "attributes": {},
+    "attributes": {
+        "tagName": {
+            "type": "string",
+            "default": "tr"
+        }
+    },
     "supports": {
         "html": false
     },

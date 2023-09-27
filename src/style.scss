@@ -6,7 +6,47 @@
  */
 
 table.wp-block-tableberg-table {
-    border: 1px solid black;
+    border-top: var(--tableberg-table-border-top, 1px solid black);
+    border-right: var(--tableberg-table-border-right, 1px solid black);
+    border-bottom: var(--tableberg-table-border-bottom, 1px solid black);
+    border-left: var(--tableberg-table-border-left, 1px solid black);
     border-collapse: collapse;
     width: 100%;
+    &.has-table-width {
+        max-width: var(--tableber-table-width) !important;
+    }
+    &[id*="block-"] {
+        &.justify-table-left {
+            margin-left: 0 !important;
+            margin-right: auto !important;
+        }
+        &.justify-table-center {
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        &.justify-table-right {
+            margin-left: auto !important;
+            margin-right: 0 !important;
+        }
+    }
+    &.justify-table-left {
+        margin-left: 0 !important;
+        margin-right: auto !important;
+    }
+    &.justify-table-center {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    &.justify-table-right {
+        margin-left: auto !important;
+        margin-right: 0 !important;
+    }
+    .tableberg-row {
+        &:nth-child(even) {
+            background-color: var(--tableberg-even-row-bg-color);
+        }
+        &:nth-child(odd) {
+            background-color: var(--tableberg-odd-row-bg-color);
+        }
+    }
 }

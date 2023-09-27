@@ -20,17 +20,61 @@ class Defaults {
 	public $default_values = array(
 		'tableberg/table' => array(
 			'attributes' => array(
-				'rows'            => array(
+				'rows'                     => array(
 					'type'    => 'number',
 					'default' => 2,
 				),
-				'cols'            => array(
+				'cols'                     => array(
 					'type'    => 'number',
 					'default' => 2,
 				),
-				'hasTableCreated' => array(
+				'hasTableCreated'          => array(
 					'type'    => 'boolean',
 					'default' => false,
+				),
+				'enableTableHeader'        => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'enableTableFooter'        => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'tableWidth'               => array(
+					'type'    => 'string',
+					'default' => '',
+				),
+				'tableAlignment'           => array(
+					'type'    => 'string',
+					'default' => 'center',
+				),
+				'headerBackgroundColor'    => array(
+					'type'    => 'string',
+					'default' => null,
+				),
+				'evenRowBackgroundColor'   => array(
+					'type'    => 'string',
+					'default' => null,
+				),
+				'oddRowBackgroundColor'    => array(
+					'type'    => 'string',
+					'default' => null,
+				),
+				'footerRowBackgroundColor' => array(
+					'type'    => 'string',
+					'default' => null,
+				),
+				'tableBorder'              => array(
+					'type'    => 'object',
+					'default' => array(),
+				),
+				'innerBorder'              => array(
+					'type'    => 'object',
+					'default' => array(),
+				),
+				'enableInnerBorder'        => array(
+					'type'    => 'boolean',
+					'default' => true,
 				),
 			),
 		),

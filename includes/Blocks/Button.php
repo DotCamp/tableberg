@@ -28,7 +28,7 @@ class Button {
 	 * @return string   border CSS inline style string
 	 */
 	public function get_border_style( $border_style ) {
-		if (!is_array($border_style)) {
+		if ( ! is_array( $border_style ) ) {
 			return;
 		}
 
@@ -55,7 +55,7 @@ class Button {
 	 */
 	public function render_tableberg_button_block( $attributes, $content, $block ) {
 		$text                   = isset( $attributes['text'] ) ? $attributes['text'] : '';
-		$align					= isset( $attributes['align'] ) ? $attributes['align'] : '';
+		$align                  = isset( $attributes['align'] ) ? $attributes['align'] : '';
 		$width                  = isset( $attributes['width'] ) ? $attributes['width'] : '';
 		$background_color       = isset( $attributes['backgroundColor'] ) ? $attributes['backgroundColor'] : '';
 		$text_color             = isset( $attributes['textColor'] ) ? $attributes['textColor'] : '';
@@ -74,7 +74,7 @@ class Button {
 		$rel                    = isset( $attributes['rel'] ) ? $attributes['rel'] : '';
 		$style                  = isset( $attributes['style'] ) ? $attributes['style'] : '';
 		$font_size              = isset( $attributes['fontSize'] ) ? $attributes['fontSize'] : '';
-		$border					= isset( $style['border'] ) ? $style['border'] : '';
+		$border                 = isset( $style['border'] ) ? $style['border'] : '';
 
 		$classes = trim(
 			join(
@@ -82,7 +82,7 @@ class Button {
 				array(
 					'wp-block-tableberg-button',
 					$align ? "block-align-{$align}" : '',
-					$width  ? "has-custom-width wp-block-button__width-{$width}" : '',
+					$width ? "has-custom-width wp-block-button__width-{$width}" : '',
 					$font_size ? 'has-custom-font-size' : '',
 				)
 			)

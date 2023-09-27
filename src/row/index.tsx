@@ -10,12 +10,14 @@ import { useSelect } from "@wordpress/data";
 
 import metadata from "./block.json";
 
-interface TBRowAttrs {}
+interface TBRowAttrs {
+    tagName: string;
+}
 
 const ALLOWED_BLOCKS = ["tableberg/cell"];
 
-function edit({ clientId }: BlockEditProps<TBRowAttrs>) {
-    const blockProps = useBlockProps();
+function edit({ clientId, attributes }: BlockEditProps<TBRowAttrs>) {
+    const blockProps = useBlockProps({ className: "tableberg-row" });
 
     const hasInnerBlocks = useSelect(
         (select) =>
@@ -29,20 +31,24 @@ function edit({ clientId }: BlockEditProps<TBRowAttrs>) {
             : InnerBlocks.ButtonBlockAppender,
         allowedBlocks: ALLOWED_BLOCKS,
     });
+    const TagName = attributes?.tagName;
 
-    return <tr {...innerBlocksProps} />;
+    return <TagName {...innerBlocksProps} />;
 }
 
-function save() {
+function save({ attributes }: BlockEditProps<TBRowAttrs>) {
     const blockProps = useBlockProps.save();
     const innerBlocksProps = useInnerBlocksProps.save(blockProps);
-    return <tr {...innerBlocksProps} />;
+    const TagName = attributes?.tagName;
+
+    return <TagName {...innerBlocksProps} />;
 }
 
+//@ts-ignore
 registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
-    attributes: {},
+    attributes: metadata.attributes,
     example: {},
     edit,
     save,

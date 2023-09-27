@@ -35,9 +35,9 @@ class Cell {
 	public function render_tableberg_cell_block( $attributes, $content, $block ) {
 		$vertical_align = $attributes['vAlign'] ?? '';
 
-		$td = new WP_HTML_Tag_Processor($content);
+		$td = new WP_HTML_Tag_Processor( $content );
 
-		if ( $td->next_tag('td') && $vertical_align ) {
+		if ( $td->next_tag( 'td' ) && $vertical_align ) {
 			$td->add_class( "align-v-{$vertical_align}" );
 		}
 

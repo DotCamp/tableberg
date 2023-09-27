@@ -18,6 +18,70 @@
         "hasTableCreated": {
             "type": "boolean",
             "default": false
+        },
+        "cellPadding": {
+            "type": "object",
+            "default": {}
+        },
+        "enableTableHeader": {
+            "type": "boolean",
+            "default": false
+        },
+        "enableTableFooter": {
+            "type": "boolean",
+            "default": false
+        },
+        "tableWidth": {
+            "type": "string",
+            "default": ""
+        },
+        "tableAlignment": {
+            "type": "string",
+            "default": "center"
+        },
+        "headerBackgroundColor": {
+            "type": "string",
+            "default": null
+        },
+        "headerBackgroundGradient": {
+            "type": "string",
+            "default": null
+        },
+        "evenRowBackgroundColor": {
+            "type": "string",
+            "default": null
+        },
+        "evenRowBackgroundGradient": {
+            "type": "string",
+            "default": null
+        },
+        "oddRowBackgroundColor": {
+            "type": "string",
+            "default": null
+        },
+        "oddRowBackgroundGradient": {
+            "type": "string",
+            "default": null
+        },
+        "footerBackgroundColor": {
+            "type": "string",
+            "default": null
+        },
+        "footerBackgroundGradient": {
+            "type": "string",
+            "default": null
+        },
+        "tableBorder": {
+            "type": "object",
+            "default": {}
+        },
+        "innerBorder": {
+            "type": "object",
+            "default": {}
+        },
+        "enableInnerBorder": {
+            "type": "boolean",
+            "default": true
         }
     },
     "textdomain": "tableberg",

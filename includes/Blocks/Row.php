@@ -30,6 +30,8 @@ class Row {
 	 * @return string Returns the HTML content for the custom row block.
 	 */
 	public function render_tableberg_row_block( $attributes, $content, $block ) {
+		$content = str_replace( '<tr class="wp-block-tableberg-row', '<tr class="wp-block-tableberg-row tableberg-row', $content );
+
 		return $content;
 	}
 
@@ -37,7 +39,7 @@ class Row {
 	 * Register the block.
 	 */
 	public function block_registration() {
-		register_block_type_from_metadata(
+		register_block_type(
 			TABLEBERG_DIR_PATH . 'build/row/block.json',
 			array(
 				'render_callback' => array( $this, 'render_tableberg_row_block' ),
