@@ -16,8 +16,8 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         evenRowBackgroundGradient,
         oddRowBackgroundGradient,
         tableWidth,
-        footerRowBackgroundColor,
-        footerRowBackgroundGradient,
+        footerBackgroundColor,
+        footerBackgroundGradient,
         enableTableFooter,
         tableAlignment,
         enableTableHeader,
@@ -30,9 +30,9 @@ export function getStyles(attributes: TablebergBlockAttrs) {
 
     let styles = {
         "--tableber-table-width": tableWidth,
-        "--tableberg-footer-bg-color": !isEmpty(footerRowBackgroundColor)
-            ? footerRowBackgroundColor
-            : footerRowBackgroundGradient,
+        "--tableberg-footer-bg-color": !isEmpty(footerBackgroundColor)
+            ? footerBackgroundColor
+            : footerBackgroundGradient,
         "--tableberg-header-bg-color": !isEmpty(headerBackgroundColor)
             ? headerBackgroundColor
             : headerBackgroundGradient,

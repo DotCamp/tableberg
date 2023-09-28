@@ -5,6 +5,7 @@ import {
     createBlocksFromInnerBlocksTemplate,
     createBlock,
     BlockInstance,
+    BlockSaveProps,
 } from "@wordpress/blocks";
 import {
     BlockVerticalAlignmentToolbar,
@@ -32,6 +33,7 @@ import classNames from "classnames";
 
 interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
+    tagName: string;
 }
 
 const ALLOWED_BLOCKS = [
@@ -74,6 +76,9 @@ function edit({
         deleteRowFromTable,
         insertColumnToTable,
         deleteColumnFromTable,
+        currentRowBlock,
+        isHeader,
+        isFooter,
     ] = useSelect(
         (select) => {
             const storeSelect = select(blockEditorStore) as any;
@@ -84,12 +89,15 @@ function edit({
                 (parentId: string) =>
                     storeSelect.getBlockName(parentId) === "tableberg/table"
             );
+            const tableBlock = storeSelect.getBlock(tableBlockId);
 
             const currentRowBlockId = parentBlocks.find(
                 (parentId: string) =>
                     storeSelect.getBlockName(parentId) === "tableberg/row"
             );
-
+            const currentRowBlock = storeSelect.getBlock(currentRowBlockId);
+            const isHeader = currentRowBlock?.attributes?.isHeader;
+            const isFooter = currentRowBlock?.attributes?.isFooter;
             const { rows, cols } = storeSelect.getBlockAttributes(tableBlockId);
 
             const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
@@ -123,9 +131,20 @@ function edit({
 
                 await storeSelect
                     .getBlocks(tableBlockId)
-                    .forEach(async (row: BlockInstance) => {
+                    .forEach(async (row: BlockInstance, index: number) => {
+                        const rowIsHeader = row?.attributes?.isHeader;
+                        const rowIsFooter = row?.attributes?.isFooter;
+
                         await insertBlock(
-                            createBlock("tableberg/cell"),
+                            createBlock("tableberg/cell", {
+                                tagName:
+                                    (rowIsHeader || rowIsFooter) &&
+                                    (index === 0 ||
+                                        index ===
+                                            tableBlock.innerBlocks.length - 1)
+                                        ? "th"
+                                        : "td",
+                            }),
                             newColIndex,
                             row.clientId,
                             false
@@ -151,8 +170,15 @@ function edit({
                     cols: cols - 1,
                 });
             };
-
-            return [insertRow, deleteRow, insertColumn, deleteColumnFromTable];
+            return [
+                insertRow,
+                deleteRow,
+                insertColumn,
+                deleteColumnFromTable,
+                currentRowBlock,
+                isHeader,
+                isFooter,
+            ];
         },
         [clientId]
     );
@@ -177,16 +203,24 @@ function edit({
     };
 
     const tableControls = [
-        {
-            icon: tableRowBefore,
-            title: "Insert row before",
-            onClick: onInsertRowBefore,
-        },
-        {
-            icon: tableRowAfter,
-            title: "Insert row after",
-            onClick: onInsertRowAfter,
-        },
+        ...(isHeader
+            ? []
+            : [
+                  {
+                      icon: tableRowBefore,
+                      title: "Insert row before",
+                      onClick: onInsertRowBefore,
+                  },
+              ]),
+        ...(isFooter
+            ? []
+            : [
+                  {
+                      icon: tableRowAfter,
+                      title: "Insert row after",
+                      onClick: onInsertRowAfter,
+                  },
+              ]),
         {
             icon: tableRowDelete,
             title: "Delete row",
@@ -209,9 +243,11 @@ function edit({
         },
     ];
 
+    const TagName = attributes.tagName ?? "td";
+
     return (
         <>
-            <td {...innerBlocksProps} />
+            <TagName {...innerBlocksProps} />
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
                     value={vAlign}
@@ -230,10 +266,12 @@ function edit({
     );
 }
 
-function save() {
+function save(props: BlockSaveProps<TablebergCellBlockAttrs>) {
+    const { attributes } = props;
     const blockProps = useBlockProps.save();
     const innerBlocksProps = useInnerBlocksProps.save(blockProps);
-    return <td {...innerBlocksProps} />;
+    const TagName = attributes.tagName ?? "td";
+    return <TagName {...innerBlocksProps} />;
 }
 
 registerBlockType(metadata.name, {
@@ -243,6 +281,10 @@ registerBlockType(metadata.name, {
         vAlign: {
             type: "string",
             default: "center",
+        },
+        tagName: {
+            type: "string",
+            default: "td",
         },
     },
     example: {},

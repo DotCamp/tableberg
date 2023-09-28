@@ -90,6 +90,22 @@ class Defaults {
 				),
 			),
 		),
+		'tableberg/row'   => array(
+			'attributes' => array(
+				'tagName'  => array(
+					'type'    => 'string',
+					'default' => 'tr',
+				),
+				'isHeader' => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'isFooter' => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+			),
+		),
 		'tableberg/image' => array(
 			'attributes' => array(
 				'media'           => array(

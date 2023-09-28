@@ -1,3 +1,17 @@
+/**
+ * WordPress Imports
+ */
+//@ts-ignore
+import { useEffect } from "@wordpress/element";
+import { Placeholder, TextControl, Button } from "@wordpress/components";
+import { blockTable } from "@wordpress/icons";
+import { useDispatch, useSelect } from "@wordpress/data";
+import {
+    useBlockProps,
+    useInnerBlocksProps,
+    store as blockEditorStore,
+    BlockIcon,
+} from "@wordpress/block-editor";
 import {
     BlockEditProps,
     InnerBlockTemplate,
@@ -5,19 +19,10 @@ import {
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
 } from "@wordpress/blocks";
-
-import { Placeholder, TextControl, Button } from "@wordpress/components";
-import {
-    useBlockProps,
-    useInnerBlocksProps,
-    store as blockEditorStore,
-    BlockIcon,
-} from "@wordpress/block-editor";
-import { blockTable } from "@wordpress/icons";
-import { useDispatch } from "@wordpress/data";
-
+/**
+ * Internal Imports
+ */
 import "./style.scss";
-
 import metadata from "./block.json";
 import { FormEvent, useState } from "react";
 import Inspector from "./inspector";
@@ -34,8 +39,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             hasTableCreated,
             enableTableFooter,
             enableTableHeader,
-            tableAlignment,
-            tableWidth,
+            cols,
         },
         setAttributes,
         clientId,
@@ -53,10 +57,70 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         allowedBlocks: ALLOWED_BLOCKS,
     });
 
-    const { replaceInnerBlocks } = useDispatch(blockEditorStore);
+    //@ts-ignore
+    const { block } = useSelect((select) => {
+        return {
+            //@ts-ignore
+            block: select(blockEditorStore).getBlock(clientId),
+        };
+    });
+
+    const { replaceInnerBlocks, insertBlocks, removeBlock } =
+        useDispatch(blockEditorStore);
 
     const [initialRowCount, setInitialRowCount] = useState<number | "">(2);
     const [initialColCount, setInitialColCount] = useState<number | "">(2);
+
+    useEffect(() => {
+        if (enableTableHeader) {
+            const tableHeaderTemplate = [
+                [
+                    "tableberg/row",
+                    { isHeader: true },
+                    new Array(initialColCount)
+                        .fill(0)
+                        .map(() => ["tableberg/cell", { tagName: "th" }, []]),
+                ],
+            ];
+            insertBlocks(
+                createBlocksFromInnerBlocksTemplate(tableHeaderTemplate),
+                0,
+                clientId
+            );
+        } else {
+            const firstBlock = block.innerBlocks[0];
+            const isHeader = firstBlock?.attributes?.isHeader;
+
+            if (isHeader) {
+                removeBlock(firstBlock.clientId);
+            }
+        }
+    }, [enableTableHeader]);
+    useEffect(() => {
+        if (enableTableFooter) {
+            const tableHeaderTemplate = [
+                [
+                    "tableberg/row",
+                    { isFooter: true },
+                    new Array(initialColCount)
+                        .fill(0)
+                        .map(() => ["tableberg/cell", { tagName: "th" }, []]),
+                ],
+            ];
+            insertBlocks(
+                createBlocksFromInnerBlocksTemplate(tableHeaderTemplate),
+                block?.innerBlocks?.length + 1,
+                clientId
+            );
+        } else {
+            const firstBlock = block.innerBlocks[0];
+            const isHeader = firstBlock?.attributes?.isHeader;
+
+            if (isHeader) {
+                removeBlock(firstBlock.clientId);
+            }
+        }
+    }, [enableTableFooter]);
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();

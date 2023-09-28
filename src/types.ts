@@ -30,8 +30,8 @@ export interface TablebergBlockAttrs {
     evenRowBackgroundGradient: string | null;
     oddRowBackgroundColor: string | null;
     oddRowBackgroundGradient: string | null;
-    footerRowBackgroundColor: string | null;
-    footerRowBackgroundGradient: string | null;
+    footerBackgroundColor: string | null;
+    footerBackgroundGradient: string | null;
     tableBorder: BorderTypes;
     innerBorder: BorderTypes;
     enableInnerBorder: boolean;

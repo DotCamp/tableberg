@@ -30,7 +30,12 @@ class Row {
 	 * @return string Returns the HTML content for the custom row block.
 	 */
 	public function render_tableberg_row_block( $attributes, $content, $block ) {
-		$content = str_replace( '<tr class="wp-block-tableberg-row', '<tr class="wp-block-tableberg-row tableberg-row', $content );
+		$footer_class = $attributes['isHeader'] ? 'tableberg-footer' : '';
+		$header_class = $attributes['isFooter'] ? 'tableberg-header' : '';
+
+		$classes = array( 'wp-block-tableberg-row', 'tableberg-row', $footer_class, $header_class );
+
+		$content = str_replace( '<tr class="wp-block-tableberg-row', '<tr class="' . join( ' ', $classes ) . '', $content );
 
 		return $content;
 	}
@@ -39,9 +44,11 @@ class Row {
 	 * Register the block.
 	 */
 	public function block_registration() {
+		$defaults = new \Tableberg\Defaults();
 		register_block_type(
 			TABLEBERG_DIR_PATH . 'build/row/block.json',
 			array(
+				'attributes'      => $defaults->get_default_attributes( 'tableberg/row' ),
 				'render_callback' => array( $this, 'render_tableberg_row_block' ),
 			)
 		);

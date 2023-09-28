@@ -1,4 +1,8 @@
-import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
+import {
+    BlockEditProps,
+    BlockSaveProps,
+    registerBlockType,
+} from "@wordpress/blocks";
 
 import {
     useBlockProps,
@@ -9,15 +13,23 @@ import {
 import { useSelect } from "@wordpress/data";
 
 import metadata from "./block.json";
+import classNames from "classnames";
 
 interface TBRowAttrs {
     tagName: string;
+    isHeader: boolean;
+    isFooter: boolean;
 }
 
 const ALLOWED_BLOCKS = ["tableberg/cell"];
 
 function edit({ clientId, attributes }: BlockEditProps<TBRowAttrs>) {
-    const blockProps = useBlockProps({ className: "tableberg-row" });
+    const blockProps = useBlockProps({
+        className: classNames("tableberg-row", {
+            "tableberg-header": attributes.isHeader,
+            "tableberg-footer": attributes.isFooter,
+        }),
+    });
 
     const hasInnerBlocks = useSelect(
         (select) =>
@@ -25,18 +37,21 @@ function edit({ clientId, attributes }: BlockEditProps<TBRowAttrs>) {
         [clientId]
     );
 
-    const innerBlocksProps = useInnerBlocksProps(blockProps, {
-        renderAppender: hasInnerBlocks
-            ? undefined
-            : InnerBlocks.ButtonBlockAppender,
-        allowedBlocks: ALLOWED_BLOCKS,
-    });
+    const innerBlocksProps = useInnerBlocksProps(
+        { ...blockProps },
+        {
+            renderAppender: hasInnerBlocks
+                ? undefined
+                : InnerBlocks.ButtonBlockAppender,
+            allowedBlocks: ALLOWED_BLOCKS,
+        }
+    );
     const TagName = attributes?.tagName;
 
     return <TagName {...innerBlocksProps} />;
 }
 
-function save({ attributes }: BlockEditProps<TBRowAttrs>) {
+function save({ attributes }: BlockSaveProps<TBRowAttrs>) {
     const blockProps = useBlockProps.save();
     const innerBlocksProps = useInnerBlocksProps.save(blockProps);
     const TagName = attributes?.tagName;
@@ -44,11 +59,23 @@ function save({ attributes }: BlockEditProps<TBRowAttrs>) {
     return <TagName {...innerBlocksProps} />;
 }
 
-//@ts-ignore
 registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
-    attributes: metadata.attributes,
+    attributes: {
+        tagName: {
+            type: "string",
+            default: "tr",
+        },
+        isHeader: {
+            type: "boolean",
+            default: false,
+        },
+        isFooter: {
+            type: "boolean",
+            default: false,
+        },
+    },
     example: {},
     edit,
     save,

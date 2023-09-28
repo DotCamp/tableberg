@@ -42,11 +42,21 @@ table.wp-block-tableberg-table {
         margin-right: 0 !important;
     }
     .tableberg-row {
-        &:nth-child(even) {
-            background-color: var(--tableberg-even-row-bg-color);
+        &:not(.tableberg-header):not(.tableberg-footer) {
+            &:nth-child(even) {
+                background: var(--tableberg-even-row-bg-color);
+            }
+            &:nth-child(odd) {
+                background: var(--tableberg-odd-row-bg-color);
+            }
         }
-        &:nth-child(odd) {
-            background-color: var(--tableberg-odd-row-bg-color);
+
+        &.tableberg-footer {
+            background: var(--tableberg-footer-bg-color);
+        }
+
+        &.tableberg-header {
+            background: var(--tableberg-header-bg-color);
         }
     }
     &.has-inner-border {
