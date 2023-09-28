@@ -121,7 +121,7 @@ function Inspector(props: BlockEditProps<TablebergBlockAttrs>) {
                     showDefaultBorder
                     showBorderRadius={false}
                     attrBorderKey="tableBorder"
-                    borderLabel={__("Table Border", "tableberg")}
+                    borderLabel={__("Table Border Size", "tableberg")}
                 />
                 <ToolsPanelItem
                     panelId={clientId}
@@ -153,7 +153,7 @@ function Inspector(props: BlockEditProps<TablebergBlockAttrs>) {
                     showBorderRadius={false}
                     showBorder={attributes.enableInnerBorder}
                     attrBorderKey="innerBorder"
-                    borderLabel={__("InnerBorder Border", "tableberg")}
+                    borderLabel={__("Inner Border Size", "tableberg")}
                 />
             </InspectorControls>
         </>
