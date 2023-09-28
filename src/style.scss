@@ -49,4 +49,18 @@ table.wp-block-tableberg-table {
             background-color: var(--tableberg-odd-row-bg-color);
         }
     }
+    &.has-inner-border {
+        td.wp-block-tableberg-cell {
+            border-top: var(--tableberg-inner-border-top, 1px solid #000000);
+            border-right: var(
+                --tableberg-inner-border-right,
+                1px solid #000000
+            );
+            border-bottom: var(
+                --tableberg-inner-border-bottom,
+                1px solid #000000
+            );
+            border-left: var(--tableberg-inner-border-left, 1px solid #000000);
+        }
+    }
 }

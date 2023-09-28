@@ -62,9 +62,13 @@ class Table {
 	 * @return array CSS classes based on attributes.
 	 */
 	public function get_style_class( $attributes ) {
-		$table_width     = $attributes['tableWidth'];
-		$table_alignment = $attributes['tableAlignment'];
-
+		$table_width         = $attributes['tableWidth'];
+		$table_alignment     = $attributes['tableAlignment'];
+		$enable_inner_border = $attributes['enableInnerBorder'];
+		$classes             = array();
+		if ( $enable_inner_border ) {
+			$classes[] = 'has-inner-border';
+		}
 		$is_value_empty = function( $value ) {
 			return (
 				is_null( $value ) ||
@@ -75,7 +79,6 @@ class Table {
 			);
 		};
 
-		$classes = array();
 		if ( ! $is_value_empty( $table_width ) ) {
 			$classes[] = 'has-table-width';
 		}

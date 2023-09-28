@@ -24,6 +24,10 @@ class Defaults {
 					'type'    => 'number',
 					'default' => 2,
 				),
+				'cellPadding'              => array(
+					'type'    => 'array',
+					'default' => array(),
+				),
 				'cols'                     => array(
 					'type'    => 'number',
 					'default' => 2,
