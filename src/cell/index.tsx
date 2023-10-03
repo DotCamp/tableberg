@@ -30,6 +30,8 @@ import "./editor.scss";
 
 import metadata from "./block.json";
 import classNames from "classnames";
+import { useEffect, useRef, useState } from "react";
+import { store as tbStore } from "../store";
 
 interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
@@ -58,7 +60,9 @@ function edit({
         [`align-v-${vAlign}`]: vAlign,
     });
 
-    const blockProps = useBlockProps({ className });
+    const cellRef = useRef<HTMLTableCellElement>();
+
+    const blockProps = useBlockProps({ className, ref: cellRef });
 
     const innerBlocksProps = useInnerBlocksProps(
         { ...blockProps },
@@ -170,6 +174,7 @@ function edit({
                     cols: cols - 1,
                 });
             };
+
             return [
                 insertRow,
                 deleteRow,
@@ -201,6 +206,57 @@ function edit({
     const onDeleteColumn = async () => {
         await deleteColumnFromTable();
     };
+
+    const {
+        setCurrentCellClientId,
+        startCellMultiSelect,
+        endCellMultiSelect,
+        addCellToMultiSelect,
+        removeCellFromMultiSelect,
+    } = useDispatch(tbStore);
+    const {
+        getCurrentCellClientId,
+        getCurrentSelectedCells,
+        isInMultiSelectMode,
+    } = useSelect((select) => {
+        const {
+            getCurrentCellClientId,
+            getCurrentSelectedCells,
+            isInMultiSelectMode,
+        } = select(tbStore);
+        return {
+            getCurrentCellClientId,
+            getCurrentSelectedCells,
+            isInMultiSelectMode,
+        };
+    }, []);
+
+    const handleMultiSelection = (event: MouseEvent) => {
+        if (!event.ctrlKey || getCurrentCellClientId() === "") {
+            return;
+        }
+
+        if (!isInMultiSelectMode()) {
+            startCellMultiSelect();
+        }
+
+        if (getCurrentSelectedCells().indexOf(clientId) >= 0) {
+            removeCellFromMultiSelect(clientId);
+        } else {
+            addCellToMultiSelect(clientId);
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+    };
+
+    useEffect(() => {
+        cellRef.current?.addEventListener("mousedown", (event) => {
+            handleMultiSelection(event);
+            setCurrentCellClientId(clientId);
+            console.log(getCurrentSelectedCells());
+        });
+    }, []);
 
     const tableControls = [
         ...(isHeader
