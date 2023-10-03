@@ -75,7 +75,7 @@ function edit({
     const { insertBlock, updateBlockAttributes, removeBlock } =
         useDispatch(blockEditorStore);
 
-    const [
+    const {
         insertRowToTable,
         deleteRowFromTable,
         insertColumnToTable,
@@ -83,7 +83,8 @@ function edit({
         currentRowBlock,
         isHeader,
         isFooter,
-    ] = useSelect(
+        tableBlockId,
+    } = useSelect(
         (select) => {
             const storeSelect = select(blockEditorStore) as any;
 
@@ -106,7 +107,7 @@ function edit({
 
             const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
 
-            const insertRow = async (after = false) => {
+            const insertRowToTable = async (after = false) => {
                 const newRowIndex = after ? rowIndex + 1 : rowIndex;
                 const newRowBlock = createBlocksFromInnerBlocksTemplate([
                     [
@@ -122,14 +123,14 @@ function edit({
                 });
             };
 
-            const deleteRow = async () => {
+            const deleteRowFromTable = async () => {
                 await removeBlock(currentRowBlockId, true);
                 await updateBlockAttributes(tableBlockId, {
                     rows: rows - 1,
                 });
             };
 
-            const insertColumn = async (after = false) => {
+            const insertColumnToTable = async (after = false) => {
                 const colIndex = storeSelect.getBlockIndex(clientId);
                 const newColIndex = after ? colIndex + 1 : colIndex;
 
@@ -175,15 +176,16 @@ function edit({
                 });
             };
 
-            return [
-                insertRow,
-                deleteRow,
-                insertColumn,
+            return {
+                insertRowToTable,
+                deleteRowFromTable,
+                insertColumnToTable,
                 deleteColumnFromTable,
                 currentRowBlock,
                 isHeader,
                 isFooter,
-            ];
+                tableBlockId,
+            };
         },
         [clientId]
     );
@@ -232,22 +234,47 @@ function edit({
     }, []);
 
     const handleMultiSelection = (event: MouseEvent) => {
+        if (!event.ctrlKey && isInMultiSelectMode()) {
+            endCellMultiSelect();
+            document.removeEventListener("mousedown", handleClickOutsideTable);
+        }
+
         if (!event.ctrlKey || getCurrentCellClientId() === "") {
             return;
         }
 
         if (!isInMultiSelectMode()) {
             startCellMultiSelect();
+            document.addEventListener("mousedown", handleClickOutsideTable);
         }
 
         if (getCurrentSelectedCells().indexOf(clientId) >= 0) {
             removeCellFromMultiSelect(clientId);
+
+            if (getCurrentSelectedCells().length === 1) {
+                endCellMultiSelect();
+                document.removeEventListener(
+                    "mousedown",
+                    handleClickOutsideTable
+                );
+            }
         } else {
             addCellToMultiSelect(clientId);
         }
 
         event.preventDefault();
         event.stopPropagation();
+    };
+
+    const handleClickOutsideTable = (event: MouseEvent) => {
+        if (
+            !document
+                .querySelector(`[data-block="${tableBlockId}"]`)
+                ?.contains(event.target as Node)
+        ) {
+            endCellMultiSelect();
+            document.removeEventListener("mousedown", handleClickOutsideTable);
+        }
     };
 
     useEffect(() => {
