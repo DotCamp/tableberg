@@ -72,8 +72,12 @@ function edit({
         }
     );
 
-    const { insertBlock, updateBlockAttributes, removeBlock } =
-        useDispatch(blockEditorStore);
+    const {
+        insertBlock,
+        updateBlockAttributes,
+        removeBlock,
+        moveBlocksToPosition,
+    } = useDispatch(blockEditorStore);
 
     const {
         insertRowToTable,
@@ -84,6 +88,10 @@ function edit({
         isHeader,
         isFooter,
         tableBlockId,
+        getBlockParents,
+        getBlockName,
+        getBlockIndex,
+        getBlock,
     } = useSelect(
         (select) => {
             const storeSelect = select(blockEditorStore) as any;
@@ -176,6 +184,9 @@ function edit({
                 });
             };
 
+            const { getBlockParents, getBlockName, getBlockIndex, getBlock } =
+                storeSelect;
+
             return {
                 insertRowToTable,
                 deleteRowFromTable,
@@ -185,6 +196,10 @@ function edit({
                 isHeader,
                 isFooter,
                 tableBlockId,
+                getBlockParents,
+                getBlockName,
+                getBlockIndex,
+                getBlock,
             };
         },
         [clientId]
@@ -245,7 +260,7 @@ function edit({
 
         if (!isInMultiSelectMode()) {
             startCellMultiSelect();
-            document.addEventListener("mousedown", handleClickOutsideTable);
+            // document.addEventListener("mousedown", handleClickOutsideTable);
         }
 
         if (getCurrentSelectedCells().indexOf(clientId) >= 0) {
@@ -284,6 +299,69 @@ function edit({
             console.log(getCurrentSelectedCells());
         });
     }, []);
+
+    const [colspan, setColspan] = useState(1);
+    const [rowspan, setRowspan] = useState(1);
+
+    const mergeCells = () => {
+        const cellClientIds = getCurrentSelectedCells();
+        console.log("mergeCells", cellClientIds);
+        const coords: {
+            col: number;
+            row: number;
+        }[] = [];
+
+        cellClientIds.forEach((cellId) => {
+            const parentBlocks = getBlockParents(cellId);
+            const rowClientId = parentBlocks.find(
+                (parentId: string) => getBlockName(parentId) === "tableberg/row"
+            );
+
+            coords.push({
+                col: getBlockIndex(cellId),
+                row: getBlockIndex(rowClientId),
+            });
+        });
+
+        const sameRow = coords
+            .map((coord) => coord.row)
+            .every((n, _, arr) => n === arr[0]);
+        const sameCol = coords
+            .map((coord) => coord.col)
+            .every((n, _, arr) => n === arr[0]);
+
+        console.log(coords);
+
+        if (!sameRow && !sameCol) {
+            return;
+        }
+
+        const blockInstances = cellClientIds
+            .map((cellClientId) => {
+                return cellClientId === clientId
+                    ? undefined
+                    : getBlock(cellClientId);
+            })
+            .filter((i) => i);
+
+        blockInstances.forEach((block: BlockInstance) => {
+            moveBlocksToPosition(
+                block.innerBlocks.map((b) => b.clientId),
+                block.clientId,
+                clientId
+            );
+
+            removeBlock(block.clientId);
+            if (sameRow) {
+                setColspan(colspan + 1);
+            }
+            if (sameCol) {
+                setRowspan(rowspan + 1);
+            }
+        });
+
+        endCellMultiSelect();
+    };
 
     const tableControls = [
         ...(isHeader
@@ -324,13 +402,24 @@ function edit({
             title: "Delete column",
             onClick: onDeleteColumn,
         },
+        {
+            icon: table,
+            title: "Merge",
+            onClick: () => {
+                mergeCells();
+            },
+        },
     ];
 
     const TagName = attributes.tagName ?? "td";
 
     return (
         <>
-            <TagName {...innerBlocksProps} />
+            <TagName
+                {...innerBlocksProps}
+                colspan={colspan}
+                rowspan={rowspan}
+            />
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
                     value={vAlign}
