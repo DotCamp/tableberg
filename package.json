@@ -5,6 +5,14 @@
     "author": "Dotcamp",
     "license": "GPL-2.0-or-later",
     "main": "build/index.js",
+    "files": [
+        "build",
+        "includes",
+        "vendor/composer",
+        "vendor/autoload.php",
+        "readme.txt",
+        "tableberg.php"
+    ],
     "scripts": {
         "build": "wp-scripts build",
         "export": "wp-scripts plugin-zip",
