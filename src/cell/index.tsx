@@ -224,79 +224,78 @@ function edit({
         await deleteColumnFromTable();
     };
 
-    const {
-        setCurrentCellClientId,
-        startCellMultiSelect,
-        endCellMultiSelect,
-        addCellToMultiSelect,
-        removeCellFromMultiSelect,
-    } = useDispatch(tbStore);
-    const {
-        getCurrentCellClientId,
-        getCurrentSelectedCells,
-        isInMultiSelectMode,
-    } = useSelect((select) => {
-        const {
-            getCurrentCellClientId,
-            getCurrentSelectedCells,
-            isInMultiSelectMode,
-        } = select(tbStore);
-        return {
-            getCurrentCellClientId,
-            getCurrentSelectedCells,
-            isInMultiSelectMode,
-        };
-    }, []);
-
-    const handleMultiSelection = (event: MouseEvent) => {
-        if (!event.ctrlKey && isInMultiSelectMode()) {
-            endCellMultiSelect();
-            document.removeEventListener("mousedown", handleClickOutsideTable);
-        }
-
-        if (!event.ctrlKey || getCurrentCellClientId() === "") {
-            return;
-        }
-
-        if (!isInMultiSelectMode()) {
-            startCellMultiSelect();
-            // document.addEventListener("mousedown", handleClickOutsideTable);
-        }
-
-        if (getCurrentSelectedCells().indexOf(clientId) >= 0) {
-            removeCellFromMultiSelect(clientId);
-
-            if (getCurrentSelectedCells().length === 1) {
-                endCellMultiSelect();
-                document.removeEventListener(
-                    "mousedown",
-                    handleClickOutsideTable
-                );
-            }
-        } else {
-            addCellToMultiSelect(clientId);
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-    };
+    const { toggleCellSelection, endCellMultiSelect } = useDispatch(tbStore);
+    const { getCurrentSelectedCells, isInMultiSelectMode } = useSelect(
+        (select) => {
+            const { getCurrentSelectedCells } = select(tbStore);
+            const isInMultiSelectMode = () =>
+                getCurrentSelectedCells().length > 0;
+            return {
+                getCurrentSelectedCells,
+                isInMultiSelectMode,
+            };
+        },
+        []
+    );
 
     const handleClickOutsideTable = (event: MouseEvent) => {
         if (
             !document
                 .querySelector(`[data-block="${tableBlockId}"]`)
-                ?.contains(event.target as Node)
+                ?.contains(event.target as Node) &&
+            !(event.target as HTMLDivElement)?.closest(
+                ".components-popover__content"
+            )
         ) {
             endCellMultiSelect();
             document.removeEventListener("mousedown", handleClickOutsideTable);
         }
     };
 
+    function multiSelectStartListener(event: MouseEvent) {
+        if (event.ctrlKey) {
+            event.preventDefault();
+            event.stopPropagation();
+            toggleCellSelection(clientId);
+            document.addEventListener("mousedown", handleClickOutsideTable);
+            cellRef.current?.classList.add("is-multi-selected");
+        }
+
+        cellRef.current
+            ?.closest("table")
+            ?.querySelectorAll("td")
+            .forEach((cell) => {
+                cell.removeEventListener("mousedown", multiSelectStartListener);
+            });
+    }
+
     useEffect(() => {
         cellRef.current?.addEventListener("mousedown", (event) => {
-            handleMultiSelection(event);
-            setCurrentCellClientId(clientId);
-            console.log(getCurrentSelectedCells());
+            if (event.ctrlKey) {
+                event.preventDefault();
+                event.stopPropagation();
+                toggleCellSelection(clientId);
+            } else {
+                endCellMultiSelect();
+                document.removeEventListener(
+                    "mousedown",
+                    handleClickOutsideTable
+                );
+            }
+
+            if (!isInMultiSelectMode()) {
+                cellRef.current
+                    ?.closest("table")
+                    ?.querySelectorAll("td")
+                    .forEach((cell) => {
+                        if (cell.dataset["block"] !== clientId) {
+                            cell.addEventListener(
+                                "mousedown",
+                                multiSelectStartListener
+                            );
+                        }
+                    });
+            }
         });
     }, []);
 

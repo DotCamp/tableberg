@@ -1,49 +1,33 @@
-import { createReduxStore, register, useSelect } from "@wordpress/data";
-import { store as blockEditorStore } from "@wordpress/block-editor";
+import { createReduxStore, register } from "@wordpress/data";
 
 interface ITBStoreState {
-    currentCellClientId: string;
-    cellMultiSelect: boolean;
     selectedCells: string[];
 }
 
 const DEFAULT_STATE: ITBStoreState = {
-    currentCellClientId: "",
-    cellMultiSelect: false,
     selectedCells: [],
 };
 
 export const store = createReduxStore("tableberg-store", {
     reducer(state: ITBStoreState = DEFAULT_STATE, action) {
         switch (action.type) {
-            case "SET_CURRENT_CELL":
+            case "TOGGLE_CELL_SELECTION":
+                const updatedSelection = state.selectedCells;
+                const index = updatedSelection.indexOf(action.clientId);
+                if (index > -1) {
+                    updatedSelection.splice(index, 1);
+                } else {
+                    updatedSelection.push(action.clientId);
+                }
+
                 return {
                     ...state,
-                    currentCellClientId: action.clientId,
+                    selectedCells: updatedSelection,
                 };
-            case "SET_CELL_MULTI_SELECT":
+            case "END_CELL_MULTI_SELECT":
                 return {
                     ...state,
-                    cellMultiSelect: true,
-                    selectedCells: [state.currentCellClientId],
-                };
-            case "UNSET_CELL_MULTI_SELECT":
-                return {
-                    ...state,
-                    cellMultiSelect: false,
                     selectedCells: [],
-                };
-            case "ADD_CELL_TO_MULTI_SELECT":
-                return {
-                    ...state,
-                    selectedCells: [...state.selectedCells, action.clientId],
-                };
-            case "REMOVE_CELL_TO_MULTI_SELECT":
-                return {
-                    ...state,
-                    selectedCells: state.selectedCells.filter(
-                        (id) => id !== action.clientId
-                    ),
                 };
         }
 
@@ -51,52 +35,32 @@ export const store = createReduxStore("tableberg-store", {
     },
 
     actions: {
-        setCurrentCellClientId(clientId: string) {
+        toggleCellSelection(clientId: string) {
+            const cell = document.querySelector(`[data-block="${clientId}"]`);
+
+            if (cell?.classList.contains("is-multi-selected")) {
+                cell.classList.remove("is-multi-selected");
+            } else {
+                cell?.classList.add("is-multi-selected");
+            }
+
             return {
-                type: "SET_CURRENT_CELL",
+                type: "TOGGLE_CELL_SELECTION",
                 clientId,
-            };
-        },
-        startCellMultiSelect() {
-            return {
-                type: "SET_CELL_MULTI_SELECT",
             };
         },
         endCellMultiSelect() {
-            document
-                .querySelectorAll(".multi-select")
-                .forEach((el) => el.classList.remove("multi-select"));
+            document.querySelectorAll(".is-multi-selected").forEach((cell) => {
+                cell.classList.remove("is-multi-selected");
+            });
+
             return {
-                type: "UNSET_CELL_MULTI_SELECT",
-            };
-        },
-        addCellToMultiSelect(clientId: string) {
-            document
-                .querySelector(`[data-block="${clientId}"]`)
-                ?.classList.add("multi-select");
-            return {
-                type: "ADD_CELL_TO_MULTI_SELECT",
-                clientId,
-            };
-        },
-        removeCellFromMultiSelect(clientId: string) {
-            document
-                .querySelector(`[data-block="${clientId}"]`)
-                ?.classList.remove("multi-select");
-            return {
-                type: "REMOVE_CELL_TO_MULTI_SELECT",
-                clientId,
+                type: "END_CELL_MULTI_SELECT",
             };
         },
     },
 
     selectors: {
-        getCurrentCellClientId(state: ITBStoreState) {
-            return state.currentCellClientId;
-        },
-        isInMultiSelectMode(state: ITBStoreState) {
-            return state.cellMultiSelect;
-        },
         getCurrentSelectedCells(state: ITBStoreState) {
             return state.selectedCells;
         },
