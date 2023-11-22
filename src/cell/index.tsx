@@ -36,6 +36,8 @@ import { store as tbStore } from "../store";
 interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
     tagName: string;
+    rowspan: number;
+    colspan: number;
 }
 
 const ALLOWED_BLOCKS = [
@@ -77,6 +79,7 @@ function edit({
         updateBlockAttributes,
         removeBlock,
         moveBlocksToPosition,
+        selectBlock,
     } = useDispatch(blockEditorStore);
 
     const {
@@ -225,18 +228,18 @@ function edit({
     };
 
     const { toggleCellSelection, endCellMultiSelect } = useDispatch(tbStore);
-    const { getCurrentSelectedCells, isInMultiSelectMode } = useSelect(
-        (select) => {
-            const { getCurrentSelectedCells } = select(tbStore);
+    const { getCurrentSelectedCells, isInMultiSelectMode, getCellsStructure } =
+        useSelect((select) => {
+            const { getCurrentSelectedCells, getCellsStructure } =
+                select(tbStore);
             const isInMultiSelectMode = () =>
                 getCurrentSelectedCells().length > 0;
             return {
                 getCurrentSelectedCells,
                 isInMultiSelectMode,
+                getCellsStructure,
             };
-        },
-        []
-    );
+        }, []);
 
     const handleClickOutsideTable = (event: MouseEvent) => {
         if (
@@ -299,45 +302,132 @@ function edit({
         });
     }, []);
 
-    const [colspan, setColspan] = useState(1);
-    const [rowspan, setRowspan] = useState(1);
+    const isMergeAllowed = () => {
+        if (!isInMultiSelectMode()) {
+            return false;
+        }
+
+        const selectedCellClientIds = getCurrentSelectedCells();
+
+        if (selectedCellClientIds.length !== 2) {
+            return false;
+        }
+
+        const cellsStructure: {
+            clientId: string;
+            colIndex: number;
+            colspan: number;
+            rowIndex: number;
+            rowspan: number;
+        }[] = getCellsStructure(clientId);
+
+        const sameRowspan = selectedCellClientIds
+            .map((cellClientId) => {
+                return cellsStructure.find(
+                    (cell) => cell.clientId === cellClientId
+                )?.rowspan;
+            })
+            .every((n, _, arr) => n === arr[0]);
+
+        const sameColspan = selectedCellClientIds
+            .map((cellClientId) => {
+                return cellsStructure.find(
+                    (cell) => cell.clientId === cellClientId
+                )?.colspan;
+            })
+            .every((n, _, arr) => n === arr[0]);
+
+        if (!(sameRowspan && sameColspan)) {
+            return false;
+        }
+
+        const cellsInfo = selectedCellClientIds.map((cellClientId) =>
+            cellsStructure.find((cell) => cell.clientId === cellClientId)
+        );
+
+        if (cellsInfo[0] && cellsInfo[1]) {
+            const colDistance = Math.abs(
+                cellsInfo[0]?.colIndex - cellsInfo[1]?.colIndex
+            );
+            const rowDistance = Math.abs(
+                cellsInfo[0]?.rowIndex - cellsInfo[1]?.rowIndex
+            );
+            if (colDistance !== 1 && rowDistance !== 1) {
+                return false;
+            }
+            if (colDistance === 1 && rowDistance === 1) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    const getMergedProps = (clientIds: string[]) => {
+        const cellsStructure: {
+            clientId: string;
+            colIndex: number;
+            colspan: number;
+            rowIndex: number;
+            rowspan: number;
+        }[] = getCellsStructure(clientId);
+
+        let cells = clientIds.map((cellId) => {
+            const cell = cellsStructure.find(
+                (cellInfo) => cellInfo.clientId == cellId
+            )!;
+
+            return cell;
+        });
+
+        cells = cells
+            .sort((a, z) => {
+                if (!a || !z) {
+                    return 1;
+                }
+                return a.colIndex - z.colIndex;
+            })
+            .sort((a, z) => {
+                if (!a || !z) {
+                    return 1;
+                }
+                return a.rowIndex - z.rowIndex;
+            });
+
+        const sameRow = cells
+            .map((cell) => cell?.rowIndex)
+            .every((n, _, arr) => n === arr[0]);
+        const sameCol = cells
+            .map((cell) => cell?.colIndex)
+            .every((n, _, arr) => n === arr[0]);
+
+        let targetColSpan = cells[0]?.colspan;
+        let targetRowSpan = cells[0]?.rowspan;
+
+        if (sameRow) {
+            targetColSpan += cells[1]?.colspan;
+        }
+        if (sameCol) {
+            targetRowSpan += cells[1]?.rowspan;
+        }
+
+        return {
+            targetCellId: cells[0].clientId,
+            targetColSpan,
+            targetRowSpan,
+        };
+    };
 
     const mergeCells = () => {
         const cellClientIds = getCurrentSelectedCells();
         console.log("mergeCells", cellClientIds);
-        const coords: {
-            col: number;
-            row: number;
-        }[] = [];
 
-        cellClientIds.forEach((cellId) => {
-            const parentBlocks = getBlockParents(cellId);
-            const rowClientId = parentBlocks.find(
-                (parentId: string) => getBlockName(parentId) === "tableberg/row"
-            );
-
-            coords.push({
-                col: getBlockIndex(cellId),
-                row: getBlockIndex(rowClientId),
-            });
-        });
-
-        const sameRow = coords
-            .map((coord) => coord.row)
-            .every((n, _, arr) => n === arr[0]);
-        const sameCol = coords
-            .map((coord) => coord.col)
-            .every((n, _, arr) => n === arr[0]);
-
-        console.log(coords);
-
-        if (!sameRow && !sameCol) {
-            return;
-        }
+        const { targetCellId, targetColSpan, targetRowSpan } =
+            getMergedProps(cellClientIds);
 
         const blockInstances = cellClientIds
             .map((cellClientId) => {
-                return cellClientId === clientId
+                return cellClientId === targetCellId
                     ? undefined
                     : getBlock(cellClientId);
             })
@@ -347,17 +437,18 @@ function edit({
             moveBlocksToPosition(
                 block.innerBlocks.map((b) => b.clientId),
                 block.clientId,
-                clientId
+                targetCellId
             );
 
             removeBlock(block.clientId);
-            if (sameRow) {
-                setColspan(colspan + 1);
-            }
-            if (sameCol) {
-                setRowspan(rowspan + 1);
-            }
         });
+
+        updateBlockAttributes(targetCellId, {
+            rowspan: targetRowSpan,
+            colspan: targetColSpan,
+        });
+
+        selectBlock(targetCellId);
 
         endCellMultiSelect();
     };
@@ -407,6 +498,7 @@ function edit({
             onClick: () => {
                 mergeCells();
             },
+            isDisabled: !isMergeAllowed(),
         },
     ];
 
@@ -416,8 +508,8 @@ function edit({
         <>
             <TagName
                 {...innerBlocksProps}
-                colspan={colspan}
-                rowspan={rowspan}
+                colspan={attributes.colspan}
+                rowspan={attributes.rowspan}
             />
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
@@ -456,6 +548,14 @@ registerBlockType(metadata.name, {
         tagName: {
             type: "string",
             default: "td",
+        },
+        rowspan: {
+            type: "number",
+            default: "1",
+        },
+        colspan: {
+            type: "number",
+            default: "1",
         },
     },
     example: {},

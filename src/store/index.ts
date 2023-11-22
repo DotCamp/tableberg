@@ -1,4 +1,10 @@
-import { createReduxStore, register } from "@wordpress/data";
+import {
+    createReduxStore,
+    register,
+    createRegistrySelector,
+} from "@wordpress/data";
+import { store as blockEditorStore } from "@wordpress/block-editor";
+import { BlockInstance } from "@wordpress/blocks";
 
 interface ITBStoreState {
     selectedCells: string[];
@@ -64,6 +70,44 @@ export const store = createReduxStore("tableberg-store", {
         getCurrentSelectedCells(state: ITBStoreState) {
             return state.selectedCells;
         },
+        getCellsStructure: createRegistrySelector(
+            (select: any) => (clientId: string) => {
+                const storeSelect = select(blockEditorStore);
+                const parentBlocks = storeSelect.getBlockParents(clientId);
+
+                const tableBlockId = parentBlocks.find(
+                    (parentId: string) =>
+                        storeSelect.getBlockName(parentId) === "tableberg/table"
+                );
+                const tableBlock: BlockInstance =
+                    storeSelect.getBlocks(tableBlockId)[0];
+                return tableBlock.innerBlocks
+                    .map((row, rowIndex) => {
+                        let colMod = 0;
+                        let rowMod = 0;
+
+                        const rowStructure = row.innerBlocks.map(
+                            ({ clientId, attributes }, cellIndex) => {
+                                const colspan = Number(attributes.colspan);
+                                const rowspan = Number(attributes.rowspan);
+
+                                colMod += colspan - 1;
+                                rowMod += rowspan - 1;
+
+                                return {
+                                    clientId: clientId,
+                                    colIndex: cellIndex + colMod,
+                                    colspan: colspan,
+                                    rowIndex: rowIndex + rowMod,
+                                    rowspan: rowspan,
+                                };
+                            }
+                        );
+                        return rowStructure;
+                    })
+                    .flat();
+            }
+        ),
     },
 });
 
