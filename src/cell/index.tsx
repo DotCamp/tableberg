@@ -418,6 +418,15 @@ function edit({
         };
     };
 
+    const removeEmptyRowsIfAny = () => {
+        const tableBlock: BlockInstance = getBlock(tableBlockId);
+        tableBlock.innerBlocks.forEach((row) => {
+            if (row.innerBlocks.length === 0) {
+                removeBlock(row.clientId);
+            }
+        });
+    };
+
     const mergeCells = () => {
         const cellClientIds = getCurrentSelectedCells();
         console.log("mergeCells", cellClientIds);
@@ -442,6 +451,8 @@ function edit({
 
             removeBlock(block.clientId);
         });
+
+        removeEmptyRowsIfAny();
 
         updateBlockAttributes(targetCellId, {
             rowspan: targetRowSpan,

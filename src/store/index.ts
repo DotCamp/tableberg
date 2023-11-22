@@ -71,16 +71,16 @@ export const store = createReduxStore("tableberg-store", {
             return state.selectedCells;
         },
         getCellsStructure: createRegistrySelector(
-            (select: any) => (clientId: string) => {
-                const storeSelect = select(blockEditorStore);
-                const parentBlocks = storeSelect.getBlockParents(clientId);
+            (select: any) => (_: ITBStoreState, clientId: string) => {
+                const { getBlockParents, getBlockName, getBlock } =
+                    select(blockEditorStore);
+                const parentBlocks = getBlockParents(clientId);
 
                 const tableBlockId = parentBlocks.find(
                     (parentId: string) =>
-                        storeSelect.getBlockName(parentId) === "tableberg/table"
+                        getBlockName(parentId) === "tableberg/table"
                 );
-                const tableBlock: BlockInstance =
-                    storeSelect.getBlocks(tableBlockId)[0];
+                const tableBlock: BlockInstance = getBlock(tableBlockId);
                 return tableBlock.innerBlocks
                     .map((row, rowIndex) => {
                         let colMod = 0;
