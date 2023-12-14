@@ -1,12 +1,10 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "version": "0.0.2",
+    "version": "0.1.0",
     "title": "Cell",
     "name": "tableberg/cell",
-    "parent": [
-        "tableberg/row"
-    ],
+    "parent": ["tableberg/row"],
     "category": "design",
     "icon": "table-row-after",
     "description": "Tableberg Cell: Individual cell of a tableberg table",
@@ -18,6 +16,14 @@
         "tagName": {
             "type": "string",
             "default": "td"
+        },
+        "rowspan": {
+            "type": "number",
+            "default": "1"
+        },
+        "colspan": {
+            "type": "number",
+            "default": "1"
         }
     },
     "supports": {
