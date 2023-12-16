@@ -16,7 +16,9 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
+if ( ! defined( 'TABLEBERG_VERSION' ) ) {
+	define( 'TABLEBERG_VERSION', '0.0.2' );
+}
 if ( ! defined( 'TABLEBERG_DIR_PATH' ) ) {
 	define( 'TABLEBERG_DIR_PATH', plugin_dir_path( __FILE__ ) );
 }
@@ -45,6 +47,7 @@ if ( ! class_exists( 'Tableberg' ) ) {
 			new Tableberg\Blocks\Table();
 			new Tableberg\Blocks\Cell();
 			new Tableberg\Blocks\Row();
+			new Tableberg\Admin\Tableberg_Admin();
 		}
 	}
 

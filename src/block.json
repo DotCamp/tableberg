@@ -85,6 +85,7 @@
         }
     },
     "textdomain": "tableberg",
-    "editorScript": "file:./index.tsx",
-    "style": "file:./style-index.css"
+    "editorScript": "tableberg-script",
+    "editorStyle": "tableberg-editor-style",
+    "style": "tableberg-style"
 }
