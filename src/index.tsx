@@ -245,6 +245,14 @@ registerBlockType(metadata.name, {
                                     {
                                         content: cell.content,
                                         align: cell.align,
+                                        style: {
+                                            spacing: {
+                                                margin: {
+                                                    top: "0",
+                                                    bottom: "0",
+                                                },
+                                            },
+                                        },
                                     },
                                 ],
                             ],
@@ -262,6 +270,14 @@ registerBlockType(metadata.name, {
                                     {
                                         content: cell.content,
                                         align: cell.align,
+                                        style: {
+                                            spacing: {
+                                                margin: {
+                                                    top: "0",
+                                                    bottom: "0",
+                                                },
+                                            },
+                                        },
                                     },
                                 ],
                             ],
@@ -281,6 +297,14 @@ registerBlockType(metadata.name, {
                                     {
                                         content: cell.content,
                                         align: cell.align,
+                                        style: {
+                                            spacing: {
+                                                margin: {
+                                                    top: "0",
+                                                    bottom: "0",
+                                                },
+                                            },
+                                        },
                                     },
                                 ],
                             ],

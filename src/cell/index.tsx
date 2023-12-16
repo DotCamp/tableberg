@@ -70,7 +70,21 @@ function edit({
         { ...blockProps },
         {
             allowedBlocks: ALLOWED_BLOCKS,
-            template: [["core/paragraph"]],
+            template: [
+                [
+                    "core/paragraph",
+                    {
+                        style: {
+                            spacing: {
+                                margin: {
+                                    top: "0",
+                                    bottom: "0",
+                                },
+                            },
+                        },
+                    },
+                ],
+            ],
         }
     );
 
