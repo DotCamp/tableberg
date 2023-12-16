@@ -2,7 +2,7 @@
  * WordPress Imports
  */
 //@ts-ignore
-import { isEmpty, get } from "lodash";
+import { isEmpty, get, last } from "lodash";
 //@ts-ignore
 import { useEffect } from "@wordpress/element";
 import { Placeholder, TextControl, Button } from "@wordpress/components";
@@ -116,11 +116,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 clientId
             );
         } else {
-            const firstBlock = block.innerBlocks[0];
-            const isHeader = firstBlock?.attributes?.isHeader;
+            const lastBlock = last(block.innerBlocks);
+            const isFooter = lastBlock?.attributes?.isFooter;
 
-            if (isHeader) {
-                removeBlock(firstBlock.clientId);
+            if (isFooter) {
+                removeBlock(lastBlock.clientId);
             }
         }
     }, [enableTableFooter]);
