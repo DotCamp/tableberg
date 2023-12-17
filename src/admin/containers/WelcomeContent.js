@@ -1,12 +1,12 @@
 import React from "react";
 import { __ } from "@wordpress/i18n";
-import BoxContentProvider from "$Components/BoxContent/BoxContentProvider";
-import { BoxContentSize } from "$Components/BoxContent/BoxContent";
-import YouTubeEmbed from "$Components/YouTubeEmbed";
-import ButtonLink, { ButtonLinkType } from "$Components/ButtonLink";
-import ButtonLinkGroup from "$Components/ButtonLinkGroup";
-import UpgradeBoxContent from "$Components/UpgradeBoxContent";
-import AssetProvider from "$Components/AssetProvider";
+import BoxContentProvider from "../components/BoxContent/BoxContentProvider";
+import { BoxContentSize } from "../components/BoxContent/BoxContent";
+import YouTubeEmbed from "../components/YouTubeEmbed";
+import ButtonLink, { ButtonLinkType } from "../components/ButtonLink";
+import ButtonLinkGroup from "../components/ButtonLinkGroup";
+import UpgradeBoxContent from "../components/UpgradeBoxContent";
+import AssetProvider from "../components/AssetProvider";
 
 /**
  * Welcome content component.

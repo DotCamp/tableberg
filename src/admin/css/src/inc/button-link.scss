@@ -38,15 +38,15 @@
         @extend %p2-bold;
 
         color: $neutral-gray-50;
-        background-color: $red-500;
+        background-color: $deep-aqua-500;
         border: 0;
 
         &:hover {
-            background-color: #f4406d;
+            background-color: #249dc6;
         }
 
         &:active {
-            background-color: #991132;
+            background-color: #094d64;
         }
     }
 

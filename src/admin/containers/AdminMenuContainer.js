@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
 // import MenuHeader from "../components/MenuHeader";
-// import Content from "../components/Content";
+import Content from "../components/Content";
 // import UpsellModalSettingsMenu from '$Components/UpsellModalSettingsMenu';
 
 /**
@@ -13,10 +13,9 @@ import React from "react";
 function AdminMenuContainer() {
     return (
         <div className={"tableberg-admin-menu-container"}>
-            <h1>hello world</h1>
             {/* <UpsellModalSettingsMenu /> */}
-            {/* <MenuHeader />
-            <Content /> */}
+            {/* <MenuHeader />*/}
+            <Content />
         </div>
     );
 }

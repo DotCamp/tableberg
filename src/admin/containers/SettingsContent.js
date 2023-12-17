@@ -1,20 +1,14 @@
 import React, { useRef } from "react";
 import { __ } from "@wordpress/i18n";
-import BoxContentProvider from "$Components/BoxContent/BoxContentProvider";
-import {
-    getBlocks,
-    setBlockActiveStatus,
-} from "$Stores/settings-menu/slices/blocks";
+import BoxContentProvider from "../components/BoxContent/BoxContentProvider";
 import {
     BoxContentAlign,
     BoxContentLayout,
     BoxContentSize,
-} from "$Components/BoxContent/BoxContent";
-import ButtonLink, { ButtonLinkType } from "$Components/ButtonLink";
-import UpgradeBoxContent from "$Components/UpgradeBoxContent";
-import BlockControlsContainer from "$Components/BlockControlsContainer";
-import withStore from "$HOC/withStore";
-import { toggleBlockStatus } from "$Stores/settings-menu/actions";
+} from "../components/BoxContent/BoxContent";
+import ButtonLink, { ButtonLinkType } from "../components/ButtonLink";
+import UpgradeBoxContent from "../components/UpgradeBoxContent";
+// import BlockControlsContainer from "../components/BlockControlsContainer";
 
 /**
  * Blocks content.
@@ -25,7 +19,7 @@ import { toggleBlockStatus } from "$Stores/settings-menu/actions";
  * @param {Function} props.dispatch       store action dispatch function, will be supplied via HOC
  * @class
  */
-function BlocksContent({ pluginBlocks, setBlockStatus, dispatch }) {
+function SettingsContent({ pluginBlocks, setBlockStatus, dispatch }) {
     const pluginBlockNames = useRef(pluginBlocks.map(({ name }) => name));
 
     /**
@@ -62,23 +56,13 @@ function BlocksContent({ pluginBlocks, setBlockStatus, dispatch }) {
                     title={__("Deactivate All")}
                 />
             </BoxContentProvider>
-            <BlockControlsContainer />
-            <UpgradeBoxContent alignment={BoxContentAlign.CENTER} />
+            {/* <BlockControlsContainer /> */}
+            {/* <UpgradeBoxContent alignment={BoxContentAlign.CENTER} /> */}
         </div>
     );
 }
 
-// store select mapping
-const selectMapping = (select) => ({
-    pluginBlocks: select(getBlocks),
-});
-
-// store action mapping
-const actionMapping = () => ({
-    setBlockStatus: setBlockActiveStatus,
-});
-
 /**
- * @module BlocksContent
+ * @module SettingsContent
  */
-export default withStore(BlocksContent, selectMapping, actionMapping);
+export default SettingsContent;

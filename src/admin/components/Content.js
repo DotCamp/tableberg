@@ -1,16 +1,16 @@
-import React from 'react';
-import Router from '$Components/Router';
-import RouterProvider from '$Components/RouterProvider';
+import React from "react";
+import Router from "../components/Router";
+import RouterProvider from "../components/RouterProvider";
 
 /**
  * Contents of menu page.
  */
 function Content() {
-	return (
-		<RouterProvider>
-			<Router />
-		</RouterProvider>
-	);
+    return (
+        <RouterProvider>
+            <Router />
+        </RouterProvider>
+    );
 }
 
 /**

@@ -1,7 +1,7 @@
 import { __ } from "@wordpress/i18n";
 export const welcomePageData = {
     welcome: {
-        title: __("Welcome to Ultimate Blocks", "tableberg"),
+        title: __("Welcome to Tableberg!", "tableberg"),
         content: __(
             "Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!",
             "tableberg"
