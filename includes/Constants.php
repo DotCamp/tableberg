@@ -5,12 +5,14 @@
  * @package    tableberg
  */
 
+namespace Tableberg;
+
 /**
  * The core plugin class.
  *
  * This is used for defining constants which are used throughout plugin.
  */
-class Tableberg_Constants {
+class Constants {
 
 	const PLUGIN_VERSION = '0.0.2';
 

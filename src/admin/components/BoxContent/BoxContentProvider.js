@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import BoxContent from "./BoxContent";
 import ContentNotFoundError from "../../inc/err/ContentNotFoundError";
-import { welcomePageData } from "../../data/settings-menu-content-data";
 
 const getCData = (contentId) => {
-    return welcomePageData?.[contentId];
+    return tablebergAdminMenuData?.[contentId];
 };
 /**
  * Box content provider component.

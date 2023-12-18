@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import Router from "./Router";
 import routes from "../inc/routes";
 import { generateRouteArray } from "../inc/Route";
@@ -11,13 +11,7 @@ import NoRouterComponentFoundError from "../inc/err/NoRouterComponentFoundError"
  * @param {Router}   props.children         router component
  * @class
  */
-function RouterProvider({ children }) {
-    const queryParams = new URLSearchParams(location.search);
-    const route = queryParams.get("route");
-
-    const [currentRoutePath, setCurrentRoutePath] = useState(
-        route ?? "welcome"
-    );
+function RouterProvider({ children, currentRoutePath, setCurrentRoutePath }) {
     const RouterChild = useMemo(() => {
         const Component = children?.type === Router ? children.type : null;
 
@@ -26,7 +20,7 @@ function RouterProvider({ children }) {
         }
 
         return Component;
-    }, []);
+    }, [currentRoutePath]);
 
     const generatedRoutes = useMemo(() => {
         return generateRouteArray(routes);

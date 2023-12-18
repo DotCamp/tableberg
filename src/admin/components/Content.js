@@ -5,9 +5,12 @@ import RouterProvider from "../components/RouterProvider";
 /**
  * Contents of menu page.
  */
-function Content() {
+function Content({ currentRoutePath, setCurrentRoutePath }) {
     return (
-        <RouterProvider>
+        <RouterProvider
+            currentRoutePath={currentRoutePath}
+            setCurrentRoutePath={setCurrentRoutePath}
+        >
             <Router />
         </RouterProvider>
     );

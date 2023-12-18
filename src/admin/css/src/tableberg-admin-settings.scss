@@ -8,15 +8,12 @@
 @import "./base/common";
 @import "./base/themes/admin-menu-theme";
 @import "./inc/welcome-content-styles";
-@import "./inc/blocks-content-styles";
+@import "./inc/settings-control-card";
 @import "./inc/box-content";
 @import "./inc/button-link";
 @import "./inc/screen-center-mark";
 @import "./inc/navigation";
 @import "./inc/controls-container";
-@import "./inc/block-control-card";
-@import "./inc/extensions-content-styles";
-@import "./inc/extension-control-card";
 
 .tableberg-admin-menu-wrapper {
     @extend %size-full;

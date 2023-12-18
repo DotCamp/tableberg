@@ -1,4 +1,4 @@
-import { welcomePageAssets } from "../data/settings-menu-content-data";
+import { welcomePageAssets } from "../data/settings-menu-data";
 
 /**
  * Store asset provider.

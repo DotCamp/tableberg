@@ -8,7 +8,7 @@
 namespace Tableberg\Admin;
 
 use Tableberg;
-
+use Tableberg\Version_Control;
 /**
  * Manage Tableberg Admin
  */
@@ -53,10 +53,44 @@ class Tableberg_Admin {
 		$this->version     = TABLEBERG_VERSION;
 		$this->plugin_path = TABLEBERG_DIR_PATH;
 		$this->plugin_url  = TABLEBERG_URL;
+
+		// initialize version sync manager.
+		Tableberg\Version_Sync_Manager::init();
+
+		// initialize version control manager.
+		Version_Control::init();
+
 		add_action( 'admin_menu', array( $this, 'register_admin_menus' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_script' ) );
+		add_filter( 'tableberg/filter/admin_settings_menu_data', array( $this, 'add_settings_menu_data' ), 1, 1 );
 	}
+	/**
+	 * Add data for admin settings menu frontend.
+	 *
+	 * @param array $data frontend data.
+	 *
+	 * @return array filtered frontend data
+	 */
+	public function add_settings_menu_data( $data ) {
+		$data['assets'] = array(
+			'logo' => trailingslashit( $this->plugin_url ) . 'includes/Admin/images/logos/menu-icon-colored.svg',
+		);
 
+		$data['individual_control'] = array(
+			'data' => get_option( 'tableberg_individual_control', false ),
+		);
+		$data['global_control']     = array(
+			'data' => get_option( 'tableberg_global_control', false ),
+		);
+		$data['block_properties']   = array(
+			'data' => get_option( 'tableberg_block_properties', false ),
+		);
+		$data                       = array_merge( $data, Tableberg\Utils::welcome_page() );
+		return $data;
+	}
+	/**
+	 * Enqueue admin scripts.
+	 */
 	public function enqueue_admin_script() {
 		$tableberg_assets = new Tableberg\Assets();
 		$tableberg_assets->register_admin_assets();

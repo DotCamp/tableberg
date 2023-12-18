@@ -10,6 +10,9 @@ namespace Tableberg;
  * Handle plugin assets
  */
 class Assets {
+	/**
+	 * Register blocks assets
+	 */
 	public function register_blocks_assets() {
 		wp_register_script(
 			'tableberg-script',
@@ -43,6 +46,9 @@ class Assets {
 			false
 		);
 	}
+	/**
+	 * Enqueue Admin assets
+	 */
 	public function register_admin_assets() {
 		wp_enqueue_script(
 			'tableberg-admin-script',
@@ -61,6 +67,8 @@ class Assets {
 			'0.0.2',
 			true
 		);
+		$frontend_script_data = apply_filters( 'tableberg/filter/admin_settings_menu_data', array() );
+		wp_localize_script( 'tableberg-admin-script', 'tablebergAdminMenuData', $frontend_script_data );
 		wp_enqueue_style(
 			'tableberg-admin-style',
 			TABLEBERG_URL . 'build/tableberg-admin-style.css',

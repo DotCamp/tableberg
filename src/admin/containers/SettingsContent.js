@@ -8,7 +8,8 @@ import {
 } from "../components/BoxContent/BoxContent";
 import ButtonLink, { ButtonLinkType } from "../components/ButtonLink";
 import UpgradeBoxContent from "../components/UpgradeBoxContent";
-// import BlockControlsContainer from "../components/BlockControlsContainer";
+import BooleanSetting from "../components/BooleanSetting";
+import NumberSettings from "../components/NumberSettings";
 
 /**
  * Blocks content.
@@ -19,45 +20,19 @@ import UpgradeBoxContent from "../components/UpgradeBoxContent";
  * @param {Function} props.dispatch       store action dispatch function, will be supplied via HOC
  * @class
  */
-function SettingsContent({ pluginBlocks, setBlockStatus, dispatch }) {
-    const pluginBlockNames = useRef(pluginBlocks.map(({ name }) => name));
-
-    /**
-     * Toggle status of all available blocks.
-     *
-     * @param {boolean} status status to set
-     */
-    const toggleAllBlockStatus = (status) => {
-        dispatch(toggleBlockStatus)(pluginBlockNames.current, status);
-        pluginBlockNames.current.map((bName) =>
-            setBlockStatus({ id: bName, status })
-        );
-    };
+function SettingsContent() {
+    const individualData = tablebergAdminMenuData?.individual_control?.data[0];
+    const globalControl = tablebergAdminMenuData?.global_control?.data[0];
+    const blockProperties = tablebergAdminMenuData?.block_properties?.data;
 
     return (
-        <div className="tableberg-blocks-content">
-            <BoxContentProvider
-                layout={BoxContentLayout.HORIZONTAL}
-                contentId={"globalControl"}
-                size={BoxContentSize.JUMBO}
-            >
-                <ButtonLink
-                    onClickHandler={() => {
-                        toggleAllBlockStatus(true);
-                    }}
-                    type={ButtonLinkType.DEFAULT}
-                    title={__("Activate All")}
-                />
-                <ButtonLink
-                    onClickHandler={() => {
-                        toggleAllBlockStatus(false);
-                    }}
-                    type={ButtonLinkType.DEFAULT}
-                    title={__("Deactivate All")}
-                />
-            </BoxContentProvider>
-            {/* <BlockControlsContainer /> */}
-            {/* <UpgradeBoxContent alignment={BoxContentAlign.CENTER} /> */}
+        <div className="tableberg-settings-content">
+            <BooleanSetting {...individualData} />
+            {blockProperties.map((property) => {
+                return <NumberSettings {...property} />;
+            })}
+            <BooleanSetting {...globalControl} />
+            <UpgradeBoxContent alignment={BoxContentAlign.CENTER} />
         </div>
     );
 }

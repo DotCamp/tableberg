@@ -26,6 +26,9 @@ if ( ! defined( 'TABLEBERG_DIR_PATH' ) ) {
 if ( ! defined( 'TABLEBERG_URL' ) ) {
 	define( 'TABLEBERG_URL', plugin_dir_url( __FILE__ ) );
 }
+if ( ! defined( 'TABLEBERG_PLUGIN_FILE' ) ) {
+	define( 'TABLEBERG_PLUGIN_FILE', __FILE__ );
+}
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -48,7 +51,26 @@ if ( ! class_exists( 'Tableberg' ) ) {
 			new Tableberg\Blocks\Cell();
 			new Tableberg\Blocks\Row();
 			new Tableberg\Admin\Tableberg_Admin();
+			register_activation_hook( __FILE__, array( $this, 'activate_plugin' ) );
+			register_deactivation_hook( __FILE__, array( $this, 'deactivate_plugin' ) );
 		}
+
+		/**
+		 * The code that runs during plugin activation.
+		 * This action is documented in includes/class-ultimate-blocks-activator.php
+		 */
+		public function activate_plugin() {
+			Tableberg\Activator::activate();
+		}
+
+		/**
+		 * The code that runs during plugin deactivation.
+		 * This action is documented in includes/class-ultimate-blocks-deactivator.php
+		 */
+		public function deactivate_plugin() {
+			Tableberg\Deactivator::deactivate();
+		}
+
 	}
 
 	new Tableberg();
