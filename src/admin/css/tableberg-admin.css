@@ -207,7 +207,7 @@ input:checked + .tableberg-switch-input-slider {
     font-size: 18px;
 }
 
-#adminmenu .toplevel_page_ultimate-blocks-settings .wp-menu-image > img {
+#adminmenu .toplevel_page_tableberg-settings .wp-menu-image > img {
     width: 21px !important;
     margin: 5px 9px;
     display: block;

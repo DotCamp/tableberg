@@ -2,7 +2,7 @@
 /**
  * Fired during plugin activation
  *
- * @package    tableberg
+ *  @package Tableberg
  */
 
 namespace Tableberg;
@@ -16,7 +16,7 @@ use Tableberg;
  * This class defines all code necessary to run during the plugin's activation.
  *
  * @since      1.0.2
- * @package    tableberg
+ *  @package Tableberg
  * @author     Imtiaz Rayhan <imtiazrayhan@gmail.com>
  */
 class Activator {

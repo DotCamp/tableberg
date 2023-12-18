@@ -2,14 +2,14 @@
 /**
  * Version sync base
  *
- * @package tableberg
+ * @package Tableberg
  */
 
 namespace Tableberg\includes;
 
 use Plugin_Upgrader;
 use Tableberg\includes\Version_Control_Upgrader_Skin;
-use Tableberg\includes\Version_Sync_Manager;
+use Tableberg\Version_Sync_Manager;
 use WP_Error;
 use function add_filter;
 
@@ -108,7 +108,7 @@ abstract class Version_Sync_Base {
 	 * @return WP_Error|array plugin versions
 	 */
 	final protected function plugin_versions( $force = false ) {
-		$transient_key = 'ub-' . $this->get_version_slug() . '-versions-info';
+		$transient_key = 'tableberg-' . $this->get_version_slug() . '-versions-info';
 		$versions_info = false;
 
 		// get cached version if force options is disabled.

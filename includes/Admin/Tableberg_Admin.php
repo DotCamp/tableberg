@@ -2,7 +2,7 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * @package ultimate-blocks
+ * @package tableberg
  */
 
 namespace Tableberg\Admin;
@@ -53,6 +53,7 @@ class Tableberg_Admin {
 		$this->version     = TABLEBERG_VERSION;
 		$this->plugin_path = TABLEBERG_DIR_PATH;
 		$this->plugin_url  = TABLEBERG_URL;
+		$this->add_tableberg_admin_hook();
 
 		// initialize version sync manager.
 		Tableberg\Version_Sync_Manager::init();
@@ -63,6 +64,35 @@ class Tableberg_Admin {
 		add_action( 'admin_menu', array( $this, 'register_admin_menus' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_script' ) );
 		add_filter( 'tableberg/filter/admin_settings_menu_data', array( $this, 'add_settings_menu_data' ), 1, 1 );
+	}
+	/**
+	 * Add hook
+	 */
+	public function add_tableberg_admin_hook() {
+		add_action( 'wp_ajax_toggle_individual_control', array( $this, 'toggle_individual_control' ) );
+	}
+
+	/**
+	 * Toggle the global_control
+	 */
+	private function toggle_global_control() {
+		check_ajax_referer( 'toggle_global_control' );
+
+		if ( isset( $_POST['enable'] ) ) {
+			$enable = sanitize_text_field( wp_unslash( $_POST['enable'] ) );
+			update_option( 'tableberg_global_control', $enable );
+		}
+	}
+	/**
+	 * Toggle the individual_control
+	 */
+	private function toggle_individual_control() {
+		check_ajax_referer( 'toggle_individual_control' );
+
+		if ( isset( $_POST['enable'] ) ) {
+			$enable = sanitize_text_field( wp_unslash( $_POST['enable'] ) );
+			update_option( 'tableberg_individual_control', $enable );
+		}
 	}
 	/**
 	 * Add data for admin settings menu frontend.
@@ -78,14 +108,29 @@ class Tableberg_Admin {
 
 		$data['individual_control'] = array(
 			'data' => get_option( 'tableberg_individual_control', false ),
+			'ajax' => array(
+				'toggleIndividualControl' => array(
+					'url'    => admin_url( 'admin-ajax.php' ),
+					'action' => 'toggle_individual_control',
+					'nonce'  => wp_create_nonce( 'toggle_individual_control' ),
+				),
+			),
 		);
 		$data['global_control']     = array(
 			'data' => get_option( 'tableberg_global_control', false ),
+			'ajax' => array(
+				'toggleGlobalControl' => array(
+					'url'    => admin_url( 'admin-ajax.php' ),
+					'action' => 'toggle_global_control',
+					'nonce'  => wp_create_nonce( 'toggle_global_control' ),
+				),
+			),
 		);
 		$data['block_properties']   = array(
 			'data' => get_option( 'tableberg_block_properties', false ),
 		);
-		$data                       = array_merge( $data, Tableberg\Utils::welcome_page() );
+
+		$data = array_merge( $data, Tableberg\Utils::welcome_page() );
 		return $data;
 	}
 	/**
@@ -115,7 +160,7 @@ class Tableberg_Admin {
 
 		$menu_page_slug = 'tableberg-settings';
 		$menu_page      = add_menu_page(
-			'Tablerberg Settings',
+			'Tableberg Settings',
 			'Tableberg',
 			'manage_options',
 			$menu_page_slug,

@@ -2,7 +2,7 @@
 /**
  * Version control upgrader skin
  *
- * @package tableberg
+ * @package Tableberg
  */
 
 namespace Tableberg\includes;

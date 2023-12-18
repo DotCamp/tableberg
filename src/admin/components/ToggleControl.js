@@ -15,12 +15,14 @@ function ToggleControl({
     onStatusChange = () => {},
     disabled = false,
 }) {
+    const [toggleStatus, setToggleStatus] = useState(status);
     /**
      * Click handler for toggle component.
      */
     const clickHandler = () => {
         if (!disabled) {
-            onStatusChange(!status);
+            onStatusChange(!toggleStatus);
+            setToggleStatus(!toggleStatus);
         }
     };
 
@@ -29,7 +31,7 @@ function ToggleControl({
         <div
             onClick={clickHandler}
             className={"tableberg-toggle-control"}
-            data-enabled={JSON.stringify(disabled || status)}
+            data-enabled={JSON.stringify(disabled || toggleStatus)}
             role={"button"}
         >
             <div className={"knob"}></div>

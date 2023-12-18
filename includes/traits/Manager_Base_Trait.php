@@ -2,7 +2,7 @@
 /**
  * Manager trait.
  *
- * @package tableberg
+ * @package Tableberg
  */
 
 namespace Tableberg\includes\traits;

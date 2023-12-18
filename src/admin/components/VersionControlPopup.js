@@ -104,8 +104,8 @@ function VersionControlPopup({
                     <div
                         className={`version-id ${
                             isDowngrade
-                                ? "ub-positive-color"
-                                : "ub-negative-color"
+                                ? "tableberg-positive-color"
+                                : "tableberg-negative-color"
                         }`}
                     >
                         {from}
@@ -123,8 +123,8 @@ function VersionControlPopup({
                     <div
                         className={`version-id ${
                             isDowngrade
-                                ? "ub-negative-color"
-                                : "ub-positive-color"
+                                ? "tableberg-negative-color"
+                                : "tableberg-positive-color"
                         }`}
                     >
                         {to}

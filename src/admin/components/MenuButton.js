@@ -32,11 +32,11 @@ function MenuButton({
 
         switch (type) {
             case BUTTON_TYPES.NEGATIVE: {
-                buttonClass = "ub-negative-bg";
+                buttonClass = "tableberg-negative-bg";
                 break;
             }
             case BUTTON_TYPES.POSITIVE: {
-                buttonClass = "ub-positive-bg";
+                buttonClass = "tableberg-positive-bg";
                 break;
             }
         }

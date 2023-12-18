@@ -57,7 +57,7 @@ if ( ! class_exists( 'Tableberg' ) ) {
 
 		/**
 		 * The code that runs during plugin activation.
-		 * This action is documented in includes/class-ultimate-blocks-activator.php
+		 * This action is documented in includes/Activator.php
 		 */
 		public function activate_plugin() {
 			Tableberg\Activator::activate();
@@ -65,7 +65,7 @@ if ( ! class_exists( 'Tableberg' ) ) {
 
 		/**
 		 * The code that runs during plugin deactivation.
-		 * This action is documented in includes/class-ultimate-blocks-deactivator.php
+		 * This action is documented in includes/Deactivator.php
 		 */
 		public function deactivate_plugin() {
 			Tableberg\Deactivator::deactivate();

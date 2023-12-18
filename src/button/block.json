@@ -4,7 +4,9 @@
     "version": "0.0.2",
     "title": "Button",
     "name": "tableberg/button",
-    "parent": ["tableberg/cell"],
+    "parent": [
+        "tableberg/cell"
+    ],
     "category": "design",
     "icon": "button",
     "description": "Tableberg Button: Add a button to your tableberg table",
@@ -53,7 +55,7 @@
         }
     },
     "textdomain": "tableberg",
-    "editorScript": "file:./index.tsx",
-    "editorStyle": "file:./index.css",
-    "style": "file:./style-index.css"
+    "editorScript": "tableberg-script",
+    "editorStyle": "tableberg-editor-style",
+    "style": "tableberg-style"
 }

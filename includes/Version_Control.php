@@ -2,7 +2,7 @@
 /**
  * Version control manager
  *
- * @package tableberg
+ * @package Tableberg
  */
 
 namespace Tableberg;

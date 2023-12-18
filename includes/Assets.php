@@ -2,7 +2,7 @@
 /**
  * The file register assets for the plugin
  *
- * @package    tableberg
+ *  @package Tableberg
  */
 namespace Tableberg;
 

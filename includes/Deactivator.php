@@ -2,7 +2,7 @@
 /**
  * Fired during plugin deactivation
  *
- * @package    tableberg
+ *  @package Tableberg
  */
 
 namespace Tableberg;

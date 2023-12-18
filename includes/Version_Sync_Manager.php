@@ -2,7 +2,7 @@
 /**
  * Version sync manager
  *
- * @package tableberg
+ * @package Tableberg
  */
 
 namespace Tableberg;

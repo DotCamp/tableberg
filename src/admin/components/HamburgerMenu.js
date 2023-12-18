@@ -18,7 +18,7 @@ function HamburgerMenu({
     closeIcon = "fa-solid fa-xmark",
 }) {
     return (
-        <div className={"ub-hamburger-menu"}>
+        <div className={"tableberg-hamburger-menu"}>
             <div
                 tabIndex={0}
                 onKeyDown={(e) => {
@@ -28,7 +28,7 @@ function HamburgerMenu({
                     }
                 }}
                 role={"button"}
-                className={"ub-hamburger-menu-icon-wrapper"}
+                className={"tableberg-hamburger-menu-icon-wrapper"}
                 onClick={(e) => {
                     e.preventDefault();
                     clickHandler();

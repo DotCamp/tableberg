@@ -26,7 +26,7 @@ function YouTubeEmbed({ videoId, width = null, height = null }) {
     }, []);
 
     return (
-        <div className={"ub-youtube-embed"}>
+        <div className={"tableberg-youtube-embed"}>
             <iframe
                 width={width || defaults.width}
                 height={height || defaults.height}

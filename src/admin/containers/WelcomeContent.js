@@ -50,14 +50,14 @@ function WelcomeContent() {
                         <BoxContentProvider contentId={"documentation"}>
                             <ButtonLink
                                 url={documentsUrl}
-                                title={__("Visit Documents", "ultimate-blocks")}
+                                title={__("Visit Documents", "tableberg")}
                                 type={ButtonLinkType.DEFAULT}
                             />
                         </BoxContentProvider>
                         <BoxContentProvider contentId={"support"}>
                             <ButtonLink
                                 url={supportUrl}
-                                title={__("Support Forum", "ultimate-blocks")}
+                                title={__("Support Forum", "tableberg")}
                                 type={ButtonLinkType.DEFAULT}
                             />
                         </BoxContentProvider>
@@ -65,17 +65,17 @@ function WelcomeContent() {
                             <ButtonLinkGroup>
                                 <ButtonLink
                                     url={facebookUrl}
-                                    title={__("Facebook", "ultimate-blocks")}
+                                    title={__("Facebook", "tableberg")}
                                     type={ButtonLinkType.TEXT}
                                 />
                                 <ButtonLink
                                     url={twitterUrl}
-                                    title={__("Twitter", "ultimate-blocks")}
+                                    title={__("Twitter", "tableberg")}
                                     type={ButtonLinkType.TEXT}
                                 />
                                 <ButtonLink
                                     url={youtubeUrl}
-                                    title={__("YouTube", "ultimate-blocks")}
+                                    title={__("YouTube", "tableberg")}
                                     type={ButtonLinkType.TEXT}
                                 />
                             </ButtonLinkGroup>

@@ -2,7 +2,7 @@
 /**
  * The file defines global constants for the plugin
  *
- * @package    tableberg
+ *  @package Tableberg
  */
 
 namespace Tableberg;
