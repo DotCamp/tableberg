@@ -70,6 +70,7 @@ class Tableberg_Admin {
 	 */
 	public function add_tableberg_admin_hook() {
 		add_action( 'wp_ajax_toggle_individual_control', array( $this, 'toggle_individual_control' ) );
+		add_action( 'wp_ajax_toggle_global_control', array( $this, 'toggle_global_control' ) );
 	}
 
 	/**
