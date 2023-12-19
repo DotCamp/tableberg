@@ -7,11 +7,13 @@ import React, { useEffect, useRef, useState } from "react";
  * @class
  * @param {Object}   props                component properties
  * @param {boolean}  props.status         control status
+ * @param {boolean}  props.name           control name
  * @param {boolean}  props.disabled       control disabled status
  * @param {Function} props.onStatusChange status changed callback
  */
 function ToggleControl({
     status,
+    name,
     onStatusChange = () => {},
     disabled = false,
 }) {
@@ -21,7 +23,7 @@ function ToggleControl({
      */
     const clickHandler = () => {
         if (!disabled) {
-            onStatusChange(!toggleStatus);
+            onStatusChange(!toggleStatus, name);
             setToggleStatus(!toggleStatus);
         }
     };

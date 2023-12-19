@@ -1,19 +1,30 @@
-import { useState } from "react";
+import { debounce } from "lodash";
+import { useState, useEffect } from "react";
 import BoxContent from "./BoxContent/BoxContent";
-
-function UnitControl({ unit }) {
-    return <div className="tableberg-number-unit">{unit}</div>;
-}
-function NumberSettings({ title, content, name, value }) {
+const debouncedOnValueChange = debounce((val, setVal) => {
+    setVal(val);
+}, 500);
+function NumberSettings({ title, content, name, value, onValueChange }) {
     const [numValue, setNumValue] = useState(value);
+    const [debouncedValue, setDebouncedValue] = useState(numValue);
+
+    useEffect(() => {
+        onValueChange(debouncedValue, name);
+    }, [debouncedValue]);
+    useEffect(() => {
+        debouncedOnValueChange(numValue, setDebouncedValue);
+    }, [numValue]);
+
     return (
         <div className="tableberg-number-settings tableberg-settings-card">
             <BoxContent title={title} content={content}>
-                {name !== "font-size" && (
+                {name !== "font_size" && (
                     <button
-                        onClick={() =>
-                            numValue > 1 && setNumValue(numValue - 1)
-                        }
+                        onClick={() => {
+                            if (numValue > 1) {
+                                setNumValue(numValue - 1);
+                            }
+                        }}
                         className="tableberg-number-settings-value-button tableberg-number-settings-decrease-value-button"
                     >
                         -
@@ -24,17 +35,23 @@ function NumberSettings({ title, content, name, value }) {
                     type="number"
                     min={1}
                     className="tableberg-number-settings-value"
-                    onChange={(e) => setNumValue(Number(e.target.value))}
+                    onChange={(e) => {
+                        setNumValue(Number(e.target.value));
+                    }}
                 />
-                {name !== "font-size" && (
+                {name !== "font_size" && (
                     <button
-                        onClick={() => setNumValue(numValue + 1)}
+                        onClick={() => {
+                            setNumValue(numValue + 1);
+                        }}
                         className="tableberg-number-settings-value-button tableberg-number-settings-increase-value-button"
                     >
                         +
                     </button>
                 )}
-                {name === "font-size" && <UnitControl unit={"PX"} />}
+                {name === "font_size" && (
+                    <div className="tableberg-number-unit">{"PX"}</div>
+                )}
             </BoxContent>
         </div>
     );

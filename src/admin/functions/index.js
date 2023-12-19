@@ -1,10 +1,11 @@
-export const toggleIndividualControl = (status) => {
-    const individualData = tablebergAdminMenuData?.individual_control;
+export const updateBlockProperties = (value, propertyName) => {
+    const data = tablebergAdminMenuData?.block_properties;
 
-    const { url, action, nonce } = individualData.ajax.toggleIndividualControl;
+    const { url, action, nonce } = data.ajax.blockProperties;
     const formData = new FormData();
 
-    formData.append("enable", JSON.stringify(status));
+    formData.append("property_name", propertyName);
+    formData.append("value", JSON.stringify(value));
     formData.append("action", action);
     formData.append("_wpnonce", nonce);
 
@@ -13,12 +14,13 @@ export const toggleIndividualControl = (status) => {
         body: formData,
     });
 };
+export const toggleControl = (status, name) => {
+    const data = tablebergAdminMenuData?.[name];
 
-export const toggleGlobalControl = (status) => {
-    const individualData = tablebergAdminMenuData?.global_control;
-    const { url, action, nonce } = individualData.ajax.toggleGlobalControl;
+    const { url, action, nonce } = data.ajax.toggleControl;
     const formData = new FormData();
 
+    formData.append("toggle_name", "tableberg_" + name);
     formData.append("enable", JSON.stringify(status));
     formData.append("action", action);
     formData.append("_wpnonce", nonce);

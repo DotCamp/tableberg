@@ -49,7 +49,7 @@ class Utils {
 		return array(
 			array(
 				'title'   => 'Individual Control',
-				'name'    => 'individual-control',
+				'name'    => 'individual_control',
 				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!',
 				'active'  => false,
 			),
@@ -64,7 +64,7 @@ class Utils {
 		return array(
 			array(
 				'title'   => 'Global Control',
-				'name'    => 'global-control',
+				'name'    => 'global_control',
 				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!',
 				'active'  => true,
 			),
@@ -79,19 +79,19 @@ class Utils {
 		return array(
 			array(
 				'title'   => 'Default Row Number',
-				'name'    => 'row-number',
+				'name'    => 'row_number',
 				'content' => 'Set your default row number of the table when you add Tableberg to your site. Further you can increase or decrease it there simply.',
 				'value'   => 3,
 			),
 			array(
 				'title'   => 'Default Column Number',
-				'name'    => 'column-number',
+				'name'    => 'column_number',
 				'content' => 'Set your default column number of the table when you add Tableberg to your site. Further you can increase or decrease it there simply.',
 				'value'   => 3,
 			),
 			array(
 				'title'   => 'Default Property Font Size',
-				'name'    => 'font-size',
+				'name'    => 'font_size',
 				'content' => 'Set your default FONT SIZE of the PROPERTY of the table when you add Tableberg to your site. Further you can increase or decrease it there simply.',
 				'value'   => 18,
 			),

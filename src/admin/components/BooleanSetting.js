@@ -7,6 +7,7 @@ function BooleanSetting({ title, content, name, active, onStatusChange }) {
             <BoxContent title={title} content={content}>
                 <ToggleControl
                     status={active}
+                    name={name}
                     onStatusChange={onStatusChange}
                 />
             </BoxContent>

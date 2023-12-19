@@ -69,30 +69,41 @@ class Tableberg_Admin {
 	 * Add hook
 	 */
 	public function add_tableberg_admin_hook() {
-		add_action( 'wp_ajax_toggle_individual_control', array( $this, 'toggle_individual_control' ) );
-		add_action( 'wp_ajax_toggle_global_control', array( $this, 'toggle_global_control' ) );
+		add_action( 'wp_ajax_toggle_control', array( $this, 'update_toggle_control' ) );
+		add_action( 'wp_ajax_block_properties', array( $this, 'update_block_properties' ) );
 	}
 
 	/**
-	 * Toggle the global_control
+	 * Block properties control
 	 */
-	private function toggle_global_control() {
-		check_ajax_referer( 'toggle_global_control' );
+	private function update_block_properties() {
+		check_ajax_referer( 'block_properties' );
 
-		if ( isset( $_POST['enable'] ) ) {
-			$enable = sanitize_text_field( wp_unslash( $_POST['enable'] ) );
-			update_option( 'tableberg_global_control', $enable );
+		if ( isset( $_POST['value'] ) && isset( $_POST['property_name'] ) ) {
+			$value            = sanitize_text_field( wp_unslash( $_POST['value'] ) );
+			$property_name    = sanitize_text_field( wp_unslash( $_POST['property_name'] ) );
+			$saved_properties = get_option( 'tableberg_block_properties', false );
+			if ( $saved_properties ) {
+				foreach ( $saved_properties as $key => $property ) {
+					if ( $property['name'] === $property_name ) {
+						$saved_properties[ $key ]['value'] = (int) $value;
+					}
+				}
+			}
+
+			update_option( 'tableberg_block_properties', $saved_properties );
 		}
 	}
 	/**
-	 * Toggle the individual_control
+	 * Toggle control
 	 */
-	private function toggle_individual_control() {
-		check_ajax_referer( 'toggle_individual_control' );
+	private function update_toggle_control() {
+		check_ajax_referer( 'toggle_control' );
 
-		if ( isset( $_POST['enable'] ) ) {
-			$enable = sanitize_text_field( wp_unslash( $_POST['enable'] ) );
-			update_option( 'tableberg_individual_control', $enable );
+		if ( isset( $_POST['enable'] ) && isset( $_POST['toggle_name'] ) ) {
+			$enable      = sanitize_text_field( wp_unslash( $_POST['enable'] ) );
+			$toggle_name = sanitize_text_field( wp_unslash( $_POST['toggle_name'] ) );
+			update_option( $toggle_name, $enable );
 		}
 	}
 	/**
@@ -110,25 +121,32 @@ class Tableberg_Admin {
 		$data['individual_control'] = array(
 			'data' => get_option( 'tableberg_individual_control', false ),
 			'ajax' => array(
-				'toggleIndividualControl' => array(
+				'toggleControl' => array(
 					'url'    => admin_url( 'admin-ajax.php' ),
-					'action' => 'toggle_individual_control',
-					'nonce'  => wp_create_nonce( 'toggle_individual_control' ),
+					'action' => 'toggle_control',
+					'nonce'  => wp_create_nonce( 'toggle_control' ),
 				),
 			),
 		);
 		$data['global_control']     = array(
 			'data' => get_option( 'tableberg_global_control', false ),
 			'ajax' => array(
-				'toggleGlobalControl' => array(
+				'toggleControl' => array(
 					'url'    => admin_url( 'admin-ajax.php' ),
-					'action' => 'toggle_global_control',
-					'nonce'  => wp_create_nonce( 'toggle_global_control' ),
+					'action' => 'toggle_control',
+					'nonce'  => wp_create_nonce( 'toggle_control' ),
 				),
 			),
 		);
 		$data['block_properties']   = array(
 			'data' => get_option( 'tableberg_block_properties', false ),
+			'ajax' => array(
+				'blockProperties' => array(
+					'url'    => admin_url( 'admin-ajax.php' ),
+					'action' => 'block_properties',
+					'nonce'  => wp_create_nonce( 'block_properties' ),
+				),
+			),
 		);
 
 		$data = array_merge( $data, Tableberg\Utils::welcome_page() );
