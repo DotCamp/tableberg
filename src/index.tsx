@@ -70,9 +70,21 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const { replaceInnerBlocks, insertBlocks, removeBlock } =
         useDispatch(blockEditorStore);
-
-    const [initialRowCount, setInitialRowCount] = useState<number | "">(2);
-    const [initialColCount, setInitialColCount] = useState<number | "">(2);
+    //@ts-ignore
+    const tablebergData = tablebergAdminMenuData;
+    const globalBlockProperties = tablebergData?.block_properties;
+    const globalRows = globalBlockProperties?.data.find(
+        (property: any) => property.name === "row_number"
+    );
+    const globalColumns = globalBlockProperties?.data.find(
+        (property: any) => property.name === "column_number"
+    );
+    const [initialRowCount, setInitialRowCount] = useState<number | "">(
+        globalRows?.value ?? 3
+    );
+    const [initialColCount, setInitialColCount] = useState<number | "">(
+        globalColumns?.value ?? 3
+    );
 
     useEffect(() => {
         if (enableTableHeader) {
