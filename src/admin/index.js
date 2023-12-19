@@ -14,6 +14,4 @@ if (mountPoint) {
             <AdminMenuContainer />
         </AdminMenuWrapper>
     );
-} else {
-    throw new Error("no mount point found for settings menu");
 }
