@@ -29,10 +29,6 @@ import {
     useBlockProps,
     InspectorControls,
     // @ts-ignore
-    __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
-    // @ts-ignore
-    __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
-    // @ts-ignore
     __experimentalUseBorderProps as useBorderProps,
     // @ts-ignore
     __experimentalLinkControl as LinkControl,
@@ -43,21 +39,11 @@ import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import "./style.scss";
 import { link, linkOff } from "@wordpress/icons";
-
-interface ButtonElementBlockAttrs {
-    text: string;
-    align: "left" | "right" | "center";
-    width: number | undefined;
-    backgroundColor: string;
-    textColor: string;
-    backgroundHoverColor: string | undefined;
-    textHoverColor: string | undefined;
-    textAlign: string;
-    id: string;
-    url: string | undefined;
-    linkTarget: "_blank" | undefined;
-    rel: string | undefined;
-}
+import { ColorSettings, ColorSettingsWithGradient } from "../components";
+import { __ } from "@wordpress/i18n";
+import { getStyleClass } from "./get-classes";
+import { ButtonBlockTypes } from "./type";
+import { getStyles } from "./get-styles";
 
 const ALL_REL = ["sponsored", "nofollow", "noreferrer", "noopener"];
 const NEW_TAB_REL = "noreferrer noopener";
@@ -66,13 +52,13 @@ function edit({
     attributes,
     setAttributes,
     isSelected,
-}: BlockEditProps<ButtonElementBlockAttrs>) {
+}: BlockEditProps<ButtonBlockTypes>) {
     function WidthPanel({
         selectedWidth,
         setAttributes,
     }: {
         selectedWidth: number | undefined;
-        setAttributes: (attrs: Partial<ButtonElementBlockAttrs>) => void;
+        setAttributes: (attrs: Partial<ButtonBlockTypes>) => void;
     }) {
         function handleChange(newWidth: number) {
             // Check if we are toggling the width off
@@ -106,169 +92,6 @@ function edit({
         );
     }
 
-    const [buttonStyle, setButtonStyle] = useState<{
-        color?: string;
-        backgroundColor?: string;
-        "--text-hover-color"?: string;
-        "--background-hover-color"?: string;
-    }>({
-        color: attributes.textColor,
-        backgroundColor: attributes.backgroundColor,
-        "--text-hover-color":
-            attributes.textHoverColor ??
-            attributes.textColor ??
-            "var(--wp--preset--color--base)",
-        "--background-hover-color":
-            attributes.backgroundHoverColor ??
-            attributes.backgroundColor ??
-            "var(--wp--preset--color--primary)",
-    });
-
-    function ColorsPanel() {
-        const resetAll = () => {
-            setAttributes({ textColor: undefined, backgroundColor: undefined });
-            setButtonStyle({
-                ...buttonStyle,
-                color: undefined,
-                backgroundColor: undefined,
-            });
-        };
-
-        const resetAllHover = () => {
-            changeTextHoverColor(undefined);
-            changeBackgroundHoverColor(undefined);
-        };
-
-        const changeTextColor = (val: string) => {
-            setAttributes({ textColor: val });
-            setButtonStyle({ ...buttonStyle, color: val });
-        };
-
-        const changeBackgroundColor = (val: string) => {
-            setAttributes({ backgroundColor: val });
-            setButtonStyle({ ...buttonStyle, backgroundColor: val });
-        };
-
-        const changeTextHoverColor = (val: string | undefined) => {
-            setAttributes({ textHoverColor: val });
-        };
-
-        const changeBackgroundHoverColor = (val: string | undefined) => {
-            setAttributes({ backgroundHoverColor: val });
-        };
-
-        const colorGradientSettings = useMultipleOriginColorsAndGradients();
-
-        return (
-            <>
-                <ToolsPanel
-                    label={"Color"}
-                    resetAll={resetAll}
-                    hasInnerWrapper
-                    className="color-block-support-panel"
-                    __experimentalFirstVisibleItemClass="first"
-                    __experimentalLastVisibleItemClass="last"
-                >
-                    <div className="color-block-support-panel__inner-wrapper">
-                        <ColorGradientSettingsDropdown
-                            __experimentalIsRenderedInSidebar
-                            settings={[
-                                {
-                                    colorValue: attributes.textColor,
-                                    label: "Text",
-                                    onColorChange: changeTextColor,
-                                    clearable: true,
-                                    resetAllFilter: () =>
-                                        setAttributes({ textColor: undefined }),
-                                },
-                            ]}
-                            {...colorGradientSettings}
-                        />
-                        <ColorGradientSettingsDropdown
-                            __experimentalIsRenderedInSidebar
-                            settings={[
-                                {
-                                    colorValue: attributes.backgroundColor,
-                                    label: "Background",
-                                    onColorChange: changeBackgroundColor,
-                                    clearable: true,
-                                    resetAllFilter: () =>
-                                        setAttributes({
-                                            backgroundColor: undefined,
-                                        }),
-                                },
-                            ]}
-                            {...colorGradientSettings}
-                        />
-                    </div>
-                </ToolsPanel>
-                <ToolsPanel
-                    label={"Hover Color"}
-                    resetAll={resetAllHover}
-                    hasInnerWrapper
-                    className="color-block-support-panel"
-                    __experimentalFirstVisibleItemClass="first"
-                    __experimentalLastVisibleItemClass="last"
-                >
-                    <div className="color-block-support-panel__inner-wrapper">
-                        <ColorGradientSettingsDropdown
-                            __experimentalIsRenderedInSidebar
-                            settings={[
-                                {
-                                    colorValue: attributes.textHoverColor,
-                                    label: "Text",
-                                    onColorChange: changeTextHoverColor,
-                                    clearable: true,
-                                    resetAllFilter: () =>
-                                        setAttributes({
-                                            textHoverColor: undefined,
-                                        }),
-                                },
-                            ]}
-                            {...colorGradientSettings}
-                        />
-                        <ColorGradientSettingsDropdown
-                            __experimentalIsRenderedInSidebar
-                            settings={[
-                                {
-                                    colorValue: attributes.backgroundHoverColor,
-                                    label: "Background",
-                                    onColorChange: changeBackgroundHoverColor,
-                                    clearable: true,
-                                    resetAllFilter: () =>
-                                        setAttributes({
-                                            backgroundHoverColor: undefined,
-                                        }),
-                                },
-                            ]}
-                            {...colorGradientSettings}
-                        />
-                    </div>
-                </ToolsPanel>
-            </>
-        );
-    }
-
-    useEffect(() => {
-        setButtonStyle({
-            ...buttonStyle,
-            "--background-hover-color":
-                attributes.backgroundHoverColor ??
-                attributes.backgroundColor ??
-                "var(--wp--preset--color--primary)",
-        });
-    }, [attributes.backgroundColor, attributes.backgroundHoverColor]);
-
-    useEffect(() => {
-        setButtonStyle({
-            ...buttonStyle,
-            "--text-hover-color":
-                attributes.textHoverColor ??
-                attributes.textColor ??
-                "var(--wp--preset--color--base)",
-        });
-    }, [attributes.textColor, attributes.textHoverColor]);
-
     const { text, align, width, textAlign, id, url, rel, linkTarget } =
         attributes;
     const ref = useRef();
@@ -282,6 +105,8 @@ function edit({
 
     const blockProps = useBlockProps({
         ref: useMergeRefs([setPopoverAnchor, ref]),
+        className: getStyleClass(attributes),
+        style: getStyles(attributes),
     });
 
     const blockAlignChange = (newValue: "left" | "right" | "center") => {
@@ -382,7 +207,7 @@ function edit({
                     // @ts-ignore
                     withoutInteractiveFormatting
                     identifier="text"
-                    style={{ ...buttonStyle, ...borderProps.style }}
+                    style={{ ...borderProps.style }}
                 />
             </div>
             {/* @ts-ignore */}
@@ -441,8 +266,25 @@ function edit({
                 )}
             </BlockControls>
             {/* @ts-ignore */}
-            <InspectorControls group="styles">
-                <ColorsPanel />
+            <InspectorControls group="color">
+                <ColorSettings
+                    attrKey="textColor"
+                    label={__("Text", "tableberg")}
+                />
+                <ColorSettings
+                    attrKey="textHoverColor"
+                    label={__("Hover Text", "tableberg")}
+                />
+                <ColorSettingsWithGradient
+                    label={__("Background Color", "tableberg")}
+                    attrBackgroundKey="backgroundColor"
+                    attrGradientKey="backgroundGradient"
+                />
+                <ColorSettingsWithGradient
+                    label={__("Hover Background Color", "tableberg")}
+                    attrBackgroundKey="backgroundHoverColor"
+                    attrGradientKey="backgroundHoverGradient"
+                />
             </InspectorControls>
             <InspectorControls>
                 <WidthPanel
@@ -493,6 +335,12 @@ registerBlockType(metadata.name, {
         },
         width: {
             type: "number",
+        },
+        backgroundGradient: {
+            type: "string",
+        },
+        backgroundHoverGradient: {
+            type: "string",
         },
         backgroundColor: {
             type: "string",

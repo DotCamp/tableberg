@@ -1,11 +1,31 @@
 $blocks-block__margin: 0.5em;
 
 .wp-block-tableberg-button {
+    .wp-block-button__link {
+        display: inline-block;
+    }
     margin-block: 10px;
-
-    .wp-block-button__link:hover {
-        color: var(--text-hover-color) !important;
-        background-color: var(--background-hover-color) !important;
+    &.has-background-color {
+        .wp-block-button__link {
+            background: var(--tableberg-button-background-color);
+        }
+    }
+    &.has-text-color {
+        .wp-block-button__link {
+            color: var(--tableberg-button-text-color);
+        }
+    }
+    &.has-hover-background-color {
+        .wp-block-button__link:hover {
+            background: var(
+                --tableberg-button-hover-background-color
+            ) !important;
+        }
+    }
+    &.has-hover-text-color {
+        .wp-block-button__link:hover {
+            color: var(--tableberg-button-text-hover-color) !important;
+        }
     }
 
     &.block-align-left {

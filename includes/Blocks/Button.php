@@ -7,6 +7,8 @@
 
 namespace Tableberg\Blocks;
 
+use Tableberg;
+
 /**
  * Handle the block registration on server side and rendering.
  */
@@ -44,7 +46,43 @@ class Button {
 				"border-top-right-radius: {$border_style['radius']['topRight']};";
 		}
 	}
+	/**
+	 * Get block styles.
+	 *
+	 * @param array $attributes - block attributes.
+	 * @return string Generated CSS styles.
+	 */
+	public static function get_styles( $attributes ) {
+		$background_color       = \Tableberg\Utils::get_background_color( $attributes, 'backgroundColor', 'backgroundGradient' );
+		$background_hover_color = \Tableberg\Utils::get_background_color( $attributes, 'backgroundHoverColor', 'backgroundHoverGradient' );
 
+		$styles = array(
+			'--tableberg-button-background-color'       => $background_color,
+			'--tableberg-button-hover-background-color' => $background_hover_color,
+			'--tableberg-button-text-hover-color'       => $attributes['textHoverColor'],
+			'--tableberg-button-text-color'             => $attributes['textColor'],
+		);
+
+		return \Tableberg\Utils::generate_css_string( $styles );
+	}
+	/**
+	 * Get block classes.
+	 *
+	 * @param array $attributes - block attributes.
+	 * @return string Generated block classess.
+	 */
+	public static function get_classes( $attributes ) {
+		$classes = join(
+			' ',
+			array(
+				! Tableberg\Utils::is_value_empty( $attributes['backgroundColor'] ) || ! Tableberg\Utils::is_value_empty( $attributes['backgroundGradient'] ) ? 'has-background-color' : '',
+				! Tableberg\Utils::is_value_empty( $attributes['backgroundHoverColor'] ) || ! Tableberg\Utils::is_value_empty( $attributes['backgroundHoverGradient'] ) ? 'has-hover-background-color' : '',
+				! Tableberg\Utils::is_value_empty( $attributes['textHoverColor'] ) ? 'has-hover-text-color' : '',
+				! Tableberg\Utils::is_value_empty( $attributes['textColor'] ) ? 'has-text-color' : '',
+			)
+		);
+		return $classes;
+	}
 	/**
 	 * Renders the custom button block on the server.
 	 *
@@ -54,27 +92,17 @@ class Button {
 	 * @return string  Returns the HTML content for the custom button block.
 	 */
 	public function render_tableberg_button_block( $attributes, $content, $block ) {
-		$text                   = isset( $attributes['text'] ) ? $attributes['text'] : '';
-		$align                  = isset( $attributes['align'] ) ? $attributes['align'] : '';
-		$width                  = isset( $attributes['width'] ) ? $attributes['width'] : '';
-		$background_color       = isset( $attributes['backgroundColor'] ) ? $attributes['backgroundColor'] : '';
-		$text_color             = isset( $attributes['textColor'] ) ? $attributes['textColor'] : '';
-		$background_hover_color =
-			$attributes['backgroundHoverColor'] ??
-			$attributes['background_color'] ??
-			'var(--wp--preset--color--primary)';
-		$text_hover_color       =
-			$attributes['textHoverColor'] ??
-			$attributes['text_color'] ??
-			'var(--wp--preset--color--base)';
-		$text_align             = isset( $attributes['textAlign'] ) ? $attributes['textAlign'] : '';
-		$id                     = isset( $attributes['id'] ) ? $attributes['id'] : '';
-		$url                    = isset( $attributes['url'] ) ? $attributes['url'] : '';
-		$link_target            = isset( $attributes['linkTarget'] ) ? $attributes['linkTarget'] : '';
-		$rel                    = isset( $attributes['rel'] ) ? $attributes['rel'] : '';
-		$style                  = isset( $attributes['style'] ) ? $attributes['style'] : '';
-		$font_size              = isset( $attributes['fontSize'] ) ? $attributes['fontSize'] : '';
-		$border                 = isset( $style['border'] ) ? $style['border'] : '';
+		$text        = isset( $attributes['text'] ) ? $attributes['text'] : '';
+		$align       = isset( $attributes['align'] ) ? $attributes['align'] : '';
+		$width       = isset( $attributes['width'] ) ? $attributes['width'] : '';
+		$text_align  = isset( $attributes['textAlign'] ) ? $attributes['textAlign'] : '';
+		$id          = isset( $attributes['id'] ) ? $attributes['id'] : '';
+		$url         = isset( $attributes['url'] ) ? $attributes['url'] : '';
+		$link_target = isset( $attributes['linkTarget'] ) ? $attributes['linkTarget'] : '';
+		$rel         = isset( $attributes['rel'] ) ? $attributes['rel'] : '';
+		$style       = isset( $attributes['style'] ) ? $attributes['style'] : '';
+		$font_size   = isset( $attributes['fontSize'] ) ? $attributes['fontSize'] : '';
+		$border      = isset( $style['border'] ) ? $style['border'] : '';
 
 		$classes = trim(
 			join(
@@ -84,6 +112,7 @@ class Button {
 					$align ? "block-align-{$align}" : '',
 					$width ? "has-custom-width wp-block-button__width-{$width}" : '',
 					$font_size ? 'has-custom-font-size' : '',
+					$this->get_classes( $attributes ),
 				)
 			)
 		);
@@ -98,14 +127,10 @@ class Button {
 				)
 			)
 		);
-
-		$button_styles = join(
+		$button_styles  = join(
 			'',
 			array(
-				$text_color ? "color: {$text_color};" : '',
-				$background_color ? "background-color: {$background_color};" : '',
-				"--text-hover-color: {$text_hover_color};",
-				"--background-hover-color: {$background_hover_color};",
+				$this->get_styles( $attributes ),
 				$this->get_border_style( $border ),
 			)
 		);
