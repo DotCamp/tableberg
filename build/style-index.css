@@ -1,0 +1,64 @@
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/.pnpm/css-loader@6.8.1_webpack@5.88.1/node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/.pnpm/postcss-loader@6.2.1_postcss@8.4.24_webpack@5.88.1/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/.pnpm/sass-loader@12.6.0_sass@1.63.6_webpack@5.88.1/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/style.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+table.wp-block-tableberg-table {
+  border-top: var(--tableberg-table-border-top, 1px solid black);
+  border-right: var(--tableberg-table-border-right, 1px solid black);
+  border-bottom: var(--tableberg-table-border-bottom, 1px solid black);
+  border-left: var(--tableberg-table-border-left, 1px solid black);
+  border-collapse: collapse;
+  width: 100%;
+}
+table.wp-block-tableberg-table.has-table-width {
+  max-width: var(--tableber-table-width) !important;
+}
+table.wp-block-tableberg-table[id*=block-].justify-table-left {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+table.wp-block-tableberg-table[id*=block-].justify-table-center {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+table.wp-block-tableberg-table[id*=block-].justify-table-right {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+table.wp-block-tableberg-table.justify-table-left {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+table.wp-block-tableberg-table.justify-table-center {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+table.wp-block-tableberg-table.justify-table-right {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+table.wp-block-tableberg-table .tableberg-row:not(.tableberg-header):not(.tableberg-footer):nth-child(even) {
+  background: var(--tableberg-even-row-bg-color);
+}
+table.wp-block-tableberg-table .tableberg-row:not(.tableberg-header):not(.tableberg-footer):nth-child(odd) {
+  background: var(--tableberg-odd-row-bg-color);
+}
+table.wp-block-tableberg-table .tableberg-row.tableberg-footer {
+  background: var(--tableberg-footer-bg-color);
+}
+table.wp-block-tableberg-table .tableberg-row.tableberg-header {
+  background: var(--tableberg-header-bg-color);
+}
+table.wp-block-tableberg-table.has-inner-border .wp-block-tableberg-cell {
+  border-top: var(--tableberg-inner-border-top, 1px solid #000000);
+  border-right: var(--tableberg-inner-border-right, 1px solid #000000);
+  border-bottom: var(--tableberg-inner-border-bottom, 1px solid #000000);
+  border-left: var(--tableberg-inner-border-left, 1px solid #000000);
+}
+
+/*# sourceMappingURL=style-index.css.map*/

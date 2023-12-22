@@ -1,0 +1,57 @@
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/.pnpm/css-loader@6.8.1_webpack@5.88.1/node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/.pnpm/postcss-loader@6.2.1_postcss@8.4.24_webpack@5.88.1/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/.pnpm/sass-loader@12.6.0_sass@1.63.6_webpack@5.88.1/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/button/style.scss ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.wp-block-tableberg-button {
+  margin-block: 10px;
+}
+.wp-block-tableberg-button .wp-block-button__link {
+  display: inline-block;
+}
+.wp-block-tableberg-button.has-background-color .wp-block-button__link {
+  background: var(--tableberg-button-background-color);
+}
+.wp-block-tableberg-button.has-text-color .wp-block-button__link {
+  color: var(--tableberg-button-text-color);
+}
+.wp-block-tableberg-button.has-hover-background-color .wp-block-button__link:hover {
+  background: var(--tableberg-button-hover-background-color) !important;
+}
+.wp-block-tableberg-button.has-hover-text-color .wp-block-button__link:hover {
+  color: var(--tableberg-button-text-hover-color) !important;
+}
+.wp-block-tableberg-button.block-align-left {
+  text-align: left;
+  margin-right: auto;
+}
+.wp-block-tableberg-button.block-align-center {
+  text-align: center;
+  margin-inline: auto;
+}
+.wp-block-tableberg-button.block-align-right {
+  text-align: right;
+  margin-left: auto;
+}
+.wp-block-tableberg-button.has-custom-font-size .wp-block-button__link {
+  font-size: inherit;
+}
+.wp-block-tableberg-button.has-custom-width {
+  max-width: none;
+}
+.wp-block-tableberg-button.has-custom-width .wp-block-button__link {
+  width: 100%;
+}
+.wp-block-tableberg-button.wp-block-button__width-25 {
+  width: calc(25% - var(--wp--style--block-gap, 0.5em) * 0.75);
+}
+.wp-block-tableberg-button.wp-block-button__width-50 {
+  width: calc(50% - var(--wp--style--block-gap, 0.5em) * 0.5);
+}
+.wp-block-tableberg-button.wp-block-button__width-75 {
+  width: calc(75% - var(--wp--style--block-gap, 0.5em) * 0.25);
+}
+.wp-block-tableberg-button.wp-block-button__width-100 {
+  width: 100%;
+  flex-basis: 100%;
+}
+
+/*# sourceMappingURL=style-index.css.map*/
