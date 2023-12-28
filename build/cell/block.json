@@ -33,7 +33,7 @@
     "__experimentalExposeControlsToChildren": true
   },
   "textdomain": "tableberg",
-  "editorScript": "file:./index.js",
-  "editorStyle": "file:./index.css",
-  "style": "file:./style-index.css"
+  "editorScript": "tableberg-script",
+  "editorStyle": "tableberg-editor-style",
+  "style": "tableberg-style"
 }

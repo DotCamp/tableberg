@@ -20,13 +20,7 @@
     "backgroundColor": {
       "type": "string"
     },
-    "backgroundGradient": {
-      "type": "string"
-    },
     "textColor": {
-      "type": "string"
-    },
-    "backgroundHoverGradient": {
       "type": "string"
     },
     "backgroundHoverColor": {
@@ -61,7 +55,7 @@
     }
   },
   "textdomain": "tableberg",
-  "editorScript": "file:./index.js",
-  "editorStyle": "file:./index.css",
-  "style": "file:./style-index.css"
+  "editorScript": "tableberg-script",
+  "editorStyle": "tableberg-editor-style",
+  "style": "tableberg-style"
 }

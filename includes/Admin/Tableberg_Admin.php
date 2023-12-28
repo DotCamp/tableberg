@@ -93,6 +93,8 @@ class Tableberg_Admin {
 
 			update_option( 'tableberg_block_properties', $saved_properties );
 		}
+
+		die();
 	}
 	/**
 	 * Toggle control
@@ -105,6 +107,7 @@ class Tableberg_Admin {
 			$toggle_name = sanitize_text_field( wp_unslash( $_POST['toggle_name'] ) );
 			update_option( $toggle_name, $enable );
 		}
+		die();
 	}
 	/**
 	 * Add data for admin settings menu frontend.

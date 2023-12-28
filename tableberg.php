@@ -45,12 +45,12 @@ if ( ! class_exists( 'Tableberg' ) ) {
 		 * @return void
 		 */
 		public function __construct() {
+			new Tableberg\Admin\Tableberg_Admin();
 			new Tableberg\Blocks\Button();
 			new Tableberg\Blocks\Image();
 			new Tableberg\Blocks\Table();
 			new Tableberg\Blocks\Cell();
 			new Tableberg\Blocks\Row();
-			new Tableberg\Admin\Tableberg_Admin();
 			register_activation_hook( __FILE__, array( $this, 'activate_plugin' ) );
 			register_deactivation_hook( __FILE__, array( $this, 'deactivate_plugin' ) );
 		}
