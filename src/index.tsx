@@ -33,6 +33,7 @@ import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
+import exampleImage from "./example.png";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 
@@ -43,6 +44,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             enableTableFooter,
             enableTableHeader,
             cols,
+            isExample,
         },
         setAttributes,
         clientId,
@@ -201,9 +203,17 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         </Placeholder>
     );
 
+    const example = <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
+
     return (
         <>
-            {hasTableCreated ? <table {...innerBlocksProps} /> : placeholder}
+            {isExample ? (
+                example
+            ) : hasTableCreated ? (
+                <table {...innerBlocksProps} />
+            ) : (
+                placeholder
+            )}
             <Inspector {...props} />
         </>
     );

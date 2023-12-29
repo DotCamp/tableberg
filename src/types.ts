@@ -20,4 +20,5 @@ export interface TablebergBlockAttrs {
     tableBorder: BorderTypes;
     innerBorder: BorderTypes;
     enableInnerBorder: boolean;
+    isExample: boolean;
 }

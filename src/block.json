@@ -82,6 +82,15 @@
         "enableInnerBorder": {
             "type": "boolean",
             "default": true
+        },
+        "isExample": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "example": {
+        "attributes": {
+            "isExample": true
         }
     },
     "textdomain": "tableberg",
