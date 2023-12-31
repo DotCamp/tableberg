@@ -4,7 +4,9 @@
     "version": "0.0.2",
     "title": "Button",
     "name": "tableberg/button",
-    "parent": ["tableberg/cell"],
+    "parent": [
+        "tableberg/cell"
+    ],
     "category": "design",
     "icon": "button",
     "description": "Tableberg Button: Add a button to your tableberg table",
@@ -18,7 +20,13 @@
         "backgroundColor": {
             "type": "string"
         },
+        "backgroundGradient": {
+            "type": "string"
+        },
         "textColor": {
+            "type": "string"
+        },
+        "backgroundHoverGradient": {
             "type": "string"
         },
         "backgroundHoverColor": {

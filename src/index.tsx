@@ -2,6 +2,8 @@
  * WordPress Imports
  */
 //@ts-ignore
+import { isEmpty, get, last } from "lodash";
+//@ts-ignore
 import { useEffect } from "@wordpress/element";
 import { Placeholder, TextControl, Button } from "@wordpress/components";
 import { blockTable } from "@wordpress/icons";
@@ -18,6 +20,7 @@ import {
     // @ts-ignore
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
+    createBlock,
 } from "@wordpress/blocks";
 /**
  * Internal Imports
@@ -113,11 +116,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 clientId
             );
         } else {
-            const firstBlock = block.innerBlocks[0];
-            const isHeader = firstBlock?.attributes?.isHeader;
+            const lastBlock = last(block.innerBlocks);
+            const isFooter = lastBlock?.attributes?.isFooter;
 
-            if (isHeader) {
-                removeBlock(firstBlock.clientId);
+            if (isFooter) {
+                removeBlock(lastBlock.clientId);
             }
         }
     }, [enableTableFooter]);
@@ -219,4 +222,124 @@ registerBlockType(metadata.name, {
     attributes: metadata.attributes,
     edit,
     save,
+    transforms: {
+        from: [
+            {
+                type: "block",
+                blocks: ["core/table"],
+                transform: function (attributes) {
+                    const tableBorder = get(attributes, "style.border", {});
+                    //@ts-ignore
+                    const tableBody = get(attributes, "body", []);
+                    const tableHead = get(attributes, "head", []);
+                    const tableFoot = get(attributes, "head", []);
+                    const tableBodyBlocks = tableBody?.map((row: any) => [
+                        "tableberg/row",
+                        {},
+                        row.cells?.map((cell: any) => [
+                            "tableberg/cell",
+                            {},
+                            [
+                                [
+                                    "core/paragraph",
+                                    {
+                                        content: cell.content,
+                                        align: cell.align,
+                                        style: {
+                                            spacing: {
+                                                margin: {
+                                                    top: "0",
+                                                    bottom: "0",
+                                                },
+                                            },
+                                        },
+                                    },
+                                ],
+                            ],
+                        ]),
+                    ]);
+                    const tableHeaderBlocks = tableHead?.map((row: any) => [
+                        "tableberg/row",
+                        {},
+                        row.cells?.map((cell: any) => [
+                            "tableberg/cell",
+                            { tagName: "th" },
+                            [
+                                [
+                                    "core/paragraph",
+                                    {
+                                        content: cell.content,
+                                        align: cell.align,
+                                        style: {
+                                            spacing: {
+                                                margin: {
+                                                    top: "0",
+                                                    bottom: "0",
+                                                },
+                                            },
+                                        },
+                                    },
+                                ],
+                            ],
+                        ]),
+                    ]);
+                    const tableFooterBlocks = tableFoot?.map((row: any) => [
+                        "tableberg/row",
+                        {},
+                        row.cells?.map((cell: any) => [
+                            "tableberg/cell",
+                            {
+                                tagName: "th",
+                            },
+                            [
+                                [
+                                    "core/paragraph",
+                                    {
+                                        content: cell.content,
+                                        align: cell.align,
+                                        style: {
+                                            spacing: {
+                                                margin: {
+                                                    top: "0",
+                                                    bottom: "0",
+                                                },
+                                            },
+                                        },
+                                    },
+                                ],
+                            ],
+                        ]),
+                    ]);
+
+                    const tablebergAttributes = {
+                        // @ts-ignore
+                        rows: attributes.body.length,
+                        // @ts-ignore
+                        cols: attributes.body[0].cells.length,
+                        tableBorder: tableBorder,
+                        innerBorder: tableBorder,
+                        // @ts-ignore
+                        enableTableFooter: attributes.foot.length > 0,
+                        // @ts-ignore
+                        enableTableHeader: attributes.head.length > 0,
+                        // @ts-ignore
+                        tableAlignment: !isEmpty(attributes.align)
+                            ? // @ts-ignore
+                              attributes.align
+                            : "center",
+                        hasTableCreated: true,
+                    };
+                    return createBlock(
+                        "tableberg/table",
+                        tablebergAttributes,
+                        createBlocksFromInnerBlocksTemplate([
+                            ...tableHeaderBlocks,
+                            ...tableBodyBlocks,
+                            ...tableFooterBlocks,
+                        ])
+                    );
+                },
+            },
+        ],
+    },
 });

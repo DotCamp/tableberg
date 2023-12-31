@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "0.0.2",
+  "title": "Row",
+  "name": "tableberg/row",
+  "parent": [
+    "tableberg/table"
+  ],
+  "category": "design",
+  "icon": "table-row-after",
+  "description": "Tableberg Row: Individual row of a tableberg table",
+  "attributes": {
+    "tagName": {
+      "type": "string",
+      "default": "tr"
+    },
+    "isHeader": {
+      "type": "boolean",
+      "default": false
+    },
+    "isFooter": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "supports": {
+    "html": false
+  },
+  "textdomain": "tableberg",
+  "editorScript": "file:./index.js"
+}

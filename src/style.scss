@@ -60,7 +60,7 @@ table.wp-block-tableberg-table {
         }
     }
     &.has-inner-border {
-        td.wp-block-tableberg-cell {
+        .wp-block-tableberg-cell {
             border-top: var(--tableberg-inner-border-top, 1px solid #000000);
             border-right: var(
                 --tableberg-inner-border-right,
