@@ -105,10 +105,11 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
                         </ProFilter>
                     </RightContainerItem>
                 </div>
-                <HamburgerMenu
+                {/* TODO  WIlL ADD IT LATER*/}
+                {/* <HamburgerMenu
                     clickHandler={() => setMenuStatus(!menuStatus)}
                     status={menuStatus}
-                />
+                /> */}
             </div>
             <div
                 className={"dropdown-navigation"}

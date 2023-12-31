@@ -16,11 +16,12 @@ const routes = [
         title: "Welcome",
         element: <WelcomeContent />,
     },
-    {
-        path: "settings",
-        title: "Settings",
-        element: <SettingsContent />,
-    },
+    // TODO WIll ADD LATER.
+    // {
+    //     path: "settings",
+    //     title: "Settings",
+    //     element: <SettingsContent />,
+    // },
     {
         path: "404",
         title: "404",

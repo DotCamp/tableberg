@@ -1335,10 +1335,7 @@ function MenuHeader({
     url: proBuyUrl,
     title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Upgrade to PRO", "tableberg"),
     type: _ButtonLink__WEBPACK_IMPORTED_MODULE_9__.ButtonLinkType.DEFAULT
-  }))))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_HamburgerMenu__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    clickHandler: () => setMenuStatus(!menuStatus),
-    status: menuStatus
-  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  })))))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "dropdown-navigation",
     "data-menu-status": menuStatus
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -2770,11 +2767,14 @@ const routes = [{
   path: "welcome",
   title: "Welcome",
   element: (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_containers_WelcomeContent__WEBPACK_IMPORTED_MODULE_3__["default"], null)
-}, {
-  path: "settings",
-  title: "Settings",
-  element: (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_containers_SettingsContent__WEBPACK_IMPORTED_MODULE_4__["default"], null)
-}, {
+},
+// TODO WIll ADD LATER.
+// {
+//     path: "settings",
+//     title: "Settings",
+//     element: <SettingsContent />,
+// },
+{
   path: "404",
   title: "404",
   element: (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, "404")
