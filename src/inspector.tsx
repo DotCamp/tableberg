@@ -4,7 +4,12 @@
 import { __ } from "@wordpress/i18n";
 import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
 //@ts-ignore
-import { InspectorControls, HeightControl } from "@wordpress/block-editor";
+import {
+    InspectorControls,
+    HeightControl,
+    BlockControls,
+    BlockAlignmentToolbar,
+} from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
     PanelBody,
@@ -40,9 +45,13 @@ const AVAILABLE_JUSTIFICATIONS = [
     },
 ];
 
-function Inspector(props: BlockEditProps<TablebergBlockAttrs>) {
+function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
-    const { enableInnerBorder } = attributes;
+    const { enableInnerBorder, tableAlignment } = attributes;
+
+    const blockAlignChange = (newValue: "left" | "right" | "center") => {
+        setAttributes({ tableAlignment: newValue });
+    };
 
     return (
         <>
@@ -156,7 +165,14 @@ function Inspector(props: BlockEditProps<TablebergBlockAttrs>) {
                     borderLabel={__("Inner Border Size", "tableberg")}
                 />
             </InspectorControls>
+            <BlockControls>
+                <BlockAlignmentToolbar
+                    value={tableAlignment}
+                    onChange={blockAlignChange}
+                    controls={["left", "center", "right"]}
+                />
+            </BlockControls>
         </>
     );
 }
-export default Inspector;
+export default TablebergControls;
