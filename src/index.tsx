@@ -28,7 +28,7 @@ import {
 import "./style.scss";
 import metadata from "./block.json";
 import { FormEvent, useState } from "react";
-import TablebergControls from "./inspector";
+import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
