@@ -1327,15 +1327,7 @@ function MenuHeader({
     pluginVersion: versionData.currentVersion,
     allVersions: versionData.versions,
     onVersionRollBack: rollbackToVersion
-  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_ProFilter__WEBPACK_IMPORTED_MODULE_10__["default"], null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_AssetProvider__WEBPACK_IMPORTED_MODULE_8__["default"], {
-    assetIds: ["proBuyUrl"]
-  }, ({
-    proBuyUrl
-  }) => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_ButtonLink__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    url: proBuyUrl,
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Upgrade to PRO", "tableberg"),
-    type: _ButtonLink__WEBPACK_IMPORTED_MODULE_9__.ButtonLinkType.DEFAULT
-  })))))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }))))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "dropdown-navigation",
     "data-menu-status": menuStatus
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -2383,8 +2375,6 @@ function SettingsContent() {
     });
   }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_BooleanSetting__WEBPACK_IMPORTED_MODULE_5__["default"], {
     ...globalControlDataProps
-  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_UpgradeBoxContent__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    alignment: _components_BoxContent_BoxContent__WEBPACK_IMPORTED_MODULE_3__.BoxContentAlign.CENTER
   }));
 }
 
@@ -2455,7 +2445,7 @@ function WelcomeContent() {
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_YouTubeEmbed__WEBPACK_IMPORTED_MODULE_5__["default"], {
     height: 315,
     videoId: youtubeVideoId
-  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_UpgradeBoxContent__WEBPACK_IMPORTED_MODULE_8__["default"], null)), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "tableberg-welcome-content__right-sidebar"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_BoxContent_BoxContentProvider__WEBPACK_IMPORTED_MODULE_3__["default"], {
     contentId: "documentation"

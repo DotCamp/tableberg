@@ -44,7 +44,6 @@ function WelcomeContent() {
                                 videoId={youtubeVideoId}
                             />
                         </BoxContentProvider>
-                        <UpgradeBoxContent />
                     </div>
                     <div className={"tableberg-welcome-content__right-sidebar"}>
                         <BoxContentProvider contentId={"documentation"}>

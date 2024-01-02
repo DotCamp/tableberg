@@ -43,7 +43,6 @@ function SettingsContent() {
                 );
             })}
             <BooleanSetting {...globalControlDataProps} />
-            <UpgradeBoxContent alignment={BoxContentAlign.CENTER} />
         </div>
     );
 }

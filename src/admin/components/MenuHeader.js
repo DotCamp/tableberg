@@ -89,20 +89,6 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
                                 onVersionRollBack={rollbackToVersion}
                             />
                         </div>
-                        <ProFilter>
-                            <AssetProvider assetIds={["proBuyUrl"]}>
-                                {({ proBuyUrl }) => (
-                                    <ButtonLink
-                                        url={proBuyUrl}
-                                        title={__(
-                                            "Upgrade to PRO",
-                                            "tableberg"
-                                        )}
-                                        type={ButtonLinkType.DEFAULT}
-                                    />
-                                )}
-                            </AssetProvider>
-                        </ProFilter>
                     </RightContainerItem>
                 </div>
                 {/* TODO  WIlL ADD IT LATER*/}
