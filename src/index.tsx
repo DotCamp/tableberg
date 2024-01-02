@@ -33,6 +33,7 @@ import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
+import exampleImage from "./example.png";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 
@@ -43,6 +44,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             enableTableFooter,
             enableTableHeader,
             cols,
+            isExample,
         },
         setAttributes,
         clientId,
@@ -163,47 +165,59 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }
 
     const placeholder = (
-        <Placeholder
-            label={"Create Tableberg Table"}
-            icon={<BlockIcon icon={blockTable} showColors />}
-            instructions={"Create a complex table with all types of element"}
-        >
-            <form
-                className="blocks-table__placeholder-form"
-                onSubmit={onCreateTable}
+        <div {...innerBlocksProps}>
+            <Placeholder
+                label={"Create Tableberg Table"}
+                icon={<BlockIcon icon={blockTable} showColors />}
+                instructions={
+                    "Create a complex table with all types of element"
+                }
             >
-                <TextControl
-                    __nextHasNoMarginBottom
-                    type="number"
-                    label={"Column count"}
-                    value={initialColCount}
-                    onChange={onChangeInitialColCount}
-                    min="1"
-                    className="blocks-table__placeholder-input"
-                />
-                <TextControl
-                    __nextHasNoMarginBottom
-                    type="number"
-                    label={"Row count"}
-                    value={initialRowCount}
-                    onChange={onChangeInitialRowCount}
-                    min="1"
-                    className="blocks-table__placeholder-input"
-                />
-                <Button
-                    className="blocks-table__placeholder-button"
-                    variant="primary"
-                    type="submit"
+                <form
+                    className="blocks-table__placeholder-form"
+                    onSubmit={onCreateTable}
                 >
-                    {"Create Table"}
-                </Button>
-            </form>
-        </Placeholder>
+                    <TextControl
+                        __nextHasNoMarginBottom
+                        type="number"
+                        label={"Column count"}
+                        value={initialColCount}
+                        onChange={onChangeInitialColCount}
+                        min="1"
+                        className="blocks-table__placeholder-input"
+                    />
+                    <TextControl
+                        __nextHasNoMarginBottom
+                        type="number"
+                        label={"Row count"}
+                        value={initialRowCount}
+                        onChange={onChangeInitialRowCount}
+                        min="1"
+                        className="blocks-table__placeholder-input"
+                    />
+                    <Button
+                        className="blocks-table__placeholder-button"
+                        variant="primary"
+                        type="submit"
+                    >
+                        {"Create Table"}
+                    </Button>
+                </form>
+            </Placeholder>
+        </div>
     );
+
+    const example = <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
 
     return (
         <>
-            {hasTableCreated ? <table {...innerBlocksProps} /> : placeholder}
+            {isExample ? (
+                example
+            ) : hasTableCreated ? (
+                <table {...innerBlocksProps} />
+            ) : (
+                placeholder
+            )}
             <TablebergControls {...props} />
         </>
     );
