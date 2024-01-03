@@ -17,7 +17,6 @@ import {
 import {
     BlockEditProps,
     InnerBlockTemplate,
-    // @ts-ignore
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
     createBlock,
@@ -78,7 +77,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     useEffect(() => {
         if (enableTableHeader) {
-            const tableHeaderTemplate = [
+            const tableHeaderTemplate: InnerBlockTemplate[] = [
                 [
                     "tableberg/row",
                     { isHeader: true },
@@ -103,7 +102,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, [enableTableHeader]);
     useEffect(() => {
         if (enableTableFooter) {
-            const tableHeaderTemplate = [
+            const tableHeaderTemplate: InnerBlockTemplate[] = [
                 [
                     "tableberg/row",
                     { isFooter: true },
