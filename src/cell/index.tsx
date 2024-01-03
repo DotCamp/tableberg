@@ -32,6 +32,10 @@ import metadata from "./block.json";
 import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { store as tbStore } from "../store";
+import {
+    BlockEditorStoreActions,
+    BlockEditorStoreSelectors,
+} from "../wordpress__data";
 
 interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
@@ -94,7 +98,7 @@ function edit({
         removeBlock,
         moveBlocksToPosition,
         selectBlock,
-    } = useDispatch(blockEditorStore);
+    } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
 
     const {
         insertRowToTable,
@@ -111,24 +115,27 @@ function edit({
         getBlock,
     } = useSelect(
         (select) => {
-            const storeSelect = select(blockEditorStore) as any;
+            const storeSelect = select(
+                blockEditorStore
+            ) as BlockEditorStoreSelectors;
 
             const parentBlocks = storeSelect.getBlockParents(clientId);
 
             const tableBlockId = parentBlocks.find(
                 (parentId: string) =>
                     storeSelect.getBlockName(parentId) === "tableberg/table"
-            );
-            const tableBlock = storeSelect.getBlock(tableBlockId);
+            )!;
+            const tableBlock = storeSelect.getBlock(tableBlockId)!;
 
             const currentRowBlockId = parentBlocks.find(
                 (parentId: string) =>
                     storeSelect.getBlockName(parentId) === "tableberg/row"
-            );
+            )!;
             const currentRowBlock = storeSelect.getBlock(currentRowBlockId);
             const isHeader = currentRowBlock?.attributes?.isHeader;
             const isFooter = currentRowBlock?.attributes?.isFooter;
-            const { rows, cols } = storeSelect.getBlockAttributes(tableBlockId);
+            const { rows, cols } =
+                storeSelect.getBlockAttributes(tableBlockId)!;
 
             const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
 
@@ -433,8 +440,8 @@ function edit({
     };
 
     const removeEmptyRowsIfAny = () => {
-        const tableBlock: BlockInstance = getBlock(tableBlockId);
-        tableBlock.innerBlocks.forEach((row) => {
+        const tableBlock = getBlock(tableBlockId);
+        tableBlock?.innerBlocks.forEach((row) => {
             if (row.innerBlocks.length === 0) {
                 removeBlock(row.clientId);
             }
@@ -456,14 +463,14 @@ function edit({
             })
             .filter((i) => i);
 
-        blockInstances.forEach((block: BlockInstance) => {
+        blockInstances.forEach((block) => {
             moveBlocksToPosition(
-                block.innerBlocks.map((b) => b.clientId),
-                block.clientId,
+                block?.innerBlocks.map((b) => b.clientId)!,
+                block?.clientId,
                 targetCellId
             );
 
-            removeBlock(block.clientId);
+            removeBlock(block?.clientId!);
         });
 
         removeEmptyRowsIfAny();
