@@ -60,25 +60,6 @@ function WelcomeContent() {
                                 type={ButtonLinkType.DEFAULT}
                             />
                         </BoxContentProvider>
-                        <BoxContentProvider contentId={"community"}>
-                            <ButtonLinkGroup>
-                                <ButtonLink
-                                    url={facebookUrl}
-                                    title={__("Facebook", "tableberg")}
-                                    type={ButtonLinkType.TEXT}
-                                />
-                                <ButtonLink
-                                    url={twitterUrl}
-                                    title={__("Twitter", "tableberg")}
-                                    type={ButtonLinkType.TEXT}
-                                />
-                                <ButtonLink
-                                    url={youtubeUrl}
-                                    title={__("YouTube", "tableberg")}
-                                    type={ButtonLinkType.TEXT}
-                                />
-                            </ButtonLinkGroup>
-                        </BoxContentProvider>
                     </div>
                 </div>
             )}

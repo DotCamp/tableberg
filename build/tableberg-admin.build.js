@@ -2459,21 +2459,7 @@ function WelcomeContent() {
     url: supportUrl,
     title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Support Forum", "tableberg"),
     type: _components_ButtonLink__WEBPACK_IMPORTED_MODULE_6__.ButtonLinkType.DEFAULT
-  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_BoxContent_BoxContentProvider__WEBPACK_IMPORTED_MODULE_3__["default"], {
-    contentId: "community"
-  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ButtonLinkGroup__WEBPACK_IMPORTED_MODULE_7__["default"], null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ButtonLink__WEBPACK_IMPORTED_MODULE_6__["default"], {
-    url: facebookUrl,
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Facebook", "tableberg"),
-    type: _components_ButtonLink__WEBPACK_IMPORTED_MODULE_6__.ButtonLinkType.TEXT
-  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ButtonLink__WEBPACK_IMPORTED_MODULE_6__["default"], {
-    url: twitterUrl,
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Twitter", "tableberg"),
-    type: _components_ButtonLink__WEBPACK_IMPORTED_MODULE_6__.ButtonLinkType.TEXT
-  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ButtonLink__WEBPACK_IMPORTED_MODULE_6__["default"], {
-    url: youtubeUrl,
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("YouTube", "tableberg"),
-    type: _components_ButtonLink__WEBPACK_IMPORTED_MODULE_6__.ButtonLinkType.TEXT
-  }))))));
+  })))));
 }
 
 /**
@@ -2499,12 +2485,9 @@ __webpack_require__.r(__webpack_exports__);
 
 const welcomePageAssets = {
   proBuyUrl: "https://ultimateblocks.com/pricing/",
-  youtubeVideoId: "SDnYi50Vxus",
-  documentsUrl: "https://ultimateblocks.com/docs/",
-  supportUrl: "https://ultimateblocks.com/community/",
-  facebookUrl: "https://www.facebook.com/UltimateBlocks",
-  twitterUrl: "https://twitter.com/Ultimate_Blocks",
-  youtubeUrl: "https://www.youtube.com/@ultimateblockswp"
+  youtubeVideoId: "TKsL_bUVCTU",
+  documentsUrl: "https://tableberg.com/docs/",
+  supportUrl: "https://tableberg.com/contact/"
 };
 
 /***/ }),

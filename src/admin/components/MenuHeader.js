@@ -91,7 +91,7 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
                         </div>
                     </RightContainerItem>
                 </div>
-                {/* TODO  WIlL ADD IT LATER*/}
+                {/* TODO  WIlL ADD IT LATER GETTING ERROR FROM ICON*/}
                 {/* <HamburgerMenu
                     clickHandler={() => setMenuStatus(!menuStatus)}
                     status={menuStatus}
