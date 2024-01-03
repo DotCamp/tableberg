@@ -7,7 +7,7 @@ import { isEmpty, get, last } from "lodash";
 import { useEffect } from "@wordpress/element";
 import { Placeholder, TextControl, Button } from "@wordpress/components";
 import { blockTable } from "@wordpress/icons";
-import { useDispatch, useSelect } from "@wordpress/data";
+import { select, useDispatch, useSelect } from "@wordpress/data";
 import {
     useBlockProps,
     useInnerBlocksProps,
@@ -70,15 +70,19 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         };
     });
 
-    const { replaceInnerBlocks, insertBlocks, removeBlock } =
-        useDispatch(blockEditorStore);
+    const {
+        replaceInnerBlocks,
+        insertBlocks,
+        removeBlock,
+        updateBlockAttributes,
+    } = useDispatch(blockEditorStore);
 
     const [initialRowCount, setInitialRowCount] = useState<number | "">(2);
     const [initialColCount, setInitialColCount] = useState<number | "">(2);
 
     useEffect(() => {
         if (enableTableHeader) {
-            const tableHeaderTemplate = [
+            const tableHeaderTemplate: InnerBlockTemplate[] = [
                 [
                     "tableberg/row",
                     { isHeader: true },
@@ -103,7 +107,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, [enableTableHeader]);
     useEffect(() => {
         if (enableTableFooter) {
-            const tableHeaderTemplate = [
+            const tableHeaderTemplate: InnerBlockTemplate[] = [
                 [
                     "tableberg/row",
                     { isFooter: true },
@@ -126,6 +130,37 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             }
         }
     }, [enableTableFooter]);
+
+    
+    const removeEmptyCols = async () => {
+        const storeSelect = select(blockEditorStore) as any;
+        const rows = storeSelect.getBlocks(clientId);
+        const row1cols = rows[0].innerBlocks;
+        for (let i = 0; i < row1cols.length; i++) {
+            if (row1cols[i].innerBlocks.length === 0) {
+                rows.forEach(async (row: any) => {
+                    const colIndex = storeSelect.getBlockIndex(row.innerBlocks[i].clientId);
+                    await storeSelect
+                        .getBlocks(clientId)
+                        .forEach(async (row: any) => {
+                            const cells = storeSelect.getBlockOrder(
+                                row.clientId
+                            );
+                            await removeBlock(cells[colIndex]);
+                        });
+                    removeBlock(row.innerBlocks[i]);
+                });
+                updateBlockAttributes(clientId, {
+                    cols: row1cols.length - 1,
+                });
+                break;
+            }
+        }
+    };
+
+    if (select("core/editor").hasEditorRedo()) {
+        removeEmptyCols();
+    }
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
