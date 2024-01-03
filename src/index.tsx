@@ -7,13 +7,14 @@ import { isEmpty, get, last } from "lodash";
 import { useEffect } from "@wordpress/element";
 import { Placeholder, TextControl, Button } from "@wordpress/components";
 import { blockTable } from "@wordpress/icons";
-import { select, useDispatch, useSelect } from "@wordpress/data";
+import { useDispatch, useSelect } from "@wordpress/data";
 import {
     useBlockProps,
     useInnerBlocksProps,
     store as blockEditorStore,
     BlockIcon,
 } from "@wordpress/block-editor";
+import { store as editorStore } from "@wordpress/editor";
 import {
     BlockEditProps,
     InnerBlockTemplate,
@@ -57,18 +58,54 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     // @ts-ignore
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
-        // @ts-ignore false can obviously be assigned to renderAppender as does wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
+        // @ts-ignore false can obviously be assigned to renderAppender as does
+        // wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
         renderAppender: false,
         allowedBlocks: ALLOWED_BLOCKS,
     });
 
-    //@ts-ignore
     const { block } = useSelect((select) => {
         return {
             //@ts-ignore
             block: select(blockEditorStore).getBlock(clientId),
         };
-    });
+    }, []);
+
+    const { hasEditorRedo, removeEmptyCols } = useSelect((select) => {
+        const removeEmptyCols = async () => {
+            const storeSelect = select(blockEditorStore) as any;
+            const rows = storeSelect.getBlocks(clientId);
+            const row1cols = rows[0].innerBlocks;
+            for (let i = 0; i < row1cols.length; i++) {
+                if (row1cols[i].innerBlocks.length === 0) {
+                    rows.forEach(async (row: any) => {
+                        const colIndex = storeSelect.getBlockIndex(
+                            row.innerBlocks[i].clientId
+                        );
+                        await storeSelect
+                            .getBlocks(clientId)
+                            .forEach(async (row: any) => {
+                                const cells = storeSelect.getBlockOrder(
+                                    row.clientId
+                                );
+                                await removeBlock(cells[colIndex]);
+                            });
+                        removeBlock(row.innerBlocks[i]);
+                    });
+                    updateBlockAttributes(clientId, {
+                        cols: row1cols.length - 1,
+                    });
+                    break;
+                }
+            }
+        };
+
+        return {
+            // @ts-ignore
+            hasEditorRedo: select(editorStore).hasEditorRedo(),
+            removeEmptyCols,
+        };
+    }, []);
 
     const {
         replaceInnerBlocks,
@@ -131,34 +168,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         }
     }, [enableTableFooter]);
 
-    
-    const removeEmptyCols = async () => {
-        const storeSelect = select(blockEditorStore) as any;
-        const rows = storeSelect.getBlocks(clientId);
-        const row1cols = rows[0].innerBlocks;
-        for (let i = 0; i < row1cols.length; i++) {
-            if (row1cols[i].innerBlocks.length === 0) {
-                rows.forEach(async (row: any) => {
-                    const colIndex = storeSelect.getBlockIndex(row.innerBlocks[i].clientId);
-                    await storeSelect
-                        .getBlocks(clientId)
-                        .forEach(async (row: any) => {
-                            const cells = storeSelect.getBlockOrder(
-                                row.clientId
-                            );
-                            await removeBlock(cells[colIndex]);
-                        });
-                    removeBlock(row.innerBlocks[i]);
-                });
-                updateBlockAttributes(clientId, {
-                    cols: row1cols.length - 1,
-                });
-                break;
-            }
-        }
-    };
-
-    if (select("core/editor").hasEditorRedo()) {
+    if (hasEditorRedo) {
         removeEmptyCols();
     }
 
