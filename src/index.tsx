@@ -106,17 +106,28 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         };
     }, []);
 
-    const { replaceInnerBlocks, insertBlocks, removeBlock, updateBlockAttributes } =
-        useDispatch(blockEditorStore);
+    const {
+        replaceInnerBlocks,
+        insertBlocks,
+        removeBlock,
+        updateBlockAttributes,
+    } = useDispatch(blockEditorStore);
     //@ts-ignore
     const tablebergData = tablebergAdminMenuData;
     const globalBlockProperties = tablebergData?.block_properties;
-    const globalRows = globalBlockProperties?.data.find(
-        (property: any) => property.name === "row_number"
-    );
-    const globalColumns = globalBlockProperties?.data.find(
-        (property: any) => property.name === "column_number"
-    );
+
+    const globalRows = globalBlockProperties?.data.length
+        ? globalBlockProperties?.data.find(
+              (property: any) => property.name === "row_number"
+          )
+        : false;
+
+    const globalColumns = globalBlockProperties?.data.length
+        ? globalBlockProperties?.data.find(
+              (property: any) => property.name === "column_number"
+          )
+        : false;
+
     const [initialRowCount, setInitialRowCount] = useState<number | "">(
         globalRows?.value ?? 3
     );
