@@ -23,9 +23,15 @@
         "@types/react-dom": "^18.2.6",
         "@types/wordpress__block-editor": "^11.5.1",
         "@types/wordpress__blocks": "^12.5.4",
-        "@wordpress/scripts": "^26.6.0"
+        "@wordpress/base-styles": "^4.39.0",
+        "@wordpress/scripts": "^26.6.0",
+        "ignore-emit-webpack-plugin": "^2.0.6"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.3.0",
+        "@fortawesome/free-brands-svg-icons": "^6.3.0",
+        "@fortawesome/free-solid-svg-icons": "^6.3.0",
+        "@fortawesome/react-fontawesome": "^0.2.0",
         "@types/wordpress__editor": "^13.6.7",
         "@wordpress/blob": "^3.37.0",
         "@wordpress/components": "^25.3.0",

@@ -22,7 +22,6 @@ class ComposerStaticInit5c4d43dcdd3f5361bd26ecb40ba79213
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Tableberg\\Blocks\\Image' => __DIR__ . '/../..' . '/includes/Blocks/Image.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

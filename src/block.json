@@ -15,6 +15,10 @@
             "type": "number",
             "default": 2
         },
+        "cols": {
+            "type": "number",
+            "default": 2
+        },
         "hasTableCreated": {
             "type": "boolean",
             "default": false
@@ -94,6 +98,7 @@
         }
     },
     "textdomain": "tableberg",
-    "editorScript": "file:./index.tsx",
-    "style": "file:./style-index.css"
+    "editorScript": "tableberg-script",
+    "editorStyle": "tableberg-editor-style",
+    "style": "tableberg-style"
 }

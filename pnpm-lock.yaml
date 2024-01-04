@@ -5,6 +5,18 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@fortawesome/fontawesome-svg-core':
+    specifier: ^6.3.0
+    version: 6.5.1
+  '@fortawesome/free-brands-svg-icons':
+    specifier: ^6.3.0
+    version: 6.5.1
+  '@fortawesome/free-solid-svg-icons':
+    specifier: ^6.3.0
+    version: 6.5.1
+  '@fortawesome/react-fontawesome':
+    specifier: ^0.2.0
+    version: 0.2.0(@fortawesome/fontawesome-svg-core@6.5.1)(react@18.2.0)
   '@types/wordpress__editor':
     specifier: ^13.6.7
     version: 13.6.7(react-dom@18.2.0)(react@18.2.0)
@@ -55,9 +67,15 @@ devDependencies:
   '@types/wordpress__blocks':
     specifier: ^12.5.4
     version: 12.5.4(react-dom@18.2.0)(react@18.2.0)
+  '@wordpress/base-styles':
+    specifier: ^4.39.0
+    version: 4.39.0
   '@wordpress/scripts':
     specifier: ^26.6.0
     version: 26.6.0(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+  ignore-emit-webpack-plugin:
+    specifier: ^2.0.6
+    version: 2.0.6
 
 packages:
 
@@ -1748,6 +1766,47 @@ packages:
       '@floating-ui/dom': 1.4.5
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@fortawesome/fontawesome-common-types@6.5.1:
+    resolution: {integrity: sha512-GkWzv+L6d2bI5f/Vk6ikJ9xtl7dfXtoRu3YGE6nq0p/FFqA1ebMOAWg3XgRyb0I6LYyYkiAo+3/KrwuBp8xG7A==}
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dev: false
+
+  /@fortawesome/fontawesome-svg-core@6.5.1:
+    resolution: {integrity: sha512-MfRCYlQPXoLlpem+egxjfkEuP9UQswTrlCOsknus/NcMoblTH2g0jPrapbcIb04KGA7E2GZxbAccGZfWoYgsrQ==}
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dependencies:
+      '@fortawesome/fontawesome-common-types': 6.5.1
+    dev: false
+
+  /@fortawesome/free-brands-svg-icons@6.5.1:
+    resolution: {integrity: sha512-093l7DAkx0aEtBq66Sf19MgoZewv1zeY9/4C7vSKPO4qMwEsW/2VYTUTpBtLwfb9T2R73tXaRDPmE4UqLCYHfg==}
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dependencies:
+      '@fortawesome/fontawesome-common-types': 6.5.1
+    dev: false
+
+  /@fortawesome/free-solid-svg-icons@6.5.1:
+    resolution: {integrity: sha512-S1PPfU3mIJa59biTtXJz1oI0+KAXW6bkAb31XKhxdxtuXDiUIFsih4JR1v5BbxY7hVHsD1RKq+jRkVRaf773NQ==}
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dependencies:
+      '@fortawesome/fontawesome-common-types': 6.5.1
+    dev: false
+
+  /@fortawesome/react-fontawesome@0.2.0(@fortawesome/fontawesome-svg-core@6.5.1)(react@18.2.0):
+    resolution: {integrity: sha512-uHg75Rb/XORTtVt7OS9WoK8uM276Ufi7gCzshVWkUJbHhh3svsUUeqXerrM96Wm7fRiDzfKRwSoahhMIkGAYHw==}
+    peerDependencies:
+      '@fortawesome/fontawesome-svg-core': ~1 || ~6
+      react: '>=16.3'
+    dependencies:
+      '@fortawesome/fontawesome-svg-core': 6.5.1
+      prop-types: 15.8.1
+      react: 18.2.0
     dev: false
 
   /@hapi/hoek@9.3.0:
@@ -4043,8 +4102,8 @@ packages:
       - supports-color
     dev: true
 
-  /@wordpress/base-styles@4.27.0:
-    resolution: {integrity: sha512-W6cSj+rhRm5R+f51vk4l5c5768XqISwbyz2WL6zCLZ9nLpC3kQ4UetHruVNN+ylNqtK9I+6+ZJeBw+dmRqSYaQ==}
+  /@wordpress/base-styles@4.39.0:
+    resolution: {integrity: sha512-Obc6fKAnqzuWQSLgoce2yxhwMLd0nu4j7k3pVkBSzuitPw1LokmzHcHWPpgpMGR1T8CzKuj0Wsybcr2n3Xtyug==}
     dev: true
 
   /@wordpress/blob@3.37.0:
@@ -5154,7 +5213,7 @@ packages:
     peerDependencies:
       postcss: ^8.0.0
     dependencies:
-      '@wordpress/base-styles': 4.27.0
+      '@wordpress/base-styles': 4.39.0
       autoprefixer: 10.4.14(postcss@8.4.24)
       postcss: 8.4.24
     dev: true
@@ -8431,6 +8490,10 @@ packages:
 
   /ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
+
+  /ignore-emit-webpack-plugin@2.0.6:
+    resolution: {integrity: sha512-/zC18RWCC2wz4ZwnS4UoujGWzvSKy28DLjtE+jrGBOXej6YdmityhBDzE8E0NlktEqi4tgdNbydX8B6G4haHSQ==}
+    dev: true
 
   /ignore-walk@4.0.1:
     resolution: {integrity: sha512-rzDQLaW4jQbh2YrOFlJdCtX8qgJTehFRYiUB2r1osqTeDzV/3+Jh8fz1oAPzUThf3iku8Ds4IDqawI5d8mUiQw==}

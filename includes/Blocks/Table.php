@@ -7,6 +7,7 @@
 
 namespace Tableberg\Blocks;
 
+use Tableberg;
 use WP_Block;
 
 /**
@@ -119,7 +120,9 @@ class Table {
 	 * Register the block.
 	 */
 	public function block_registration() {
-		$defaults = new \Tableberg\Defaults();
+		$defaults         = new \Tableberg\Defaults();
+		$tableberg_assets = new Tableberg\Assets();
+		$tableberg_assets->register_blocks_assets();
 		register_block_type(
 			TABLEBERG_DIR_PATH . 'build/block.json',
 			array(

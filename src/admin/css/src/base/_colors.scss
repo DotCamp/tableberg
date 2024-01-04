@@ -1,0 +1,71 @@
+$white: #fff;
+$black: #000;
+$wp-gray: #ccc;
+$wp-black: #2f2f2f;
+$gray-100: #fbfbfb;
+$gray-300: #e5e5e5;
+$gray-400: #dfdfdf;
+$gray-500: #b4a7a7;
+$gray-600: #7b6d6d;
+$gray-800: #938181;
+$red-100: #fff0f0;
+$deep-aqua-500: #176b87;
+$yellow-500: #eab308;
+$green-500: #22c55e;
+$positive: $green-500;
+$negative: $deep-aqua-500;
+$gold: #ffd700;
+$logo-color: #f64646;
+
+// overhaul colors
+// gray
+$o-gray-50: #fff3f6;
+$neutral-gray-50: #f8fafc;
+$o-gray-200: #e2e8f0;
+$o-gray-500: #64748b;
+
+// blue
+$o-blue-100: #bbcaf3;
+$o-blue-300: #6183e4;
+$o-blue-500: #1d4ed8;
+
+// common color values
+
+$white: #ffffff;
+$gutenberg-gray: #e0e0e0;
+
+$wp-gray: #cccccc;
+$wp-black: #2f2f2f;
+
+$plugin-deep-aqua: #176b87;
+
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+
+$red-100: #fff0f0;
+$deep-aqua-500: #176b87;
+
+$yellow-200: #fef08a;
+$yellow-400: #facc15;
+$yellow-500: #eab308;
+
+$green-100: #dcfce7;
+$green-200: #bbf7d0;
+$green-400: #86efac;
+$green-500: #22c55e;
+
+$blue-100: #dbeafe;
+$blue-500: #3b82f6;
+
+$positive: $green-500;
+$negative: $deep-aqua-500;
+
+$logo-color: #f64646;
+
+$wordpress-gray: #e0e0e0;
+$wordpress-admin-main: var(--wp-admin-theme-color);
