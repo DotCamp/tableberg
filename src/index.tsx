@@ -78,26 +78,22 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             /**
              * First check if there is any empty rows.
              */
-            for (const row of rows) {
+            row_loop: for (const row of rows) {
                 const cols = row.innerBlocks;
                 for (let i = 0; i < cols.length; i++) {
-                    if (cols[i].innerBlocks.length !== 0) {
-                        break;
+                    if (cols[i].innerBlocks.length > 0) {
+                        continue row_loop;
                     }
                 }
+
                 // The row is empty, remove it
-                const cells = storeSelect.getBlockOrder(
-                    row.clientId
-                );
+                const cells = storeSelect.getBlockOrder(row.clientId);
                 const removeRows: Promise<any>[] = [];
                 for (const cell of cells) {
                     removeRows.push(removeBlock(cell));
                 }
                 await Promise.all(removeRows);
-                await removeBlock(row);
-                updateBlockAttributes(clientId, {
-                    cols: cols.length - 1,
-                });
+                await removeBlock(row.clientId);
                 // There can be only one empty row or column in a undo
                 return;
             }
