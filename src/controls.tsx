@@ -6,9 +6,11 @@ import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
 //@ts-ignore
 import {
     InspectorControls,
+    // @ts-ignore
     HeightControl,
     BlockControls,
     BlockAlignmentToolbar,
+    FontSizePicker,
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
@@ -59,8 +61,7 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
         setAttributes({ fontColor: value.hex });
     };
     const onFontSizeChange = (value: any) => {
-        
-        setAttributes({ fontSize: value.toString() + 'px' });
+        setAttributes({ fontSize: value });
     };
     const onLinkColorChange = (value: any) => {
         setAttributes({ linkColor: value.hex });
@@ -74,11 +75,10 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                         color={attributes.fontColor}
                         onChangeComplete={onFontColorChange}
                     />
-                    <RangeControl
-                        label="Size"
-                        value={parseInt(attributes.fontSize) || 0}
-                        min={3}
-                        max={100}
+                    <FontSizePicker
+                        /*
+                        // @ts-ignore*/
+                        value={attributes.fontSize}
                         onChange={onFontSizeChange}
                     />
                 </PanelBody>
@@ -195,6 +195,8 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
             </InspectorControls>
             <BlockControls>
                 <BlockAlignmentToolbar
+                    /*
+                    // @ts-ignore*/
                     value={tableAlignment}
                     onChange={blockAlignChange}
                     controls={["left", "center", "right"]}
