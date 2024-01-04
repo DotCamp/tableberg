@@ -12,6 +12,92 @@ namespace Tableberg;
  */
 class Utils {
 	/**
+	 * Get welcome page data.
+	 *
+	 * @return array
+	 */
+	public static function welcome_page() {
+		return array(
+			'welcome'       => array(
+				'title'   => 'Welcome to Tableberg!',
+				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!',
+			),
+			'documentation' => array(
+				'title'   => 'Documentation',
+				'content' => 'Elevate your space with Tableberg: a sleek, modern table block for style and functionality. Crafted for timeless elegance and versatility.',
+			),
+			'support'       => array(
+				'title'   => 'Support',
+				'content' => "Visit our Tableberg Support Page for quick solutions and assistance. We're here to ensure your Tableberg experience is seamless and satisfying.",
+			),
+			'community'     => array(
+				'title'   => 'Join Community',
+				'content' => 'Join the vibrant Tableberg community. Connect, share, and discover endless possibilities together. Elevate your experience with like-minded enthusiasts now!',
+			),
+			'upgrade'       => array(
+				'title'   => 'Upgrade to Tableberg PRO!',
+				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!',
+			),
+		);
+	}
+	/**
+	 * Get Individual Control.
+	 *
+	 * @return array
+	 */
+	public static function individual_control() {
+		return array(
+			array(
+				'title'   => 'Individual Control',
+				'name'    => 'individual_control',
+				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!',
+				'active'  => false,
+			),
+		);
+	}
+	/**
+	 * Get global control.
+	 *
+	 * @return array
+	 */
+	public static function global_control() {
+		return array(
+			array(
+				'title'   => 'Global Control',
+				'name'    => 'global_control',
+				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!',
+				'active'  => true,
+			),
+		);
+	}
+	/**
+	 * Get default block properties.
+	 *
+	 * @return array
+	 */
+	public static function default_block_properties() {
+		return array(
+			array(
+				'title'   => 'Default Row Number',
+				'name'    => 'row_number',
+				'content' => 'Set your default row number of the table when you add Tableberg to your site. Further you can increase or decrease it there simply.',
+				'value'   => 3,
+			),
+			array(
+				'title'   => 'Default Column Number',
+				'name'    => 'column_number',
+				'content' => 'Set your default column number of the table when you add Tableberg to your site. Further you can increase or decrease it there simply.',
+				'value'   => 3,
+			),
+			array(
+				'title'   => 'Default Property Font Size',
+				'name'    => 'font_size',
+				'content' => 'Set your default FONT SIZE of the PROPERTY of the table when you add Tableberg to your site. Further you can increase or decrease it there simply.',
+				'value'   => 18,
+			),
+		);
+	}
+	/**
 	 * Check if border has split borders.
 	 *
 	 * @param array $border - block border.
