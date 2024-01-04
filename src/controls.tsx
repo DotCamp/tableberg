@@ -11,12 +11,11 @@ import {
     BlockControls,
     BlockAlignmentToolbar,
     FontSizePicker,
+    ColorPalette,
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
-    ColorPicker,
     PanelBody,
-    RangeControl,
     ToggleControl,
     __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
@@ -58,7 +57,7 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     };
 
     const onFontColorChange = (value: any) => {
-        setAttributes({ fontColor: value.hex });
+        setAttributes({ fontColor: value });
     };
     const onFontSizeChange = (value: any) => {
         setAttributes({ fontSize: value });
@@ -71,9 +70,10 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
         <>
             <InspectorControls>
                 <PanelBody title="Global Style" initialOpen={false}>
-                    <ColorPicker
-                        color={attributes.fontColor}
-                        onChangeComplete={onFontColorChange}
+                    <ColorPalette
+                        value={attributes.fontColor}
+                        onChange={onFontColorChange}
+                        colors={[]}
                     />
                     <FontSizePicker
                         /*
