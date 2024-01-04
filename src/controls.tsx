@@ -12,7 +12,9 @@ import {
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
+    ColorPicker,
     PanelBody,
+    RangeControl,
     ToggleControl,
     __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
@@ -53,8 +55,34 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
         setAttributes({ tableAlignment: newValue });
     };
 
+    const onFontColorChange = (value: any) => {
+        setAttributes({ fontColor: value.hex });
+    };
+    const onFontSizeChange = (value: any) => {
+        
+        setAttributes({ fontSize: value.toString() + 'px' });
+    };
+    const onLinkColorChange = (value: any) => {
+        setAttributes({ linkColor: value.hex });
+    };
+
     return (
         <>
+            <InspectorControls>
+                <PanelBody title="Global Style" initialOpen={false}>
+                    <ColorPicker
+                        color={attributes.fontColor}
+                        onChangeComplete={onFontColorChange}
+                    />
+                    <RangeControl
+                        label="Size"
+                        value={parseInt(attributes.fontSize) || 0}
+                        min={3}
+                        max={100}
+                        onChange={onFontSizeChange}
+                    />
+                </PanelBody>
+            </InspectorControls>
             <InspectorControls>
                 <PanelBody>
                     <ToggleControl

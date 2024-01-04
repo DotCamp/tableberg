@@ -12,6 +12,14 @@ table.wp-block-tableberg-table {
     border-left: var(--tableberg-table-border-left, 1px solid black);
     border-collapse: collapse;
     width: 100%;
+
+    color: var(--tableberg-global-text-color);
+    font-size: var(--tableberg-global-font-size);
+
+    a {
+        color: var(--tableberg-global-link-color);;
+    }
+
     &.has-table-width {
         max-width: var(--tableber-table-width) !important;
     }
