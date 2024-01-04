@@ -1,7 +1,6 @@
 # Directories
 node_modules/
 .vscode
+build
 # Files
 tableberg.zip
-
-
