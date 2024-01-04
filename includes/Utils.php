@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Table Block
  *
@@ -20,7 +21,7 @@ class Utils {
 		return array(
 			'welcome'       => array(
 				'title'   => 'Welcome to Tableberg!',
-				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!',
+				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Block Editor Plugin for Effortless Table Creation!',
 			),
 			'documentation' => array(
 				'title'   => 'Documentation',
@@ -36,7 +37,7 @@ class Utils {
 			),
 			'upgrade'       => array(
 				'title'   => 'Upgrade to Tableberg PRO!',
-				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!',
+				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Block Editor Plugin for Effortless Table Creation!',
 			),
 		);
 	}
@@ -50,7 +51,7 @@ class Utils {
 			array(
 				'title'   => 'Individual Control',
 				'name'    => 'individual_control',
-				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!',
+				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Block Editor Plugin for Effortless Table Creation!',
 				'active'  => false,
 			),
 		);
@@ -65,7 +66,7 @@ class Utils {
 			array(
 				'title'   => 'Global Control',
 				'name'    => 'global_control',
-				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Gutenberg Plugin for Effortless Table Creation!',
+				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Block Editor Plugin for Effortless Table Creation!',
 				'active'  => true,
 			),
 		);
@@ -103,10 +104,10 @@ class Utils {
 	 * @param array $border - block border.
 	 * @return bool Whether the border has split sides.
 	 */
-	public static function has_split_borders( $border = array() ) {
-		$sides = array( 'top', 'right', 'bottom', 'left' );
-		foreach ( $border as $side => $value ) {
-			if ( in_array( $side, $sides, true ) ) {
+	public static function has_split_borders($border = array()) {
+		$sides = array('top', 'right', 'bottom', 'left');
+		foreach ($border as $side => $value) {
+			if (in_array($side, $sides, true)) {
 				return true;
 			}
 		}
@@ -120,10 +121,10 @@ class Utils {
 	 * @param array $object - block border.
 	 * @return array CSS styles for the border.
 	 */
-	public static function get_border_css( $object ) {
+	public static function get_border_css($object) {
 		$css = array();
 
-		if ( ! self::has_split_borders( $object ) ) {
+		if (!self::has_split_borders($object)) {
 			$css['top']    = $object;
 			$css['right']  = $object;
 			$css['bottom'] = $object;
@@ -141,12 +142,12 @@ class Utils {
 	 * @param string $side - border side.
 	 * @return string CSS value for the specified side.
 	 */
-	public static function get_single_side_border_value( $border, $side ) {
-		$width = $border[ $side ]['width'] ?? '';
-		$style = $border[ $side ]['style'] ?? '';
-		$color = $border[ $side ]['color'] ?? '';
+	public static function get_single_side_border_value($border, $side) {
+		$width = $border[$side]['width'] ?? '';
+		$style = $border[$side]['style'] ?? '';
+		$color = $border[$side]['color'] ?? '';
 
-		return "{$width} " . ( $width && empty( $border[ $side ]['style'] ) ? 'solid' : $style ) . " {$color}";
+		return "{$width} " . ($width && empty($border[$side]['style']) ? 'solid' : $style) . " {$color}";
 	}
 	/**
 	 * Check if a value is considered empty based on certain conditions.
@@ -154,13 +155,13 @@ class Utils {
 	 * @param mixed $value - The value to check.
 	 * @return bool Whether the value is considered empty.
 	 */
-	public static function is_value_empty( $value ) {
+	public static function is_value_empty($value) {
 		return (
-			self::is_undefined( $value ) ||
+			self::is_undefined($value) ||
 			false === $value ||
-			trim( $value ) === '' ||
-			trim( $value ) === 'undefined undefined undefined' ||
-			empty( $value )
+			trim($value) === '' ||
+			trim($value) === 'undefined undefined undefined' ||
+			empty($value)
 		);
 	}
 	/**
@@ -170,15 +171,15 @@ class Utils {
 	 * @param string $slug - slug to use in variable.
 	 * @return array CSS styles for the border variables.
 	 */
-	public static function get_border_variables_css( $border, $slug ) {
-		$border_in_dimensions = self::get_border_css( $border );
-		$border_sides         = array( 'top', 'right', 'bottom', 'left' );
+	public static function get_border_variables_css($border, $slug) {
+		$border_in_dimensions = self::get_border_css($border);
+		$border_sides         = array('top', 'right', 'bottom', 'left');
 		$borders              = array();
 
-		foreach ( $border_sides as $side ) {
+		foreach ($border_sides as $side) {
 			$side_property             = "--tableberg-{$slug}-border-{$side}";
-			$side_value                = self::get_single_side_border_value( $border_in_dimensions, $side );
-			$borders[ $side_property ] = $side_value;
+			$side_value                = self::get_single_side_border_value($border_in_dimensions, $side);
+			$borders[$side_property] = $side_value;
 		}
 
 		return $borders;
@@ -190,11 +191,11 @@ class Utils {
 	 * @param string $value - spacing value.
 	 * @return bool Whether the value is a preset or custom spacing.
 	 */
-	public static function is_value_spacing_preset( $value ) {
-		if ( ! $value || ! is_string( $value ) ) {
+	public static function is_value_spacing_preset($value) {
+		if (!$value || !is_string($value)) {
 			return false;
 		}
-		return '0' === $value || strpos( $value, 'var:preset|spacing|' ) === 0;
+		return '0' === $value || strpos($value, 'var:preset|spacing|') === 0;
 	}
 
 	/**
@@ -203,15 +204,15 @@ class Utils {
 	 * @param string $value - spacing value.
 	 * @return string CSS variable or the original value.
 	 */
-	public static function get_spacing_preset_css_var( $value ) {
-		if ( ! $value ) {
+	public static function get_spacing_preset_css_var($value) {
+		if (!$value) {
 			return null;
 		}
 
 		$matches = array();
-		preg_match( '/var:preset\|spacing\|(.+)/', $value, $matches );
+		preg_match('/var:preset\|spacing\|(.+)/', $value, $matches);
 
-		if ( empty( $matches ) ) {
+		if (empty($matches)) {
 			return $value;
 		}
 		return "var(--wp--preset--spacing--{$matches[1]})";
@@ -223,14 +224,14 @@ class Utils {
 	 * @param array $object - spacing object.
 	 * @return array CSS styles for spacing.
 	 */
-	public static function get_spacing_css( $object ) {
+	public static function get_spacing_css($object) {
 		$css = array();
 
-		foreach ( $object as $key => $value ) {
-			if ( self::is_value_spacing_preset( $value ) ) {
-				$css[ $key ] = self::get_spacing_preset_css_var( $value );
+		foreach ($object as $key => $value) {
+			if (self::is_value_spacing_preset($value)) {
+				$css[$key] = self::get_spacing_preset_css_var($value);
 			} else {
-				$css[ $key ] = $value;
+				$css[$key] = $value;
 			}
 		}
 
@@ -243,8 +244,8 @@ class Utils {
 	 * @param mixed $value - value.
 	 * @return bool Whether the value is undefined.
 	 */
-	public static function is_undefined( $value ) {
-		return null === $value || ! isset( $value ) || empty( $value );
+	public static function is_undefined($value) {
+		return null === $value || !isset($value) || empty($value);
 	}
 
 	/**
@@ -253,11 +254,11 @@ class Utils {
 	 * @param array $styles - CSS styles.
 	 * @return string Generated CSS string.
 	 */
-	public static function generate_css_string( $styles ) {
+	public static function generate_css_string($styles) {
 		$css_string = '';
 
-		foreach ( $styles as $key => $value ) {
-			if ( ! self::is_undefined( $value ) && false !== $value && trim( $value ) !== '' && trim( $value ) !== 'undefined undefined undefined' && ! empty( $value ) ) {
+		foreach ($styles as $key => $value) {
+			if (!self::is_undefined($value) && false !== $value && trim($value) !== '' && trim($value) !== 'undefined undefined undefined' && !empty($value)) {
 				$css_string .= $key . ': ' . $value . '; ';
 			}
 		}
@@ -273,12 +274,12 @@ class Utils {
 	 * @param string $gradient_attr_key - block background gradient attribute key.
 	 * @return string Background color or gradient.
 	 */
-	public static function get_background_color( $attributes, $color_attr_key, $gradient_attr_key ) {
+	public static function get_background_color($attributes, $color_attr_key, $gradient_attr_key) {
 		$bg_color = '';
-		if ( ! empty( $attributes[ $color_attr_key ] ) ) {
-			$bg_color = $attributes[ $color_attr_key ];
-		} elseif ( ! empty( $attributes[ $gradient_attr_key ] ) ) {
-			$bg_color = $attributes[ $gradient_attr_key ];
+		if (!empty($attributes[$color_attr_key])) {
+			$bg_color = $attributes[$color_attr_key];
+		} elseif (!empty($attributes[$gradient_attr_key])) {
+			$bg_color = $attributes[$gradient_attr_key];
 		}
 		return $bg_color;
 	}

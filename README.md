@@ -1,6 +1,6 @@
 # TableBerg
 
-Gutenberg Block for Tables.
+Advanced Table Block for Wordpress Block Editor
 
 ## Project Setup
 
