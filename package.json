@@ -26,10 +26,12 @@
         "@wordpress/scripts": "^26.6.0"
     },
     "dependencies": {
+        "@types/wordpress__editor": "^13.6.7",
         "@wordpress/blob": "^3.37.0",
         "@wordpress/components": "^25.3.0",
         "@wordpress/compose": "^6.18.0",
         "@wordpress/data": "^9.7.0",
+        "@wordpress/editor": "^13.25.0",
         "@wordpress/i18n": "^4.37.0",
         "@wordpress/icons": "^9.28.0",
         "@wordpress/url": "^3.42.0",

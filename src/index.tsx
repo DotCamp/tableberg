@@ -14,6 +14,7 @@ import {
     store as blockEditorStore,
     BlockIcon,
 } from "@wordpress/block-editor";
+import { store as editorStore } from "@wordpress/editor";
 import {
     BlockEditProps,
     InnerBlockTemplate,
@@ -56,21 +57,61 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     // @ts-ignore
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
-        // @ts-ignore false can obviously be assigned to renderAppender as does wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
+        // @ts-ignore false can obviously be assigned to renderAppender as does
+        // wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
         renderAppender: false,
         allowedBlocks: ALLOWED_BLOCKS,
     });
 
-    //@ts-ignore
     const { block } = useSelect((select) => {
         return {
             //@ts-ignore
             block: select(blockEditorStore).getBlock(clientId),
         };
-    });
+    }, []);
 
-    const { replaceInnerBlocks, insertBlocks, removeBlock } =
-        useDispatch(blockEditorStore);
+    const { hasEditorRedo, removeEmptyCols } = useSelect((select) => {
+        const removeEmptyCols = async () => {
+            const storeSelect = select(blockEditorStore) as any;
+            const rows = storeSelect.getBlocks(clientId);
+            const row1cols = rows[0].innerBlocks;
+            for (let i = 0; i < row1cols.length; i++) {
+                if (row1cols[i].innerBlocks.length === 0) {
+                    rows.forEach(async (row: any) => {
+                        const colIndex = storeSelect.getBlockIndex(
+                            row.innerBlocks[i].clientId
+                        );
+                        await storeSelect
+                            .getBlocks(clientId)
+                            .forEach(async (row: any) => {
+                                const cells = storeSelect.getBlockOrder(
+                                    row.clientId
+                                );
+                                await removeBlock(cells[colIndex]);
+                            });
+                        removeBlock(row.innerBlocks[i]);
+                    });
+                    updateBlockAttributes(clientId, {
+                        cols: row1cols.length - 1,
+                    });
+                    break;
+                }
+            }
+        };
+
+        return {
+            // @ts-ignore
+            hasEditorRedo: select(editorStore).hasEditorRedo(),
+            removeEmptyCols,
+        };
+    }, []);
+
+    const {
+        replaceInnerBlocks,
+        insertBlocks,
+        removeBlock,
+        updateBlockAttributes,
+    } = useDispatch(blockEditorStore);
 
     const [initialRowCount, setInitialRowCount] = useState<number | "">(2);
     const [initialColCount, setInitialColCount] = useState<number | "">(2);
@@ -125,6 +166,10 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             }
         }
     }, [enableTableFooter]);
+
+    if (hasEditorRedo) {
+        removeEmptyCols();
+    }
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
