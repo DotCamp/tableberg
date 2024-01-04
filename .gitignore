@@ -4,3 +4,4 @@ node_modules/
 build
 # Files
 tableberg.zip
+.DS_Store

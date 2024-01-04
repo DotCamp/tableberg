@@ -34,6 +34,41 @@ if ( ! defined( 'TABLEBERG_PLUGIN_FILE' ) ) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+
+if ( ! function_exists( 'tab_fs' ) ) {
+    // Create a helper function for easy SDK access.
+    function tab_fs() {
+        global $tab_fs;
+
+        if ( ! isset( $tab_fs ) ) {
+            // Include Freemius SDK.
+            require_once __DIR__ . '/includes/freemius/start.php';
+
+            $tab_fs = fs_dynamic_init( array(
+                'id'                  => '14649',
+                'slug'                => 'tableberg',
+                'type'                => 'plugin',
+                'public_key'          => 'pk_8043aa788c004c4b385af8384c74b',
+                'is_premium'          => false,
+                'has_addons'          => false,
+                'has_paid_plans'      => false,
+                'menu'                => array(
+                    'slug'           => 'tableberg-settings',
+                    'first-path'     => 'admin.php?page=tableberg-settings&route=welcome',
+                ),
+            ) );
+        }
+
+        return $tab_fs;
+    }
+
+    // Init Freemius.
+    tab_fs();
+    // Signal that SDK was initiated.
+    do_action( 'tab_fs_loaded' );
+}
+
+
 if ( ! class_exists( 'Tableberg' ) ) {
 	/**
 	 * External Query Block main class.
