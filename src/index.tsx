@@ -71,11 +71,15 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, []);
 
     const { hasEditorRedo, removeEmptyCols } = useSelect((select) => {
-        const removeEmptyCols = async () => {
+        const removeEmptyCols = () => {
             const storeSelect = select(blockEditorStore) as any;
             const rows = storeSelect.getBlocks(clientId);
             const row1cols = rows[0].innerBlocks;
             for (let i = 0; i < row1cols.length; i++) {
+                /**
+                 * If the i th col of the first row is empty,
+                 * we can safely consider the whole i th column to be empty
+                 */
                 if (row1cols[i].innerBlocks.length === 0) {
                     rows.forEach(async (row: any) => {
                         const colIndex = storeSelect.getBlockIndex(
@@ -96,6 +100,26 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                     });
                     break;
                 }
+            }
+
+            const lastRow = rows[rows.length - 1];
+            if (lastRow?.innerBlocks && lastRow.innerBlocks[0].innerBlocks.length === 0) {
+                /**
+                 * If the first col of the last row is empty,
+                 * we can safely consider the whole row to be empty
+                 * because there will be a block if the row is normal
+                 */
+                const cells = storeSelect.getBlockOrder(
+                    lastRow.clientId
+                );
+                cells.forEach(async (col: any) => {
+                    await removeBlock(col);
+                });
+                removeBlock(lastRow);
+                
+                updateBlockAttributes(clientId, {
+                    rows: rows.length - 1,
+                });
             }
         };
 
