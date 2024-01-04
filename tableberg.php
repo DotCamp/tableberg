@@ -1,11 +1,13 @@
 <?php
 /**
  * Plugin Name:       Tableberg
- * Description:       Tableberg: table builder Gutenberg block
+ * Plugin URI:        https://tableberg.com/
+ * Description:       Table Block by Tableberg - Create Better Tables With Block Editor
  * Version:           0.0.2
  * Requires at least: 6.1
  * Requires PHP:      7.0
- * Author:            Dotcamp
+ * Author:            Tableberg
+ * Author URI:        https://tableberg.com/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       tableberg

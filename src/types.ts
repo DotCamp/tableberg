@@ -1,20 +1,5 @@
-export interface SingleBorderTypes {
-    width?: string;
-    style?: string;
-    color?: string;
-}
-export interface BorderTypes {
-    top?: SingleBorderTypes;
-    right?: SingleBorderTypes;
-    bottom?: SingleBorderTypes;
-    left?: SingleBorderTypes;
-}
-export interface PaddingTypes {
-    top?: string;
-    right?: string;
-    bottom?: string;
-    left?: string;
-}
+import { BorderTypes, PaddingTypes } from "./utils/common-types";
+
 export interface TablebergBlockAttrs {
     rows: number;
     cols: number;
@@ -35,4 +20,5 @@ export interface TablebergBlockAttrs {
     tableBorder: BorderTypes;
     innerBorder: BorderTypes;
     enableInnerBorder: boolean;
+    isExample: boolean;
 }

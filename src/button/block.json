@@ -20,7 +20,13 @@
         "backgroundColor": {
             "type": "string"
         },
+        "backgroundGradient": {
+            "type": "string"
+        },
         "textColor": {
+            "type": "string"
+        },
+        "backgroundHoverGradient": {
             "type": "string"
         },
         "backgroundHoverColor": {

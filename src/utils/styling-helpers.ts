@@ -1,7 +1,7 @@
 // @ts-ignore
 import { isEmpty, has } from "lodash";
 import { __experimentalHasSplitBorders as hasSplitBorders } from "@wordpress/components";
-import { BorderTypes } from "../types";
+import { BorderTypes } from "./common-types";
 
 export const getBorderCSS = (object: object) => {
     let borders: BorderTypes = {};

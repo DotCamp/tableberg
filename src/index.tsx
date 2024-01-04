@@ -14,10 +14,10 @@ import {
     store as blockEditorStore,
     BlockIcon,
 } from "@wordpress/block-editor";
+import { store as editorStore } from "@wordpress/editor";
 import {
     BlockEditProps,
     InnerBlockTemplate,
-    // @ts-ignore
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
     createBlock,
@@ -28,11 +28,12 @@ import {
 import "./style.scss";
 import metadata from "./block.json";
 import { FormEvent, useState } from "react";
-import Inspector from "./inspector";
+import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
+import exampleImage from "./example.png";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 
@@ -43,6 +44,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             enableTableFooter,
             enableTableHeader,
             cols,
+            isExample,
         },
         setAttributes,
         clientId,
@@ -55,20 +57,56 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     // @ts-ignore
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
-        // @ts-ignore false can obviously be assigned to renderAppender as does wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
+        // @ts-ignore false can obviously be assigned to renderAppender as does
+        // wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
         renderAppender: false,
         allowedBlocks: ALLOWED_BLOCKS,
     });
 
-    //@ts-ignore
     const { block } = useSelect((select) => {
         return {
             //@ts-ignore
             block: select(blockEditorStore).getBlock(clientId),
         };
-    });
+    }, []);
 
-    const { replaceInnerBlocks, insertBlocks, removeBlock } =
+    const { hasEditorRedo, removeEmptyCols } = useSelect((select) => {
+        const removeEmptyCols = async () => {
+            const storeSelect = select(blockEditorStore) as any;
+            const rows = storeSelect.getBlocks(clientId);
+            const row1cols = rows[0].innerBlocks;
+            for (let i = 0; i < row1cols.length; i++) {
+                if (row1cols[i].innerBlocks.length === 0) {
+                    rows.forEach(async (row: any) => {
+                        const colIndex = storeSelect.getBlockIndex(
+                            row.innerBlocks[i].clientId
+                        );
+                        await storeSelect
+                            .getBlocks(clientId)
+                            .forEach(async (row: any) => {
+                                const cells = storeSelect.getBlockOrder(
+                                    row.clientId
+                                );
+                                await removeBlock(cells[colIndex]);
+                            });
+                        removeBlock(row.innerBlocks[i]);
+                    });
+                    updateBlockAttributes(clientId, {
+                        cols: row1cols.length - 1,
+                    });
+                    break;
+                }
+            }
+        };
+
+        return {
+            // @ts-ignore
+            hasEditorRedo: select(editorStore).hasEditorRedo(),
+            removeEmptyCols,
+        };
+    }, []);
+
+    const { replaceInnerBlocks, insertBlocks, removeBlock, updateBlockAttributes } =
         useDispatch(blockEditorStore);
     //@ts-ignore
     const tablebergData = tablebergAdminMenuData;
@@ -88,7 +126,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     useEffect(() => {
         if (enableTableHeader) {
-            const tableHeaderTemplate = [
+            const tableHeaderTemplate: InnerBlockTemplate[] = [
                 [
                     "tableberg/row",
                     { isHeader: true },
@@ -113,7 +151,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, [enableTableHeader]);
     useEffect(() => {
         if (enableTableFooter) {
-            const tableHeaderTemplate = [
+            const tableHeaderTemplate: InnerBlockTemplate[] = [
                 [
                     "tableberg/row",
                     { isFooter: true },
@@ -136,6 +174,10 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             }
         }
     }, [enableTableFooter]);
+
+    if (hasEditorRedo) {
+        removeEmptyCols();
+    }
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
@@ -175,48 +217,60 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }
 
     const placeholder = (
-        <Placeholder
-            label={"Create Tableberg Table"}
-            icon={<BlockIcon icon={blockTable} showColors />}
-            instructions={"Create a complex table with all types of element"}
-        >
-            <form
-                className="blocks-table__placeholder-form"
-                onSubmit={onCreateTable}
+        <div {...innerBlocksProps}>
+            <Placeholder
+                label={"Create Tableberg Table"}
+                icon={<BlockIcon icon={blockTable} showColors />}
+                instructions={
+                    "Create a complex table with all types of element"
+                }
             >
-                <TextControl
-                    __nextHasNoMarginBottom
-                    type="number"
-                    label={"Column count"}
-                    value={initialColCount}
-                    onChange={onChangeInitialColCount}
-                    min="1"
-                    className="blocks-table__placeholder-input"
-                />
-                <TextControl
-                    __nextHasNoMarginBottom
-                    type="number"
-                    label={"Row count"}
-                    value={initialRowCount}
-                    onChange={onChangeInitialRowCount}
-                    min="1"
-                    className="blocks-table__placeholder-input"
-                />
-                <Button
-                    className="blocks-table__placeholder-button"
-                    variant="primary"
-                    type="submit"
+                <form
+                    className="blocks-table__placeholder-form"
+                    onSubmit={onCreateTable}
                 >
-                    {"Create Table"}
-                </Button>
-            </form>
-        </Placeholder>
+                    <TextControl
+                        __nextHasNoMarginBottom
+                        type="number"
+                        label={"Column count"}
+                        value={initialColCount}
+                        onChange={onChangeInitialColCount}
+                        min="1"
+                        className="blocks-table__placeholder-input"
+                    />
+                    <TextControl
+                        __nextHasNoMarginBottom
+                        type="number"
+                        label={"Row count"}
+                        value={initialRowCount}
+                        onChange={onChangeInitialRowCount}
+                        min="1"
+                        className="blocks-table__placeholder-input"
+                    />
+                    <Button
+                        className="blocks-table__placeholder-button"
+                        variant="primary"
+                        type="submit"
+                    >
+                        {"Create Table"}
+                    </Button>
+                </form>
+            </Placeholder>
+        </div>
     );
+
+    const example = <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
 
     return (
         <>
-            {hasTableCreated ? <table {...innerBlocksProps} /> : placeholder}
-            <Inspector {...props} />
+            {isExample ? (
+                example
+            ) : hasTableCreated ? (
+                <table {...innerBlocksProps} />
+            ) : (
+                placeholder
+            )}
+            <TablebergControls {...props} />
         </>
     );
 }

@@ -148,7 +148,21 @@ class Utils {
 
 		return "{$width} " . ( $width && empty( $border[ $side ]['style'] ) ? 'solid' : $style ) . " {$color}";
 	}
-
+	/**
+	 * Check if a value is considered empty based on certain conditions.
+	 *
+	 * @param mixed $value - The value to check.
+	 * @return bool Whether the value is considered empty.
+	 */
+	public static function is_value_empty( $value ) {
+		return (
+			self::is_undefined( $value ) ||
+			false === $value ||
+			trim( $value ) === '' ||
+			trim( $value ) === 'undefined undefined undefined' ||
+			empty( $value )
+		);
+	}
 	/**
 	 * Get border variables for CSS.
 	 *
