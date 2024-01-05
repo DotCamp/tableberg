@@ -76,41 +76,6 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     return (
         <>
             <InspectorControls>
-                <ToolsPanel
-                    label="Global Font Style"
-                    resetAll={() =>
-                        setAttributes({
-                            fontColor: "",
-                            fontSize: "",
-                            linkColor: "",
-                        })
-                    }
-                >
-                    <ToolsPanelItem label="Font Color" hasValue={() => true}>
-                        <ColorPickerDropdown
-                            label="Font Color"
-                            value={attributes.fontColor}
-                            onChange={onFontColorChange}
-                        />
-                    </ToolsPanelItem>
-                    <ToolsPanelItem label="Link Color" hasValue={() => true}>
-                        <ColorPickerDropdown
-                            label="Link Color"
-                            value={attributes.linkColor}
-                            onChange={onLinkColorChange}
-                        />
-                    </ToolsPanelItem>
-                    <ToolsPanelItem label="Size" hasValue={() => true}>
-                        <FontSizePicker
-                            /*
-                            // @ts-ignore*/
-                            value={attributes.fontSize}
-                            onChange={onFontSizeChange}
-                        />
-                    </ToolsPanelItem>
-                </ToolsPanel>
-            </InspectorControls>
-            <InspectorControls>
                 <PanelBody>
                     <ToggleControl
                         checked={attributes.enableTableHeader}
@@ -147,6 +112,42 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                 </PanelBody>
             </InspectorControls>
 
+            {/* @ts-ignore */}
+            <InspectorControls group="styles">
+                <ToolsPanel
+                    label="Global Font Style"
+                    resetAll={() =>
+                        setAttributes({
+                            fontColor: "",
+                            fontSize: "",
+                            linkColor: "",
+                        })
+                    }
+                >
+                    <ToolsPanelItem label="Font Color" hasValue={() => true}>
+                        <ColorPickerDropdown
+                            label="Font Color"
+                            value={attributes.fontColor}
+                            onChange={onFontColorChange}
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem label="Link Color" hasValue={() => true}>
+                        <ColorPickerDropdown
+                            label="Link Color"
+                            value={attributes.linkColor}
+                            onChange={onLinkColorChange}
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem label="Size" hasValue={() => true}>
+                        <FontSizePicker
+                            /*
+                            // @ts-ignore*/
+                            value={attributes.fontSize}
+                            onChange={onFontSizeChange}
+                        />
+                    </ToolsPanelItem>
+                </ToolsPanel>
+            </InspectorControls>
             {/* @ts-ignore  */}
             <InspectorControls group="color">
                 <ColorSettingsWithGradient
