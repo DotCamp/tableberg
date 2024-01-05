@@ -115,7 +115,7 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
             {/* @ts-ignore */}
             <InspectorControls group="styles">
                 <ToolsPanel
-                    label="Global Font Style"
+                    label={__("Global Font Style", "tableberg")}
                     resetAll={() =>
                         setAttributes({
                             fontColor: "",
@@ -124,21 +124,30 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                         })
                     }
                 >
-                    <ToolsPanelItem label="Font Color" hasValue={() => true}>
+                    <ToolsPanelItem
+                        label={__("Font Color", "tableberg")}
+                        hasValue={() => true}
+                    >
                         <ColorPickerDropdown
-                            label="Font Color"
+                            label={__("Font Color", "tableberg")}
                             value={attributes.fontColor}
                             onChange={onFontColorChange}
                         />
                     </ToolsPanelItem>
-                    <ToolsPanelItem label="Link Color" hasValue={() => true}>
+                    <ToolsPanelItem
+                        label={__("Link Color", "tableberg")}
+                        hasValue={() => true}
+                    >
                         <ColorPickerDropdown
-                            label="Link Color"
+                            label={__("Link Color", "tableberg")}
                             value={attributes.linkColor}
                             onChange={onLinkColorChange}
                         />
                     </ToolsPanelItem>
-                    <ToolsPanelItem label="Size" hasValue={() => true}>
+                    <ToolsPanelItem
+                        label={__("Font Size", "tableberg")}
+                        hasValue={() => true}
+                    >
                         <FontSizePicker
                             /*
                             // @ts-ignore*/
