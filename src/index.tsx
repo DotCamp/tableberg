@@ -54,6 +54,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         className: classNames(getStyleClass(props.attributes)),
         style: getStyles(props.attributes),
     });
+    
 
     // @ts-ignore
     const innerBlocksProps = useInnerBlocksProps(blockProps, {

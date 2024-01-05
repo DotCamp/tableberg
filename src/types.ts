@@ -21,4 +21,7 @@ export interface TablebergBlockAttrs {
     innerBorder: BorderTypes;
     enableInnerBorder: boolean;
     isExample: boolean;
+    fontColor: string;
+    fontSize: string;
+    linkColor: string;
 }
