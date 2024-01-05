@@ -11,12 +11,17 @@ import {
     BlockControls,
     BlockAlignmentToolbar,
     FontSizePicker,
-    ColorPalette,
+    // @ts-ignore
+    __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
+    // @ts-ignore
+    __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
+    Button,
     PanelBody,
     ToggleControl,
+    __experimentalToolsPanel as ToolsPanel,
     __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
 /**
@@ -25,6 +30,7 @@ import {
 import { TablebergBlockAttrs } from "./types";
 import {
     BorderControl,
+    ColorPickerDropdown,
     CustomToggleGroupControl,
     SpacingControl,
 } from "./components";
@@ -51,6 +57,7 @@ const AVAILABLE_JUSTIFICATIONS = [
 function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
     const { enableInnerBorder, tableAlignment } = attributes;
+    const colorGradientSettings = useMultipleOriginColorsAndGradients();
 
     const blockAlignChange = (newValue: "left" | "right" | "center") => {
         setAttributes({ tableAlignment: newValue });
@@ -63,25 +70,45 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
         setAttributes({ fontSize: value });
     };
     const onLinkColorChange = (value: any) => {
-        setAttributes({ linkColor: value.hex });
+        setAttributes({ linkColor: value });
     };
 
     return (
         <>
             <InspectorControls>
-                <PanelBody title="Global Style" initialOpen={false}>
-                    <ColorPalette
-                        value={attributes.fontColor}
-                        onChange={onFontColorChange}
-                        colors={[]}
-                    />
-                    <FontSizePicker
-                        /*
-                        // @ts-ignore*/
-                        value={attributes.fontSize}
-                        onChange={onFontSizeChange}
-                    />
-                </PanelBody>
+                <ToolsPanel
+                    label="Global Font Style"
+                    resetAll={() =>
+                        setAttributes({
+                            fontColor: "",
+                            fontSize: "",
+                            linkColor: "",
+                        })
+                    }
+                >
+                    <ToolsPanelItem label="Font Color" hasValue={() => true}>
+                        <ColorPickerDropdown
+                            label="Font Color"
+                            value={attributes.fontColor}
+                            onChange={onFontColorChange}
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem label="Link Color" hasValue={() => true}>
+                        <ColorPickerDropdown
+                            label="Link Color"
+                            value={attributes.linkColor}
+                            onChange={onLinkColorChange}
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem label="Size" hasValue={() => true}>
+                        <FontSizePicker
+                            /*
+                            // @ts-ignore*/
+                            value={attributes.fontSize}
+                            onChange={onFontSizeChange}
+                        />
+                    </ToolsPanelItem>
+                </ToolsPanel>
             </InspectorControls>
             <InspectorControls>
                 <PanelBody>
