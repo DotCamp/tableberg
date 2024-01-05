@@ -11,6 +11,19 @@ namespace Tableberg;
  * Styling Help full functions utility class
  */
 class Utils {
+
+	/**
+	 * Get global font style variables for CSS.
+	 * @return array CSS styles for the global font.
+	 */
+	public static function get_global_style_variables_css( array $attributes) {
+		return [
+			'--tableberg-global-text-color' => $attributes['fontColor']??'',
+			'--tableberg-global-link-color' => $attributes['linkColor']??'',
+			'--tableberg-global-font-size' => $attributes['fontSize']??'',
+		];
+	}
+
 	/**
 	 * Check if border has split borders.
 	 *
