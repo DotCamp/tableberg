@@ -3,13 +3,20 @@
  */
 import { useDispatch, useSelect } from "@wordpress/data";
 //@ts-ignore
-import { useBlockEditContext } from "@wordpress/block-editor";
+import {
+    useBlockEditContext,
+    store as blockEditorStore,
+} from "@wordpress/block-editor";
 import {
     __experimentalToggleGroupControl as ToggleGroupControl,
     __experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon,
     __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from "@wordpress/components";
 import { ToggleGroupControlPropTypes } from "../types";
+import {
+    BlockEditorStoreActions,
+    BlockEditorStoreSelectors,
+} from "../../wordpress__data";
 
 function CustomToggleGroupControl({
     label,
@@ -20,13 +27,15 @@ function CustomToggleGroupControl({
     isDeselectable = false,
 }: ToggleGroupControlPropTypes) {
     const { clientId } = useBlockEditContext();
-    const { updateBlockAttributes } = useDispatch("core/block-editor");
+    const { updateBlockAttributes } = useDispatch(
+        blockEditorStore
+    ) as BlockEditorStoreActions;
 
-    //@ts-ignore
     const attributes = useSelect((select) => {
-        //@ts-ignore
-        return select("core/block-editor").getBlockAttributes(clientId);
-    });
+        return (
+            select(blockEditorStore) as BlockEditorStoreSelectors
+        ).getBlockAttributes(clientId);
+    }, []);
     const setAttributes = (newAttributes: object) =>
         updateBlockAttributes(clientId, newAttributes);
 

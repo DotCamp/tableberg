@@ -11,8 +11,13 @@ import {
     __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
     // @ts-ignore
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
+    store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { ColorSettingsWithGradientPropTypes } from "../types";
+import {
+    BlockEditorStoreActions,
+    BlockEditorStoreSelectors,
+} from "../../wordpress__data";
 
 /**
  *
@@ -28,31 +33,31 @@ function ColorSettingWithGradient({
     label,
 }: ColorSettingsWithGradientPropTypes) {
     const { clientId } = useBlockEditContext();
-    const { updateBlockAttributes } = useDispatch("core/block-editor");
+    const { updateBlockAttributes } = useDispatch(
+        blockEditorStore
+    ) as BlockEditorStoreActions;
 
-    // @ts-ignore
     const attributes = useSelect((select) => {
-        // @ts-ignore
-        return select("core/block-editor").getBlockAttributes(clientId);
-    });
+        return (
+            select(blockEditorStore) as BlockEditorStoreSelectors
+        ).getBlockAttributes(clientId);
+    }, []);
     // @ts-ignore
     const setAttributes = (newAttributes) =>
         updateBlockAttributes(clientId, newAttributes);
     const colorGradientSettings = useMultipleOriginColorsAndGradients();
-    // @ts-ignore
+
     const { defaultColors, defaultGradients } = useSelect((select) => {
         return {
-            defaultColors:
-                // @ts-ignore
-                select("core/block-editor")?.getSettings()
-                    ?.__experimentalFeatures?.color?.palette?.default,
+            defaultColors: (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getSettings()?.__experimentalFeatures?.color?.palette?.default,
 
-            defaultGradients:
-                // @ts-ignore
-                select("core/block-editor")?.getSettings()
-                    ?.__experimentalFeatures?.color?.gradients?.default,
+            defaultGradients: (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getSettings()?.__experimentalFeatures?.color?.gradients?.default,
         };
-    });
+    }, []);
 
     return (
         <ColorGradientSettingsDropdown

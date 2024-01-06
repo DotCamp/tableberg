@@ -76,7 +76,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const { hasEditorRedo, removeEmptyColsOrRows } = useSelect((select) => {
         const removeEmptyColsOrRows = async () => {
-            const storeSelect = select(blockEditorStore) as any;
+            const storeSelect = select(
+                blockEditorStore
+            ) as BlockEditorStoreSelectors;
             const rows = storeSelect.getBlocks(clientId);
 
             /**

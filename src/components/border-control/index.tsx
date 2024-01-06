@@ -8,6 +8,7 @@ import {
     useBlockEditContext,
     // @ts-ignore
     __experimentalBorderRadiusControl as BorderRadiusControl,
+    store as BlockEditorStore,
 } from "@wordpress/block-editor";
 import { useSelect, useDispatch } from "@wordpress/data";
 import {
@@ -17,6 +18,10 @@ import {
 } from "@wordpress/components";
 
 import type { BorderControlPropTypes } from "../types";
+import {
+    BlockEditorStoreActions,
+    BlockEditorStoreSelectors,
+} from "../../wordpress__data";
 
 export function splitBorderRadius(value: string | object) {
     const isValueMixed = typeof value === "string";
@@ -40,24 +45,27 @@ function BorderControl({
     showDefaultBorderRadius = false,
 }: BorderControlPropTypes) {
     const { clientId } = useBlockEditContext();
-    // @ts-ignore
     const attributes = useSelect(
-        // @ts-ignore
-        (select) => select("core/block-editor").getSelectedBlock().attributes
+        (select) =>
+            (
+                select(BlockEditorStore) as BlockEditorStoreSelectors
+            ).getSelectedBlock()?.attributes,
+        []
     );
-    const { updateBlockAttributes } = useDispatch("core/block-editor");
+    const { updateBlockAttributes } = useDispatch(
+        BlockEditorStore
+    ) as BlockEditorStoreActions;
     const setAttributes = (newAttributes: object) => {
         updateBlockAttributes(clientId, newAttributes);
     };
-    // @ts-ignore
+
     const { defaultColors } = useSelect((select) => {
         return {
-            defaultColors:
-                // @ts-ignore
-                select("core/block-editor")?.getSettings()
-                    ?.__experimentalFeatures?.color?.palette?.default,
+            defaultColors: (
+                select(BlockEditorStore) as BlockEditorStoreSelectors
+            ).getSettings()?.__experimentalFeatures?.color?.palette?.default,
         };
-    });
+    }, []);
     return (
         <>
             {showBorder && (
