@@ -147,9 +147,7 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                         hasValue={() => true}
                     >
                         <FontSizePicker
-                            /*
-                            // @ts-ignore*/
-                            value={attributes.fontSize}
+                            value={Number(attributes.fontSize)}
                             onChange={onFontSizeChange}
                         />
                     </ToolsPanelItem>
@@ -229,8 +227,6 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
             </InspectorControls>
             <BlockControls>
                 <BlockAlignmentToolbar
-                    /*
-                    // @ts-ignore*/
                     value={tableAlignment}
                     onChange={blockAlignChange}
                     controls={["left", "center", "right"]}
