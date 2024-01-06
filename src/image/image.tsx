@@ -1,4 +1,3 @@
-// @ts-ignore
 import { get } from "lodash";
 import type { ImageTypes } from "./types";
 import {

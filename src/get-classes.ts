@@ -1,4 +1,3 @@
-//@ts-ignore
 import { isUndefined, trim, isEmpty } from "lodash";
 import { TablebergBlockAttrs } from "./types";
 

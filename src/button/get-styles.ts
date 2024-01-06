@@ -1,4 +1,3 @@
-//@ts-ignore
 import { omitBy, isUndefined, trim, isEmpty, isNumber } from "lodash";
 import { ButtonBlockTypes } from "./type";
 

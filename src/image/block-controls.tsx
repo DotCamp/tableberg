@@ -1,4 +1,3 @@
-//@ts-ignore
 import { get } from "lodash";
 import { __ } from "@wordpress/i18n";
 //@ts-ignore

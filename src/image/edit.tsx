@@ -1,4 +1,3 @@
-// @ts-ignore
 import { isEmpty, get } from "lodash";
 import { __ } from "@wordpress/i18n";
 import { useDispatch } from "@wordpress/data";

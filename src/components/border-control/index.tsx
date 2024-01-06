@@ -1,7 +1,6 @@
 /**
  * WordPress Dependencies
  */
-//@ts-ignore
 import { isEmpty } from "lodash";
 import { __ } from "@wordpress/i18n";
 import {
