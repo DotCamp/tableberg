@@ -103,14 +103,11 @@ export function getSpacingPresetCssVar(value: string) {
 }
 
 export function getSpacingCss(object: object) {
-    let css = {};
-    //@ts-ignore
+    let css: { [key: string]: any } = {};
     for (const [key, value] of Object.entries(object)) {
         if (isValueSpacingPreset(value)) {
-            //@ts-ignore
             css[key] = getSpacingPresetCssVar(value);
         } else {
-            //@ts-ignore
             css[key] = value;
         }
     }
