@@ -34,6 +34,10 @@ import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
 import exampleImage from "./example.png";
+import {
+    BlockEditorStoreActions,
+    BlockEditorStoreSelectors,
+} from "./wordpress__data";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 
@@ -66,8 +70,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const { block } = useSelect((select) => {
         return {
-            //@ts-ignore
-            block: select(blockEditorStore).getBlock(clientId),
+            block: (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getBlock(clientId),
         };
     }, []);
 
@@ -141,7 +146,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         insertBlocks,
         removeBlock,
         updateBlockAttributes,
-    } = useDispatch(blockEditorStore);
+    } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
     //@ts-ignore
     const tablebergData = tablebergAdminMenuData;
     const globalBlockProperties = tablebergData?.block_properties;
@@ -182,7 +187,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 clientId
             );
         } else {
-            const firstBlock = block.innerBlocks[0];
+            const firstBlock = block?.innerBlocks[0];
             const isHeader = firstBlock?.attributes?.isHeader;
 
             if (isHeader) {
@@ -203,11 +208,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             ];
             insertBlocks(
                 createBlocksFromInnerBlocksTemplate(tableHeaderTemplate),
-                block?.innerBlocks?.length + 1,
+                block?.innerBlocks?.length! + 1,
                 clientId
             );
         } else {
-            const lastBlock = last(block.innerBlocks);
+            const lastBlock = last(block?.innerBlocks);
             const isFooter = lastBlock?.attributes?.isFooter;
 
             if (isFooter) {
