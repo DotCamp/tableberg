@@ -5,11 +5,9 @@
 import { useDispatch, useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 import {
-    // @ts-ignore
     useBlockEditContext,
     // @ts-ignore
     __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
-    // @ts-ignore
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
@@ -46,6 +44,7 @@ function ColorSettingWithGradient({
     const setAttributes = (newAttributes) =>
         updateBlockAttributes(clientId, newAttributes);
     const colorGradientSettings = useMultipleOriginColorsAndGradients();
+    console.log(colorGradientSettings);
 
     const { defaultColors, defaultGradients } = useSelect((select) => {
         return {

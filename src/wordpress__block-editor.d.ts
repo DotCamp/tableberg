@@ -117,4 +117,26 @@ declare module "@wordpress/block-editor" {
             [key: string]: string;
         };
     };
+
+    const __experimentalUseMultipleOriginColorsAndGradients: () => {
+        colors: {
+            name: string;
+            colors: {
+                name: string;
+                slug: string;
+                color: string;
+            }[];
+        }[];
+        disableCustomColors: boolean;
+        disableCustomGradients: boolean;
+        gradients: {
+            name: string;
+            gradients: {
+                gradient: string;
+                name: string;
+                slug: string;
+            }[];
+        }[];
+        hasColorsOrGradients: boolean;
+    };
 }
