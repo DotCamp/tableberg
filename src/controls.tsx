@@ -112,7 +112,6 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                 </PanelBody>
             </InspectorControls>
 
-            {/* @ts-ignore */}
             <InspectorControls group="styles">
                 <ToolsPanel
                     label={__("Global Font Style", "tableberg")}
@@ -157,7 +156,7 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                     </ToolsPanelItem>
                 </ToolsPanel>
             </InspectorControls>
-            {/* @ts-ignore  */}
+
             <InspectorControls group="color">
                 <ColorSettingsWithGradient
                     label={__("Header Background Color", "tableberg")}
@@ -181,7 +180,6 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                 />
             </InspectorControls>
 
-            {/* @ts-ignore  */}
             <InspectorControls group="dimensions">
                 <SpacingControl
                     attrKey="cellPadding"
@@ -189,7 +187,7 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                     showByDefault
                 />
             </InspectorControls>
-            {/* @ts-ignore  */}
+
             <InspectorControls group="border">
                 <BorderControl
                     showDefaultBorder

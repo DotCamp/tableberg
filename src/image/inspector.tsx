@@ -195,7 +195,7 @@ function Inspector(props: MainPropTypes) {
                     </ToolsPanelItem>
                 </ToolsPanel>
             </InspectorControls>
-            {/* @ts-ignore */}
+
             <InspectorControls group="border">
                 <BorderControl
                     attrBorderKey="border"

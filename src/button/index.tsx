@@ -210,7 +210,7 @@ function edit({
                     style={{ ...borderProps.style }}
                 />
             </div>
-            {/* @ts-ignore */}
+
             <BlockControls group="block">
                 <BlockAlignmentToolbar
                     value={align}
@@ -265,7 +265,7 @@ function edit({
                     </Popover>
                 )}
             </BlockControls>
-            {/* @ts-ignore */}
+
             <InspectorControls group="color">
                 <ColorSettings
                     attrKey="textColor"
@@ -292,7 +292,7 @@ function edit({
                     setAttributes={setAttributes}
                 />
             </InspectorControls>
-            {/* @ts-ignore */}
+
             <InspectorControls group="advanced">
                 <TextControl
                     label="HTML ID"
