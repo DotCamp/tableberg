@@ -3,7 +3,6 @@
  */
 import { __ } from "@wordpress/i18n";
 import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
-//@ts-ignore
 import {
     InspectorControls,
     // @ts-ignore
