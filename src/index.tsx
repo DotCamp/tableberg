@@ -2,8 +2,6 @@
  * WordPress Imports
  */
 import { isEmpty, get, last } from "lodash";
-//@ts-ignore
-import { useEffect } from "@wordpress/element";
 import { Placeholder, TextControl, Button } from "@wordpress/components";
 import { blockTable } from "@wordpress/icons";
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -26,7 +24,7 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
