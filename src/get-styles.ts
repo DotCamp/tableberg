@@ -1,4 +1,3 @@
-//@ts-ignore
 import { omitBy, isUndefined, trim, isEmpty, isNumber } from "lodash";
 import { getBorderVariablesCss, getSpacingCss } from "./utils/styling-helpers";
 import { PaddingTypes, TablebergBlockAttrs } from "./types";
@@ -23,7 +22,7 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         enableTableHeader,
         fontColor,
         fontSize,
-        linkColor
+        linkColor,
     } = attributes;
     const cellPaddingCSS: PaddingTypes = getSpacingCss(cellPadding);
     const tableBorderVar = getBorderVariablesCss(tableBorder, "table");

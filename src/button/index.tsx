@@ -5,9 +5,7 @@ import {
     BlockSaveProps,
     registerBlockType,
 } from "@wordpress/blocks";
-// @ts-ignore
 import { prependHTTP } from "@wordpress/url";
-// @ts-ignore
 import { useMergeRefs } from "@wordpress/compose";
 
 import {
@@ -23,14 +21,11 @@ import {
 
 import metadata from "./block.json";
 import {
-    // @ts-ignore
     AlignmentControl,
     RichText,
     useBlockProps,
     InspectorControls,
-    // @ts-ignore
     __experimentalUseBorderProps as useBorderProps,
-    // @ts-ignore
     __experimentalLinkControl as LinkControl,
     BlockControls,
     BlockAlignmentToolbar,
@@ -113,7 +108,7 @@ function edit({
         setAttributes({ align: newValue });
     };
 
-    const onToggleOpenInNewTab = (value: boolean) => {
+    const onToggleOpenInNewTab = (value: boolean | undefined) => {
         const newLinkTarget = value ? "_blank" : undefined;
 
         if (newLinkTarget && !rel) {
@@ -204,13 +199,12 @@ function edit({
                             text: value.replace(/<\/?a[^>]*>/g, ""),
                         })
                     }
-                    // @ts-ignore
                     withoutInteractiveFormatting
                     identifier="text"
                     style={{ ...borderProps.style }}
                 />
             </div>
-            {/* @ts-ignore */}
+
             <BlockControls group="block">
                 <BlockAlignmentToolbar
                     value={align}
@@ -246,9 +240,6 @@ function edit({
                             onChange={({
                                 url: newURL = "",
                                 opensInNewTab: newOpensInNewTab,
-                            }: {
-                                url: string;
-                                opensInNewTab: boolean;
                             }) => {
                                 setAttributes({ url: prependHTTP(newURL) });
 
@@ -265,7 +256,7 @@ function edit({
                     </Popover>
                 )}
             </BlockControls>
-            {/* @ts-ignore */}
+
             <InspectorControls group="color">
                 <ColorSettings
                     attrKey="textColor"
@@ -292,7 +283,7 @@ function edit({
                     setAttributes={setAttributes}
                 />
             </InspectorControls>
-            {/* @ts-ignore */}
+
             <InspectorControls group="advanced">
                 <TextControl
                     label="HTML ID"

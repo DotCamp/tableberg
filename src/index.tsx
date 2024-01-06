@@ -1,10 +1,7 @@
 /**
  * WordPress Imports
  */
-//@ts-ignore
 import { isEmpty, get, last } from "lodash";
-//@ts-ignore
-import { useEffect } from "@wordpress/element";
 import { Placeholder, TextControl, Button } from "@wordpress/components";
 import { blockTable } from "@wordpress/icons";
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -27,7 +24,7 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
@@ -37,6 +34,7 @@ import exampleImage from "./example.png";
 import {
     BlockEditorStoreActions,
     BlockEditorStoreSelectors,
+    EditorStoreSelectors,
 } from "./wordpress__data";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
@@ -58,7 +56,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         className: classNames(getStyleClass(props.attributes)),
         style: getStyles(props.attributes),
     });
-    
 
     // @ts-ignore
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
@@ -78,7 +75,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const { hasEditorRedo, removeEmptyColsOrRows } = useSelect((select) => {
         const removeEmptyColsOrRows = async () => {
-            const storeSelect = select(blockEditorStore) as any;
+            const storeSelect = select(
+                blockEditorStore
+            ) as BlockEditorStoreSelectors;
             const rows = storeSelect.getBlocks(clientId);
 
             /**
@@ -135,8 +134,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         };
 
         return {
-            // @ts-ignore
-            hasEditorRedo: select(editorStore).hasEditorRedo(),
+            hasEditorRedo: (
+                select(editorStore) as EditorStoreSelectors
+            ).hasEditorRedo(),
             removeEmptyColsOrRows,
         };
     }, []);
@@ -147,7 +147,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         removeBlock,
         updateBlockAttributes,
     } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
-    //@ts-ignore
     const tablebergData = tablebergAdminMenuData;
     const globalBlockProperties = tablebergData?.block_properties;
 

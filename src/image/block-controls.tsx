@@ -1,8 +1,6 @@
-//@ts-ignore
 import { get } from "lodash";
 import { __ } from "@wordpress/i18n";
-//@ts-ignore
-import { useEffect } from "@wordpress/element";
+import { useEffect } from "react";
 import { caption as captionIcon, crop } from "@wordpress/icons";
 import {
     BlockControls as WPBlockControls,
@@ -11,7 +9,6 @@ import {
     // @ts-ignore
     __experimentalImageURLInputUI as ImageURLInputUI,
 } from "@wordpress/block-editor";
-//@ts-ignore
 import { usePrevious } from "@wordpress/compose";
 import { ToolbarButton, ToolbarGroup } from "@wordpress/components";
 import type { ExtendMainPropTypes } from "./types";
@@ -48,7 +45,6 @@ function BlockControls(props: ExtendMainPropTypes) {
     }
     return (
         <>
-            {/* @ts-ignore */}
             <WPBlockControls group={"block"}>
                 <ToolbarButton
                     onClick={() => {

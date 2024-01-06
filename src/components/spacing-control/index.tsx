@@ -1,18 +1,21 @@
 /**
  * WordPress Dependencies
  */
-//@ts-ignore
 import { isEmpty } from "lodash";
 import { __ } from "@wordpress/i18n";
 import {
-    //@ts-ignore
     useBlockEditContext,
     //@ts-ignore
     __experimentalSpacingSizesControl as SpacingSizesControl,
+    store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { useSelect, useDispatch } from "@wordpress/data";
 import { __experimentalToolsPanelItem as ToolsPanelItem } from "@wordpress/components";
 import { SpacingPropTypes } from "../types";
+import {
+    BlockEditorStoreActions,
+    BlockEditorStoreSelectors,
+} from "../../wordpress__data";
 
 function SpacingControl({
     label,
@@ -21,13 +24,16 @@ function SpacingControl({
 }: SpacingPropTypes) {
     const { clientId } = useBlockEditContext();
 
-    //@ts-ignore
     const attributes = useSelect(
         (select) =>
-            //@ts-ignore
-            select("core/block-editor").getSelectedBlock().attributes
+            (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getSelectedBlock()?.attributes,
+        []
     );
-    const { updateBlockAttributes } = useDispatch("core/block-editor");
+    const { updateBlockAttributes } = useDispatch(
+        blockEditorStore
+    ) as BlockEditorStoreActions;
 
     const setAttributes = (newAttributes: object) => {
         updateBlockAttributes(clientId, newAttributes);

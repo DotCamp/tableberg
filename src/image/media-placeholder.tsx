@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-// @ts-ignore
 import { get, isEmpty } from "lodash";
 import { __ } from "@wordpress/i18n";
 import { Placeholder } from "@wordpress/components";
@@ -43,7 +42,6 @@ function CustomMediaPlaceholder(props: MainPropTypes) {
         <MediaPlaceholder
             icon={imageIcon}
             accept="image/*"
-            // @ts-ignore
             placeholder={placeholder}
             //  onError={onUploadError}
             onSelect={onSelectImage}

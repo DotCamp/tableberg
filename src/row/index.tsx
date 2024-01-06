@@ -14,6 +14,7 @@ import { useSelect } from "@wordpress/data";
 
 import metadata from "./block.json";
 import classNames from "classnames";
+import { BlockEditorStoreSelectors } from "../wordpress__data";
 
 interface TBRowAttrs {
     tagName: string;
@@ -33,7 +34,9 @@ function edit({ clientId, attributes }: BlockEditProps<TBRowAttrs>) {
 
     const hasInnerBlocks = useSelect(
         (select) =>
-            (select(blockEditorStore) as any).getBlocks(clientId).length > 0,
+            (select(blockEditorStore) as BlockEditorStoreSelectors).getBlocks(
+                clientId
+            ).length > 0,
         [clientId]
     );
 

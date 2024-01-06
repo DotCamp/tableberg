@@ -1,16 +1,13 @@
-// @ts-ignore
 import { isEmpty, get } from "lodash";
 import { __ } from "@wordpress/i18n";
 import { useDispatch } from "@wordpress/data";
-// @ts-ignore
-import { useState, useRef, useMemo } from "@wordpress/element";
+import { useState, useRef, useMemo } from "react";
 import { BlockEditProps } from "@wordpress/blocks";
 import CustomMediaPlaceholder from "./media-placeholder";
 import { ResizableBox } from "@wordpress/components";
 import {
     RichText,
     useBlockProps,
-    // @ts-ignore
     __experimentalGetElementClassName,
     // @ts-ignore
     __experimentalImageEditor as ImageEditor,
@@ -140,7 +137,6 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                                         sizes: {
                                             ...media.sizes,
                                             [sizeSlug]: {
-                                                // @ts-ignore
                                                 ...media.sizes[sizeSlug],
                                                 ...imageAttributes,
                                             },

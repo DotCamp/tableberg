@@ -3,17 +3,13 @@
  */
 import { __ } from "@wordpress/i18n";
 import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
-//@ts-ignore
 import {
     InspectorControls,
-    // @ts-ignore
     HeightControl,
     BlockControls,
     BlockAlignmentToolbar,
     FontSizePicker,
-    // @ts-ignore
     __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
-    // @ts-ignore
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
@@ -112,7 +108,6 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                 </PanelBody>
             </InspectorControls>
 
-            {/* @ts-ignore */}
             <InspectorControls group="styles">
                 <ToolsPanel
                     label={__("Global Font Style", "tableberg")}
@@ -149,15 +144,13 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                         hasValue={() => true}
                     >
                         <FontSizePicker
-                            /*
-                            // @ts-ignore*/
-                            value={attributes.fontSize}
+                            value={Number(attributes.fontSize)}
                             onChange={onFontSizeChange}
                         />
                     </ToolsPanelItem>
                 </ToolsPanel>
             </InspectorControls>
-            {/* @ts-ignore  */}
+
             <InspectorControls group="color">
                 <ColorSettingsWithGradient
                     label={__("Header Background Color", "tableberg")}
@@ -181,7 +174,6 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                 />
             </InspectorControls>
 
-            {/* @ts-ignore  */}
             <InspectorControls group="dimensions">
                 <SpacingControl
                     attrKey="cellPadding"
@@ -189,7 +181,7 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                     showByDefault
                 />
             </InspectorControls>
-            {/* @ts-ignore  */}
+
             <InspectorControls group="border">
                 <BorderControl
                     showDefaultBorder
@@ -232,8 +224,6 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
             </InspectorControls>
             <BlockControls>
                 <BlockAlignmentToolbar
-                    /*
-                    // @ts-ignore*/
                     value={tableAlignment}
                     onChange={blockAlignChange}
                     controls={["left", "center", "right"]}

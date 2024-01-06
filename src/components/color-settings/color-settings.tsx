@@ -5,14 +5,17 @@
 import { useDispatch, useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 import {
-    // @ts-ignore
     useBlockEditContext,
     // @ts-ignore
     __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
-    // @ts-ignore
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
+    store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { ColorSettingsPropTypes } from "../types";
+import {
+    BlockEditorStoreActions,
+    BlockEditorStoreSelectors,
+} from "../../wordpress__data";
 
 /**
  *
@@ -23,26 +26,27 @@ import { ColorSettingsPropTypes } from "../types";
  */
 function ColorSetting({ attrKey, label }: ColorSettingsPropTypes) {
     const { clientId } = useBlockEditContext();
-    const { updateBlockAttributes } = useDispatch("core/block-editor");
+    const { updateBlockAttributes } = useDispatch(
+        blockEditorStore
+    ) as BlockEditorStoreActions;
 
-    // @ts-ignore
     const attributes = useSelect((select) => {
-        // @ts-ignore
-        return select("core/block-editor").getBlockAttributes(clientId);
-    });
+        return (
+            select(blockEditorStore) as BlockEditorStoreSelectors
+        ).getBlockAttributes(clientId);
+    }, []);
 
     const setAttributes = (newAttributes: object) =>
         updateBlockAttributes(clientId, newAttributes);
     const colorGradientSettings = useMultipleOriginColorsAndGradients();
-    // @ts-ignore
+
     const { defaultColors } = useSelect((select) => {
         return {
-            defaultColors:
-                // @ts-ignore
-                select("core/block-editor")?.getSettings()
-                    ?.__experimentalFeatures?.color?.palette?.default,
+            defaultColors: (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getSettings()?.__experimentalFeatures?.color?.palette?.default,
         };
-    });
+    }, []);
 
     return (
         <ColorGradientSettingsDropdown
