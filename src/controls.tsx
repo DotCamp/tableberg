@@ -5,14 +5,11 @@ import { __ } from "@wordpress/i18n";
 import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
 import {
     InspectorControls,
-    // @ts-ignore
     HeightControl,
     BlockControls,
     BlockAlignmentToolbar,
     FontSizePicker,
-    // @ts-ignore
     __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
-    // @ts-ignore
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
