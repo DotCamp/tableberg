@@ -2,7 +2,6 @@
  * WordPress Dependencies
  */
 import { useDispatch, useSelect } from "@wordpress/data";
-//@ts-ignore
 import {
     useBlockEditContext,
     store as blockEditorStore,

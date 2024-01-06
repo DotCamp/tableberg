@@ -22,4 +22,10 @@ declare module "@wordpress/block-editor" {
             group?: "block" | "other";
         }
     }
+
+    const useBlockEditContext: () => {
+        name: string;
+        isSelected: boolean;
+        clientId: string;
+    };
 }
