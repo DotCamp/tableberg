@@ -36,6 +36,7 @@ import exampleImage from "./example.png";
 import {
     BlockEditorStoreActions,
     BlockEditorStoreSelectors,
+    EditorStoreSelectors,
 } from "./wordpress__data";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
@@ -135,8 +136,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         };
 
         return {
-            // @ts-ignore
-            hasEditorRedo: select(editorStore).hasEditorRedo(),
+            hasEditorRedo: (
+                select(editorStore) as EditorStoreSelectors
+            ).hasEditorRedo(),
             removeEmptyColsOrRows,
         };
     }, []);
@@ -147,7 +149,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         removeBlock,
         updateBlockAttributes,
     } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
-    //@ts-ignore
     const tablebergData = tablebergAdminMenuData;
     const globalBlockProperties = tablebergData?.block_properties;
 
