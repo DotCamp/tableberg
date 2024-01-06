@@ -54,6 +54,40 @@ declare module "@wordpress/block-editor" {
 
     const AlignmentControl: import("react").ComponentType<AlignmentControl.Props>;
 
+    namespace __experimentalLinkControl {
+        interface LinkControlValue {
+            url?: string;
+            opensInNewTab?: boolean;
+        }
+        interface Props {
+            children?: never | undefined;
+            searchInputPlaceholder?: string;
+            value: LinkControlValue;
+            settings?: {
+                id: string;
+                title: string;
+            };
+            onChange?: (newValue: LinkControlValue) => void;
+            onRemove?: () => void;
+            onCancel?: () => void;
+            noDirectEntry?: boolean;
+            showSuggestions?: boolean;
+            showInitialSuggestions?: boolean;
+            forceIsEditingLink?: boolean;
+            createSuggestion?: boolean;
+            withCreateSuggestion?: boolean;
+            inputValue?: string;
+            suggestionsQuery?: object;
+            noURLSuggestion?: boolean;
+            createSuggestionButtonText?: string | (() => string);
+            hasRichPreviews?: boolean;
+            hasTextControl?: boolean;
+            renderControlBottom?: any;
+        }
+    }
+
+    const __experimentalLinkControl: import("react").ComponentType<__experimentalLinkControl.Props>;
+
     const useBlockEditContext: () => {
         name: string;
         isSelected: boolean;

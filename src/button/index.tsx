@@ -26,7 +26,6 @@ import {
     useBlockProps,
     InspectorControls,
     __experimentalUseBorderProps as useBorderProps,
-    // @ts-ignore
     __experimentalLinkControl as LinkControl,
     BlockControls,
     BlockAlignmentToolbar,
@@ -109,7 +108,7 @@ function edit({
         setAttributes({ align: newValue });
     };
 
-    const onToggleOpenInNewTab = (value: boolean) => {
+    const onToggleOpenInNewTab = (value: boolean | undefined) => {
         const newLinkTarget = value ? "_blank" : undefined;
 
         if (newLinkTarget && !rel) {
@@ -241,9 +240,6 @@ function edit({
                             onChange={({
                                 url: newURL = "",
                                 opensInNewTab: newOpensInNewTab,
-                            }: {
-                                url: string;
-                                opensInNewTab: boolean;
                             }) => {
                                 setAttributes({ url: prependHTTP(newURL) });
 
