@@ -103,6 +103,12 @@ declare module "@wordpress/block-editor" {
         }
     }
 
+    namespace MediaPlaceholder {
+        interface Props<T extends boolean> {
+            placeholder: (content: import("react").ReactNode) => JSX.Element;
+        }
+    }
+
     const __experimentalBorderRadiusControl: import("react").ComponentType<__experimentalBorderRadiusControl.Props>;
 
     const useBlockEditContext: () => {

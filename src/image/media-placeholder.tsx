@@ -42,7 +42,6 @@ function CustomMediaPlaceholder(props: MainPropTypes) {
         <MediaPlaceholder
             icon={imageIcon}
             accept="image/*"
-            // @ts-ignore
             placeholder={placeholder}
             //  onError={onUploadError}
             onSelect={onSelectImage}
