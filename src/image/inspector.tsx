@@ -2,8 +2,7 @@
  * Wordpress Dependencies
  */
 import { InspectorControls } from "@wordpress/block-editor";
-//@ts-ignore
-import { useMemo } from "@wordpress/element";
+import { useMemo } from "react";
 import {
     PanelBody,
     SelectControl,
