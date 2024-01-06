@@ -47,7 +47,6 @@ function BlockControls(props: ExtendMainPropTypes) {
     }
     return (
         <>
-            {/* @ts-ignore */}
             <WPBlockControls group={"block"}>
                 <ToolbarButton
                     onClick={() => {
