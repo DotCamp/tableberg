@@ -31,12 +31,16 @@ export function getSingleSideBorderValue(
 
 export function getBorderVariablesCss(border: object, slug: string) {
     const borderInFourDimension = getBorderCSS(border);
-    const borderSides = ["top", "right", "bottom", "left"];
+    const borderSides: Array<keyof BorderTypes> = [
+        "top",
+        "right",
+        "bottom",
+        "left",
+    ];
     let borders = {};
     for (let i = 0; i < borderSides.length; i++) {
         const side = borderSides[i];
         const sideProperty = [`--tableberg-${slug}-border-${side}`];
-        // @ts-ignore
         const sideValue = getSingleSideBorderValue(borderInFourDimension, side);
         // @ts-ignore
         borders[sideProperty] = sideValue;
