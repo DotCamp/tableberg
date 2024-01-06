@@ -5,9 +5,7 @@ import {
     BlockSaveProps,
     registerBlockType,
 } from "@wordpress/blocks";
-// @ts-ignore
 import { prependHTTP } from "@wordpress/url";
-// @ts-ignore
 import { useMergeRefs } from "@wordpress/compose";
 
 import {
