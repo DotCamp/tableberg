@@ -202,7 +202,6 @@ function edit({
                             text: value.replace(/<\/?a[^>]*>/g, ""),
                         })
                     }
-                    // @ts-ignore
                     withoutInteractiveFormatting
                     identifier="text"
                     style={{ ...borderProps.style }}
