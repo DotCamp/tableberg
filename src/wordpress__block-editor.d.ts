@@ -1,4 +1,5 @@
 import "@wordpress/block-editor";
+import { BlockAttributes } from "@wordpress/blocks";
 
 declare module "@wordpress/block-editor" {
     namespace InspectorControls {
@@ -57,5 +58,12 @@ declare module "@wordpress/block-editor" {
         name: string;
         isSelected: boolean;
         clientId: string;
+    };
+
+    const __experimentalUseBorderProps: (attributes: BlockAttributes) => {
+        className: string;
+        style: {
+            [key: string]: string;
+        };
     };
 }

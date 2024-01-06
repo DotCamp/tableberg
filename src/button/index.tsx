@@ -25,7 +25,6 @@ import {
     RichText,
     useBlockProps,
     InspectorControls,
-    // @ts-ignore
     __experimentalUseBorderProps as useBorderProps,
     // @ts-ignore
     __experimentalLinkControl as LinkControl,
