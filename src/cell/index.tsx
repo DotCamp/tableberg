@@ -1,7 +1,6 @@
 import {
     BlockEditProps,
     registerBlockType,
-    //@ts-ignore
     createBlocksFromInnerBlocksTemplate,
     createBlock,
     BlockInstance,
