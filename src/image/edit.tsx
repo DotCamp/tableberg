@@ -1,7 +1,6 @@
 import { isEmpty, get } from "lodash";
 import { __ } from "@wordpress/i18n";
 import { useDispatch } from "@wordpress/data";
-// @ts-ignore
 import { useState, useRef, useMemo } from "react";
 import { BlockEditProps } from "@wordpress/blocks";
 import CustomMediaPlaceholder from "./media-placeholder";

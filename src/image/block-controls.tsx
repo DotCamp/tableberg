@@ -9,7 +9,6 @@ import {
     // @ts-ignore
     __experimentalImageURLInputUI as ImageURLInputUI,
 } from "@wordpress/block-editor";
-//@ts-ignore
 import { usePrevious } from "@wordpress/compose";
 import { ToolbarButton, ToolbarGroup } from "@wordpress/components";
 import type { ExtendMainPropTypes } from "./types";
