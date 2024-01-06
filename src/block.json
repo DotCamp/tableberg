@@ -6,12 +6,16 @@
     "title": "Tableberg",
     "category": "design",
     "icon": "table-row-after",
-    "description": "Tableberg: table builder Gutenberg block",
+    "description": "Table Block By Tableberg - Advanced Table Block for Block Editor",
     "supports": {
         "html": false
     },
     "attributes": {
         "rows": {
+            "type": "number",
+            "default": 2
+        },
+        "cols": {
             "type": "number",
             "default": 2
         },
@@ -86,6 +90,18 @@
         "isExample": {
             "type": "boolean",
             "default": false
+        },
+        "fontSize": {
+            "type": "string",
+            "default": ""
+        },
+        "fontColor": {
+            "type": "string",
+            "default": ""
+        },
+        "linkColor": {
+            "type": "string",
+            "default": ""
         }
     },
     "example": {
@@ -94,6 +110,7 @@
         }
     },
     "textdomain": "tableberg",
-    "editorScript": "file:./index.tsx",
-    "style": "file:./style-index.css"
+    "editorScript": "tableberg-script",
+    "editorStyle": "tableberg-editor-style",
+    "style": "tableberg-style"
 }

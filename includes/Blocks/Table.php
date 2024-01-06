@@ -7,6 +7,7 @@
 
 namespace Tableberg\Blocks;
 
+use Tableberg;
 use WP_Block;
 
 /**
@@ -35,6 +36,8 @@ class Table {
 		$odd_row_bg_color  = \Tableberg\Utils::get_background_color( $attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient' );
 		$footer_bg_color   = \Tableberg\Utils::get_background_color( $attributes, 'footerBackgroundColor', 'footerBackgroundGradient' );
 
+		$global_font_style = \Tableberg\Utils::get_global_style_variables_css($attributes);
+
 		$cell_padding = \Tableberg\Utils::get_spacing_css( $attributes['cellPadding'] );
 
 		$table_border_variables = \Tableberg\Utils::get_border_variables_css( $attributes['tableBorder'], 'table' );
@@ -50,7 +53,7 @@ class Table {
 			'--tableberg-cell-padding-right'  => $cell_padding['right'] ?? '',
 			'--tableberg-cell-padding-bottom' => $cell_padding['bottom'] ?? '',
 			'--tableberg-cell-padding-left'   => $cell_padding['left'] ?? '',
-		) + $table_border_variables + $inner_border_variables;
+		) + $table_border_variables + $inner_border_variables + $global_font_style;
 
 		return \Tableberg\Utils::generate_css_string( $styles );
 	}
@@ -119,7 +122,9 @@ class Table {
 	 * Register the block.
 	 */
 	public function block_registration() {
-		$defaults = new \Tableberg\Defaults();
+		$defaults         = new \Tableberg\Defaults();
+		$tableberg_assets = new Tableberg\Assets();
+		$tableberg_assets->register_blocks_assets();
 		register_block_type(
 			TABLEBERG_DIR_PATH . 'build/block.json',
 			array(

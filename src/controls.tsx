@@ -6,14 +6,22 @@ import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
 //@ts-ignore
 import {
     InspectorControls,
+    // @ts-ignore
     HeightControl,
     BlockControls,
     BlockAlignmentToolbar,
+    FontSizePicker,
+    // @ts-ignore
+    __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
+    // @ts-ignore
+    __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
+    Button,
     PanelBody,
     ToggleControl,
+    __experimentalToolsPanel as ToolsPanel,
     __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
 /**
@@ -22,6 +30,7 @@ import {
 import { TablebergBlockAttrs } from "./types";
 import {
     BorderControl,
+    ColorPickerDropdown,
     CustomToggleGroupControl,
     SpacingControl,
 } from "./components";
@@ -48,9 +57,20 @@ const AVAILABLE_JUSTIFICATIONS = [
 function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
     const { enableInnerBorder, tableAlignment } = attributes;
+    const colorGradientSettings = useMultipleOriginColorsAndGradients();
 
     const blockAlignChange = (newValue: "left" | "right" | "center") => {
         setAttributes({ tableAlignment: newValue });
+    };
+
+    const onFontColorChange = (value: any) => {
+        setAttributes({ fontColor: value });
+    };
+    const onFontSizeChange = (value: any) => {
+        setAttributes({ fontSize: value });
+    };
+    const onLinkColorChange = (value: any) => {
+        setAttributes({ linkColor: value });
     };
 
     return (
@@ -92,6 +112,51 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                 </PanelBody>
             </InspectorControls>
 
+            {/* @ts-ignore */}
+            <InspectorControls group="styles">
+                <ToolsPanel
+                    label={__("Global Font Style", "tableberg")}
+                    resetAll={() =>
+                        setAttributes({
+                            fontColor: "",
+                            fontSize: "",
+                            linkColor: "",
+                        })
+                    }
+                >
+                    <ToolsPanelItem
+                        label={__("Font Color", "tableberg")}
+                        hasValue={() => true}
+                    >
+                        <ColorPickerDropdown
+                            label={__("Font Color", "tableberg")}
+                            value={attributes.fontColor}
+                            onChange={onFontColorChange}
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem
+                        label={__("Link Color", "tableberg")}
+                        hasValue={() => true}
+                    >
+                        <ColorPickerDropdown
+                            label={__("Link Color", "tableberg")}
+                            value={attributes.linkColor}
+                            onChange={onLinkColorChange}
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem
+                        label={__("Font Size", "tableberg")}
+                        hasValue={() => true}
+                    >
+                        <FontSizePicker
+                            /*
+                            // @ts-ignore*/
+                            value={attributes.fontSize}
+                            onChange={onFontSizeChange}
+                        />
+                    </ToolsPanelItem>
+                </ToolsPanel>
+            </InspectorControls>
             {/* @ts-ignore  */}
             <InspectorControls group="color">
                 <ColorSettingsWithGradient
@@ -167,6 +232,8 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
             </InspectorControls>
             <BlockControls>
                 <BlockAlignmentToolbar
+                    /*
+                    // @ts-ignore*/
                     value={tableAlignment}
                     onChange={blockAlignChange}
                     controls={["left", "center", "right"]}

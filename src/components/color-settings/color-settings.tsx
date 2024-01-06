@@ -49,7 +49,7 @@ function ColorSetting({ attrKey, label }: ColorSettingsPropTypes) {
             {...colorGradientSettings}
             enableAlpha
             panelId={clientId}
-            title={__("Color Settings", "gutenberghub-tabs")}
+            title={__("Color Settings", "tableberg")}
             popoverProps={{
                 placement: "left start",
             }}

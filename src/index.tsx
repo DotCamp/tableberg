@@ -14,6 +14,7 @@ import {
     store as blockEditorStore,
     BlockIcon,
 } from "@wordpress/block-editor";
+import { store as editorStore } from "@wordpress/editor";
 import {
     BlockEditProps,
     InnerBlockTemplate,
@@ -57,10 +58,12 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         className: classNames(getStyleClass(props.attributes)),
         style: getStyles(props.attributes),
     });
+    
 
     // @ts-ignore
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
-        // @ts-ignore false can obviously be assigned to renderAppender as does wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
+        // @ts-ignore false can obviously be assigned to renderAppender as does
+        // wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
         renderAppender: false,
         allowedBlocks: ALLOWED_BLOCKS,
     });
@@ -73,12 +76,99 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         };
     }, []);
 
-    const { replaceInnerBlocks, insertBlocks, removeBlock } = useDispatch(
-        blockEditorStore
-    ) as BlockEditorStoreActions;
+    const { hasEditorRedo, removeEmptyColsOrRows } = useSelect((select) => {
+        const removeEmptyColsOrRows = async () => {
+            const storeSelect = select(blockEditorStore) as any;
+            const rows = storeSelect.getBlocks(clientId);
 
-    const [initialRowCount, setInitialRowCount] = useState<number | "">(2);
-    const [initialColCount, setInitialColCount] = useState<number | "">(2);
+            /**
+             * First check if there is any empty rows.
+             */
+            row_loop: for (const row of rows) {
+                const cols = row.innerBlocks;
+                for (let i = 0; i < cols.length; i++) {
+                    if (cols[i].innerBlocks.length > 0) {
+                        continue row_loop;
+                    }
+                }
+
+                // The row is empty, remove it
+                const cells = storeSelect.getBlockOrder(row.clientId);
+                const removeRows: Promise<any>[] = [];
+                for (const cell of cells) {
+                    removeRows.push(removeBlock(cell));
+                }
+                await Promise.all(removeRows);
+                await removeBlock(row.clientId);
+                // There can be only one empty row or column in a undo
+                return;
+            }
+
+            const row1cols = rows[0].innerBlocks;
+            for (let i = 0; i < row1cols.length; i++) {
+                /**
+                 * If the i th col of the first row is empty,
+                 * we can safely consider the whole i th column to be empty
+                 */
+                if (row1cols[i].innerBlocks.length === 0) {
+                    rows.forEach(async (row: any) => {
+                        const col = row.innerBlocks[i];
+                        const colIndex = storeSelect.getBlockIndex(
+                            col.clientId
+                        );
+                        await storeSelect
+                            .getBlocks(clientId)
+                            .forEach(async (row: any) => {
+                                const cells = storeSelect.getBlockOrder(
+                                    row.clientId
+                                );
+                                await removeBlock(cells[colIndex]);
+                            });
+                        removeBlock(row.innerBlocks[i]);
+                    });
+                    updateBlockAttributes(clientId, {
+                        cols: row1cols.length - 1,
+                    });
+                    break;
+                }
+            }
+        };
+
+        return {
+            // @ts-ignore
+            hasEditorRedo: select(editorStore).hasEditorRedo(),
+            removeEmptyColsOrRows,
+        };
+    }, []);
+
+    const {
+        replaceInnerBlocks,
+        insertBlocks,
+        removeBlock,
+        updateBlockAttributes,
+    } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
+    //@ts-ignore
+    const tablebergData = tablebergAdminMenuData;
+    const globalBlockProperties = tablebergData?.block_properties;
+
+    const globalRows = globalBlockProperties?.data.length
+        ? globalBlockProperties?.data.find(
+              (property: any) => property.name === "row_number"
+          )
+        : false;
+
+    const globalColumns = globalBlockProperties?.data.length
+        ? globalBlockProperties?.data.find(
+              (property: any) => property.name === "column_number"
+          )
+        : false;
+
+    const [initialRowCount, setInitialRowCount] = useState<number | "">(
+        globalRows?.value ?? 3
+    );
+    const [initialColCount, setInitialColCount] = useState<number | "">(
+        globalColumns?.value ?? 3
+    );
 
     useEffect(() => {
         if (enableTableHeader) {
@@ -130,6 +220,10 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             }
         }
     }, [enableTableFooter]);
+
+    if (hasEditorRedo) {
+        removeEmptyColsOrRows();
+    }
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
