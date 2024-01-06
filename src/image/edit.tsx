@@ -9,7 +9,6 @@ import { ResizableBox } from "@wordpress/components";
 import {
     RichText,
     useBlockProps,
-    // @ts-ignore
     __experimentalGetElementClassName,
     // @ts-ignore
     __experimentalImageEditor as ImageEditor,

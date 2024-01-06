@@ -145,4 +145,6 @@ declare module "@wordpress/block-editor" {
         }[];
         hasColorsOrGradients: boolean;
     };
+
+    const __experimentalGetElementClassName: (element: string) => string;
 }
