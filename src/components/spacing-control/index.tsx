@@ -4,7 +4,6 @@
 import { isEmpty } from "lodash";
 import { __ } from "@wordpress/i18n";
 import {
-    //@ts-ignore
     useBlockEditContext,
     //@ts-ignore
     __experimentalSpacingSizesControl as SpacingSizesControl,
