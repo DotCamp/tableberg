@@ -42,8 +42,7 @@ function Inspector(props: MainPropTypes) {
     const aspectRatioDisplayValue = aspectRatio ?? "auto";
     const scaleDisplayValue = scale ?? "cover";
     const scaleHelp = useMemo(() => {
-        return scaleOptions.reduce((acc, option) => {
-            //@ts-ignore
+        return scaleOptions.reduce((acc: { [key: string]: any }, option) => {
             acc[option.value] = option.help;
             return acc;
         }, {});
