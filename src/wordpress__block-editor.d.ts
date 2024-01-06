@@ -34,6 +34,25 @@ declare module "@wordpress/block-editor" {
 
     const HeightControl: import("react").ComponentType<HeightControl.Props>;
 
+    namespace AlignmentControl {
+        interface Props {
+            children?: never | undefined;
+            onChange(newValue: string | undefined): void;
+            value: string | undefined;
+            label?: string;
+            alignmentControls?: {
+                align: string;
+                icon: JSX.Element;
+                title: string;
+            }[];
+            describedBy?: string;
+            isCollapsed?: boolean;
+            isToolbar?: boolean;
+        }
+    }
+
+    const AlignmentControl: import("react").ComponentType<AlignmentControl.Props>;
+
     const useBlockEditContext: () => {
         name: string;
         isSelected: boolean;

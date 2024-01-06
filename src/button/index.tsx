@@ -21,7 +21,6 @@ import {
 
 import metadata from "./block.json";
 import {
-    // @ts-ignore
     AlignmentControl,
     RichText,
     useBlockProps,
