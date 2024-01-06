@@ -4,9 +4,7 @@
 import { isEmpty } from "lodash";
 import { __ } from "@wordpress/i18n";
 import {
-    // @ts-ignore
     useBlockEditContext,
-    // @ts-ignore
     __experimentalBorderRadiusControl as BorderRadiusControl,
     store as BlockEditorStore,
 } from "@wordpress/block-editor";
@@ -51,7 +49,7 @@ function BorderControl({
                 select(BlockEditorStore) as BlockEditorStoreSelectors
             ).getSelectedBlock()?.attributes,
         []
-    );
+    )!;
     const { updateBlockAttributes } = useDispatch(
         BlockEditorStore
     ) as BlockEditorStoreActions;

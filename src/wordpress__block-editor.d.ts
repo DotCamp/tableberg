@@ -88,6 +88,23 @@ declare module "@wordpress/block-editor" {
 
     const __experimentalLinkControl: import("react").ComponentType<__experimentalLinkControl.Props>;
 
+    namespace __experimentalBorderRadiusControl {
+        interface Props {
+            children?: never | undefined;
+            values:
+                | string
+                | {
+                      topLeft: string;
+                      topRight: string;
+                      bottomLeft: string;
+                      bottomRight: string;
+                  };
+            onChange: (newValue: object) => void;
+        }
+    }
+
+    const __experimentalBorderRadiusControl: import("react").ComponentType<__experimentalBorderRadiusControl.Props>;
+
     const useBlockEditContext: () => {
         name: string;
         isSelected: boolean;
