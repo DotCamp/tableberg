@@ -1,6 +1,5 @@
 import { Button, ColorIndicator, Dropdown } from "@wordpress/components";
 
-import "./style.scss";
 import { ColorPalette } from "@wordpress/block-editor";
 import { Color } from "@wordpress/components/build-types/palette-edit/types";
 
