@@ -28,7 +28,7 @@ declare module "@wordpress/block-editor" {
             children?: never | undefined;
             onChange(newValue: string | undefined): void;
             value: string | undefined;
-            label: string;
+            label?: string;
         }
     }
 
