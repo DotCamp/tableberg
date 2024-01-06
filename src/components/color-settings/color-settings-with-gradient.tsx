@@ -40,8 +40,7 @@ function ColorSettingWithGradient({
             select(blockEditorStore) as BlockEditorStoreSelectors
         ).getBlockAttributes(clientId);
     }, []);
-    // @ts-ignore
-    const setAttributes = (newAttributes) =>
+    const setAttributes = (newAttributes: Record<string, any>) =>
         updateBlockAttributes(clientId, newAttributes);
     const colorGradientSettings = useMultipleOriginColorsAndGradients();
     console.log(colorGradientSettings);
