@@ -1,7 +1,6 @@
 import { get } from "lodash";
 import { __ } from "@wordpress/i18n";
-//@ts-ignore
-import { useEffect } from "@wordpress/element";
+import { useEffect } from "react";
 import { caption as captionIcon, crop } from "@wordpress/icons";
 import {
     BlockControls as WPBlockControls,
