@@ -1,8 +1,3 @@
-import blockEditorStoreSelectorTypes from "../node_modules/@types/wordpress__block-editor/store/selectors";
-import blockEditorStoreActionsTypes from "../node_modules/@types/wordpress__block-editor/store/actions";
-
-import editorStoreSelectorTypes from "../node_modules/@types/wordpress__editor/store/selectors";
-
 interface blockEditorStoreSelectorCustomTypes {
     getBlockParents: (clientId: string, ascending?: boolean) => string[];
 }
@@ -16,9 +11,12 @@ interface blockEditorStoreActionsCustomTypes {
     ) => void;
 }
 
-type BlockEditorStoreSelectors = typeof blockEditorStoreSelectorTypes &
-    blockEditorStoreSelectorCustomTypes;
-type BlockEditorStoreActions = typeof blockEditorStoreActionsTypes &
-    blockEditorStoreActionsCustomTypes;
+declare type BlockEditorStoreSelectors =
+    typeof import("@wordpress/block-editor/store/selectors") &
+        blockEditorStoreSelectorCustomTypes;
+declare type BlockEditorStoreActions =
+    typeof import("@wordpress/block-editor/store/actions") &
+        blockEditorStoreActionsCustomTypes;
 
-type EditorStoreSelectors = typeof editorStoreSelectorTypes;
+declare type EditorStoreSelectors =
+    typeof import("@wordpress/editor/store/selectors");

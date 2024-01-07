@@ -12,10 +12,6 @@ import {
     __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from "@wordpress/components";
 import { ToggleGroupControlPropTypes } from "../types";
-import {
-    BlockEditorStoreActions,
-    BlockEditorStoreSelectors,
-} from "../../../typedefs/wordpress__data";
 
 function CustomToggleGroupControl({
     label,

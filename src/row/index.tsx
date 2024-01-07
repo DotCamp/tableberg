@@ -14,7 +14,6 @@ import { useSelect } from "@wordpress/data";
 
 import metadata from "./block.json";
 import classNames from "classnames";
-import { BlockEditorStoreSelectors } from "../../typedefs/wordpress__data";
 
 interface TBRowAttrs {
     tagName: string;

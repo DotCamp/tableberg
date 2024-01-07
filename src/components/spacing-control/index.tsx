@@ -12,10 +12,6 @@ import {
 import { useSelect, useDispatch } from "@wordpress/data";
 import { __experimentalToolsPanelItem as ToolsPanelItem } from "@wordpress/components";
 import { SpacingPropTypes } from "../types";
-import {
-    BlockEditorStoreActions,
-    BlockEditorStoreSelectors,
-} from "../../../typedefs/wordpress__data";
 
 function SpacingControl({
     label,

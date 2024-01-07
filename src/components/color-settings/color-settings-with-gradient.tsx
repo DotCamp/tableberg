@@ -12,10 +12,6 @@ import {
     store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { ColorSettingsWithGradientPropTypes } from "../types";
-import {
-    BlockEditorStoreActions,
-    BlockEditorStoreSelectors,
-} from "../../../typedefs/wordpress__data";
 
 /**
  *

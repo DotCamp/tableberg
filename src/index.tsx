@@ -31,11 +31,6 @@ import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
 import exampleImage from "./example.png";
-import {
-    BlockEditorStoreActions,
-    BlockEditorStoreSelectors,
-    EditorStoreSelectors,
-} from "../typedefs/wordpress__data";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 

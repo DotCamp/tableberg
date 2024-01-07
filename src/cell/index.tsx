@@ -31,10 +31,6 @@ import metadata from "./block.json";
 import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { store as tbStore } from "../store";
-import {
-    BlockEditorStoreActions,
-    BlockEditorStoreSelectors,
-} from "../../typedefs/wordpress__data";
 
 interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
