@@ -1,10 +1,12 @@
+import { RefObject } from "react";
+
 interface MediaSize {
     height: number;
     width: number;
     url: string;
     orientation: string;
 }
-interface MediaSizes {
+export interface MediaSizes {
     thumbnail?: MediaSize;
     medium?: MediaSize;
     large?: MediaSize;
@@ -79,5 +81,5 @@ export interface ExtendMainPropTypes extends MainPropTypes {
     setIsEditingImage: (isImageEditing: boolean) => void;
 }
 export interface ImageTypes extends MainPropTypes {
-    imageRef: HTMLImageElement | null;
+    imageRef: RefObject<HTMLImageElement> | null;
 }

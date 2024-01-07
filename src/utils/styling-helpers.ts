@@ -37,12 +37,11 @@ export function getBorderVariablesCss(border: object, slug: string) {
         "bottom",
         "left",
     ];
-    let borders = {};
+    let borders: Record<string, any> = {};
     for (let i = 0; i < borderSides.length; i++) {
         const side = borderSides[i];
-        const sideProperty = [`--tableberg-${slug}-border-${side}`];
+        const sideProperty = `--tableberg-${slug}-border-${side}`;
         const sideValue = getSingleSideBorderValue(borderInFourDimension, side);
-        // @ts-ignore
         borders[sideProperty] = sideValue;
     }
 

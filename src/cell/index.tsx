@@ -34,7 +34,7 @@ import { store as tbStore } from "../store";
 
 interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
-    tagName: string;
+    tagName: "td" | "th";
     rowspan: number;
     colspan: number;
 }
@@ -535,8 +535,8 @@ function edit({
         <>
             <TagName
                 {...innerBlocksProps}
-                colspan={attributes.colspan}
-                rowspan={attributes.rowspan}
+                rowSpan={attributes.rowspan}
+                colSpan={attributes.colspan}
             />
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
@@ -564,6 +564,8 @@ function save(props: BlockSaveProps<TablebergCellBlockAttrs>) {
     return <TagName {...innerBlocksProps} />;
 }
 
+// @ts-ignore This is a weird case.
+// Need to investigate further why this is happening
 registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,

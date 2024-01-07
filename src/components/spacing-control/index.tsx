@@ -5,7 +5,6 @@ import { isEmpty } from "lodash";
 import { __ } from "@wordpress/i18n";
 import {
     useBlockEditContext,
-    //@ts-ignore
     __experimentalSpacingSizesControl as SpacingSizesControl,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
@@ -26,7 +25,7 @@ function SpacingControl({
                 select(blockEditorStore) as BlockEditorStoreSelectors
             ).getSelectedBlock()?.attributes,
         []
-    );
+    )!;
     const { updateBlockAttributes } = useDispatch(
         blockEditorStore
     ) as BlockEditorStoreActions;

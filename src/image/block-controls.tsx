@@ -4,9 +4,7 @@ import { useEffect } from "react";
 import { caption as captionIcon, crop } from "@wordpress/icons";
 import {
     BlockControls as WPBlockControls,
-    //@ts-ignore
     MediaReplaceFlow,
-    // @ts-ignore
     __experimentalImageURLInputUI as ImageURLInputUI,
 } from "@wordpress/block-editor";
 import { usePrevious } from "@wordpress/compose";

@@ -9,20 +9,19 @@ import {
     RichText,
     useBlockProps,
     __experimentalGetElementClassName,
-    // @ts-ignore
     __experimentalImageEditor as ImageEditor,
 } from "@wordpress/block-editor";
 import Image from "./image";
 import Inspector from "./inspector";
 import BlockControls from "./block-controls";
-import type { AttributesTypes } from "./types";
+import type { AttributesTypes, MediaSizes } from "./types";
 
 function Edit(props: BlockEditProps<AttributesTypes>) {
     const { attributes, setAttributes, isSelected } = props;
     const { media, height, width, caption } = attributes;
     const [showCaption, setShowCaption] = useState(!!caption);
     const [isImageEditing, setIsEditingImage] = useState(false);
-    const imageRef = useRef<HTMLImageElement | null>(null);
+    const imageRef = useRef<HTMLImageElement>(null);
     const blockProps = useBlockProps();
     const hasImage = !isEmpty(media);
     const { toggleSelection } = useDispatch("core/block-editor");
@@ -45,7 +44,7 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
     // So we try using the imageRef width first and fallback to clientWidth.
     const fallbackClientWidth = imageRef.current?.width;
     const id = get(media, "id", "");
-    const sizeSlug = get(attributes, "sizeSlug", "large");
+    const sizeSlug = get(attributes, "sizeSlug", "large") as keyof MediaSizes;
     const url = get(media, `sizes.${sizeSlug}.url`, "");
     // The only supported unit is px, so we can parseInt to strip the px here.
     const numericWidth = width ? parseInt(width, 10) : undefined;
@@ -129,7 +128,7 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                             clientWidth={fallbackClientWidth}
                             naturalHeight={naturalHeight}
                             naturalWidth={naturalWidth}
-                            onSaveImage={(imageAttributes: any) => {
+                            onSaveImage={(imageAttributes) => {
                                 setAttributes({
                                     media: {
                                         ...media,

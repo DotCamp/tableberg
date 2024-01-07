@@ -4,6 +4,7 @@ import {
     getBorderCSS,
     getSingleSideBorderValue,
 } from "../utils/styling-helpers";
+import { RefObject } from "react";
 
 function Image(props: ImageTypes) {
     const { attributes, imageRef } = props;
@@ -16,17 +17,31 @@ function Image(props: ImageTypes) {
     );
     const mediaAlt = get(attributes, "alt", "");
     const aspectRatio = get(attributes, "aspectRatio", "");
-    const scale = get(attributes, "scale", "");
+    const scale = get(attributes, "scale", "none") as
+        | "contain"
+        | "cover"
+        | "fill"
+        | "none"
+        | "scale-down";
     const width = get(attributes, "width", "");
     const height = get(attributes, "height", "");
-    const borderAttr = get(attributes, "border", "");
-    const borderRadius = get(attributes, "borderRadius", "");
+    const borderAttr = get(attributes, "border", {
+        top: "",
+        right: "",
+        bottom: "",
+        left: "",
+    });
+    const borderRadius = get(attributes, "borderRadius", {
+        topLeft: "",
+        topRight: "",
+        bottomLeft: "",
+        bottomRight: "",
+    });
     const border = getBorderCSS(borderAttr);
 
     return (
         <img
-            // @ts-ignore
-            ref={imageRef}
+            ref={props.imageRef as unknown as RefObject<HTMLImageElement>}
             style={{
                 aspectRatio,
                 objectFit: scale,

@@ -30,7 +30,14 @@ import {
     BlockControls,
     BlockAlignmentToolbar,
 } from "@wordpress/block-editor";
-import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
+import {
+    MouseEvent,
+    RefObject,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 
 import "./style.scss";
 import { link, linkOff } from "@wordpress/icons";
@@ -90,7 +97,7 @@ function edit({
     const { text, align, width, textAlign, id, url, rel, linkTarget } =
         attributes;
     const ref = useRef();
-    const richTextRef = useRef<HTMLDivElement>();
+    const richTextRef = useRef<HTMLDivElement>(null);
     const isURLSet = !!url;
     const opensInNewTab = linkTarget === "_blank";
     const borderProps = useBorderProps(attributes);
@@ -180,8 +187,7 @@ function edit({
                 id={id}
             >
                 <RichText
-                    // @ts-ignore
-                    ref={richTextRef}
+                    ref={richTextRef as unknown as RefObject<"div">}
                     className={classnames(
                         "wp-block-button__link",
                         "wp-element-button",

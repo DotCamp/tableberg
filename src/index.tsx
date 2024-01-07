@@ -50,9 +50,8 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const blockProps = useBlockProps({
         className: classNames(getStyleClass(props.attributes)),
         style: getStyles(props.attributes),
-    });
+    } as Record<string, any>);
 
-    // @ts-ignore
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
         // @ts-ignore false can obviously be assigned to renderAppender as does
         // wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
@@ -321,7 +320,9 @@ function save() {
     return <table {...innerBlocksProps} />;
 }
 
-//@ts-ignore
+// @ts-ignore to remove this, we have to manually add the attributes
+// from block.json, which is not very scalable or pleasant.
+// We'll think of removing this @ts-ignore later
 registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
@@ -335,103 +336,99 @@ registerBlockType(metadata.name, {
                 blocks: ["core/table"],
                 transform: function (attributes) {
                     const tableBorder = get(attributes, "style.border", {});
-                    //@ts-ignore
                     const tableBody = get(attributes, "body", []);
                     const tableHead = get(attributes, "head", []);
                     const tableFoot = get(attributes, "head", []);
-                    const tableBodyBlocks = tableBody?.map((row: any) => [
-                        "tableberg/row",
-                        {},
-                        row.cells?.map((cell: any) => [
-                            "tableberg/cell",
+                    const tableBodyBlocks: InnerBlockTemplate[] =
+                        tableBody?.map((row: any) => [
+                            "tableberg/row",
                             {},
-                            [
+                            row.cells?.map((cell: any) => [
+                                "tableberg/cell",
+                                {},
                                 [
-                                    "core/paragraph",
-                                    {
-                                        content: cell.content,
-                                        align: cell.align,
-                                        style: {
-                                            spacing: {
-                                                margin: {
-                                                    top: "0",
-                                                    bottom: "0",
+                                    [
+                                        "core/paragraph",
+                                        {
+                                            content: cell.content,
+                                            align: cell.align,
+                                            style: {
+                                                spacing: {
+                                                    margin: {
+                                                        top: "0",
+                                                        bottom: "0",
+                                                    },
                                                 },
                                             },
                                         },
-                                    },
+                                    ],
                                 ],
-                            ],
-                        ]),
-                    ]);
-                    const tableHeaderBlocks = tableHead?.map((row: any) => [
-                        "tableberg/row",
-                        {},
-                        row.cells?.map((cell: any) => [
-                            "tableberg/cell",
-                            { tagName: "th" },
-                            [
+                            ]),
+                        ]);
+                    const tableHeaderBlocks: InnerBlockTemplate[] =
+                        tableHead?.map((row: any) => [
+                            "tableberg/row",
+                            {},
+                            row.cells?.map((cell: any) => [
+                                "tableberg/cell",
+                                { tagName: "th" },
                                 [
-                                    "core/paragraph",
-                                    {
-                                        content: cell.content,
-                                        align: cell.align,
-                                        style: {
-                                            spacing: {
-                                                margin: {
-                                                    top: "0",
-                                                    bottom: "0",
+                                    [
+                                        "core/paragraph",
+                                        {
+                                            content: cell.content,
+                                            align: cell.align,
+                                            style: {
+                                                spacing: {
+                                                    margin: {
+                                                        top: "0",
+                                                        bottom: "0",
+                                                    },
                                                 },
                                             },
                                         },
-                                    },
+                                    ],
                                 ],
-                            ],
-                        ]),
-                    ]);
-                    const tableFooterBlocks = tableFoot?.map((row: any) => [
-                        "tableberg/row",
-                        {},
-                        row.cells?.map((cell: any) => [
-                            "tableberg/cell",
-                            {
-                                tagName: "th",
-                            },
-                            [
+                            ]),
+                        ]);
+                    const tableFooterBlocks: InnerBlockTemplate[] =
+                        tableFoot?.map((row: any) => [
+                            "tableberg/row",
+                            {},
+                            row.cells?.map((cell: any) => [
+                                "tableberg/cell",
+                                {
+                                    tagName: "th",
+                                },
                                 [
-                                    "core/paragraph",
-                                    {
-                                        content: cell.content,
-                                        align: cell.align,
-                                        style: {
-                                            spacing: {
-                                                margin: {
-                                                    top: "0",
-                                                    bottom: "0",
+                                    [
+                                        "core/paragraph",
+                                        {
+                                            content: cell.content,
+                                            align: cell.align,
+                                            style: {
+                                                spacing: {
+                                                    margin: {
+                                                        top: "0",
+                                                        bottom: "0",
+                                                    },
                                                 },
                                             },
                                         },
-                                    },
+                                    ],
                                 ],
-                            ],
-                        ]),
-                    ]);
+                            ]),
+                        ]);
 
                     const tablebergAttributes = {
-                        // @ts-ignore
-                        rows: attributes.body.length,
-                        // @ts-ignore
-                        cols: attributes.body[0].cells.length,
+                        rows: (attributes as any).body.length,
+                        cols: (attributes as any).body[0].cells.length,
                         tableBorder: tableBorder,
                         innerBorder: tableBorder,
-                        // @ts-ignore
-                        enableTableFooter: attributes.foot.length > 0,
-                        // @ts-ignore
-                        enableTableHeader: attributes.head.length > 0,
-                        // @ts-ignore
-                        tableAlignment: !isEmpty(attributes.align)
-                            ? // @ts-ignore
-                              attributes.align
+                        enableTableFooter: (attributes as any).foot.length > 0,
+                        enableTableHeader: (attributes as any).head.length > 0,
+                        tableAlignment: !isEmpty((attributes as any).align)
+                            ? (attributes as any).align
                             : "center",
                         hasTableCreated: true,
                     };

@@ -62,7 +62,7 @@ function BorderControl({
     }, []);
     return (
         <>
-            {showBorder && (
+            {showBorder && attrBorderKey && borderLabel && (
                 <ToolsPanelItem
                     panelId={clientId}
                     isShownByDefault={showDefaultBorder}
@@ -90,7 +90,7 @@ function BorderControl({
                 </ToolsPanelItem>
             )}
 
-            {showBorderRadius && (
+            {showBorderRadius && borderRadiusLabel && attrBorderRadiusKey && (
                 <ToolsPanelItem
                     panelId={clientId}
                     isShownByDefault={showDefaultBorderRadius}

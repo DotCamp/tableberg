@@ -30,7 +30,7 @@ function CustomToggleGroupControl({
         return (
             select(blockEditorStore) as BlockEditorStoreSelectors
         ).getBlockAttributes(clientId);
-    }, []);
+    }, [])!;
     const setAttributes = (newAttributes: object) =>
         updateBlockAttributes(clientId, newAttributes);
 

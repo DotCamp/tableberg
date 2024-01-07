@@ -25,3 +25,5 @@ export interface TablebergBlockAttrs {
     fontSize: string;
     linkColor: string;
 }
+
+export { PaddingTypes } from "./utils/common-types";

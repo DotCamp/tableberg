@@ -9,7 +9,6 @@ import {
     BlockControls,
     BlockAlignmentToolbar,
     FontSizePicker,
-    __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
