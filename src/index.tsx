@@ -11,6 +11,7 @@ import {
     store as blockEditorStore,
     BlockIcon,
 } from "@wordpress/block-editor";
+// const editorStore = "core/editor";
 import { store as editorStore } from "@wordpress/editor";
 import {
     BlockEditProps,
@@ -69,7 +70,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, []);
 
     const { hasEditorRedo, removeEmptyColsOrRows } = useSelect((select) => {
-        const removeEmptyColsOrRows = async () => {
+        const removeEmptyColsOrRows = () => {
             const storeSelect = select(
                 blockEditorStore
             ) as BlockEditorStoreSelectors;
@@ -88,12 +89,10 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
                 // The row is empty, remove it
                 const cells = storeSelect.getBlockOrder(row.clientId);
-                const removeRows: Promise<any>[] = [];
                 for (const cell of cells) {
-                    removeRows.push(removeBlock(cell));
+                    removeBlock(cell);
                 }
-                await Promise.all(removeRows);
-                await removeBlock(row.clientId);
+                removeBlock(row.clientId);
                 // There can be only one empty row or column in a undo
                 return;
             }
@@ -105,19 +104,17 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                  * we can safely consider the whole i th column to be empty
                  */
                 if (row1cols[i].innerBlocks.length === 0) {
-                    rows.forEach(async (row: any) => {
+                    rows.forEach((row: any) => {
                         const col = row.innerBlocks[i];
                         const colIndex = storeSelect.getBlockIndex(
                             col.clientId
                         );
-                        await storeSelect
-                            .getBlocks(clientId)
-                            .forEach(async (row: any) => {
-                                const cells = storeSelect.getBlockOrder(
-                                    row.clientId
-                                );
-                                await removeBlock(cells[colIndex]);
-                            });
+                        storeSelect.getBlocks(clientId).forEach((row: any) => {
+                            const cells = storeSelect.getBlockOrder(
+                                row.clientId
+                            );
+                            removeBlock(cells[colIndex]);
+                        });
                         removeBlock(row.innerBlocks[i]);
                     });
                     updateBlockAttributes(clientId, {
