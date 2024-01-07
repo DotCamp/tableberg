@@ -34,7 +34,7 @@ import { store as tbStore } from "../store";
 import {
     BlockEditorStoreActions,
     BlockEditorStoreSelectors,
-} from "../wordpress__data";
+} from "../../typedefs/wordpress__data";
 
 interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";

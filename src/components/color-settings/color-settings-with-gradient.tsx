@@ -15,7 +15,7 @@ import { ColorSettingsWithGradientPropTypes } from "../types";
 import {
     BlockEditorStoreActions,
     BlockEditorStoreSelectors,
-} from "../../wordpress__data";
+} from "../../../typedefs/wordpress__data";
 
 /**
  *

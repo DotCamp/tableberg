@@ -15,7 +15,7 @@ import { ToggleGroupControlPropTypes } from "../types";
 import {
     BlockEditorStoreActions,
     BlockEditorStoreSelectors,
-} from "../../wordpress__data";
+} from "../../../typedefs/wordpress__data";
 
 function CustomToggleGroupControl({
     label,

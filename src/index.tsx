@@ -35,7 +35,7 @@ import {
     BlockEditorStoreActions,
     BlockEditorStoreSelectors,
     EditorStoreSelectors,
-} from "./wordpress__data";
+} from "../typedefs/wordpress__data";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 

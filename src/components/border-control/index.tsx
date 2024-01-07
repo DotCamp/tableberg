@@ -19,7 +19,7 @@ import type { BorderControlPropTypes } from "../types";
 import {
     BlockEditorStoreActions,
     BlockEditorStoreSelectors,
-} from "../../wordpress__data";
+} from "../../../typedefs/wordpress__data";
 
 export function splitBorderRadius(value: string | object) {
     const isValueMixed = typeof value === "string";
