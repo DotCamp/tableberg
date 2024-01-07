@@ -134,7 +134,7 @@ function edit({
 
             const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
 
-            const insertRowToTable = async (after = false) => {
+            const insertRowToTable = (after = false) => {
                 const newRowIndex = after ? rowIndex + 1 : rowIndex;
                 const newRowBlock = createBlocksFromInnerBlocksTemplate([
                     [
@@ -144,30 +144,30 @@ function edit({
                     ],
                 ])[0];
 
-                await insertBlock(newRowBlock, newRowIndex, tableBlockId, true);
-                await updateBlockAttributes(tableBlockId, {
+                insertBlock(newRowBlock, newRowIndex, tableBlockId, true);
+                updateBlockAttributes(tableBlockId, {
                     rows: rows + 1,
                 });
             };
 
-            const deleteRowFromTable = async () => {
-                await removeBlock(currentRowBlockId, true);
-                await updateBlockAttributes(tableBlockId, {
+            const deleteRowFromTable = () => {
+                removeBlock(currentRowBlockId, true);
+                updateBlockAttributes(tableBlockId, {
                     rows: rows - 1,
                 });
             };
 
-            const insertColumnToTable = async (after = false) => {
+            const insertColumnToTable = (after = false) => {
                 const colIndex = storeSelect.getBlockIndex(clientId);
                 const newColIndex = after ? colIndex + 1 : colIndex;
 
-                await storeSelect
+                storeSelect
                     .getBlocks(tableBlockId)
-                    .forEach(async (row: BlockInstance, index: number) => {
+                    .forEach((row: BlockInstance, index: number) => {
                         const rowIsHeader = row?.attributes?.isHeader;
                         const rowIsFooter = row?.attributes?.isFooter;
 
-                        await insertBlock(
+                        insertBlock(
                             createBlock("tableberg/cell", {
                                 tagName:
                                     (rowIsHeader || rowIsFooter) &&
@@ -183,22 +183,22 @@ function edit({
                         );
                     });
 
-                await updateBlockAttributes(tableBlockId, {
+                updateBlockAttributes(tableBlockId, {
                     cols: cols + 1,
                 });
             };
 
-            const deleteColumnFromTable = async () => {
+            const deleteColumnFromTable = () => {
                 const colIndex = storeSelect.getBlockIndex(clientId);
 
-                await storeSelect
+                storeSelect
                     .getBlocks(tableBlockId)
-                    .forEach(async (row: BlockInstance) => {
+                    .forEach((row: BlockInstance) => {
                         const cells = storeSelect.getBlockOrder(row.clientId);
-                        await removeBlock(cells[colIndex]);
+                        removeBlock(cells[colIndex]);
                     });
 
-                await updateBlockAttributes(tableBlockId, {
+                updateBlockAttributes(tableBlockId, {
                     cols: cols - 1,
                 });
             };
@@ -224,23 +224,23 @@ function edit({
         [clientId]
     );
 
-    const onInsertRowBefore = async () => {
-        await insertRowToTable();
+    const onInsertRowBefore = () => {
+        insertRowToTable();
     };
-    const onInsertRowAfter = async () => {
-        await insertRowToTable(true);
+    const onInsertRowAfter = () => {
+        insertRowToTable(true);
     };
-    const onDeleteRow = async () => {
+    const onDeleteRow = () => {
         deleteRowFromTable();
     };
-    const onInsertColumnBefore = async () => {
-        await insertColumnToTable();
+    const onInsertColumnBefore = () => {
+        insertColumnToTable();
     };
-    const onInsertColumnAfter = async () => {
-        await insertColumnToTable(true);
+    const onInsertColumnAfter = () => {
+        insertColumnToTable(true);
     };
-    const onDeleteColumn = async () => {
-        await deleteColumnFromTable();
+    const onDeleteColumn = () => {
+        deleteColumnFromTable();
     };
 
     const { toggleCellSelection, endCellMultiSelect } = useDispatch(tbStore);
