@@ -41,6 +41,13 @@ class Cell {
 			$td->add_class( "align-v-{$vertical_align}" );
 		}
 
+
+		$style = \Tableberg\Utils::generate_css_string([
+			'--tableberg-cell-width' => $attributes['width']??'',
+			'--tableberg-cell-height' => $attributes['height']??'',
+		]);
+		$td->set_attribute('style', $style);
+
 		return $td;
 	}
 
