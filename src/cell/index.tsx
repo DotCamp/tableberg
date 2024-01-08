@@ -57,10 +57,10 @@ const getStyle = (
     const { height, width } = attributes;
     
     if (height) {
-        style["--tableberg-cell-height"] = `${height}px`;
+        style["--tableberg-cell-height"] = height;
     }
     if (width) {
-        style["--tableberg-cell-width"] = `${width}px`;
+        style["--tableberg-cell-width"] = width;
     }
     return style;
 };
