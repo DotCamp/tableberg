@@ -10,6 +10,7 @@ import {
     BlockVerticalAlignmentToolbar,
     BlockControls,
     store as blockEditorStore,
+    InspectorControls,
 } from "@wordpress/block-editor";
 import { useBlockProps, useInnerBlocksProps } from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -31,12 +32,15 @@ import metadata from "./block.json";
 import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { store as tbStore } from "../store";
+import CellControls from "./controls";
 
-interface TablebergCellBlockAttrs {
+export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
     tagName: "td" | "th";
     rowspan: number;
     colspan: number;
+    width: number;
+    height: number;
 }
 
 const ALLOWED_BLOCKS = [
@@ -46,11 +50,22 @@ const ALLOWED_BLOCKS = [
     "core/list",
 ];
 
-function edit({
-    clientId,
-    attributes,
-    setAttributes,
-}: BlockEditProps<TablebergCellBlockAttrs>) {
+const getStyle = (
+    attributes: TablebergCellBlockAttrs
+): Record<string, string> => {
+    const style: Record<string, string> = {};
+    const { height, width } = attributes;
+    if (height > 0) {
+        style["--tableberg-cell-height"] = `${height}px`;
+    }
+    if (width > 0) {
+        style["--tableberg-cell-width"] = `${width}px`;
+    }
+    return style;
+};
+
+function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
+    const { clientId, attributes, setAttributes } = props;
     const { vAlign } = attributes;
 
     const vAlignChange = (newValue: "bottom" | "center" | "top") => {
@@ -63,7 +78,11 @@ function edit({
 
     const cellRef = useRef<HTMLTableCellElement>();
 
-    const blockProps = useBlockProps({ className, ref: cellRef });
+    const blockProps = useBlockProps({
+        className,
+        style: getStyle(attributes),
+        ref: cellRef,
+    });
 
     const innerBlocksProps = useInnerBlocksProps(
         { ...blockProps },
@@ -552,6 +571,7 @@ function edit({
                     controls={tableControls}
                 />
             </BlockControls>
+            <CellControls {...props} />
         </>
     );
 }
