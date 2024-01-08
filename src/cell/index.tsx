@@ -39,8 +39,8 @@ export interface TablebergCellBlockAttrs {
     tagName: "td" | "th";
     rowspan: number;
     colspan: number;
-    width: number;
-    height: number;
+    width: string;
+    height: string;
 }
 
 const ALLOWED_BLOCKS = [
@@ -55,10 +55,11 @@ const getStyle = (
 ): Record<string, string> => {
     const style: Record<string, string> = {};
     const { height, width } = attributes;
-    if (height > 0) {
+    
+    if (height) {
         style["--tableberg-cell-height"] = `${height}px`;
     }
-    if (width > 0) {
+    if (width) {
         style["--tableberg-cell-width"] = `${width}px`;
     }
     return style;

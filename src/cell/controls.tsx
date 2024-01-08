@@ -17,8 +17,8 @@ export default function CellControls(
                 label={__("Cell Size", "tableberg")}
                 resetAll={() =>
                     setAttributes({
-                        height: 0,
-                        width: 0,
+                        height: '',
+                        width: '',
                     })
                 }
             >
@@ -30,7 +30,7 @@ export default function CellControls(
                         value={attributes.width as any}
                         label={__("Cell Width", "tableberg")}
                         onChange={(newValue: string) =>
-                            setAttributes({ width: parseInt(newValue) })
+                            setAttributes({ width: newValue })
                         }
                     />
                 </ToolsPanelItem>
@@ -42,7 +42,7 @@ export default function CellControls(
                         value={attributes.height as any}
                         label={__("Cell Height", "tableberg")}
                         onChange={(newValue: string) =>
-                            setAttributes({ height: parseInt(newValue) })
+                            setAttributes({ height: newValue })
                         }
                     />
                 </ToolsPanelItem>
