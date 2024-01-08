@@ -32,3 +32,23 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 == Screenshot ==
 
 1. Core Table Block vs Tableberg Block
+
+== Changelog ==
+
+= 0.2.0 =
+
+* NEW: Added plugin page with instructions, documentation, and support.
+* NEW: Added table block preview.
+* NEW: (Table Block) Added custom block logo.
+* NEW: (Table Block) Added block transform: transform core block into tableberg block.
+* NEW: (Table Block) Added table alignment control to toolbar.
+* NEW: (Table Block) Added global font style controls: Text Color, Link Color, Font Size.
+* NEW: (Button Block) Added gradient support.
+* IMPROVE: Decreased initial spacing
+* IMPROVE: Changed block name from "Tableberg Image" to "Image".
+* FIX: (Table Block) Fixed an issue with table footer toggle.
+* FIX: (Table Block) Show block toolbar when add table placeholder dialog is shown.
+* FIX: (Table Block) Fixed an issue with adding a new row.
+* FIX: (Table Block) Fixed an issue with undoing adding a row.
+* FIX: (Table Block) Fixed an issue with undoing adding a column.
+* FIX: (Button Block) Fixed an issue with color.
