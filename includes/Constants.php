@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The file defines global constants for the plugin
  *
@@ -14,7 +15,7 @@ namespace Tableberg;
  */
 class Constants {
 
-	const PLUGIN_VERSION = '0.0.2';
+	const PLUGIN_VERSION = '0.2.0';
 
 	const PLUGIN_NAME = 'tableberg';
 
