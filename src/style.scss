@@ -17,7 +17,7 @@ table.wp-block-tableberg-table {
     font-size: var(--tableberg-global-font-size);
 
     a {
-        color: var(--tableberg-global-link-color);;
+        color: var(--tableberg-global-link-color);
     }
 
     &.has-table-width {
@@ -65,6 +65,11 @@ table.wp-block-tableberg-table {
 
         &.tableberg-header {
             background: var(--tableberg-header-bg-color);
+        }
+
+        > * {
+            width: var(--tableberg-cell-width);
+            height: var(--tableberg-cell-height);
         }
     }
     &.has-inner-border {
