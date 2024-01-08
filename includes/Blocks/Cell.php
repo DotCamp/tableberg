@@ -40,13 +40,15 @@ class Cell {
 		if ( $td->next_tag( 'td' ) && $vertical_align ) {
 			$td->add_class( "align-v-{$vertical_align}" );
 		}
+		$style = [];
+		if (isset($attributes['width']) && $attributes['width']) {
+			$style['--tableberg-cell-width'] = $attributes['width'] . 'px';
+		}
+		if (isset($attributes['height']) && $attributes['height']) {
+			$style['--tableberg-cell-height'] = $attributes['height'] . 'px';
+		}
 
-
-		$style = \Tableberg\Utils::generate_css_string([
-			'--tableberg-cell-width' => $attributes['width']??'',
-			'--tableberg-cell-height' => $attributes['height']??'',
-		]);
-		$td->set_attribute('style', $style);
+		$td->set_attribute('style', \Tableberg\Utils::generate_css_string($style));
 
 		return $td;
 	}
