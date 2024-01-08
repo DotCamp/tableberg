@@ -589,24 +589,7 @@ function save(props: BlockSaveProps<TablebergCellBlockAttrs>) {
 registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
-    attributes: {
-        vAlign: {
-            type: "string",
-            default: "center",
-        },
-        tagName: {
-            type: "string",
-            default: "td",
-        },
-        rowspan: {
-            type: "number",
-            default: "1",
-        },
-        colspan: {
-            type: "number",
-            default: "1",
-        },
-    },
+    attributes: metadata.attributes,
     example: {},
     edit,
     save,
