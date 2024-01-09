@@ -69,7 +69,7 @@ table.wp-block-tableberg-table {
 
         > * {
             width: var(--tableberg-cell-width);
-            height: var(--tableberg-cell-height);
+            height: var(--tableberg-row-height);
         }
     }
     &.has-inner-border {

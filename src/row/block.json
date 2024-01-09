@@ -22,6 +22,10 @@
         "isFooter": {
             "type": "boolean",
             "default": false
+        },
+        "height": {
+            "type": "string",
+            "default": ""
         }
     },
     "supports": {
