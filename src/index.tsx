@@ -11,8 +11,6 @@ import {
     store as blockEditorStore,
     BlockIcon,
 } from "@wordpress/block-editor";
-// const editorStore = "core/editor";
-import { store as editorStore } from "@wordpress/editor";
 import {
     BlockEditProps,
     InnerBlockTemplate,
@@ -127,7 +125,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
         return {
             hasEditorRedo: (
-                select(editorStore) as EditorStoreSelectors
+                select("core/editor") as EditorStoreSelectors
             ).hasEditorRedo(),
             removeEmptyColsOrRows,
         };
