@@ -1,20 +1,5 @@
-export interface SingleBorderTypes {
-    width?: string;
-    style?: string;
-    color?: string;
-}
-export interface BorderTypes {
-    top?: SingleBorderTypes;
-    right?: SingleBorderTypes;
-    bottom?: SingleBorderTypes;
-    left?: SingleBorderTypes;
-}
-export interface PaddingTypes {
-    top?: string;
-    right?: string;
-    bottom?: string;
-    left?: string;
-}
+import { BorderTypes, PaddingTypes } from "./utils/common-types";
+
 export interface TablebergBlockAttrs {
     rows: number;
     cols: number;
@@ -22,7 +7,7 @@ export interface TablebergBlockAttrs {
     tableWidth: string;
     enableTableHeader: boolean;
     enableTableFooter: boolean;
-    tableAlignment: string;
+    tableAlignment: "center" | "full" | "left" | "right" | "wide";
     cellPadding: PaddingTypes;
     headerBackgroundColor: string | null;
     headerBackgroundGradient: string | null;
@@ -35,4 +20,10 @@ export interface TablebergBlockAttrs {
     tableBorder: BorderTypes;
     innerBorder: BorderTypes;
     enableInnerBorder: boolean;
+    isExample: boolean;
+    fontColor: string;
+    fontSize: string;
+    linkColor: string;
 }
+
+export { PaddingTypes } from "./utils/common-types";

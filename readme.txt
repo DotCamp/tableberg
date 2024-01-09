@@ -1,17 +1,20 @@
-=== TableBerg ===
+=== Table Block by Tableberg - Best WordPress Table Block Plugin ===
 Contributors: dotcamp, imtiazrayhan, istiakrayhan, permafrost06, ultimateblocks, wptb
-Tags: table, block-editor, block, gutenberg
+Tags: table, comparison-tables, comparison-table, amazon-affiliate
 Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
-Tested up to: 6.3
+Tested up to: 6.4
 Requires PHP: 7.0
-Stable tag: 0.0.2
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Table Block For the Block Editor. Craft Beautiful Tables With Ease.
 
 == Description ==
+
+[Live Demo](https://app.instawp.io/launch?t=tableberg-demo&d=v2)
+
 Meet TableBerg, a simple WordPress plugin that makes adding tables to your website easy as pie. With TableBerg, creating a table in the block editor is straightforward and hassle-free.
 
 It comes with three easy-to-use sub-blocks: text, image, and button. The text block lets you type out information, the image block lets you add pictures, and the button block lets you insert clickable buttons. It’s all pretty intuitive!
@@ -25,3 +28,27 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 == Installation ==
 1. Upload the plugin zip file via the plugin page of WordPress by clicking \'Add New\' and selecting the zip from your local computer.
 2. Activate the plugins through the Plugins menu in WordPress.
+
+== Screenshot ==
+
+1. Core Table Block vs Tableberg Block
+
+== Changelog ==
+
+= 0.2.0 =
+
+* NEW: Added plugin page with instructions, documentation, and support.
+* NEW: Added table block preview.
+* NEW: (Table Block) Added custom block logo.
+* NEW: (Table Block) Added block transform: transform core block into tableberg block.
+* NEW: (Table Block) Added table alignment control to toolbar.
+* NEW: (Table Block) Added global font style controls: Text Color, Link Color, Font Size.
+* NEW: (Button Block) Added gradient support.
+* IMPROVE: Decreased initial spacing
+* IMPROVE: Changed block name from "Tableberg Image" to "Image".
+* FIX: (Table Block) Fixed an issue with table footer toggle.
+* FIX: (Table Block) Show block toolbar when add table placeholder dialog is shown.
+* FIX: (Table Block) Fixed an issue with adding a new row.
+* FIX: (Table Block) Fixed an issue with undoing adding a row.
+* FIX: (Table Block) Fixed an issue with undoing adding a column.
+* FIX: (Button Block) Fixed an issue with color.

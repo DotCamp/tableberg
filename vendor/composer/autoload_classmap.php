@@ -7,5 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'Tableberg\\Blocks\\Image' => $baseDir . '/includes/Blocks/Image.php',
 );

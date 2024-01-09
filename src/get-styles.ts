@@ -1,4 +1,3 @@
-//@ts-ignore
 import { omitBy, isUndefined, trim, isEmpty, isNumber } from "lodash";
 import { getBorderVariablesCss, getSpacingCss } from "./utils/styling-helpers";
 import { PaddingTypes, TablebergBlockAttrs } from "./types";
@@ -21,6 +20,9 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         enableTableFooter,
         tableAlignment,
         enableTableHeader,
+        fontColor,
+        fontSize,
+        linkColor,
     } = attributes;
     const cellPaddingCSS: PaddingTypes = getSpacingCss(cellPadding);
     const tableBorderVar = getBorderVariablesCss(tableBorder, "table");
@@ -28,7 +30,7 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         ? getBorderVariablesCss(innerBorder, "inner")
         : {};
 
-    let styles = {
+    let styles: Record<string, any> = {
         "--tableber-table-width": tableWidth,
         "--tableberg-footer-bg-color": !isEmpty(footerBackgroundColor)
             ? footerBackgroundColor
@@ -46,6 +48,9 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         "--tableberg-cell-padding-right": cellPaddingCSS?.right,
         "--tableberg-cell-padding-bottom": cellPaddingCSS?.bottom,
         "--tableberg-cell-padding-left": cellPaddingCSS?.left,
+        "--tableberg-global-text-color": fontColor,
+        "--tableberg-global-link-color": linkColor,
+        "--tableberg-global-font-size": fontSize,
         ...tableBorderVar,
         ...tableInnerBorder,
     };

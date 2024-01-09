@@ -1,7 +1,6 @@
-// @ts-ignore
 import { isEmpty, has } from "lodash";
 import { __experimentalHasSplitBorders as hasSplitBorders } from "@wordpress/components";
-import { BorderTypes } from "../types";
+import { BorderTypes } from "./common-types";
 
 export const getBorderCSS = (object: object) => {
     let borders: BorderTypes = {};
@@ -32,14 +31,17 @@ export function getSingleSideBorderValue(
 
 export function getBorderVariablesCss(border: object, slug: string) {
     const borderInFourDimension = getBorderCSS(border);
-    const borderSides = ["top", "right", "bottom", "left"];
-    let borders = {};
+    const borderSides: Array<keyof BorderTypes> = [
+        "top",
+        "right",
+        "bottom",
+        "left",
+    ];
+    let borders: Record<string, any> = {};
     for (let i = 0; i < borderSides.length; i++) {
         const side = borderSides[i];
-        const sideProperty = [`--tableberg-${slug}-border-${side}`];
-        // @ts-ignore
+        const sideProperty = `--tableberg-${slug}-border-${side}`;
         const sideValue = getSingleSideBorderValue(borderInFourDimension, side);
-        // @ts-ignore
         borders[sideProperty] = sideValue;
     }
 
@@ -100,14 +102,11 @@ export function getSpacingPresetCssVar(value: string) {
 }
 
 export function getSpacingCss(object: object) {
-    let css = {};
-    //@ts-ignore
+    let css: { [key: string]: any } = {};
     for (const [key, value] of Object.entries(object)) {
         if (isValueSpacingPreset(value)) {
-            //@ts-ignore
             css[key] = getSpacingPresetCssVar(value);
         } else {
-            //@ts-ignore
             css[key] = value;
         }
     }

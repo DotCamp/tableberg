@@ -5,12 +5,10 @@
 import { useDispatch, useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 import {
-    // @ts-ignore
     useBlockEditContext,
-    // @ts-ignore
     __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
-    // @ts-ignore
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
+    store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { ColorSettingsWithGradientPropTypes } from "../types";
 
@@ -28,38 +26,37 @@ function ColorSettingWithGradient({
     label,
 }: ColorSettingsWithGradientPropTypes) {
     const { clientId } = useBlockEditContext();
-    const { updateBlockAttributes } = useDispatch("core/block-editor");
+    const { updateBlockAttributes } = useDispatch(
+        blockEditorStore
+    ) as BlockEditorStoreActions;
 
-    // @ts-ignore
     const attributes = useSelect((select) => {
-        // @ts-ignore
-        return select("core/block-editor").getBlockAttributes(clientId);
-    });
-    // @ts-ignore
-    const setAttributes = (newAttributes) =>
+        return (
+            select(blockEditorStore) as BlockEditorStoreSelectors
+        ).getBlockAttributes(clientId);
+    }, [])!;
+    const setAttributes = (newAttributes: Record<string, any>) =>
         updateBlockAttributes(clientId, newAttributes);
     const colorGradientSettings = useMultipleOriginColorsAndGradients();
-    // @ts-ignore
+
     const { defaultColors, defaultGradients } = useSelect((select) => {
         return {
-            defaultColors:
-                // @ts-ignore
-                select("core/block-editor")?.getSettings()
-                    ?.__experimentalFeatures?.color?.palette?.default,
+            defaultColors: (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getSettings()?.__experimentalFeatures?.color?.palette?.default,
 
-            defaultGradients:
-                // @ts-ignore
-                select("core/block-editor")?.getSettings()
-                    ?.__experimentalFeatures?.color?.gradients?.default,
+            defaultGradients: (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getSettings()?.__experimentalFeatures?.color?.gradients?.default,
         };
-    });
+    }, []);
 
     return (
         <ColorGradientSettingsDropdown
             {...colorGradientSettings}
             enableAlpha
             panelId={clientId}
-            title={__("Color Settings", "gutenberghub-tabs")}
+            title={__("Color Settings", "tableberg")}
             popoverProps={{
                 placement: "left start",
             }}

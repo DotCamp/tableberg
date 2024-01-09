@@ -1,13 +1,11 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "version": "0.0.1",
-    "title": "Tableberg Image",
+    "version": "0.0.2",
+    "title": "Image",
     "name": "tableberg/image",
     "category": "design",
-    "parent": [
-        "tableberg/cell"
-    ],
+    "parent": ["tableberg/cell"],
     "description": "Tableberg Image",
     "attributes": {
         "media": {
@@ -88,7 +86,7 @@
         }
     },
     "textdomain": "tableberg",
-    "editorScript": "file:./index.tsx",
-    "editorStyle": "file:./index.css",
-    "style": "file:./style-index.css"
+    "editorScript": "tableberg-script",
+    "editorStyle": "tableberg-editor-style",
+    "style": "tableberg-style"
 }

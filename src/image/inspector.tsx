@@ -2,8 +2,7 @@
  * Wordpress Dependencies
  */
 import { InspectorControls } from "@wordpress/block-editor";
-//@ts-ignore
-import { useMemo } from "@wordpress/element";
+import { useMemo } from "react";
 import {
     PanelBody,
     SelectControl,
@@ -43,8 +42,7 @@ function Inspector(props: MainPropTypes) {
     const aspectRatioDisplayValue = aspectRatio ?? "auto";
     const scaleDisplayValue = scale ?? "cover";
     const scaleHelp = useMemo(() => {
-        return scaleOptions.reduce((acc, option) => {
-            //@ts-ignore
+        return scaleOptions.reduce((acc: { [key: string]: any }, option) => {
             acc[option.value] = option.help;
             return acc;
         }, {});
@@ -195,7 +193,7 @@ function Inspector(props: MainPropTypes) {
                     </ToolsPanelItem>
                 </ToolsPanel>
             </InspectorControls>
-            {/* @ts-ignore */}
+
             <InspectorControls group="border">
                 <BorderControl
                     attrBorderKey="border"

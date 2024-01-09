@@ -1,8 +1,7 @@
 /**
  * WordPress Imports
  */
-//@ts-ignore
-import { useEffect } from "@wordpress/element";
+import { isEmpty, get, last } from "lodash";
 import { Placeholder, TextControl, Button } from "@wordpress/components";
 import { blockTable } from "@wordpress/icons";
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -12,24 +11,28 @@ import {
     store as blockEditorStore,
     BlockIcon,
 } from "@wordpress/block-editor";
+// const editorStore = "core/editor";
+import { store as editorStore } from "@wordpress/editor";
 import {
     BlockEditProps,
     InnerBlockTemplate,
-    // @ts-ignore
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
+    createBlock,
 } from "@wordpress/blocks";
 /**
  * Internal Imports
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useState } from "react";
-import Inspector from "./inspector";
+import { FormEvent, useState, useEffect } from "react";
+import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
+import exampleImage from "./example.png";
+import blockIcon from "./components/icon";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 
@@ -40,6 +43,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             enableTableFooter,
             enableTableHeader,
             cols,
+            isExample,
         },
         setAttributes,
         clientId,
@@ -48,32 +52,118 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const blockProps = useBlockProps({
         className: classNames(getStyleClass(props.attributes)),
         style: getStyles(props.attributes),
-    });
+    } as Record<string, any>);
 
-    // @ts-ignore
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
-        // @ts-ignore false can obviously be assigned to renderAppender as does wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
+        // @ts-ignore false can obviously be assigned to renderAppender as does
+        // wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
         renderAppender: false,
         allowedBlocks: ALLOWED_BLOCKS,
     });
 
-    //@ts-ignore
     const { block } = useSelect((select) => {
         return {
-            //@ts-ignore
-            block: select(blockEditorStore).getBlock(clientId),
+            block: (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getBlock(clientId),
         };
-    });
+    }, []);
 
-    const { replaceInnerBlocks, insertBlocks, removeBlock } =
-        useDispatch(blockEditorStore);
+    const { hasEditorRedo, removeEmptyColsOrRows } = useSelect((select) => {
+        const removeEmptyColsOrRows = () => {
+            const storeSelect = select(
+                blockEditorStore
+            ) as BlockEditorStoreSelectors;
+            const rows = storeSelect.getBlocks(clientId);
 
-    const [initialRowCount, setInitialRowCount] = useState<number | "">(2);
-    const [initialColCount, setInitialColCount] = useState<number | "">(2);
+            /**
+             * First check if there is any empty rows.
+             */
+            row_loop: for (const row of rows) {
+                const cols = row.innerBlocks;
+                for (let i = 0; i < cols.length; i++) {
+                    if (cols[i].innerBlocks.length > 0) {
+                        continue row_loop;
+                    }
+                }
+
+                // The row is empty, remove it
+                const cells = storeSelect.getBlockOrder(row.clientId);
+                for (const cell of cells) {
+                    removeBlock(cell);
+                }
+                removeBlock(row.clientId);
+                // There can be only one empty row or column in a undo
+                return;
+            }
+
+            const row1cols = rows[0].innerBlocks;
+            for (let i = 0; i < row1cols.length; i++) {
+                /**
+                 * If the i th col of the first row is empty,
+                 * we can safely consider the whole i th column to be empty
+                 */
+                if (row1cols[i].innerBlocks.length === 0) {
+                    rows.forEach((row: any) => {
+                        const col = row.innerBlocks[i];
+                        const colIndex = storeSelect.getBlockIndex(
+                            col.clientId
+                        );
+                        storeSelect.getBlocks(clientId).forEach((row: any) => {
+                            const cells = storeSelect.getBlockOrder(
+                                row.clientId
+                            );
+                            removeBlock(cells[colIndex]);
+                        });
+                        removeBlock(row.innerBlocks[i]);
+                    });
+                    updateBlockAttributes(clientId, {
+                        cols: row1cols.length - 1,
+                    });
+                    break;
+                }
+            }
+        };
+
+        return {
+            hasEditorRedo: (
+                select(editorStore) as EditorStoreSelectors
+            ).hasEditorRedo(),
+            removeEmptyColsOrRows,
+        };
+    }, []);
+
+    const {
+        replaceInnerBlocks,
+        insertBlocks,
+        removeBlock,
+        updateBlockAttributes,
+    } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
+    const tablebergData = tablebergAdminMenuData;
+    const globalBlockProperties = tablebergData?.block_properties;
+
+    const globalRows = globalBlockProperties?.data.length
+        ? globalBlockProperties?.data.find(
+              (property: any) => property.name === "row_number"
+          )
+        : false;
+
+    const globalColumns = globalBlockProperties?.data.length
+        ? globalBlockProperties?.data.find(
+              (property: any) => property.name === "column_number"
+          )
+        : false;
+
+    const [initialRowCount, setInitialRowCount] = useState<number | "">(
+        globalRows?.value ?? 3
+    );
+    const [initialColCount, setInitialColCount] = useState<number | "">(
+        globalColumns?.value ?? 3
+    );
 
     useEffect(() => {
         if (enableTableHeader) {
-            const tableHeaderTemplate = [
+            const tableHeaderTemplate: InnerBlockTemplate[] = [
                 [
                     "tableberg/row",
                     { isHeader: true },
@@ -88,7 +178,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 clientId
             );
         } else {
-            const firstBlock = block.innerBlocks[0];
+            const firstBlock = block?.innerBlocks[0];
             const isHeader = firstBlock?.attributes?.isHeader;
 
             if (isHeader) {
@@ -98,7 +188,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, [enableTableHeader]);
     useEffect(() => {
         if (enableTableFooter) {
-            const tableHeaderTemplate = [
+            const tableHeaderTemplate: InnerBlockTemplate[] = [
                 [
                     "tableberg/row",
                     { isFooter: true },
@@ -109,18 +199,22 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             ];
             insertBlocks(
                 createBlocksFromInnerBlocksTemplate(tableHeaderTemplate),
-                block?.innerBlocks?.length + 1,
+                block?.innerBlocks?.length! + 1,
                 clientId
             );
         } else {
-            const firstBlock = block.innerBlocks[0];
-            const isHeader = firstBlock?.attributes?.isHeader;
+            const lastBlock = last(block?.innerBlocks);
+            const isFooter = lastBlock?.attributes?.isFooter;
 
-            if (isHeader) {
-                removeBlock(firstBlock.clientId);
+            if (isFooter) {
+                removeBlock(lastBlock.clientId);
             }
         }
     }, [enableTableFooter]);
+
+    if (hasEditorRedo) {
+        removeEmptyColsOrRows();
+    }
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
@@ -160,48 +254,60 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }
 
     const placeholder = (
-        <Placeholder
-            label={"Create Tableberg Table"}
-            icon={<BlockIcon icon={blockTable} showColors />}
-            instructions={"Create a complex table with all types of element"}
-        >
-            <form
-                className="blocks-table__placeholder-form"
-                onSubmit={onCreateTable}
+        <div {...innerBlocksProps}>
+            <Placeholder
+                label={"Create Tableberg Table"}
+                icon={<BlockIcon icon={blockTable} showColors />}
+                instructions={
+                    "Create a complex table with all types of element"
+                }
             >
-                <TextControl
-                    __nextHasNoMarginBottom
-                    type="number"
-                    label={"Column count"}
-                    value={initialColCount}
-                    onChange={onChangeInitialColCount}
-                    min="1"
-                    className="blocks-table__placeholder-input"
-                />
-                <TextControl
-                    __nextHasNoMarginBottom
-                    type="number"
-                    label={"Row count"}
-                    value={initialRowCount}
-                    onChange={onChangeInitialRowCount}
-                    min="1"
-                    className="blocks-table__placeholder-input"
-                />
-                <Button
-                    className="blocks-table__placeholder-button"
-                    variant="primary"
-                    type="submit"
+                <form
+                    className="blocks-table__placeholder-form"
+                    onSubmit={onCreateTable}
                 >
-                    {"Create Table"}
-                </Button>
-            </form>
-        </Placeholder>
+                    <TextControl
+                        __nextHasNoMarginBottom
+                        type="number"
+                        label={"Column count"}
+                        value={initialColCount}
+                        onChange={onChangeInitialColCount}
+                        min="1"
+                        className="blocks-table__placeholder-input"
+                    />
+                    <TextControl
+                        __nextHasNoMarginBottom
+                        type="number"
+                        label={"Row count"}
+                        value={initialRowCount}
+                        onChange={onChangeInitialRowCount}
+                        min="1"
+                        className="blocks-table__placeholder-input"
+                    />
+                    <Button
+                        className="blocks-table__placeholder-button"
+                        variant="primary"
+                        type="submit"
+                    >
+                        {"Create Table"}
+                    </Button>
+                </form>
+            </Placeholder>
+        </div>
     );
+
+    const example = <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
 
     return (
         <>
-            {hasTableCreated ? <table {...innerBlocksProps} /> : placeholder}
-            <Inspector {...props} />
+            {isExample ? (
+                example
+            ) : hasTableCreated ? (
+                <table {...innerBlocksProps} />
+            ) : (
+                placeholder
+            )}
+            <TablebergControls {...props} />
         </>
     );
 }
@@ -212,11 +318,130 @@ function save() {
     return <table {...innerBlocksProps} />;
 }
 
-//@ts-ignore
+// @ts-ignore to remove this, we have to manually add the attributes
+// from block.json, which is not very scalable or pleasant.
+// We'll think of removing this @ts-ignore later
 registerBlockType(metadata.name, {
     title: metadata.title,
+    icon: blockIcon,
     category: metadata.category,
     attributes: metadata.attributes,
     edit,
     save,
+    transforms: {
+        from: [
+            {
+                type: "block",
+                blocks: ["core/table"],
+                transform: function (attributes) {
+                    const tableBorder = get(attributes, "style.border", {});
+                    const tableBody = get(attributes, "body", []);
+                    const tableHead = get(attributes, "head", []);
+                    const tableFoot = get(attributes, "head", []);
+                    const tableBodyBlocks: InnerBlockTemplate[] =
+                        tableBody?.map((row: any) => [
+                            "tableberg/row",
+                            {},
+                            row.cells?.map((cell: any) => [
+                                "tableberg/cell",
+                                {},
+                                [
+                                    [
+                                        "core/paragraph",
+                                        {
+                                            content: cell.content,
+                                            align: cell.align,
+                                            style: {
+                                                spacing: {
+                                                    margin: {
+                                                        top: "0",
+                                                        bottom: "0",
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                ],
+                            ]),
+                        ]);
+                    const tableHeaderBlocks: InnerBlockTemplate[] =
+                        tableHead?.map((row: any) => [
+                            "tableberg/row",
+                            {},
+                            row.cells?.map((cell: any) => [
+                                "tableberg/cell",
+                                { tagName: "th" },
+                                [
+                                    [
+                                        "core/paragraph",
+                                        {
+                                            content: cell.content,
+                                            align: cell.align,
+                                            style: {
+                                                spacing: {
+                                                    margin: {
+                                                        top: "0",
+                                                        bottom: "0",
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                ],
+                            ]),
+                        ]);
+                    const tableFooterBlocks: InnerBlockTemplate[] =
+                        tableFoot?.map((row: any) => [
+                            "tableberg/row",
+                            {},
+                            row.cells?.map((cell: any) => [
+                                "tableberg/cell",
+                                {
+                                    tagName: "th",
+                                },
+                                [
+                                    [
+                                        "core/paragraph",
+                                        {
+                                            content: cell.content,
+                                            align: cell.align,
+                                            style: {
+                                                spacing: {
+                                                    margin: {
+                                                        top: "0",
+                                                        bottom: "0",
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                ],
+                            ]),
+                        ]);
+
+                    const tablebergAttributes = {
+                        rows: (attributes as any).body.length,
+                        cols: (attributes as any).body[0].cells.length,
+                        tableBorder: tableBorder,
+                        innerBorder: tableBorder,
+                        enableTableFooter: (attributes as any).foot.length > 0,
+                        enableTableHeader: (attributes as any).head.length > 0,
+                        tableAlignment: !isEmpty((attributes as any).align)
+                            ? (attributes as any).align
+                            : "center",
+                        hasTableCreated: true,
+                    };
+                    return createBlock(
+                        "tableberg/table",
+                        tablebergAttributes,
+                        createBlocksFromInnerBlocksTemplate([
+                            ...tableHeaderBlocks,
+                            ...tableBodyBlocks,
+                            ...tableFooterBlocks,
+                        ])
+                    );
+                },
+            },
+        ],
+    },
 });

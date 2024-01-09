@@ -1,0 +1,278 @@
+@import "./_colors.scss";
+
+/**
+ * Common styles
+ */
+
+//region Mixins
+@mixin size($val) {
+    width: #{$val}px;
+    height: #{$val}px;
+}
+
+@mixin basic-transition($target: all) {
+    transition: $target 0.2s ease-out;
+}
+//endregion
+
+//region Extends
+%pointer {
+    cursor: pointer;
+}
+
+%text-no-select {
+    user-select: none;
+}
+
+%flex-center-all {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+%gutenberg-sidebar-default-borders {
+    border: 1px solid $gutenberg_gray;
+}
+
+%default-border-radius {
+    border-radius: 3px;
+}
+
+%shadow {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+%shadow-md {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+%size-full {
+    width: 100%;
+    height: 100%;
+}
+
+@keyframes basic-click {
+    100% {
+        transform: scale(0.8);
+    }
+}
+
+%basic-click {
+    animation: basic-click 0.2s ease-out;
+}
+
+%absolute-overlay {
+    @extend %size-full;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+@keyframes appear {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+%appear-anim {
+    animation: appear 0.2s ease-out forwards;
+}
+
+%shadow-lg {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+%filter-shadow {
+    filter: drop-shadow(2px 5px 3px hsla(0, 0%, 0%, 0.2));
+}
+
+%border-box {
+    box-sizing: border-box;
+}
+
+%basic-appear {
+    animation: basic-appear 0.2s ease-out forwards;
+}
+
+//endregion
+
+//region BasicTransition
+.tableberg-pro-basic-transition-enter {
+    opacity: 0;
+}
+
+.tableberg-pro-basic-transition-enter-active {
+    @include basic-transition(opacity);
+    opacity: 1;
+}
+
+.tableberg-pro-basic-transition-exit {
+    opacity: 1;
+}
+
+.tableberg-pro-basic-transition-exit-active {
+    @include basic-transition(opacity);
+    opacity: 0;
+}
+
+//endregion
+
+@keyframes basic-appear {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.tableberg-pro-overlay {
+    @extend %flex-center-all;
+    @extend %size-full;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.tableberg-spinner-overlay-container {
+    svg {
+        width: 25px;
+        height: 25px;
+        color: $wordpress-admin-main;
+    }
+}
+@import "./themes/admin-menu-theme";
+
+$screen-sm: 640px;
+$screen-sm2: 712px;
+$screen-md: 768px;
+$screen-md2: 850px;
+$screen-md3: 870px;
+$screen-lg: 1024px;
+$screen-xl: 1280px;
+$screen-2xl: 1536px;
+
+@mixin screen-max($max) {
+    @media screen and (max-width: $max - 1) {
+        @content;
+    }
+}
+
+%size-full {
+    width: 100%;
+    height: 100%;
+}
+
+%unselectable {
+    user-select: none;
+}
+
+%box-shadow-lg {
+    box-shadow: 0 1px 20px rgb(0 0 0 / 25%);
+}
+
+%box-shadow-md {
+    box-shadow: 0 6px 8px -4px rgb(0 0 0 / 25%);
+}
+
+%flex-center-all {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+%flex-center-all-row {
+    @extend %flex-center-all;
+
+    flex-flow: row nowrap;
+}
+
+%default-transition {
+    transition: all 0.2s ease-out;
+}
+
+%default-border {
+    border: 1px solid $border-color;
+}
+
+%pill {
+    border-radius: 999px;
+}
+
+%pointer {
+    cursor: pointer;
+}
+
+@mixin size($val) {
+    width: #{$val}px;
+    height: #{$val}px;
+}
+
+.tableberg-positive-color {
+    color: $positive;
+}
+
+.tableberg-negative-color {
+    color: $negative;
+}
+
+%tableberg-negative-color {
+    color: $negative;
+}
+
+.tableberg-positive-bg {
+    background-color: $positive !important;
+}
+
+.tableberg-negative-bg {
+    background-color: $negative !important;
+}
+
+.tableberg-strip-anchor {
+    text-decoration: none !important;
+
+    &:hover {
+        color: inherit !important;
+        text-decoration: none !important;
+    }
+}
+
+.tableberg-pointer {
+    @extend %pointer;
+}
+
+%tableberg-click {
+    @extend %default-transition;
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+.strip-anchor-styles {
+    text-decoration: none;
+    color: inherit;
+    background-color: transparent;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    line-height: inherit;
+
+    &:hover {
+        text-decoration: none;
+        color: inherit;
+        background-color: transparent;
+        border: 0;
+    }
+
+    &:active,
+    &:focus {
+        outline: none;
+        border: 0;
+    }
+}

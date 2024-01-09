@@ -1,0 +1,23 @@
+.tableberg-dropdown-color-picker {
+    position: relative;
+    border-radius: 2px;
+    color: var(--wp-components-color-foreground, #1e1e1e);
+    width: 100%;
+
+    .tbdcp-dropdown-handle {
+        border: 1px solid #ddd;
+        border-radius: inherit;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        box-sizing: border-box;
+
+        p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+            padding: 0;
+        }
+    }
+}

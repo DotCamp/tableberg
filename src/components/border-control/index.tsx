@@ -1,14 +1,12 @@
 /**
  * WordPress Dependencies
  */
-//@ts-ignore
 import { isEmpty } from "lodash";
 import { __ } from "@wordpress/i18n";
 import {
-    // @ts-ignore
     useBlockEditContext,
-    // @ts-ignore
     __experimentalBorderRadiusControl as BorderRadiusControl,
+    store as BlockEditorStore,
 } from "@wordpress/block-editor";
 import { useSelect, useDispatch } from "@wordpress/data";
 import {
@@ -41,27 +39,30 @@ function BorderControl({
     showDefaultBorderRadius = false,
 }: BorderControlPropTypes) {
     const { clientId } = useBlockEditContext();
-    // @ts-ignore
     const attributes = useSelect(
-        // @ts-ignore
-        (select) => select("core/block-editor").getSelectedBlock().attributes
-    );
-    const { updateBlockAttributes } = useDispatch("core/block-editor");
+        (select) =>
+            (
+                select(BlockEditorStore) as BlockEditorStoreSelectors
+            ).getSelectedBlock()?.attributes,
+        []
+    )!;
+    const { updateBlockAttributes } = useDispatch(
+        BlockEditorStore
+    ) as BlockEditorStoreActions;
     const setAttributes = (newAttributes: object) => {
         updateBlockAttributes(clientId, newAttributes);
     };
-    // @ts-ignore
+
     const { defaultColors } = useSelect((select) => {
         return {
-            defaultColors:
-                // @ts-ignore
-                select("core/block-editor")?.getSettings()
-                    ?.__experimentalFeatures?.color?.palette?.default,
+            defaultColors: (
+                select(BlockEditorStore) as BlockEditorStoreSelectors
+            ).getSettings()?.__experimentalFeatures?.color?.palette?.default,
         };
-    });
+    }, []);
     return (
         <>
-            {showBorder && (
+            {showBorder && attrBorderKey && borderLabel && (
                 <ToolsPanelItem
                     panelId={clientId}
                     isShownByDefault={showDefaultBorder}
@@ -89,7 +90,7 @@ function BorderControl({
                 </ToolsPanelItem>
             )}
 
-            {showBorderRadius && (
+            {showBorderRadius && borderRadiusLabel && attrBorderRadiusKey && (
                 <ToolsPanelItem
                     panelId={clientId}
                     isShownByDefault={showDefaultBorderRadius}

@@ -3,12 +3,20 @@
  */
 import { __ } from "@wordpress/i18n";
 import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
-//@ts-ignore
-import { InspectorControls, HeightControl } from "@wordpress/block-editor";
+import {
+    InspectorControls,
+    HeightControl,
+    BlockControls,
+    BlockAlignmentToolbar,
+    FontSizePicker,
+    __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
+} from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
+    Button,
     PanelBody,
     ToggleControl,
+    __experimentalToolsPanel as ToolsPanel,
     __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
 /**
@@ -17,6 +25,7 @@ import {
 import { TablebergBlockAttrs } from "./types";
 import {
     BorderControl,
+    ColorPickerDropdown,
     CustomToggleGroupControl,
     SpacingControl,
 } from "./components";
@@ -40,9 +49,24 @@ const AVAILABLE_JUSTIFICATIONS = [
     },
 ];
 
-function Inspector(props: BlockEditProps<TablebergBlockAttrs>) {
+function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
-    const { enableInnerBorder } = attributes;
+    const { enableInnerBorder, tableAlignment } = attributes;
+    const colorGradientSettings = useMultipleOriginColorsAndGradients();
+
+    const blockAlignChange = (newValue: "left" | "right" | "center") => {
+        setAttributes({ tableAlignment: newValue });
+    };
+
+    const onFontColorChange = (value: any) => {
+        setAttributes({ fontColor: value });
+    };
+    const onFontSizeChange = (value: any) => {
+        setAttributes({ fontSize: value });
+    };
+    const onLinkColorChange = (value: any) => {
+        setAttributes({ linkColor: value });
+    };
 
     return (
         <>
@@ -83,7 +107,49 @@ function Inspector(props: BlockEditProps<TablebergBlockAttrs>) {
                 </PanelBody>
             </InspectorControls>
 
-            {/* @ts-ignore  */}
+            <InspectorControls group="styles">
+                <ToolsPanel
+                    label={__("Global Font Style", "tableberg")}
+                    resetAll={() =>
+                        setAttributes({
+                            fontColor: "",
+                            fontSize: "",
+                            linkColor: "",
+                        })
+                    }
+                >
+                    <ToolsPanelItem
+                        label={__("Font Color", "tableberg")}
+                        hasValue={() => true}
+                    >
+                        <ColorPickerDropdown
+                            label={__("Font Color", "tableberg")}
+                            value={attributes.fontColor}
+                            onChange={onFontColorChange}
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem
+                        label={__("Link Color", "tableberg")}
+                        hasValue={() => true}
+                    >
+                        <ColorPickerDropdown
+                            label={__("Link Color", "tableberg")}
+                            value={attributes.linkColor}
+                            onChange={onLinkColorChange}
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem
+                        label={__("Font Size", "tableberg")}
+                        hasValue={() => true}
+                    >
+                        <FontSizePicker
+                            value={attributes.fontSize as any}
+                            onChange={onFontSizeChange}
+                        />
+                    </ToolsPanelItem>
+                </ToolsPanel>
+            </InspectorControls>
+
             <InspectorControls group="color">
                 <ColorSettingsWithGradient
                     label={__("Header Background Color", "tableberg")}
@@ -107,7 +173,6 @@ function Inspector(props: BlockEditProps<TablebergBlockAttrs>) {
                 />
             </InspectorControls>
 
-            {/* @ts-ignore  */}
             <InspectorControls group="dimensions">
                 <SpacingControl
                     attrKey="cellPadding"
@@ -115,7 +180,7 @@ function Inspector(props: BlockEditProps<TablebergBlockAttrs>) {
                     showByDefault
                 />
             </InspectorControls>
-            {/* @ts-ignore  */}
+
             <InspectorControls group="border">
                 <BorderControl
                     showDefaultBorder
@@ -156,7 +221,14 @@ function Inspector(props: BlockEditProps<TablebergBlockAttrs>) {
                     borderLabel={__("Inner Border Size", "tableberg")}
                 />
             </InspectorControls>
+            <BlockControls>
+                <BlockAlignmentToolbar
+                    value={tableAlignment}
+                    onChange={blockAlignChange}
+                    controls={["left", "center", "right"]}
+                />
+            </BlockControls>
         </>
     );
 }
-export default Inspector;
+export default TablebergControls;

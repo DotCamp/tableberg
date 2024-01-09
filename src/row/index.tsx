@@ -33,7 +33,9 @@ function edit({ clientId, attributes }: BlockEditProps<TBRowAttrs>) {
 
     const hasInnerBlocks = useSelect(
         (select) =>
-            (select(blockEditorStore) as any).getBlocks(clientId).length > 0,
+            (select(blockEditorStore) as BlockEditorStoreSelectors).getBlocks(
+                clientId
+            ).length > 0,
         [clientId]
     );
 
