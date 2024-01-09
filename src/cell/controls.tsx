@@ -14,7 +14,7 @@ export default function CellControls(
     return (
         <InspectorControls group="styles">
             <ToolsPanel
-                label={__("Cell Size", "tableberg")}
+                label={__("Cell Settings", "tableberg")}
                 resetAll={() =>
                     setAttributes({
                         height: '',
@@ -23,24 +23,24 @@ export default function CellControls(
                 }
             >
                 <ToolsPanelItem
-                    label={__("Cell Width", "tableberg")}
+                    label={__("Column Width", "tableberg")}
                     hasValue={() => true}
                 >
                     <HeightControl
                         value={attributes.width as any}
-                        label={__("Cell Width", "tableberg")}
+                        label={__("Column Width", "tableberg")}
                         onChange={(newValue: string) =>
                             setAttributes({ width: newValue })
                         }
                     />
                 </ToolsPanelItem>
                 <ToolsPanelItem
-                    label={__("Cell Height", "tableberg")}
+                    label={__("Row Height", "tableberg")}
                     hasValue={() => true}
                 >
                     <HeightControl
                         value={attributes.height as any}
-                        label={__("Cell Height", "tableberg")}
+                        label={__("Row Height", "tableberg")}
                         onChange={(newValue: string) =>
                             setAttributes({ height: newValue })
                         }
