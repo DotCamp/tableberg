@@ -143,7 +143,7 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                         hasValue={() => true}
                     >
                         <FontSizePicker
-                            value={Number(attributes.fontSize)}
+                            value={attributes.fontSize as any}
                             onChange={onFontSizeChange}
                         />
                     </ToolsPanelItem>
