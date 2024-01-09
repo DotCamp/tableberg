@@ -76,9 +76,6 @@ devDependencies:
   '@wordpress/scripts':
     specifier: ^26.6.0
     version: 26.6.0(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
-  ignore-emit-webpack-plugin:
-    specifier: ^2.0.6
-    version: 2.0.6
 
 packages:
 
@@ -8382,10 +8379,6 @@ packages:
 
   /ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
-
-  /ignore-emit-webpack-plugin@2.0.6:
-    resolution: {integrity: sha512-/zC18RWCC2wz4ZwnS4UoujGWzvSKy28DLjtE+jrGBOXej6YdmityhBDzE8E0NlktEqi4tgdNbydX8B6G4haHSQ==}
-    dev: true
 
   /ignore-walk@4.0.1:
     resolution: {integrity: sha512-rzDQLaW4jQbh2YrOFlJdCtX8qgJTehFRYiUB2r1osqTeDzV/3+Jh8fz1oAPzUThf3iku8Ds4IDqawI5d8mUiQw==}

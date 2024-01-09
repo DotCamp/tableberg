@@ -26,8 +26,7 @@
         "@types/wordpress__blocks": "^12.5.4",
         "@types/wordpress__editor": "^13.6.7",
         "@wordpress/base-styles": "^4.39.0",
-        "@wordpress/scripts": "^26.6.0",
-        "ignore-emit-webpack-plugin": "^2.0.6"
+        "@wordpress/scripts": "^26.6.0"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.3.0",
