@@ -1,12 +1,10 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "version": "0.0.2",
+    "version": "0.1.0",
     "title": "Button",
     "name": "tableberg/button",
-    "parent": [
-        "tableberg/cell"
-    ],
+    "parent": ["tableberg/cell"],
     "category": "design",
     "icon": "button",
     "description": "Tableberg Button: Add a button to your tableberg table",

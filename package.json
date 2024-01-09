@@ -1,6 +1,6 @@
 {
     "name": "tableberg",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Table Block By Tableberg - Advanced Table Block for Block Editor",
     "author": "Dotcamp",
     "license": "GPL-2.0-or-later",
@@ -15,7 +15,7 @@
     ],
     "scripts": {
         "build": "wp-scripts build",
-        "export": "wp-scripts plugin-zip",
+        "export": "wp-scripts build && wp-scripts plugin-zip",
         "start": "wp-scripts start"
     },
     "devDependencies": {

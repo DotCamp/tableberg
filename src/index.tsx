@@ -32,6 +32,7 @@ import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
 import exampleImage from "./example.png";
+import blockIcon from "./components/icon";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 
@@ -322,6 +323,7 @@ function save() {
 // We'll think of removing this @ts-ignore later
 registerBlockType(metadata.name, {
     title: metadata.title,
+    icon: blockIcon,
     category: metadata.category,
     attributes: metadata.attributes,
     edit,

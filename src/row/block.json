@@ -1,12 +1,10 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "version": "0.0.2",
+    "version": "0.0.3",
     "title": "Row",
     "name": "tableberg/row",
-    "parent": [
-        "tableberg/table"
-    ],
+    "parent": ["tableberg/table"],
     "category": "design",
     "icon": "table-row-after",
     "description": "Tableberg Row: Individual row of a tableberg table",

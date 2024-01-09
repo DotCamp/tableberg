@@ -1,11 +1,10 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "version": "0.0.2",
+    "version": "0.1.0",
     "name": "tableberg/table",
     "title": "Tableberg",
     "category": "design",
-    "icon": "table-row-after",
     "description": "Table Block By Tableberg - Advanced Table Block for Block Editor",
     "supports": {
         "html": false
