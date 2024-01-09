@@ -53,6 +53,13 @@ class Button {
 	 * @return string Generated CSS styles.
 	 */
 	public static function get_styles( $attributes ) {
+		if (!isset($attributes['textHoverColor'])) {
+			$attributes['textHoverColor'] = "";
+		}
+		if (!isset($attributes['textColor'])) {
+			$attributes['textColor'] = "";
+		}
+
 		$background_color       = \Tableberg\Utils::get_background_color( $attributes, 'backgroundColor', 'backgroundGradient' );
 		$background_hover_color = \Tableberg\Utils::get_background_color( $attributes, 'backgroundHoverColor', 'backgroundHoverGradient' );
 
@@ -72,6 +79,25 @@ class Button {
 	 * @return string Generated block classess.
 	 */
 	public static function get_classes( $attributes ) {
+		if (!isset($attributes['backgroundColor'])) {
+			$attributes['backgroundColor'] = "";
+		}
+		if (!isset($attributes['backgroundHoverColor'])) {
+			$attributes['backgroundHoverColor'] = "";
+		}
+		if (!isset($attributes['textHoverColor'])) {
+			$attributes['textHoverColor'] = "";
+		}
+		if (!isset($attributes['textColor'])) {
+			$attributes['textColor'] = "";
+		}
+		if (!isset($attributes['backgroundGradient'])) {
+			$attributes['backgroundGradient'] = "";
+		}
+		if (!isset($attributes['backgroundHoverGradient'])) {
+			$attributes['backgroundHoverGradient'] = "";
+		}
+
 		$classes = join(
 			' ',
 			array(
