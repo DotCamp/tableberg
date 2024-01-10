@@ -60,8 +60,8 @@ export function getStyles(attributes: TablebergBlockAttrs) {
     };
 
     if (
-        cellSpacingCSS?.top !== "0" ||
-        cellSpacingCSS.left !== "0"
+        (cellSpacingCSS?.top??'0') !== "0" ||
+        (cellSpacingCSS.left??'0') !== "0"
     ) {
         styles["--tableberg-border-collapse"] = "separate";
     }
