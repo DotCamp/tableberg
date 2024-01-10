@@ -16,9 +16,12 @@ function SpacingControl({
     label,
     attrKey,
     showByDefault = false,
+    sides
 }: SpacingPropTypes) {
-    const { clientId } = useBlockEditContext();
 
+    sides ||= ["top", "right", "bottom", "left"];
+
+    const { clientId } = useBlockEditContext();
     const attributes = useSelect(
         (select) =>
             (
