@@ -26,10 +26,6 @@
         "colspan": {
             "type": "number",
             "default": "1"
-        },
-        "width": {
-            "type": "string",
-            "default": ""
         }
     },
     "supports": {

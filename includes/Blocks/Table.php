@@ -109,11 +109,16 @@ class Table {
 			)
 		);
 
+		$colgroup = '<colgroup>';
+		foreach ($attributes['colWidths'] as $w) {
+			$colgroup.="<col width=\"$w\"/>";
+		}
+		$colgroup.='</colgroup>';
+
 		$pattern = '/<table[^>]*>/s';
 		if ( preg_match( $pattern, $content, $matches ) ) {
 			$table_element = $matches[0];
-
-			$content = str_replace( $table_element, '<table ' . $wrapper_attributes . ' >', $content );
+			$content = str_replace( $table_element, '<table ' . $wrapper_attributes . ' >'.$colgroup, $content );
 		}
 		return $content;
 	}

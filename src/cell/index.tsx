@@ -39,7 +39,6 @@ export interface TablebergCellBlockAttrs {
     tagName: "td" | "th";
     rowspan: number;
     colspan: number;
-    width: string;
 }
 
 const ALLOWED_BLOCKS = [
@@ -68,6 +67,7 @@ const getEssentialVars = (
     const currentRowBlock = storeSelect.getBlock(currentRowBlockId);
 
     const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
+    const colIndex = storeSelect.getBlockIndex(clientId);
 
     return {
         tableBlockId,
@@ -75,6 +75,7 @@ const getEssentialVars = (
         currentRowBlockId,
         currentRowBlock,
         rowIndex,
+        colIndex,
     };
 };
 
@@ -90,29 +91,23 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         [`align-v-${vAlign}`]: vAlign,
     });
 
-    
     const cellRef = useRef<HTMLTableCellElement>();
-    
+
     const {
         tableBlock,
         tableBlockId,
         currentRowBlock,
         currentRowBlockId,
         rowIndex,
+        colIndex,
     } = useSelect(
         (select) => getEssentialVars(select(blockEditorStore) as any, clientId),
         []
-        );
-        
-        
-        const style: Record<string, string> = {};
-        if (attributes.width) {
-            style["--tableberg-cell-width"] = attributes.width;
-        }
+    );
+
     const blockProps = useBlockProps({
         className,
         ref: cellRef,
-        style
     });
 
     const innerBlocksProps = useInnerBlocksProps(
@@ -164,7 +159,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
             const isHeader = currentRowBlock?.attributes?.isHeader;
             const isFooter = currentRowBlock?.attributes?.isFooter;
-            const { rows, cols } =
+            const { rows, cols, colWidths } =
                 storeSelect.getBlockAttributes(tableBlockId)!;
 
             const insertRowToTable = (after = false) => {
@@ -191,7 +186,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             };
 
             const insertColumnToTable = (after = false) => {
-                const colIndex = storeSelect.getBlockIndex(clientId);
                 const newColIndex = after ? colIndex + 1 : colIndex;
 
                 storeSelect
@@ -216,6 +210,13 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                         );
                     });
 
+                let toInsert = "";
+                for (let i = newColIndex; i < colWidths.length; i++) {
+                    const old = colWidths[i];
+                    colWidths[i] = toInsert;
+                    toInsert = old;
+                }
+                colWidths.push(toInsert);
                 updateBlockAttributes(tableBlockId, {
                     cols: cols + 1,
                 });
@@ -276,8 +277,16 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         deleteColumnFromTable();
     };
     const setRowHeight = (newVal: string) => {
-        updateBlockAttributes(currentRowBlockId, {
+        updateBlockAttributes(tableBlockId, {
             height: newVal,
+        });
+    };
+
+    const setColWidth = (newVal: string) => {
+        const colWidths = [...tableBlock.attributes.colWidths];
+        colWidths[colIndex] = newVal;
+        updateBlockAttributes(tableBlockId, {
+            colWidths,
         });
     };
 
@@ -593,8 +602,8 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             <CellControls
                 height={currentRowBlock?.attributes.height}
                 setHeight={setRowHeight}
-                width={attributes.width}
-                setWidth={(width) => setAttributes({width})}
+                width={tableBlock?.attributes.colWidths[colIndex]}
+                setWidth={setColWidth}
             />
         </>
     );

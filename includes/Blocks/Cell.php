@@ -40,14 +40,6 @@ class Cell {
 		if ( $td->next_tag( 'td' ) && $vertical_align ) {
 			$td->add_class( "align-v-{$vertical_align}" );
 		}
-		
-
-
-		$style = \Tableberg\Utils::generate_css_string([
-			'--tableberg-cell-width' => $attributes['width']??'',
-		]);
-
-		$td->set_attribute('style', $style);
 
 		return $td;
 	}
