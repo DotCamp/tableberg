@@ -167,7 +167,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 [
                     "tableberg/row",
                     { isHeader: true },
-                    new Array(initialColCount)
+                    new Array(props.attributes.cols ?? initialColCount)
                         .fill(0)
                         .map(() => ["tableberg/cell", { tagName: "th" }, []]),
                 ],
@@ -192,7 +192,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 [
                     "tableberg/row",
                     { isFooter: true },
-                    new Array(initialColCount)
+                    new Array(props.attributes.cols ?? initialColCount)
                         .fill(0)
                         .map(() => ["tableberg/cell", { tagName: "th" }, []]),
                 ],
