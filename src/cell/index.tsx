@@ -277,7 +277,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         deleteColumnFromTable();
     };
     const setRowHeight = (newVal: string) => {
-        updateBlockAttributes(tableBlockId, {
+        updateBlockAttributes(currentRowBlockId, {
             height: newVal,
         });
     };
