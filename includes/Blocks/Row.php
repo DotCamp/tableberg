@@ -35,7 +35,11 @@ class Row {
 
 		$classes = array( 'wp-block-tableberg-row', 'tableberg-row', $footer_class, $header_class );
 
-		$content = str_replace( '<tr class="wp-block-tableberg-row', '<tr class="' . join( ' ', $classes ) . '', $content );
+		$style = \Tableberg\Utils::generate_css_string([
+			'--tableberg-row-height' => $attributes['height']??'',
+		]);
+
+		$content = str_replace( '<tr class="wp-block-tableberg-row', '<tr style="'.$style.'" class="' . join( ' ', $classes ) . '', $content );
 
 		return $content;
 	}

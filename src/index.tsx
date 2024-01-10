@@ -11,8 +11,7 @@ import {
     store as blockEditorStore,
     BlockIcon,
 } from "@wordpress/block-editor";
-// const editorStore = "core/editor";
-import { store as editorStore } from "@wordpress/editor";
+const editorStore = "core/editor";
 import {
     BlockEditProps,
     InnerBlockTemplate,
@@ -25,7 +24,7 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState, useEffect, Fragment } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
@@ -42,7 +41,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             hasTableCreated,
             enableTableFooter,
             enableTableHeader,
-            cols,
+            colWidths,
             isExample,
         },
         setAttributes,
@@ -54,7 +53,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         style: getStyles(props.attributes),
     } as Record<string, any>);
 
-    const innerBlocksProps = useInnerBlocksProps(blockProps, {
+    const innerBlocksProps = useInnerBlocksProps({
         // @ts-ignore false can obviously be assigned to renderAppender as does
         // wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
         renderAppender: false,
@@ -240,6 +239,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             hasTableCreated: true,
             rows: initialColCount,
             cols: initialColCount,
+            colWidths: Array(initialColCount).fill(""),
         });
     }
 
@@ -303,7 +303,14 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             {isExample ? (
                 example
             ) : hasTableCreated ? (
-                <table {...innerBlocksProps} />
+                <table {...blockProps}>
+                    <colgroup>
+                        {colWidths.map((w) => (
+                            <col width={w} />
+                        ))}
+                    </colgroup>
+                    <Fragment {...innerBlocksProps} />
+                </table>
             ) : (
                 placeholder
             )}

@@ -10,6 +10,7 @@ import {
     BlockVerticalAlignmentToolbar,
     BlockControls,
     store as blockEditorStore,
+    InspectorControls,
 } from "@wordpress/block-editor";
 import { useBlockProps, useInnerBlocksProps } from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -29,10 +30,11 @@ import "./editor.scss";
 
 import metadata from "./block.json";
 import classNames from "classnames";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { store as tbStore } from "../store";
+import CellControls from "./controls";
 
-interface TablebergCellBlockAttrs {
+export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
     tagName: "td" | "th";
     rowspan: number;
@@ -46,11 +48,39 @@ const ALLOWED_BLOCKS = [
     "core/list",
 ];
 
-function edit({
-    clientId,
-    attributes,
-    setAttributes,
-}: BlockEditProps<TablebergCellBlockAttrs>) {
+const getEssentialVars = (
+    storeSelect: BlockEditorStoreSelectors,
+    clientId: string
+) => {
+    const parentBlocks = storeSelect.getBlockParents(clientId);
+
+    const tableBlockId = parentBlocks.find(
+        (parentId: string) =>
+            storeSelect.getBlockName(parentId) === "tableberg/table"
+    )!;
+    const tableBlock = storeSelect.getBlock(tableBlockId)!;
+
+    const currentRowBlockId = parentBlocks.find(
+        (parentId: string) =>
+            storeSelect.getBlockName(parentId) === "tableberg/row"
+    )!;
+    const currentRowBlock = storeSelect.getBlock(currentRowBlockId);
+
+    const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
+    const colIndex = storeSelect.getBlockIndex(clientId);
+
+    return {
+        tableBlockId,
+        tableBlock,
+        currentRowBlockId,
+        currentRowBlock,
+        rowIndex,
+        colIndex,
+    };
+};
+
+function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
+    const { clientId, attributes, setAttributes } = props;
     const { vAlign } = attributes;
 
     const vAlignChange = (newValue: "bottom" | "center" | "top") => {
@@ -63,7 +93,22 @@ function edit({
 
     const cellRef = useRef<HTMLTableCellElement>();
 
-    const blockProps = useBlockProps({ className, ref: cellRef });
+    const {
+        tableBlock,
+        tableBlockId,
+        currentRowBlock,
+        currentRowBlockId,
+        rowIndex,
+        colIndex,
+    } = useSelect(
+        (select) => getEssentialVars(select(blockEditorStore) as any, clientId),
+        []
+    );
+
+    const blockProps = useBlockProps({
+        className,
+        ref: cellRef,
+    });
 
     const innerBlocksProps = useInnerBlocksProps(
         { ...blockProps },
@@ -100,10 +145,8 @@ function edit({
         deleteRowFromTable,
         insertColumnToTable,
         deleteColumnFromTable,
-        currentRowBlock,
         isHeader,
         isFooter,
-        tableBlockId,
         getBlockParents,
         getBlockName,
         getBlockIndex,
@@ -115,25 +158,10 @@ function edit({
                 blockEditorStore
             ) as BlockEditorStoreSelectors;
 
-            const parentBlocks = storeSelect.getBlockParents(clientId);
-
-            const tableBlockId = parentBlocks.find(
-                (parentId: string) =>
-                    storeSelect.getBlockName(parentId) === "tableberg/table"
-            )!;
-            const tableBlock = storeSelect.getBlock(tableBlockId)!;
-
-            const currentRowBlockId = parentBlocks.find(
-                (parentId: string) =>
-                    storeSelect.getBlockName(parentId) === "tableberg/row"
-            )!;
-            const currentRowBlock = storeSelect.getBlock(currentRowBlockId);
             const isHeader = currentRowBlock?.attributes?.isHeader;
             const isFooter = currentRowBlock?.attributes?.isFooter;
-            const { rows, cols } =
+            const { rows, cols, colWidths } =
                 storeSelect.getBlockAttributes(tableBlockId)!;
-
-            const rowIndex = storeSelect.getBlockIndex(currentRowBlockId);
 
             const insertRowToTable = (after = false) => {
                 const newRowIndex = after ? rowIndex + 1 : rowIndex;
@@ -159,7 +187,6 @@ function edit({
             };
 
             const insertColumnToTable = (after = false) => {
-                const colIndex = storeSelect.getBlockIndex(clientId);
                 const newColIndex = after ? colIndex + 1 : colIndex;
 
                 storeSelect
@@ -184,6 +211,13 @@ function edit({
                         );
                     });
 
+                let toInsert = "";
+                for (let i = newColIndex; i < colWidths.length; i++) {
+                    const old = colWidths[i];
+                    colWidths[i] = toInsert;
+                    toInsert = old;
+                }
+                colWidths.push(toInsert);
                 updateBlockAttributes(tableBlockId, {
                     cols: cols + 1,
                 });
@@ -243,6 +277,19 @@ function edit({
     };
     const onDeleteColumn = () => {
         deleteColumnFromTable();
+    };
+    const setRowHeight = (newVal: string) => {
+        updateBlockAttributes(currentRowBlockId, {
+            height: newVal,
+        });
+    };
+
+    const setColWidth = (newVal: string) => {
+        const colWidths = [...tableBlock.attributes.colWidths];
+        colWidths[colIndex] = newVal;
+        updateBlockAttributes(tableBlockId, {
+            colWidths,
+        });
     };
 
     const { toggleCellSelection, endCellMultiSelect } = useDispatch(tbStore);
@@ -575,6 +622,12 @@ function edit({
                     controls={tableControls}
                 />
             </BlockControls>
+            <CellControls
+                height={currentRowBlock?.attributes.height}
+                setHeight={setRowHeight}
+                width={tableBlock?.attributes.colWidths[colIndex]}
+                setWidth={setColWidth}
+            />
         </>
     );
 }
@@ -592,24 +645,7 @@ function save(props: BlockSaveProps<TablebergCellBlockAttrs>) {
 registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
-    attributes: {
-        vAlign: {
-            type: "string",
-            default: "center",
-        },
-        tagName: {
-            type: "string",
-            default: "td",
-        },
-        rowspan: {
-            type: "number",
-            default: "1",
-        },
-        colspan: {
-            type: "number",
-            default: "1",
-        },
-    },
+    attributes: metadata.attributes,
     example: {},
     edit,
     save,

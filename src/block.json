@@ -18,6 +18,10 @@
             "type": "number",
             "default": 2
         },
+        "colWidths": {
+            "type": "array",
+            "default": []
+        },
         "hasTableCreated": {
             "type": "boolean",
             "default": false

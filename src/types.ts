@@ -3,6 +3,7 @@ import { BorderTypes, PaddingTypes } from "./utils/common-types";
 export interface TablebergBlockAttrs {
     rows: number;
     cols: number;
+    colWidths: string[];
     hasTableCreated: boolean;
     tableWidth: string;
     enableTableHeader: boolean;
