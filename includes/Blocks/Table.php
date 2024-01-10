@@ -110,7 +110,7 @@ class Table {
 		);
 
 		$colgroup = '<colgroup>';
-		foreach ($attributes['colWidths'] as $w) {
+		foreach ($attributes['colWidths']??[] as $w) {
 			$colgroup.="<col width=\"$w\"/>";
 		}
 		$colgroup.='</colgroup>';
