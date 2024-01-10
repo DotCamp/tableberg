@@ -108,6 +108,7 @@ function edit({
         getBlockName,
         getBlockIndex,
         getBlock,
+        storeSelect,
     } = useSelect(
         (select) => {
             const storeSelect = select(
@@ -219,6 +220,7 @@ function edit({
                 getBlockName,
                 getBlockIndex,
                 getBlock,
+                storeSelect,
             };
         },
         [clientId]
@@ -316,6 +318,27 @@ function edit({
                     });
             }
         });
+
+        cellRef.current?.addEventListener(
+            "keydown",
+            (evt) => {
+                if (evt.key !== "Backspace") {
+                    return;
+                }
+                const blocks = storeSelect.getBlocks(clientId);
+                if (blocks.length > 1) {
+                    return;
+                }
+                const attrs = blocks[0].attributes;
+                if (!attrs.content && !attrs.text) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                }
+            },
+            {
+                capture: true,
+            }
+        );
     }, []);
 
     const isMergeAllowed = () => {
