@@ -10,7 +10,8 @@ table.wp-block-tableberg-table {
     border-right: var(--tableberg-table-border-right, 1px solid black);
     border-bottom: var(--tableberg-table-border-bottom, 1px solid black);
     border-left: var(--tableberg-table-border-left, 1px solid black);
-    border-collapse: collapse;
+    border-collapse: var(--tableberg-border-collapse, collapse);
+    border-spacing: var(--tableberg-cell-spacing-top) var(--tableberg-cell-spacing-left);
     width: 100%;
 
     color: var(--tableberg-global-text-color);

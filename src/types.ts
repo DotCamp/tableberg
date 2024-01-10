@@ -10,6 +10,7 @@ export interface TablebergBlockAttrs {
     enableTableFooter: boolean;
     tableAlignment: "center" | "full" | "left" | "right" | "wide";
     cellPadding: PaddingTypes;
+    cellSpacing: PaddingTypes;
     headerBackgroundColor: string | null;
     headerBackgroundGradient: string | null;
     evenRowBackgroundColor: string | null;

@@ -1,6 +1,8 @@
 import { IconType } from "@wordpress/components";
 import { ReactElement } from "react";
 
+export type SpacingControlSides = "top" | "right" | "bottom" | "left" | "vertical" | "horizontal"
+
 export interface BorderControlPropTypes {
     borderLabel?: string;
     attrBorderKey?: string;
@@ -29,6 +31,7 @@ export interface SpacingPropTypes {
     label: string;
     attrKey: string;
     showByDefault?: boolean;
+    sides?: SpacingControlSides[];
 }
 export interface ColorSettingsWithGradientPropTypes {
     label: string;
