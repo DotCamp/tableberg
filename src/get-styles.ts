@@ -5,6 +5,7 @@ import { PaddingTypes, TablebergBlockAttrs } from "./types";
 export function getStyles(attributes: TablebergBlockAttrs) {
     const {
         cellPadding,
+        cellSpacing,
         enableInnerBorder,
         evenRowBackgroundColor,
         innerBorder,
@@ -25,6 +26,7 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         linkColor,
     } = attributes;
     const cellPaddingCSS: PaddingTypes = getSpacingCss(cellPadding);
+    const cellSpacingCSS: PaddingTypes = getSpacingCss(cellSpacing);
     const tableBorderVar = getBorderVariablesCss(tableBorder, "table");
     const tableInnerBorder = enableInnerBorder
         ? getBorderVariablesCss(innerBorder, "inner")
@@ -48,12 +50,21 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         "--tableberg-cell-padding-right": cellPaddingCSS?.right,
         "--tableberg-cell-padding-bottom": cellPaddingCSS?.bottom,
         "--tableberg-cell-padding-left": cellPaddingCSS?.left,
+        "--tableberg-cell-spacing-top": cellSpacingCSS?.top,
+        "--tableberg-cell-spacing-left": cellSpacingCSS?.left,
         "--tableberg-global-text-color": fontColor,
         "--tableberg-global-link-color": linkColor,
         "--tableberg-global-font-size": fontSize,
         ...tableBorderVar,
         ...tableInnerBorder,
     };
+
+    if (
+        cellSpacingCSS?.top !== "0" ||
+        cellSpacingCSS.left !== "0"
+    ) {
+        styles["--tableberg-border-collapse"] = "separate";
+    }
 
     return omitBy(
         styles,
