@@ -18,19 +18,34 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         tableWidth,
         footerBackgroundColor,
         footerBackgroundGradient,
-        enableTableFooter,
-        tableAlignment,
-        enableTableHeader,
         fontColor,
         fontSize,
         linkColor,
     } = attributes;
     const cellPaddingCSS: PaddingTypes = getSpacingCss(cellPadding);
     const cellSpacingCSS: PaddingTypes = getSpacingCss(cellSpacing);
-    const tableBorderVar = getBorderVariablesCss(tableBorder, "table");
     const tableInnerBorder = enableInnerBorder
         ? getBorderVariablesCss(innerBorder, "inner")
         : {};
+
+    let spacingDependantStyles: Record<string, any> = {};
+    if (
+        (cellSpacingCSS?.top??'0') !== "0" ||
+        (cellSpacingCSS.left??'0') !== "0"
+    ) {
+        spacingDependantStyles = {
+            "--tableberg-border-collapse" : "separate",
+            "--tableberg-table-border-top": "none",
+            "--tableberg-table-border-right": "none",
+            "--tableberg-table-border-bottom": "none",
+            "--tableberg-table-border-left": "none",
+            "--tableberg-cell-spacing-top": cellSpacingCSS?.top,
+            "--tableberg-cell-spacing-left": cellSpacingCSS?.left,
+        };
+    } else {
+        spacingDependantStyles = getBorderVariablesCss(tableBorder, "table");
+    }
+
 
     let styles: Record<string, any> = {
         "--tableber-table-width": tableWidth,
@@ -50,21 +65,12 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         "--tableberg-cell-padding-right": cellPaddingCSS?.right,
         "--tableberg-cell-padding-bottom": cellPaddingCSS?.bottom,
         "--tableberg-cell-padding-left": cellPaddingCSS?.left,
-        "--tableberg-cell-spacing-top": cellSpacingCSS?.top,
-        "--tableberg-cell-spacing-left": cellSpacingCSS?.left,
         "--tableberg-global-text-color": fontColor,
         "--tableberg-global-link-color": linkColor,
         "--tableberg-global-font-size": fontSize,
-        ...tableBorderVar,
+        ...spacingDependantStyles,
         ...tableInnerBorder,
     };
-
-    if (
-        (cellSpacingCSS?.top??'0') !== "0" ||
-        (cellSpacingCSS.left??'0') !== "0"
-    ) {
-        styles["--tableberg-border-collapse"] = "separate";
-    }
 
     return omitBy(
         styles,
