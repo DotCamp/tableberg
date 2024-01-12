@@ -32,6 +32,7 @@ import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
+import { createArray } from "./utils";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 
@@ -43,6 +44,8 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             enableTableHeader,
             colWidths,
             isExample,
+            rows,
+            cols,
         },
         setAttributes,
         clientId,
@@ -220,27 +223,23 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
         if (initialRowCount === "" || initialColCount === "") return;
 
-        const initialInnerBlocks: InnerBlockTemplate[] = Array.from(
-            { length: initialRowCount },
-            () => [
-                "tableberg/row",
-                {},
-                Array.from({ length: initialColCount }, () => [
-                    "tableberg/cell",
-                ]),
-            ]
-        );
+        let initialInnerBlocks: InnerBlockTemplate[] = [];
+        for (let i = 0; i < initialRowCount; i++) {
+            for (let j = 0; j < initialColCount; j++) {
+                initialInnerBlocks.push(["tableberg/cell", { row: i, col: j }]);
+            }
+        }
 
+        setAttributes({
+            hasTableCreated: true,
+            rows: initialRowCount,
+            cols: initialColCount,
+            colWidths: Array(initialColCount).fill(""),
+        });
         replaceInnerBlocks(
             clientId,
             createBlocksFromInnerBlocksTemplate(initialInnerBlocks)
         );
-        setAttributes({
-            hasTableCreated: true,
-            rows: initialColCount,
-            cols: initialColCount,
-            colWidths: Array(initialColCount).fill(""),
-        });
     }
 
     function onChangeInitialColCount(count: string) {
@@ -303,14 +302,21 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             {isExample ? (
                 example
             ) : hasTableCreated ? (
-                <table {...blockProps}>
-                    <colgroup>
-                        {colWidths.map((w) => (
-                            <col width={w} />
+                <>
+                    <table {...blockProps}>
+                        <colgroup>
+                            {colWidths.map((w) => (
+                                <col width={w} />
+                            ))}
+                        </colgroup>
+                        {createArray(rows).map((i) => (
+                            <tr id={`tableberg-${clientId}-row-${i}`}></tr>
                         ))}
-                    </colgroup>
-                    <Fragment {...innerBlocksProps} />
-                </table>
+                    </table>
+                    <div style={{ display: "none" }}>
+                        <div {...innerBlocksProps} />
+                    </div>
+                </>
             ) : (
                 placeholder
             )}

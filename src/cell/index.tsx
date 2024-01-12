@@ -30,15 +30,18 @@ import "./editor.scss";
 
 import metadata from "./block.json";
 import classNames from "classnames";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { store as tbStore } from "../store";
 import CellControls from "./controls";
+import { createPortal } from "react-dom";
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
     tagName: "td" | "th";
     rowspan: number;
     colspan: number;
+    row: number;
+    col: number;
 }
 
 const ALLOWED_BLOCKS = [
@@ -601,13 +604,26 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     const TagName = attributes.tagName ?? "td";
 
+    const [targetEl, setTargetEl] = useState<Element>(document.body);
+
+    useEffect(() => {
+        setTargetEl(
+            document.querySelector(
+                `#tableberg-${tableBlockId}-row-${attributes.row}`
+            )!
+        );
+    }, [attributes.row]);
+
     return (
         <>
-            <TagName
-                {...innerBlocksProps}
-                rowSpan={attributes.rowspan}
-                colSpan={attributes.colspan}
-            />
+            {createPortal(
+                <TagName
+                    {...innerBlocksProps}
+                    rowSpan={attributes.rowspan}
+                    colSpan={attributes.colspan}
+                />,
+                targetEl
+            )}
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
                     value={vAlign}
