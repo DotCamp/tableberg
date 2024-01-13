@@ -112,3 +112,6 @@ export const store = createReduxStore("tableberg-store", {
 });
 
 register(store);
+
+
+export const RAW_TR_STORE: Record<number, HTMLElement | null> = {};
