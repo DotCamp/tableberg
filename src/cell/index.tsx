@@ -31,7 +31,7 @@ import "./editor.scss";
 import metadata from "./block.json";
 import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
-import { RAW_TR_STORE, store as tbStore } from "../store";
+import { store as tbStore } from "../store";
 import CellControls from "./controls";
 import { createPortal } from "react-dom";
 
@@ -612,18 +612,17 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                 `#tableberg-${tableBlockId}-row-${attributes.row}`
             )!
         );
-        
     }, [attributes.row]);
 
     return (
         <>
-            {RAW_TR_STORE[attributes.row] && createPortal(
+            {createPortal(
                 <TagName
                     {...innerBlocksProps}
                     rowSpan={attributes.rowspan}
                     colSpan={attributes.colspan}
                 />,
-                RAW_TR_STORE[attributes.row]!
+                targetEl
             )}
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar

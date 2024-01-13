@@ -41,7 +41,6 @@ import { getStyleClass } from "./get-classes";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { createArray } from "./utils";
-import { RAW_TR_STORE } from "./store";
 
 const ALLOWED_BLOCKS = ["tableberg/row"];
 
@@ -303,13 +302,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             </Placeholder>
         </div>
     );
-    const trRefs: MutableRefObject<HTMLElement | undefined>[] = [];
-
-    useEffect(() => {
-        trRefs.forEach((ref, idx) => {
-            RAW_TR_STORE[idx] = ref.current!;
-        });
-    }, []);
 
     const example = <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
 
@@ -325,17 +317,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                                 <col width={w} />
                             ))}
                         </colgroup>
-                        {createArray(rows).map((i) => {
-                            if (trRefs.length == i) {
-                                trRefs.push(useRef<HTMLElement>());
-                            }
-                            return (
-                                <tr
-                                    ref={trRefs[i]}
-                                    id={`tableberg-${clientId}-row-${i}`}
-                                ></tr>
-                            );
-                        })}
+                        {createArray(rows).map((i) => (
+                            <tr id={`tableberg-${clientId}-row-${i}`}></tr>
+                        ))}
                     </table>
                     <div style={{ display: "none" }}>
                         <div {...innerBlocksProps} />
