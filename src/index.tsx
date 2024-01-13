@@ -47,6 +47,13 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         setAttributes,
         clientId,
     } = props;
+    
+    const {
+        replaceInnerBlocks,
+        insertBlocks,
+        removeBlock,
+        updateBlockAttributes,
+    } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
 
     const blockProps = useBlockProps({
         className: classNames(getStyleClass(props.attributes)),
@@ -132,12 +139,27 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         };
     }, []);
 
-    const {
-        replaceInnerBlocks,
-        insertBlocks,
-        removeBlock,
-        updateBlockAttributes,
-    } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
+    useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore
+        ) as BlockEditorStoreSelectors;
+        const rows = storeSelect.getBlocks(clientId);
+        if (rows.length !== props.attributes.rows) {
+            let removeCount = 0;
+            rows.forEach((possibleRow) => {
+                if (possibleRow.name !== 'tableberg/row') {
+                    removeCount++;
+                    removeBlock(possibleRow.clientId);
+                }
+            });
+            if (removeCount === 0) {
+                setAttributes({
+                    rows: rows.length
+                })
+            }
+        }
+    }, []);
+
     const tablebergData = tablebergAdminMenuData;
     const globalBlockProperties = tablebergData?.block_properties;
 
