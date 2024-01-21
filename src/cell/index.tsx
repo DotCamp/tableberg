@@ -604,26 +604,28 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     const TagName = attributes.tagName ?? "td";
 
-    const [targetEl, setTargetEl] = useState<Element>(document.body);
+    const [targetEl, setTargetEl] = useState<Element>();
 
     useEffect(() => {
-        setTargetEl(
-            document.querySelector(
-                `#tableberg-${tableBlockId}-row-${attributes.row}`
-            )!
+        const w = document.querySelector<HTMLIFrameElement>(
+            'iframe[name="editor-canvas"]'
         );
+        const id = `#tableberg-${tableBlockId}-row-${attributes.row}`;
+        const el = (w?.contentWindow?.document || document).querySelector(id)!;
+        el && setTargetEl(el);
     }, [attributes.row]);
 
     return (
         <>
-            {createPortal(
-                <TagName
-                    {...innerBlocksProps}
-                    rowSpan={attributes.rowspan}
-                    colSpan={attributes.colspan}
-                />,
-                targetEl
-            )}
+            {targetEl &&
+                createPortal(
+                    <TagName
+                        {...innerBlocksProps}
+                        rowSpan={attributes.rowspan}
+                        colSpan={attributes.colspan}
+                    />,
+                    targetEl
+                )}
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
                     value={vAlign}
