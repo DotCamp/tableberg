@@ -26,12 +26,7 @@ import "./style.scss";
 import metadata from "./block.json";
 import {
     FormEvent,
-    useState,
     useEffect,
-    Fragment,
-    Ref,
-    useRef,
-    MutableRefObject,
 } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
@@ -149,27 +144,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         removeBlock,
         updateBlockAttributes,
     } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
-    const tablebergData = tablebergAdminMenuData;
-    const globalBlockProperties = tablebergData?.block_properties;
-
-    const globalRows = globalBlockProperties?.data.length
-        ? globalBlockProperties?.data.find(
-              (property: any) => property.name === "row_number"
-          )
-        : false;
-
-    const globalColumns = globalBlockProperties?.data.length
-        ? globalBlockProperties?.data.find(
-              (property: any) => property.name === "column_number"
-          )
-        : false;
-
-    const [initialRowCount, setInitialRowCount] = useState<number | "">(
-        globalRows?.value ?? 3
-    );
-    const [initialColCount, setInitialColCount] = useState<number | "">(
-        globalColumns?.value ?? 3
-    );
 
     useEffect(() => {
         if (enableTableHeader) {
@@ -177,7 +151,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 [
                     "tableberg/row",
                     { isHeader: true },
-                    new Array(props.attributes.cols ?? initialColCount)
+                    new Array(props.attributes.cols ?? cols)
                         .fill(0)
                         .map(() => ["tableberg/cell", { tagName: "th" }, []]),
                 ],
@@ -202,7 +176,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 [
                     "tableberg/row",
                     { isFooter: true },
-                    new Array(props.attributes.cols ?? initialColCount)
+                    new Array(props.attributes.cols ?? cols)
                         .fill(0)
                         .map(() => ["tableberg/cell", { tagName: "th" }, []]),
                 ],
@@ -229,20 +203,18 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
 
-        if (initialRowCount === "" || initialColCount === "") return;
+        if (rows < 1 || cols < 1) return;
 
         let initialInnerBlocks: InnerBlockTemplate[] = [];
-        for (let i = 0; i < initialRowCount; i++) {
-            for (let j = 0; j < initialColCount; j++) {
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
                 initialInnerBlocks.push(["tableberg/cell", { row: i, col: j }]);
             }
         }
 
         setAttributes({
             hasTableCreated: true,
-            rows: initialRowCount,
-            cols: initialColCount,
-            colWidths: Array(initialColCount).fill(""),
+            colWidths: Array(cols).fill(""),
         });
         replaceInnerBlocks(
             clientId,
@@ -250,87 +222,72 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         );
     }
 
-    function onChangeInitialColCount(count: string) {
-        const value = count === "" ? "" : parseInt(count, 10) || 2;
-        setInitialColCount(value);
+    if (isExample) {
+        return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>
     }
 
-    function onChangeInitialRowCount(count: string) {
-        const value = count === "" ? "" : parseInt(count, 10) || 2;
-        setInitialRowCount(value);
-    }
-
-    const placeholder = (
-        <div {...innerBlocksProps}>
-            <Placeholder
-                label={"Create Tableberg Table"}
-                icon={<BlockIcon icon={blockTable} showColors />}
-                instructions={
-                    "Create a complex table with all types of element"
-                }
-            >
-                <form
-                    className="blocks-table__placeholder-form"
-                    onSubmit={onCreateTable}
+    if (!hasTableCreated) {
+        return (
+            <div {...innerBlocksProps}>
+                <Placeholder
+                    label={"Create Tableberg Table"}
+                    icon={<BlockIcon icon={blockTable} showColors />}
+                    instructions={
+                        "Create a complex table with all types of element"
+                    }
                 >
-                    <TextControl
-                        __nextHasNoMarginBottom
-                        type="number"
-                        label={"Column count"}
-                        value={initialColCount}
-                        onChange={onChangeInitialColCount}
-                        min="1"
-                        className="blocks-table__placeholder-input"
-                    />
-                    <TextControl
-                        __nextHasNoMarginBottom
-                        type="number"
-                        label={"Row count"}
-                        value={initialRowCount}
-                        onChange={onChangeInitialRowCount}
-                        min="1"
-                        className="blocks-table__placeholder-input"
-                    />
-                    <Button
-                        className="blocks-table__placeholder-button"
-                        variant="primary"
-                        type="submit"
+                    <form
+                        className="blocks-table__placeholder-form"
+                        onSubmit={onCreateTable}
                     >
-                        {"Create Table"}
-                    </Button>
-                </form>
-            </Placeholder>
+                        <TextControl
+                            __nextHasNoMarginBottom
+                            type="number"
+                            label={"Column count"}
+                            value={cols}
+                            onChange={(count) => { setAttributes({ cols: Number(count) }) }}
+                            min="1"
+                            className="blocks-table__placeholder-input"
+                        />
+                        <TextControl
+                            __nextHasNoMarginBottom
+                            type="number"
+                            label={"Row count"}
+                            value={rows}
+                            onChange={(count) => { setAttributes({ rows: Number(count) }) }}
+                            min="1"
+                            className="blocks-table__placeholder-input"
+                        />
+                        <Button
+                            className="blocks-table__placeholder-button"
+                            variant="primary"
+                            type="submit"
+                        >
+                            {"Create Table"}
+                        </Button>
+                    </form>
+                </Placeholder>
+            </div>
+        )
+    }
+
+    return <>
+        <table {...blockProps}>
+            <colgroup>
+                {colWidths.map((w) => (
+                    <col width={w} />
+                ))}
+            </colgroup>
+            {createArray(rows).map((i) => (
+                <tr id={`tableberg-${clientId}-row-${i}`}></tr>
+            ))}
+        </table>
+        <div style={{ display: "none" }}>
+            <div {...innerBlocksProps} />
         </div>
-    );
+        <TablebergControls {...props} />
+    </>
 
-    const example = <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
-
-    return (
-        <>
-            {isExample ? (
-                example
-            ) : hasTableCreated ? (
-                <>
-                    <table {...blockProps}>
-                        <colgroup>
-                            {colWidths.map((w) => (
-                                <col width={w} />
-                            ))}
-                        </colgroup>
-                        {createArray(rows).map((i) => (
-                            <tr id={`tableberg-${clientId}-row-${i}`}></tr>
-                        ))}
-                    </table>
-                    <div style={{ display: "none" }}>
-                        <div {...innerBlocksProps} />
-                    </div>
-                </>
-            ) : (
-                placeholder
-            )}
-            <TablebergControls {...props} />
-        </>
-    );
 }
 
 function save() {
@@ -354,7 +311,7 @@ registerBlockType(metadata.name, {
             {
                 type: "block",
                 blocks: ["core/table"],
-                transform: function (attributes) {
+                transform: function(attributes) {
                     const tableBorder = get(attributes, "style.border", {});
                     const tableBody = get(attributes, "body", []);
                     const tableHead = get(attributes, "head", []);
