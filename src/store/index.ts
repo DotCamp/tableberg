@@ -5,9 +5,11 @@ import {
 } from "@wordpress/data";
 import { store as blockEditorStore } from "@wordpress/block-editor";
 import { BlockInstance } from "@wordpress/blocks";
+import { useState } from "react";
 
 interface ITBStoreState {
     selectedCells: string[];
+    tableRef?: HTMLTableElement;
 }
 
 const DEFAULT_STATE: ITBStoreState = {
@@ -34,6 +36,11 @@ export const store = createReduxStore("tableberg-store", {
                 return {
                     ...state,
                     selectedCells: [],
+                };
+            case "ASSIGN_TABLE_REF":
+                return {
+                    ...state,
+                    tableRef: action.tableRef
                 };
         }
 
@@ -62,6 +69,13 @@ export const store = createReduxStore("tableberg-store", {
 
             return {
                 type: "END_CELL_MULTI_SELECT",
+            };
+        },
+
+        setTableRef (tableRef?: HTMLTableElement) {
+            return {
+                type: "ASSIGN_TABLE_REF",
+                tableRef 
             };
         },
     },
@@ -108,6 +122,9 @@ export const store = createReduxStore("tableberg-store", {
                     .flat();
             }
         ),
+        getTableRef(state: ITBStoreState){
+            return state.tableRef;
+        }
     },
 });
 

@@ -604,16 +604,13 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     const TagName = attributes.tagName ?? "td";
 
-    const [targetEl, setTargetEl] = useState<Element>();
-
-    useEffect(() => {
-        const w = document.querySelector<HTMLIFrameElement>(
-            'iframe[name="editor-canvas"]'
-        );
-        const id = `#tableberg-${tableBlockId}-row-${attributes.row}`;
-        const el = (w?.contentWindow?.document || document).querySelector(id)!;
-        el && setTargetEl(el);
+    const [targetEl, setTargetEl] = useState<HTMLTableRowElement>();
+    useSelect((select) => {
+        const { getTableRef } = select(tbStore);
+        const table =  getTableRef();
+        setTargetEl(table?.children[attributes.row + 1] as any);
     }, [attributes.row]);
+
 
     return (
         <>
