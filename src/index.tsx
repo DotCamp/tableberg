@@ -24,12 +24,7 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import {
-    FormEvent,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import { FormEvent, useEffect } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
@@ -38,9 +33,8 @@ import { getStyleClass } from "./get-classes";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { createArray } from "./utils";
-import { store as tbStore } from "./store";
 
-const ALLOWED_BLOCKS = ["tableberg/row"];
+const ALLOWED_BLOCKS = ["tableberg/cell"];
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const {
@@ -57,12 +51,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         clientId,
     } = props;
 
-    const tableRef = useRef();
-
     const blockProps = useBlockProps({
         className: classNames(getStyleClass(props.attributes)),
         style: getStyles(props.attributes),
-        ref: tableRef
     } as Record<string, any>);
 
     const innerBlocksProps = useInnerBlocksProps({
@@ -231,12 +222,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     if (isExample) {
         return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>
     }
-
-    const { setTableRef } = useDispatch(tbStore);
-
-    useEffect(() => {
-        setTableRef(tableRef.current);
-    }, []);
 
     if (!hasTableCreated) {
         return (

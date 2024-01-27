@@ -29,9 +29,9 @@
         "@wordpress/scripts": "^26.6.0"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-svg-core": "^6.3.0",
-        "@fortawesome/free-brands-svg-icons": "^6.3.0",
-        "@fortawesome/free-solid-svg-icons": "^6.3.0",
+        "@fortawesome/fontawesome-svg-core": "^6.5.1",
+        "@fortawesome/free-brands-svg-icons": "^6.5.1",
+        "@fortawesome/free-solid-svg-icons": "^6.5.1",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@wordpress/blob": "^3.37.0",
         "@wordpress/components": "^25.3.0",
