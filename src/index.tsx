@@ -17,7 +17,6 @@ import {
     InnerBlockTemplate,
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
-    createBlock,
     BlockInstance,
 } from "@wordpress/blocks";
 /**
@@ -25,7 +24,7 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useEffect } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
@@ -39,24 +38,13 @@ import { TablebergCellBlockAttrs } from "./cell";
 const ALLOWED_BLOCKS = ["tableberg/cell"];
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
-    const {
-        attributes: {
-            hasTableCreated,
-            enableTableFooter,
-            enableTableHeader,
-            colWidths,
-            rowHeights,
-            isExample,
-            rows,
-            cols,
-        },
-        setAttributes,
-        clientId,
-    } = props;
+    const { attributes, setAttributes, clientId } = props;
+    const tableRef = useRef<HTMLTableElement>();
 
     const blockProps = useBlockProps({
-        className: classNames(getStyleClass(props.attributes)),
+        ref: tableRef,
         style: getStyles(props.attributes),
+        className: classNames(getStyleClass(props.attributes)),
     } as Record<string, any>);
 
     const innerBlocksProps = useInnerBlocksProps({
@@ -66,25 +54,15 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         allowedBlocks: ALLOWED_BLOCKS,
     });
 
-    const {
-        replaceInnerBlocks,
-        insertBlocks,
-        removeBlock,
-        updateBlockAttributes,
-    } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
-
-    const { block } = useSelect((select) => {
-        return {
-            block: (
-                select(blockEditorStore) as BlockEditorStoreSelectors
-            ).getBlock(clientId),
-        };
-    }, []);
+    const { replaceInnerBlocks, updateBlockAttributes } = useDispatch(
+        blockEditorStore,
+    ) as BlockEditorStoreActions;
 
     let hasInvalidCols = false;
 
     const { hasEditorRedo, removeEmptyColsOrRows } = useSelect((select) => {
         const removeEmptyColsOrRows = () => {
+            const { rows, cols } = attributes;
             const thisBlock: BlockInstance<TablebergBlockAttrs> = (
                 select(blockEditorStore) as BlockEditorStoreSelectors
             ).getBlock(clientId)! as any;
@@ -131,64 +109,49 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         };
     }, []);
 
-    useEffect(() => {
-        if (enableTableHeader) {
-            const tableHeaderTemplate: InnerBlockTemplate[] = [
-                [
-                    "tableberg/row",
-                    { isHeader: true },
-                    new Array(props.attributes.cols ?? cols)
-                        .fill(0)
-                        .map(() => ["tableberg/cell", { tagName: "th" }, []]),
-                ],
-            ];
-            insertBlocks(
-                createBlocksFromInnerBlocksTemplate(tableHeaderTemplate),
-                0,
-                clientId,
-            );
-        } else {
-            const firstBlock = block?.innerBlocks[0];
-            const isHeader = firstBlock?.attributes?.isHeader;
-
-            if (isHeader) {
-                removeBlock(firstBlock.clientId);
-            }
-        }
-    }, [enableTableHeader]);
-    useEffect(() => {
-        if (enableTableFooter) {
-            const tableHeaderTemplate: InnerBlockTemplate[] = [
-                [
-                    "tableberg/row",
-                    { isFooter: true },
-                    new Array(props.attributes.cols ?? cols)
-                        .fill(0)
-                        .map(() => ["tableberg/cell", { tagName: "th" }, []]),
-                ],
-            ];
-            insertBlocks(
-                createBlocksFromInnerBlocksTemplate(tableHeaderTemplate),
-                block?.innerBlocks?.length! + 1,
-                clientId,
-            );
-        } else {
-            const lastBlock = last(block?.innerBlocks);
-            const isFooter = lastBlock?.attributes?.isFooter;
-
-            if (isFooter) {
-                removeBlock(lastBlock.clientId);
-            }
-        }
-    }, [enableTableFooter]);
-
     if (hasEditorRedo) {
         removeEmptyColsOrRows();
     }
 
+    useEffect(() => {
+        // Do something here to re render the cells
+        // otherwise the newly inserted cell appears in the last position
+    }, [attributes.cols]);
+
+    useSelect(
+        (select) => {
+            tableRef.current?.addEventListener(
+                "keydown",
+                (evt: KeyboardEvent) => {
+                    if (evt.key !== "Backspace" && evt.key !== "Delete") {
+                        return;
+                    }
+                    const cur: BlockInstance<TablebergCellBlockAttrs> = (
+                        select("core/block-editor") as any
+                    ).getSelectedBlock();
+                    const storeSelect = select(
+                        blockEditorStore,
+                    ) as BlockEditorStoreSelectors;
+                    if (
+                        storeSelect.getBlockName(cur.clientId) ===
+                        "tableberg/cell"
+                    ) {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        return;
+                    }
+                },
+                {
+                    capture: true,
+                },
+            );
+        },
+        [attributes.hasTableCreated],
+    );
+
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
-
+        const { rows, cols } = attributes;
         if (rows < 1 || cols < 1) return;
 
         let initialInnerBlocks: InnerBlockTemplate[] = [];
@@ -209,11 +172,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         );
     }
 
-    if (isExample) {
+    if (attributes.isExample) {
         return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
     }
 
-    if (!hasTableCreated) {
+    if (!attributes.hasTableCreated) {
         return (
             <div {...innerBlocksProps}>
                 <Placeholder
@@ -231,7 +194,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                             __nextHasNoMarginBottom
                             type="number"
                             label={"Column count"}
-                            value={cols}
+                            value={attributes.cols}
                             onChange={(count) => {
                                 setAttributes({ cols: Number(count) });
                             }}
@@ -242,7 +205,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                             __nextHasNoMarginBottom
                             type="number"
                             label={"Row count"}
-                            value={rows}
+                            value={attributes.rows}
                             onChange={(count) => {
                                 setAttributes({ rows: Number(count) });
                             }}
@@ -266,16 +229,17 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         <>
             <table {...blockProps}>
                 <colgroup>
-                    {colWidths.map((w) => (
+                    {attributes.colWidths.map((w) => (
                         <col width={w} />
                     ))}
                 </colgroup>
-                {createArray(rows).map((i) => (
+                {createArray(attributes.rows).map((i) => (
                     <tr
                         id={`tableberg-${clientId}-row-${i}`}
                         style={
                             {
-                                "--tableberg-row-height": rowHeights[i],
+                                "--tableberg-row-height":
+                                    attributes.rowHeights[i],
                             } as any
                         }
                     ></tr>
@@ -305,120 +269,4 @@ registerBlockType(metadata.name, {
     attributes: metadata.attributes,
     edit,
     save,
-    transforms: {
-        from: [
-            {
-                type: "block",
-                blocks: ["core/table"],
-                transform: function (attributes) {
-                    const tableBorder = get(attributes, "style.border", {});
-                    const tableBody = get(attributes, "body", []);
-                    const tableHead = get(attributes, "head", []);
-                    const tableFoot = get(attributes, "head", []);
-                    const tableBodyBlocks: InnerBlockTemplate[] =
-                        tableBody?.map((row: any) => [
-                            "tableberg/row",
-                            {},
-                            row.cells?.map((cell: any) => [
-                                "tableberg/cell",
-                                {},
-                                [
-                                    [
-                                        "core/paragraph",
-                                        {
-                                            content: cell.content,
-                                            align: cell.align,
-                                            style: {
-                                                spacing: {
-                                                    margin: {
-                                                        top: "0",
-                                                        bottom: "0",
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    ],
-                                ],
-                            ]),
-                        ]);
-                    const tableHeaderBlocks: InnerBlockTemplate[] =
-                        tableHead?.map((row: any) => [
-                            "tableberg/row",
-                            {},
-                            row.cells?.map((cell: any) => [
-                                "tableberg/cell",
-                                { tagName: "th" },
-                                [
-                                    [
-                                        "core/paragraph",
-                                        {
-                                            content: cell.content,
-                                            align: cell.align,
-                                            style: {
-                                                spacing: {
-                                                    margin: {
-                                                        top: "0",
-                                                        bottom: "0",
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    ],
-                                ],
-                            ]),
-                        ]);
-                    const tableFooterBlocks: InnerBlockTemplate[] =
-                        tableFoot?.map((row: any) => [
-                            "tableberg/row",
-                            {},
-                            row.cells?.map((cell: any) => [
-                                "tableberg/cell",
-                                {
-                                    tagName: "th",
-                                },
-                                [
-                                    [
-                                        "core/paragraph",
-                                        {
-                                            content: cell.content,
-                                            align: cell.align,
-                                            style: {
-                                                spacing: {
-                                                    margin: {
-                                                        top: "0",
-                                                        bottom: "0",
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    ],
-                                ],
-                            ]),
-                        ]);
-
-                    const tablebergAttributes = {
-                        rows: (attributes as any).body.length,
-                        cols: (attributes as any).body[0].cells.length,
-                        tableBorder: tableBorder,
-                        innerBorder: tableBorder,
-                        enableTableFooter: (attributes as any).foot.length > 0,
-                        enableTableHeader: (attributes as any).head.length > 0,
-                        tableAlignment: !isEmpty((attributes as any).align)
-                            ? (attributes as any).align
-                            : "center",
-                        hasTableCreated: true,
-                    };
-                    return createBlock(
-                        "tableberg/table",
-                        tablebergAttributes,
-                        createBlocksFromInnerBlocksTemplate([
-                            ...tableHeaderBlocks,
-                            ...tableBodyBlocks,
-                            ...tableFooterBlocks,
-                        ]),
-                    );
-                },
-            },
-        ],
-    },
 });

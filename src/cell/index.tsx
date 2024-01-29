@@ -69,8 +69,9 @@ const CELL_TEMPLATE: InnerBlockTemplate[] = [
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     const { clientId, attributes, setAttributes } = props;
     const cellRef = useRef<HTMLTableCellElement>();
-    const { insertBlocks, updateBlockAttributes, replaceInnerBlocks } =
-        useDispatch(blockEditorStore) as BlockEditorStoreActions;
+    const { updateBlockAttributes, replaceInnerBlocks } = useDispatch(
+        blockEditorStore,
+    ) as BlockEditorStoreActions;
 
     const { tableBlock, tableBlockId } = useSelect((select) => {
         const storeSelect = select(
@@ -88,6 +89,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             storeSelect.getBlock(tableBlockId)! as any;
 
         return {
+            storeSelect,
             tableBlock,
             tableBlockId,
         };
