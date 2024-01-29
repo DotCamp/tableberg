@@ -23,7 +23,7 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useEffect, useRef } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
@@ -112,9 +112,10 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         removeEmptyColsOrRows();
     }
 
+    const [colUpt, setColUpt] = useState(0);
+
     useEffect(() => {
-        // Do something here to re render the cells
-        // otherwise the newly inserted cell appears in the last position
+        setColUpt((old) => old + 1);
     }, [attributes.cols]);
 
     useSelect(
@@ -239,7 +240,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                     ></tr>
                 ))}
             </table>
-            <div style={{ display: "none" }}>
+            <div style={{ display: "none" }} key={colUpt}>
                 <div {...innerBlocksProps} />
             </div>
             <TablebergControls {...props} />
