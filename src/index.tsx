@@ -18,6 +18,7 @@ import {
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
     createBlock,
+    BlockInstance,
 } from "@wordpress/blocks";
 /**
  * Internal Imports
@@ -33,6 +34,7 @@ import { getStyleClass } from "./get-classes";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { createArray } from "./utils";
+import { TablebergCellBlockAttrs } from "./cell";
 
 const ALLOWED_BLOCKS = ["tableberg/cell"];
 
@@ -64,6 +66,13 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         allowedBlocks: ALLOWED_BLOCKS,
     });
 
+    const {
+        replaceInnerBlocks,
+        insertBlocks,
+        removeBlock,
+        updateBlockAttributes,
+    } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
+
     const { block } = useSelect((select) => {
         return {
             block: (
@@ -72,59 +81,45 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         };
     }, []);
 
+    let hasInvalidCols = false;
+
     const { hasEditorRedo, removeEmptyColsOrRows } = useSelect((select) => {
         const removeEmptyColsOrRows = () => {
-            const storeSelect = select(
-                blockEditorStore,
-            ) as BlockEditorStoreSelectors;
-            const rows = storeSelect.getBlocks(clientId);
+            const thisBlock: BlockInstance<TablebergBlockAttrs> = (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getBlock(clientId)! as any;
 
-            /**
-             * First check if there is any empty rows.
-             */
-            row_loop: for (const row of rows) {
-                const cols = row.innerBlocks;
-                for (let i = 0; i < cols.length; i++) {
-                    if (cols[i].innerBlocks.length > 0) {
-                        continue row_loop;
-                    }
-                }
+            const cellBlocks: BlockInstance<TablebergCellBlockAttrs>[] =
+                thisBlock.innerBlocks as any;
 
-                // The row is empty, remove it
-                const cells = storeSelect.getBlockOrder(row.clientId);
-                for (const cell of cells) {
-                    removeBlock(cell);
-                }
-                removeBlock(row.clientId);
-                // There can be only one empty row or column in a undo
-                return;
-            }
+            if (cellBlocks?.length !== rows * cols) {
+                hasInvalidCols = true;
+            } else if (hasInvalidCols) {
+                let lastCol = 0,
+                    lastRow = 0;
+                const newCellBlocks: BlockInstance<TablebergCellBlockAttrs>[] =
+                    [];
+                cellBlocks?.forEach(
+                    (cell: BlockInstance<TablebergCellBlockAttrs>) => {
+                        cell.attributes.col = lastCol;
+                        cell.attributes.row = lastRow;
+                        lastCol++;
 
-            const row1cols = rows[0].innerBlocks;
-            for (let i = 0; i < row1cols.length; i++) {
-                /**
-                 * If the i th col of the first row is empty,
-                 * we can safely consider the whole i th column to be empty
-                 */
-                if (row1cols[i].innerBlocks.length === 0) {
-                    rows.forEach((row: any) => {
-                        const col = row.innerBlocks[i];
-                        const colIndex = storeSelect.getBlockIndex(
-                            col.clientId,
-                        );
-                        storeSelect.getBlocks(clientId).forEach((row: any) => {
-                            const cells = storeSelect.getBlockOrder(
-                                row.clientId,
-                            );
-                            removeBlock(cells[colIndex]);
-                        });
-                        removeBlock(row.innerBlocks[i]);
-                    });
-                    updateBlockAttributes(clientId, {
-                        cols: row1cols.length - 1,
-                    });
-                    break;
-                }
+                        const lastColRem = lastCol % rows;
+                        if (lastColRem !== lastCol) {
+                            lastRow++;
+                            lastCol = lastColRem;
+                        }
+                        newCellBlocks.push(cell);
+                    },
+                );
+                replaceInnerBlocks(clientId, newCellBlocks);
+
+                updateBlockAttributes(clientId, {
+                    rows,
+                    cols,
+                });
+                hasInvalidCols = false;
             }
         };
 
@@ -135,13 +130,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             removeEmptyColsOrRows,
         };
     }, []);
-
-    const {
-        replaceInnerBlocks,
-        insertBlocks,
-        removeBlock,
-        updateBlockAttributes,
-    } = useDispatch(blockEditorStore) as BlockEditorStoreActions;
 
     useEffect(() => {
         if (enableTableHeader) {

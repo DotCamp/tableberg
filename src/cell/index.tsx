@@ -50,6 +50,22 @@ const ALLOWED_BLOCKS = [
     "core/list",
 ];
 
+const CELL_TEMPLATE: InnerBlockTemplate[] = [
+    [
+        "core/paragraph",
+        {
+            style: {
+                spacing: {
+                    margin: {
+                        top: "0",
+                        bottom: "0",
+                    },
+                },
+            },
+        },
+    ],
+];
+
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     const { clientId, attributes, setAttributes } = props;
     const cellRef = useRef<HTMLTableCellElement>();
@@ -85,27 +101,10 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         ref: cellRef,
     });
 
-    const innerBlocksProps = useInnerBlocksProps(
-        { ...blockProps },
-        {
-            allowedBlocks: ALLOWED_BLOCKS,
-            template: [
-                [
-                    "core/paragraph",
-                    {
-                        style: {
-                            spacing: {
-                                margin: {
-                                    top: "0",
-                                    bottom: "0",
-                                },
-                            },
-                        },
-                    },
-                ],
-            ],
-        },
-    );
+    const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
+        allowedBlocks: ALLOWED_BLOCKS,
+        template: CELL_TEMPLATE,
+    });
 
     const addRow = (before: boolean) => {
         const rowIndex = before ? attributes.row : attributes.row + 1;
@@ -121,21 +120,41 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                 },
             ] satisfies InnerBlockTemplate;
         });
-
+        const rows = tableBlock.attributes.rows + 1;
         updateBlockAttributes(tableBlockId, {
-            rows: tableBlock.attributes.rows + 1,
+            rows,
         });
 
-        tableBlock.innerBlocks.forEach(({ clientId, attributes }) => {
-            if (attributes.row >= rowIndex) {
-                updateBlockAttributes(clientId, { row: attributes.row + 1 });
-            }
-        });
-        insertBlocks(
-            createBlocksFromInnerBlocksTemplate(template),
-            1,
-            tableBlockId,
+        const cellBlocks: BlockInstance<TablebergCellBlockAttrs>[] = Array(
+            rows * tableBlock.attributes.cols,
         );
+
+        createBlocksFromInnerBlocksTemplate(template).forEach((cell) => {
+            cellBlocks[
+                cell.attributes.row * tableBlock.attributes.cols +
+                    cell.attributes.col
+            ] = cell as any;
+        });
+
+        tableBlock.innerBlocks.forEach((cell) => {
+            if (cell.attributes.row >= rowIndex) {
+                cell.attributes.row += 1;
+            }
+            const cellIdx =
+                cell.attributes.row * tableBlock.attributes.cols +
+                cell.attributes.col;
+            cellBlocks[cellIdx] = cell as any;
+        });
+
+        const rowHeights = tableBlock.attributes.rowHeights;
+        let toInsert = "";
+        for (let i = rowIndex; i < rowHeights.length; i++) {
+            const old = rowHeights[i];
+            rowHeights[i] = toInsert;
+            toInsert = old;
+        }
+        rowHeights.push(toInsert);
+        replaceInnerBlocks(tableBlockId, cellBlocks, false);
     };
 
     const addCol = (before: boolean) => {
@@ -166,7 +185,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         createBlocksFromInnerBlocksTemplate(template).forEach((cell) => {
             cellBlocks[cell.attributes.row * cols + cell.attributes.col] =
                 cell as any;
-            console.log(cell.attributes.row, cell.attributes.col);
         });
 
         tableBlock.innerBlocks.forEach((cell) => {
