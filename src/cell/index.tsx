@@ -2,7 +2,6 @@ import {
     BlockEditProps,
     registerBlockType,
     createBlocksFromInnerBlocksTemplate,
-    createBlock,
     BlockInstance,
     BlockSaveProps,
     InnerBlockTemplate,
@@ -11,11 +10,10 @@ import {
     BlockVerticalAlignmentToolbar,
     BlockControls,
     store as blockEditorStore,
-    InspectorControls,
 } from "@wordpress/block-editor";
 import { useBlockProps, useInnerBlocksProps } from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
-import { Button, ToolbarDropdownMenu } from "@wordpress/components";
+import { ToolbarDropdownMenu } from "@wordpress/components";
 import {
     tableRowBefore,
     tableRowAfter,
@@ -30,12 +28,11 @@ import "./style.scss";
 import "./editor.scss";
 
 import metadata from "./block.json";
-import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
-import { store as tbStore } from "../store";
 import CellControls from "./controls";
 import { createPortal } from "react-dom";
 import { createArray } from "../utils";
+import { TablebergBlockAttrs } from "../types";
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
@@ -55,42 +52,36 @@ const ALLOWED_BLOCKS = [
 
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     const { clientId, attributes, setAttributes } = props;
-    const { vAlign } = attributes;
-
-    const vAlignChange = (newValue: "bottom" | "center" | "top") => {
-        setAttributes({ vAlign: newValue });
-    };
-
-    const className = classNames({
-        [`align-v-${vAlign}`]: vAlign,
-    });
-
     const cellRef = useRef<HTMLTableCellElement>();
+    const { insertBlocks, updateBlockAttributes, replaceInnerBlocks } =
+        useDispatch(blockEditorStore) as BlockEditorStoreActions;
 
-    const {
-        tableBlockId,
-    } = useSelect(
-        (select) => {
-            const storeSelect = select(
-                blockEditorStore
-            ) as BlockEditorStoreSelectors;
+    const { tableBlock, tableBlockId } = useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore,
+        ) as BlockEditorStoreSelectors;
 
-            const parentBlocks = storeSelect.getBlockParents(clientId);
+        const parentBlocks = storeSelect.getBlockParents(clientId);
 
-            const tableBlockId = parentBlocks.find(
-                (parentId: string) =>
-                    storeSelect.getBlockName(parentId) === "tableberg/table"
-            )!;
+        const tableBlockId = parentBlocks.find(
+            (parentId: string) =>
+                storeSelect.getBlockName(parentId) === "tableberg/table",
+        )!;
 
-            return {
-                tableBlockId,
-            };
-        },
-        []
-    );
+        const tableBlock: BlockInstance<TablebergBlockAttrs> =
+            storeSelect.getBlock(tableBlockId)! as any;
+
+        return {
+            tableBlock,
+            tableBlockId,
+        };
+    }, []);
 
     const blockProps = useBlockProps({
-        className,
+        style: {
+            "--tableberg-cell-v-align":
+                attributes.vAlign === "center" ? "middle" : attributes.vAlign,
+        } as any,
         ref: cellRef,
     });
 
@@ -113,14 +104,172 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                     },
                 ],
             ],
-        }
+        },
     );
 
+    const addRow = (before: boolean) => {
+        const rowIndex = before ? attributes.row : attributes.row + 1;
+
+        const template: InnerBlockTemplate[] = createArray(
+            tableBlock.attributes.cols,
+        ).map((i) => {
+            return [
+                "tableberg/cell",
+                {
+                    col: i,
+                    row: rowIndex,
+                },
+            ] satisfies InnerBlockTemplate;
+        });
+
+        updateBlockAttributes(tableBlockId, {
+            rows: tableBlock.attributes.rows + 1,
+        });
+
+        tableBlock.innerBlocks.forEach(({ clientId, attributes }) => {
+            if (attributes.row >= rowIndex) {
+                updateBlockAttributes(clientId, { row: attributes.row + 1 });
+            }
+        });
+        insertBlocks(
+            createBlocksFromInnerBlocksTemplate(template),
+            1,
+            tableBlockId,
+        );
+    };
+
+    const addCol = (before: boolean) => {
+        const colIndex = before ? attributes.col : attributes.col + 1;
+
+        const template: InnerBlockTemplate[] = createArray(
+            tableBlock.attributes.rows,
+        ).map((i) => {
+            return [
+                "tableberg/cell",
+                {
+                    row: i,
+                    col: colIndex,
+                },
+            ] satisfies InnerBlockTemplate;
+        });
+
+        const cols = tableBlock.attributes.cols + 1;
+
+        updateBlockAttributes(tableBlockId, {
+            cols,
+        });
+
+        const cellBlocks: BlockInstance<TablebergCellBlockAttrs>[] = Array(
+            tableBlock.attributes.rows * cols,
+        );
+
+        createBlocksFromInnerBlocksTemplate(template).forEach((cell) => {
+            cellBlocks[cell.attributes.row * cols + cell.attributes.col] =
+                cell as any;
+            console.log(cell.attributes.row, cell.attributes.col);
+        });
+
+        tableBlock.innerBlocks.forEach((cell) => {
+            if (cell.attributes.col >= colIndex) {
+                cell.attributes.col += 1;
+            }
+            const cellIdx = cell.attributes.row * cols + cell.attributes.col;
+            cellBlocks[cellIdx] = cell as any;
+        });
+
+        const colWidths = tableBlock.attributes.colWidths;
+        let toInsert = "";
+        for (let i = colIndex; i < colWidths.length; i++) {
+            const old = colWidths[i];
+            colWidths[i] = toInsert;
+            toInsert = old;
+        }
+        colWidths.push(toInsert);
+        replaceInnerBlocks(tableBlockId, cellBlocks, false);
+    };
+
+    const deleteCol = () => {
+        const colIndex = attributes.col;
+        const cols = tableBlock.attributes.cols - 1;
+        updateBlockAttributes(tableBlockId, {
+            cols,
+        });
+        const cellBlocks: BlockInstance<TablebergCellBlockAttrs>[] = Array(
+            tableBlock.attributes.rows * cols,
+        );
+        tableBlock.innerBlocks.forEach((cell) => {
+            if (cell.attributes.col === colIndex) {
+                return;
+            }
+            if (cell.attributes.col > colIndex) {
+                cell.attributes.col -= 1;
+            }
+            const cellIdx = cell.attributes.row * cols + cell.attributes.col;
+            cellBlocks[cellIdx] = cell as any;
+        });
+        tableBlock.attributes.colWidths.splice(colIndex, 1);
+        replaceInnerBlocks(tableBlockId, cellBlocks, false);
+    };
+
+    const deleteRow = () => {
+        const rowIndex = attributes.row;
+        const rows = tableBlock.attributes.rows - 1;
+        updateBlockAttributes(tableBlockId, {
+            rows,
+        });
+        const cellBlocks: BlockInstance<TablebergCellBlockAttrs>[] = Array(
+            tableBlock.attributes.cols * rows,
+        );
+        tableBlock.innerBlocks.forEach((cell) => {
+            if (cell.attributes.row === rowIndex) {
+                return;
+            }
+            if (cell.attributes.row > rowIndex) {
+                cell.attributes.row -= 1;
+            }
+            const cellIdx =
+                cell.attributes.row * tableBlock.attributes.cols +
+                cell.attributes.col;
+            cellBlocks[cellIdx] = cell as any;
+        });
+        replaceInnerBlocks(tableBlockId, cellBlocks, false);
+    };
+
     // to be implemented
-    // table operations: add col/row before/after, delete col/row
-    // set row height
-    // set col width
     // cell merging
+
+    const tableControls = [
+        {
+            icon: tableRowBefore,
+            title: "Insert row before",
+            onClick: () => addRow(true),
+        },
+        {
+            icon: tableRowAfter,
+            title: "Insert row after",
+            onClick: () => addRow(false),
+        },
+        {
+            icon: tableColumnBefore,
+            title: "Insert column before",
+            onClick: () => addCol(true),
+        },
+        {
+            icon: tableColumnAfter,
+            title: "Insert column after",
+            onClick: () => addCol(false),
+        },
+        {
+            icon: tableRowDelete,
+            title: "Delete row",
+            onClick: deleteRow,
+        },
+        {
+            icon: tableColumnDelete,
+            title: "Delete column",
+            onClick: deleteCol,
+        },
+    ];
 
     const TagName = attributes.tagName ?? "td";
 
@@ -128,44 +277,73 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     useEffect(() => {
         const iframe = document.querySelector<HTMLIFrameElement>(
-            'iframe[name="editor-canvas"]'
+            'iframe[name="editor-canvas"]',
         );
         const id = `#tableberg-${tableBlockId}-row-${attributes.row}`;
-        const el = (iframe?.contentWindow?.document || document).querySelector(id)!;
+        const el = (iframe?.contentWindow?.document || document).querySelector(
+            id,
+        )!;
         el && setTargetEl(el);
     }, [attributes.row]);
 
+    const setVAlign = (newValue: "bottom" | "center" | "top") => {
+        setAttributes({ vAlign: newValue });
+    };
+
+    const setRowHeight = (val: string) => {
+        const rowHeights = [...tableBlock.attributes.rowHeights];
+        rowHeights[attributes.row] = val;
+        updateBlockAttributes(tableBlockId, {
+            rowHeights,
+        });
+    };
+    const setColWidth = (val: string) => {
+        const colWidths = [...tableBlock.attributes.colWidths];
+        colWidths[attributes.col] = val;
+        updateBlockAttributes(tableBlockId, {
+            colWidths,
+        });
+    };
+
     return (
         <>
-            {targetEl ?
+            {targetEl ? (
                 createPortal(
                     <TagName
                         {...innerBlocksProps}
                         rowSpan={attributes.rowspan}
                         colSpan={attributes.colspan}
                     />,
-                    targetEl
-                ) : <TagName
+                    targetEl,
+                )
+            ) : (
+                <TagName
                     {...innerBlocksProps}
                     rowSpan={attributes.rowspan}
                     colSpan={attributes.colspan}
-                />}
+                />
+            )}
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
-                    value={vAlign}
-                    onChange={vAlignChange}
+                    value={attributes.vAlign}
+                    onChange={setVAlign}
                 />
             </BlockControls>
-            { /*
+
             <BlockControls group="other" __experimentalShareWithChildBlocks>
                 <ToolbarDropdownMenu
                     hasArrowIndicator
                     icon={table}
-                label={"Edit table"}
-                controls={tableControls}
+                    label={"Edit table"}
+                    controls={tableControls}
                 />
             </BlockControls>
-            */ }
+            <CellControls
+                height={tableBlock?.attributes.rowHeights[attributes.row]}
+                setHeight={setRowHeight}
+                width={tableBlock?.attributes.colWidths[attributes.col]}
+                setWidth={setColWidth}
+            />
         </>
     );
 }

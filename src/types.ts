@@ -4,6 +4,7 @@ export interface TablebergBlockAttrs {
     rows: number;
     cols: number;
     colWidths: string[];
+    rowHeights: string[];
     hasTableCreated: boolean;
     tableWidth: string;
     enableTableHeader: boolean;

@@ -43,6 +43,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             enableTableFooter,
             enableTableHeader,
             colWidths,
+            rowHeights,
             isExample,
             rows,
             cols,
@@ -74,7 +75,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { hasEditorRedo, removeEmptyColsOrRows } = useSelect((select) => {
         const removeEmptyColsOrRows = () => {
             const storeSelect = select(
-                blockEditorStore
+                blockEditorStore,
             ) as BlockEditorStoreSelectors;
             const rows = storeSelect.getBlocks(clientId);
 
@@ -109,11 +110,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                     rows.forEach((row: any) => {
                         const col = row.innerBlocks[i];
                         const colIndex = storeSelect.getBlockIndex(
-                            col.clientId
+                            col.clientId,
                         );
                         storeSelect.getBlocks(clientId).forEach((row: any) => {
                             const cells = storeSelect.getBlockOrder(
-                                row.clientId
+                                row.clientId,
                             );
                             removeBlock(cells[colIndex]);
                         });
@@ -156,7 +157,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             insertBlocks(
                 createBlocksFromInnerBlocksTemplate(tableHeaderTemplate),
                 0,
-                clientId
+                clientId,
             );
         } else {
             const firstBlock = block?.innerBlocks[0];
@@ -181,7 +182,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             insertBlocks(
                 createBlocksFromInnerBlocksTemplate(tableHeaderTemplate),
                 block?.innerBlocks?.length! + 1,
-                clientId
+                clientId,
             );
         } else {
             const lastBlock = last(block?.innerBlocks);
@@ -212,15 +213,16 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         setAttributes({
             hasTableCreated: true,
             colWidths: Array(cols).fill(""),
+            rowHeights: Array(rows).fill(""),
         });
         replaceInnerBlocks(
             clientId,
-            createBlocksFromInnerBlocksTemplate(initialInnerBlocks)
+            createBlocksFromInnerBlocksTemplate(initialInnerBlocks),
         );
     }
 
     if (isExample) {
-        return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>
+        return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
     }
 
     if (!hasTableCreated) {
@@ -242,7 +244,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                             type="number"
                             label={"Column count"}
                             value={cols}
-                            onChange={(count) => { setAttributes({ cols: Number(count) }) }}
+                            onChange={(count) => {
+                                setAttributes({ cols: Number(count) });
+                            }}
                             min="1"
                             className="blocks-table__placeholder-input"
                         />
@@ -251,7 +255,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                             type="number"
                             label={"Row count"}
                             value={rows}
-                            onChange={(count) => { setAttributes({ rows: Number(count) }) }}
+                            onChange={(count) => {
+                                setAttributes({ rows: Number(count) });
+                            }}
                             min="1"
                             className="blocks-table__placeholder-input"
                         />
@@ -265,26 +271,34 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                     </form>
                 </Placeholder>
             </div>
-        )
+        );
     }
 
-    return <>
-        <table {...blockProps}>
-            <colgroup>
-                {colWidths.map((w) => (
-                    <col width={w} />
+    return (
+        <>
+            <table {...blockProps}>
+                <colgroup>
+                    {colWidths.map((w) => (
+                        <col width={w} />
+                    ))}
+                </colgroup>
+                {createArray(rows).map((i) => (
+                    <tr
+                        id={`tableberg-${clientId}-row-${i}`}
+                        style={
+                            {
+                                "--tableberg-row-height": rowHeights[i],
+                            } as any
+                        }
+                    ></tr>
                 ))}
-            </colgroup>
-            {createArray(rows).map((i) => (
-                <tr id={`tableberg-${clientId}-row-${i}`}></tr>
-            ))}
-        </table>
-        <div style={{ display: "none" }}>
-            <div {...innerBlocksProps} />
-        </div>
-        <TablebergControls {...props} />
-    </>
-
+            </table>
+            <div style={{ display: "none" }}>
+                <div {...innerBlocksProps} />
+            </div>
+            <TablebergControls {...props} />
+        </>
+    );
 }
 
 function save() {
@@ -308,7 +322,7 @@ registerBlockType(metadata.name, {
             {
                 type: "block",
                 blocks: ["core/table"],
-                transform: function(attributes) {
+                transform: function (attributes) {
                     const tableBorder = get(attributes, "style.border", {});
                     const tableBody = get(attributes, "body", []);
                     const tableHead = get(attributes, "head", []);
@@ -413,7 +427,7 @@ registerBlockType(metadata.name, {
                             ...tableHeaderBlocks,
                             ...tableBodyBlocks,
                             ...tableFooterBlocks,
-                        ])
+                        ]),
                     );
                 },
             },

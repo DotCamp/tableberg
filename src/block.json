@@ -22,6 +22,10 @@
             "type": "array",
             "default": []
         },
+        "rowHeights": {
+            "type": "array",
+            "default": []
+        },
         "hasTableCreated": {
             "type": "boolean",
             "default": false
