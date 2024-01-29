@@ -73,7 +73,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         blockEditorStore,
     ) as BlockEditorStoreActions;
 
-    const { tableBlock, tableBlockId } = useSelect((select) => {
+    const { storeSelect, tableBlock, tableBlockId } = useSelect((select) => {
         const storeSelect = select(
             blockEditorStore,
         ) as BlockEditorStoreSelectors;
@@ -108,6 +108,24 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         template: CELL_TEMPLATE,
     });
 
+    useEffect(() => {
+        cellRef.current?.addEventListener('keydown', (evt) => {
+            if (evt.key !== 'Backspace') {
+                return;
+            }
+            const innerBlocks: BlockInstance[] = storeSelect.getBlocks(clientId);
+            if (innerBlocks.length > 1) {
+                return;
+            }
+            const block = innerBlocks[0];
+            if (block.name === 'core/paragraph' && !block.attributes.content) {
+                evt.preventDefault();
+                evt.stopPropagation();
+            }
+            
+        }, {capture: true});
+    }, []);
+    
     const addRow = (before: boolean) => {
         const rowIndex = before ? attributes.row : attributes.row + 1;
 

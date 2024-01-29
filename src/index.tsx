@@ -1,7 +1,6 @@
 /**
  * WordPress Imports
  */
-import { isEmpty, get, last } from "lodash";
 import { Placeholder, TextControl, Button } from "@wordpress/components";
 import { blockTable } from "@wordpress/icons";
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -24,7 +23,7 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import { getStyles } from "./get-styles";
@@ -129,13 +128,8 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                     const cur: BlockInstance<TablebergCellBlockAttrs> = (
                         select("core/block-editor") as any
                     ).getSelectedBlock();
-                    const storeSelect = select(
-                        blockEditorStore,
-                    ) as BlockEditorStoreSelectors;
-                    if (
-                        storeSelect.getBlockName(cur.clientId) ===
-                        "tableberg/cell"
-                    ) {
+
+                    if (cur.name === "tableberg/cell") {
                         evt.preventDefault();
                         evt.stopPropagation();
                         return;
