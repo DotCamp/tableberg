@@ -141,7 +141,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 },
             );
         },
-        [attributes.hasTableCreated],
+        [tableRef.current],
     );
 
     function onCreateTable(event: FormEvent) {
