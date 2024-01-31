@@ -131,7 +131,7 @@ export const store = createReduxStore("tableberg-store", {
                     ...state,
                     ...DEFAULT_STATE,
                     selectedCells: new Map(),
-                    selctedIds: new Set(),
+                    selectedIds: new Set(),
                 };
         }
 
