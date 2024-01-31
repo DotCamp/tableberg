@@ -146,7 +146,7 @@ export const store = createReduxStore("tableberg-store", {
                 attributes: cell.attributes,
             };
         },
-        endCellMultiSelect(doc: Element) {
+        endCellMultiSelect(doc?: Document) {
             (doc || document)
                 .querySelectorAll(".is-multi-selected")
                 .forEach((cell) => {

@@ -33,7 +33,6 @@ import metadata from "./block.json";
 import { useEffect, useRef, useState } from "react";
 import CellControls from "./controls";
 import { createPortal } from "react-dom";
-import { createArray } from "../utils";
 import { TablebergBlockAttrs } from "../types";
 
 export interface TablebergCellBlockAttrs {
@@ -314,10 +313,14 @@ const useMerging = (
         });
 
         const destination = cells[0];
-        const innerBlocks = destination.innerBlocks;
         const toRemoves: string[] = [];
         for (let i = 1; i < cells.length; i++) {
-            innerBlocks.concat(...cells[i].innerBlocks);
+            storeActions.moveBlocksToPosition(
+                cells[i].innerBlocks.map((b) => b.clientId),
+                cells[i].clientId,
+                destination.clientId,
+                destination.innerBlocks.length,
+            );
             toRemoves.push(cells[i].clientId);
         }
 
@@ -326,9 +329,9 @@ const useMerging = (
             colspan: newSpans.col,
             rowspan: newSpans.row,
         });
-
         storeActions.removeBlocks(toRemoves);
-        storeActions.replaceInnerBlocks(destination.clientId, innerBlocks);
+
+        endCellMultiSelect();
     };
 
     return {
