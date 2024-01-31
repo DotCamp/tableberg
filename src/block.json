@@ -18,6 +18,10 @@
             "type": "number",
             "default": 2
         },
+        "cells" : {
+            "type": "number",
+            "default": 0
+        },
         "colWidths": {
             "type": "array",
             "default": []

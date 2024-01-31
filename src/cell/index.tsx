@@ -24,6 +24,8 @@ import {
     table,
 } from "@wordpress/icons";
 
+import { store as tbStore } from "../store";
+
 import "./style.scss";
 import "./editor.scss";
 
@@ -42,6 +44,8 @@ export interface TablebergCellBlockAttrs {
     row: number;
     col: number;
 }
+
+export type TablebergCellInstance = BlockInstance<TablebergCellBlockAttrs>;
 
 const ALLOWED_BLOCKS = [
     "core/paragraph",
@@ -71,41 +75,52 @@ const addRow = (
     storeActions: BlockEditorStoreActions,
     rowIndex: number,
 ) => {
-    const template: InnerBlockTemplate[] = createArray(
-        tableBlock.attributes.cols,
-    ).map((i) => {
-        return [
-            "tableberg/cell",
-            {
-                col: i,
-                row: rowIndex,
-            },
-        ] satisfies InnerBlockTemplate;
-    });
-    const rows = tableBlock.attributes.rows + 1;
-    storeActions.updateBlockAttributes(tableBlock.clientId, {
-        rows,
-    });
+    let skipCols: Map<number, number> = new Map();
+    let skipCount = 0;
 
-    const cellBlocks: BlockInstance<TablebergCellBlockAttrs>[] = Array(
-        rows * tableBlock.attributes.cols,
-    );
-
-    createBlocksFromInnerBlocksTemplate(template).forEach((cell) => {
-        cellBlocks[
-            cell.attributes.row * tableBlock.attributes.cols +
-                cell.attributes.col
-        ] = cell as any;
-    });
+    const cellBlocks: TablebergCellInstance[] = [];
+    const postCells: TablebergCellInstance[] = [];
 
     tableBlock.innerBlocks.forEach((cell) => {
-        if (cell.attributes.row >= rowIndex) {
+        const attrs: TablebergCellBlockAttrs = cell.attributes as any;
+        if (attrs.row >= rowIndex) {
             cell.attributes.row += 1;
+            postCells.push(cell as TablebergCellInstance);
+        } else {
+            if (attrs.row < rowIndex && attrs.row + attrs.rowspan > rowIndex) {
+                cell.attributes.rowspan += 1;
+                skipCols.set(cell.attributes.col, cell.attributes.colspan);
+                skipCount += cell.attributes.colspan;
+            }
+            cellBlocks.push(cell as TablebergCellInstance);
         }
-        const cellIdx =
-            cell.attributes.row * tableBlock.attributes.cols +
-            cell.attributes.col;
-        cellBlocks[cellIdx] = cell as any;
+    });
+
+    const newCellTemplates: InnerBlockTemplate[] = Array(
+        tableBlock.attributes.cols - skipCount,
+    );
+    let newTemIdx = 0;
+    for (let i = 0; i < tableBlock.attributes.cols; i++) {
+        const skip = skipCols.get(i);
+        if (skip) {
+            i += skip;
+        } else {
+            newCellTemplates[newTemIdx++] = [
+                "tableberg/cell",
+                {
+                    col: i,
+                    row: rowIndex,
+                },
+            ];
+        }
+    }
+
+    createBlocksFromInnerBlocksTemplate(newCellTemplates).forEach((cell) => {
+        cellBlocks.push(cell as TablebergCellInstance);
+    });
+
+    postCells.forEach((cell) => {
+        cellBlocks.push(cell);
     });
 
     const rowHeights = tableBlock.attributes.rowHeights;
@@ -116,7 +131,12 @@ const addRow = (
         toInsert = old;
     }
     rowHeights.push(toInsert);
+
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
+    storeActions.updateBlockAttributes(tableBlock.clientId, {
+        rows: tableBlock.attributes.rows + 1,
+        cells: cellBlocks.length,
+    });
 };
 
 const addCol = (
@@ -124,40 +144,29 @@ const addCol = (
     storeActions: BlockEditorStoreActions,
     colIndex: number,
 ) => {
-    const template: InnerBlockTemplate[] = createArray(
-        tableBlock.attributes.rows,
-    ).map((i) => {
-        return [
-            "tableberg/cell",
-            {
-                row: i,
-                col: colIndex,
-            },
-        ] satisfies InnerBlockTemplate;
-    });
-
-    const cols = tableBlock.attributes.cols + 1;
-
-    storeActions.updateBlockAttributes(tableBlock.clientId, {
-        cols,
-    });
-
-    const cellBlocks: BlockInstance<TablebergCellBlockAttrs>[] = Array(
-        tableBlock.attributes.rows * cols,
+    const cellBlocks: TablebergCellInstance[] = Array(
+        tableBlock.innerBlocks.length,
     );
 
-    const newCells = createBlocksFromInnerBlocksTemplate(template);
-    newCells.forEach((cell) => {
-        cellBlocks[cell.attributes.row * cols + cell.attributes.col] =
-            cell as any;
-    });
+    let lastIndex = 0;
 
-    tableBlock.innerBlocks.forEach((cell) => {
-        if (cell.attributes.col >= colIndex) {
-            cell.attributes.col += 1;
+    // @ts-ignore
+    tableBlock.innerBlocks.forEach((cell: TablebergCellInstance) => {
+        const attrs = cell.attributes;
+        if (attrs.col === colIndex) {
+            cellBlocks[lastIndex++] = createBlocksFromInnerBlocksTemplate([
+                ["tableberg/cell", { col: attrs.col, row: attrs.row }],
+            ])[0] as any;
         }
-        const cellIdx = cell.attributes.row * cols + cell.attributes.col;
-        cellBlocks[cellIdx] = cell as any;
+        if (attrs.col >= colIndex) {
+            cell.attributes.col += 1;
+        } else if (
+            attrs.col < colIndex &&
+            attrs.col + attrs.colspan > colIndex
+        ) {
+            cell.attributes.colspan += 1;
+        }
+        cellBlocks[lastIndex++] = cell;
     });
 
     const colWidths = tableBlock.attributes.colWidths;
@@ -168,7 +177,12 @@ const addCol = (
         toInsert = old;
     }
     colWidths.push(toInsert);
+
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
+    storeActions.updateBlockAttributes(tableBlock.clientId, {
+        cols: tableBlock.attributes.cols + 1,
+        cells: cellBlocks.length,
+    });
 };
 
 const deleteCol = (
@@ -176,25 +190,33 @@ const deleteCol = (
     storeActions: BlockEditorStoreActions,
     colIndex: number,
 ) => {
-    const cols = tableBlock.attributes.cols - 1;
-    storeActions.updateBlockAttributes(tableBlock.clientId, {
-        cols,
-    });
-    const cellBlocks: BlockInstance<TablebergCellBlockAttrs>[] = Array(
-        tableBlock.attributes.rows * cols,
+    const cellBlocks: TablebergCellInstance[] = Array(
+        tableBlock.innerBlocks.length - tableBlock.attributes.rows,
     );
+
+    let lastIdx = 0;
+
     tableBlock.innerBlocks.forEach((cell) => {
         if (cell.attributes.col === colIndex) {
             return;
         }
         if (cell.attributes.col > colIndex) {
             cell.attributes.col -= 1;
+        } else if (
+            cell.attributes.col < colIndex &&
+            cell.attributes.col + cell.attributes.colspan > colIndex
+        ) {
+            cell.attributes.colspan -= 1;
         }
-        const cellIdx = cell.attributes.row * cols + cell.attributes.col;
-        cellBlocks[cellIdx] = cell as any;
+        cellBlocks[lastIdx++] = cell as any;
     });
     tableBlock.attributes.colWidths.splice(colIndex, 1);
+
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
+    storeActions.updateBlockAttributes(tableBlock.clientId, {
+        cols: tableBlock.attributes.cols - 1,
+        cells: cellBlocks.length,
+    });
 };
 
 const deleteRow = (
@@ -202,36 +224,154 @@ const deleteRow = (
     storeActions: BlockEditorStoreActions,
     rowIndex: number,
 ) => {
-    const rows = tableBlock.attributes.rows - 1;
-    storeActions.updateBlockAttributes(tableBlock.clientId, {
-        rows,
-    });
-    const cellBlocks: BlockInstance<TablebergCellBlockAttrs>[] = Array(
-        tableBlock.attributes.cols * rows,
+    const cellBlocks: TablebergCellInstance[] = Array(
+        tableBlock.innerBlocks.length - tableBlock.attributes.cols,
     );
+    let lastIdx = 0;
+
     tableBlock.innerBlocks.forEach((cell) => {
         if (cell.attributes.row === rowIndex) {
             return;
         }
         if (cell.attributes.row > rowIndex) {
             cell.attributes.row -= 1;
+        } else if (
+            cell.attributes.row < rowIndex &&
+            cell.attributes.row + cell.attributes.rowspan > rowIndex
+        ) {
+            cell.attributes.rowspan -= 1;
         }
-        const cellIdx =
-            cell.attributes.row * tableBlock.attributes.cols +
-            cell.attributes.col;
-        cellBlocks[cellIdx] = cell as any;
+        cellBlocks[lastIdx++] = cell as any;
     });
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
+
+    storeActions.updateBlockAttributes(tableBlock.clientId, {
+        rows: tableBlock.attributes.rows - 1,
+        cells: cellBlocks.length,
+    });
 };
 
+const useMerging = (
+    clientId: string,
+    storeActions: BlockEditorStoreActions,
+) => {
+    const { toggleCellSelection, endCellMultiSelect } = useDispatch(tbStore);
+    const { getCurrentSelectedCells, getClassName, isMergable, getSpans } =
+        useSelect((select) => {
+            const {
+                getCurrentSelectedCells,
+                isMergable,
+                getClassName,
+                getSpans,
+            } = select(tbStore);
+            const isInMultiSelectMode = () =>
+                getCurrentSelectedCells().size > 0;
+            return {
+                getCurrentSelectedCells,
+                isInMultiSelectMode,
+                isMergable,
+                getClassName,
+                getSpans,
+            };
+        }, []);
 
+    const { cell, storeSelect } = useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore,
+        ) as BlockEditorStoreSelectors;
+        const cell = storeSelect.getBlock(clientId)!;
+        return { cell, storeSelect };
+    }, []);
+
+    const docClickEvt = (evt: Event) => {
+        console.log("Document click");
+    };
+
+    const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
+        if (!evt.ctrlKey) {
+            return;
+        }
+        evt.preventDefault();
+        evt.stopPropagation();
+        toggleCellSelection(cell as any);
+    };
+
+    const cleanUpMerging = () => {
+        document.removeEventListener("click", docClickEvt);
+    };
+
+    const mergeCells = () => {
+        const cells: TablebergCellInstance[] = [];
+        getCurrentSelectedCells().forEach((cellId) => {
+            cells.push(storeSelect.getBlock(cellId)! as TablebergCellInstance);
+        });
+        cells.sort((a, b) => {
+            const rowDiff = a.attributes.row - b.attributes.row;
+            if (rowDiff == 0) {
+                return a.attributes.col - b.attributes.col;
+            }
+            return rowDiff;
+        });
+
+        const destination = cells[0];
+        const innerBlocks = destination.innerBlocks;
+        const toRemoves: string[] = [];
+        for (let i = 1; i < cells.length; i++) {
+            innerBlocks.concat(...cells[i].innerBlocks);
+            toRemoves.push(cells[i].clientId);
+        }
+
+        const newSpans = getSpans();
+        storeActions.updateBlockAttributes(destination.clientId, {
+            colspan: newSpans.col,
+            rowspan: newSpans.row,
+        });
+
+        storeActions.removeBlocks(toRemoves);
+        storeActions.replaceInnerBlocks(destination.clientId, innerBlocks);
+    };
+
+    return {
+        toggleCellSelection,
+        endCellMultiSelect,
+        getClassName,
+        isMergable,
+        addMergingEvt: (el?: HTMLElement) => {
+            el?.addEventListener("mousedown", elClickEvt, { capture: true });
+        },
+        cleanUpMerging,
+        mergeCells,
+    };
+};
 
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     const { clientId, attributes, setAttributes } = props;
     const cellRef = useRef<HTMLTableCellElement>();
+
     const storeActions = useDispatch(
         blockEditorStore,
     ) as BlockEditorStoreActions;
+    const {
+        isMergable,
+        cleanUpMerging,
+        addMergingEvt,
+        getClassName,
+        mergeCells,
+    } = useMerging(clientId, storeActions);
+
+    const blockProps = useBlockProps({
+        style: {
+            "--tableberg-cell-v-align":
+                attributes.vAlign === "center" ? "middle" : attributes.vAlign,
+        } as any,
+        ref: cellRef,
+        className: getClassName(clientId),
+    });
+
+    const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
+        allowedBlocks: ALLOWED_BLOCKS,
+        template: CELL_TEMPLATE,
+    });
 
     const { storeSelect, tableBlock, tableBlockId } = useSelect((select) => {
         const storeSelect = select(
@@ -254,19 +394,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             tableBlockId,
         };
     }, []);
-
-    const blockProps = useBlockProps({
-        style: {
-            "--tableberg-cell-v-align":
-                attributes.vAlign === "center" ? "middle" : attributes.vAlign,
-        } as any,
-        ref: cellRef,
-    });
-
-    const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
-        allowedBlocks: ALLOWED_BLOCKS,
-        template: CELL_TEMPLATE,
-    });
 
     useEffect(() => {
         cellRef.current?.addEventListener(
@@ -291,10 +418,9 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             },
             { capture: true },
         );
-    }, []);
-
-    // to be implemented
-    // cell merging
+        addMergingEvt(cellRef.current);
+        return cleanUpMerging;
+    }, [cellRef.current]);
 
     const tableControls = [
         {
@@ -315,7 +441,12 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         {
             icon: tableColumnAfter,
             title: "Insert column after",
-            onClick: () => addCol(tableBlock, storeActions, attributes.col + 1),
+            onClick: () =>
+                addCol(
+                    tableBlock,
+                    storeActions,
+                    attributes.col + attributes.colspan,
+                ),
         },
         {
             icon: tableRowDelete,
@@ -326,6 +457,12 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             icon: tableColumnDelete,
             title: "Delete column",
             onClick: () => deleteCol(tableBlock, storeActions, attributes.col),
+        },
+        {
+            icon: table,
+            title: "Merge",
+            onClick: mergeCells,
+            isDisabled: !isMergable(),
         },
     ];
 

@@ -1,30 +1,126 @@
-import {
-    createReduxStore,
-    register,
-    createRegistrySelector,
-} from "@wordpress/data";
-import { store as blockEditorStore } from "@wordpress/block-editor";
+import { createReduxStore, register } from "@wordpress/data";
 import { BlockInstance } from "@wordpress/blocks";
+import { TablebergCellBlockAttrs } from "../cell";
 
 interface ITBStoreState {
-    selectedCells: string[];
+    selectedCells: Map<number, Map<string, TablebergCellBlockAttrs>>;
+    selectedIds: Set<string>;
+    minRow: number;
+    maxRow: number;
+    minCol: number;
+    maxCol: number;
+    isMergable: boolean;
 }
 
-const DEFAULT_STATE: ITBStoreState = {
-    selectedCells: [],
+const DEFAULT_STATE = {
+    minRow: Number.MAX_VALUE,
+    maxRow: -1,
+    minCol: Number.MAX_VALUE,
+    maxCol: -1,
+    isMergable: false,
+};
+
+const isMergable = (state: ITBStoreState): boolean => {
+    const rows = state.selectedCells;
+    const filledBoxes = new Set<string>();
+    rows.forEach((row) => {
+        row.forEach((cell) => {
+            for (let i = 0; i < cell.colspan; i++) {
+                for (let j = 0; j < cell.rowspan; j++) {
+                    filledBoxes.add(`${cell.row + j}x${cell.col + i}`);
+                }
+            }
+        });
+    });
+
+    if (filledBoxes.size % 2) {
+        return false;
+    }
+
+    for (let row = state.minRow; row <= state.maxRow; row++) {
+        for (let col = state.minCol; col <= state.maxCol; col++) {
+            if (!filledBoxes.has(`${row}x${col}`)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 };
 
 export const store = createReduxStore("tableberg-store", {
-    reducer(state: ITBStoreState = DEFAULT_STATE, action) {
+    reducer(
+        state: ITBStoreState = {
+            ...DEFAULT_STATE,
+            selectedCells: new Map(),
+            selectedIds: new Set(),
+        },
+        action,
+    ) {
         switch (action.type) {
             case "TOGGLE_CELL_SELECTION":
                 const updatedSelection = state.selectedCells;
-                const index = updatedSelection.indexOf(action.clientId);
-                if (index > -1) {
-                    updatedSelection.splice(index, 1);
+                const rowIdx = action.attributes.row;
+                const row = updatedSelection.get(rowIdx);
+                const attrs = action.attributes as TablebergCellBlockAttrs;
+
+                if (!row) {
+                    const row = new Map();
+                    row.set(action.clientId, attrs);
+                    updatedSelection.set(rowIdx, row);
                 } else {
-                    updatedSelection.push(action.clientId);
+                    if (!row.delete(action.clientId)) {
+                        row.set(action.clientId, attrs);
+                    }
+                    if (row.size === 0) {
+                        updatedSelection.delete(rowIdx);
+                    }
                 }
+
+                if (!state.selectedIds.delete(action.clientId)) {
+                    state.selectedIds.add(action.clientId);
+
+                    state.maxRow = Math.max(
+                        state.maxRow,
+                        attrs.row + attrs.rowspan - 1,
+                    );
+                    state.minRow = Math.min(state.minRow, attrs.row);
+                    state.maxCol = Math.max(
+                        state.maxCol,
+                        attrs.col + attrs.colspan - 1,
+                    );
+                    state.minCol = Math.min(state.minCol, attrs.col);
+                } else if (
+                    attrs.col == state.minCol ||
+                    attrs.col == state.maxCol ||
+                    attrs.row == state.minRow ||
+                    attrs.row == state.maxRow
+                ) {
+                    let minCol = Number.MAX_VALUE,
+                        maxCol = -1,
+                        minRow = Number.MAX_VALUE,
+                        maxRow = -1;
+                    state.selectedCells.forEach((row) => {
+                        row.forEach((cell) => {
+                            maxRow = Math.max(
+                                maxRow,
+                                cell.row + cell.rowspan - 1,
+                            );
+                            minRow = Math.min(minRow, cell.row);
+                            maxCol = Math.max(
+                                maxCol,
+                                cell.col + cell.colspan - 1,
+                            );
+                            minCol = Math.min(minCol, cell.col);
+                        });
+                    });
+                    state.minCol = minCol;
+                    state.maxCol = maxCol;
+                    state.minRow = minRow;
+                    state.maxRow = maxRow;
+                }
+
+                state.isMergable = isMergable(state);
 
                 return {
                     ...state,
@@ -33,7 +129,9 @@ export const store = createReduxStore("tableberg-store", {
             case "END_CELL_MULTI_SELECT":
                 return {
                     ...state,
-                    selectedCells: [],
+                    ...DEFAULT_STATE,
+                    selectedCells: new Map(),
+                    selctedIds: new Set(),
                 };
         }
 
@@ -41,25 +139,19 @@ export const store = createReduxStore("tableberg-store", {
     },
 
     actions: {
-        toggleCellSelection(clientId: string) {
-            const cell = document.querySelector(`[data-block="${clientId}"]`);
-
-            if (cell?.classList.contains("is-multi-selected")) {
-                cell.classList.remove("is-multi-selected");
-            } else {
-                cell?.classList.add("is-multi-selected");
-            }
-
+        toggleCellSelection(cell: BlockInstance<TablebergCellBlockAttrs>) {
             return {
                 type: "TOGGLE_CELL_SELECTION",
-                clientId,
+                clientId: cell.clientId,
+                attributes: cell.attributes,
             };
         },
-        endCellMultiSelect() {
-            document.querySelectorAll(".is-multi-selected").forEach((cell) => {
-                cell.classList.remove("is-multi-selected");
-            });
-
+        endCellMultiSelect(doc: Element) {
+            (doc || document)
+                .querySelectorAll(".is-multi-selected")
+                .forEach((cell) => {
+                    cell.classList.remove("is-multi-selected");
+                });
             return {
                 type: "END_CELL_MULTI_SELECT",
             };
@@ -67,49 +159,28 @@ export const store = createReduxStore("tableberg-store", {
     },
 
     selectors: {
-        getCurrentSelectedCells(state: ITBStoreState) {
-            return state.selectedCells;
+        getCurrentSelectedCells(state: ITBStoreState): Set<string> {
+            return state.selectedIds;
         },
-        getCellsStructure: createRegistrySelector(
-            (select: any) => (_: ITBStoreState, clientId: string) => {
-                const { getBlockParents, getBlockName, getBlock } =
-                    select(blockEditorStore);
-                const parentBlocks = getBlockParents(clientId);
 
-                const tableBlockId = parentBlocks.find(
-                    (parentId: string) =>
-                        getBlockName(parentId) === "tableberg/table"
-                );
-                const tableBlock: BlockInstance = getBlock(tableBlockId);
-                return tableBlock.innerBlocks
-                    .map((row, rowIndex) => {
-                        let colMod = 0;
-                        let rowMod = 0;
-
-                        const rowStructure = row.innerBlocks.map(
-                            ({ clientId, attributes }, cellIndex) => {
-                                const colspan = Number(attributes.colspan);
-                                const rowspan = Number(attributes.rowspan);
-
-                                colMod += colspan - 1;
-                                rowMod += rowspan - 1;
-
-                                return {
-                                    clientId: clientId,
-                                    colIndex: cellIndex + colMod,
-                                    colspan: colspan,
-                                    rowIndex: rowIndex + rowMod,
-                                    rowspan: rowspan,
-                                };
-                            }
-                        );
-                        return rowStructure;
-                    })
-                    .flat();
+        getClassName(
+            state: ITBStoreState,
+            clientId: string,
+        ): string | undefined {
+            if (state.selectedIds.has(clientId)) {
+                return "is-multi-selected";
             }
-        ),
+        },
+        isMergable(state: ITBStoreState): boolean {
+            return state.isMergable;
+        },
+        getSpans(state: ITBStoreState): { row: number; col: number } {
+            return {
+                row: state.maxRow - state.minRow + 1,
+                col: state.maxCol - state.minCol + 1,
+            };
+        },
     },
 });
 
 register(store);
-

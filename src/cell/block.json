@@ -19,19 +19,19 @@
         },
         "rowspan": {
             "type": "number",
-            "default": "1"
+            "default": 1
         },
         "colspan": {
             "type": "number",
-            "default": "1"
+            "default": 1
         },
         "row": {
             "type": "number",
-            "default": "0"
+            "default": 0
         },
         "col": {
             "type": "number",
-            "default": "0"
+            "default": 0
         }
     },
     "supports": {

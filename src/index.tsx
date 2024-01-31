@@ -32,7 +32,7 @@ import { getStyleClass } from "./get-classes";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { createArray } from "./utils";
-import { TablebergCellBlockAttrs } from "./cell";
+import { TablebergCellInstance } from "./cell";
 
 const ALLOWED_BLOCKS = ["tableberg/cell"];
 
@@ -56,60 +56,33 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { replaceInnerBlocks, updateBlockAttributes } = useDispatch(
         blockEditorStore,
     ) as BlockEditorStoreActions;
+    
 
-    let hasInvalidCols = false;
-
-    const { hasEditorRedo, removeEmptyColsOrRows } = useSelect((select) => {
-        const removeEmptyColsOrRows = () => {
-            const { rows, cols } = attributes;
+    const { hasEditorRedo, fixUndoAddingRowsOrCols } = useSelect((select) => {
+        const fixUndoAddingRowsOrCols = () => {
             const thisBlock: BlockInstance<TablebergBlockAttrs> = (
                 select(blockEditorStore) as BlockEditorStoreSelectors
             ).getBlock(clientId)! as any;
 
-            const cellBlocks: BlockInstance<TablebergCellBlockAttrs>[] =
+            const cellBlocks: TablebergCellInstance[] =
                 thisBlock.innerBlocks as any;
 
-            if (cellBlocks?.length !== rows * cols) {
-                hasInvalidCols = true;
-            } else if (hasInvalidCols) {
-                let lastCol = 0,
-                    lastRow = 0;
-                const newCellBlocks: BlockInstance<TablebergCellBlockAttrs>[] =
-                    [];
-                cellBlocks?.forEach(
-                    (cell: BlockInstance<TablebergCellBlockAttrs>) => {
-                        cell.attributes.col = lastCol;
-                        cell.attributes.row = lastRow;
-                        lastCol++;
-
-                        const lastColRem = lastCol % rows;
-                        if (lastColRem !== lastCol) {
-                            lastRow++;
-                            lastCol = lastColRem;
-                        }
-                        newCellBlocks.push(cell);
-                    },
-                );
-                replaceInnerBlocks(clientId, newCellBlocks);
-
-                updateBlockAttributes(clientId, {
-                    rows,
-                    cols,
-                });
-                hasInvalidCols = false;
+            if (cellBlocks?.length === thisBlock.attributes.cells) {
+                return;
             }
+            //TODO: fix the undo problem
         };
 
         return {
             hasEditorRedo: (
                 select(editorStore) as EditorStoreSelectors
             ).hasEditorRedo(),
-            removeEmptyColsOrRows,
+            fixUndoAddingRowsOrCols,
         };
     }, []);
 
     if (hasEditorRedo) {
-        removeEmptyColsOrRows();
+        fixUndoAddingRowsOrCols();
     }
 
     const [colUpt, setColUpt] = useState(0);
@@ -126,7 +99,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                     if (evt.key !== "Backspace" && evt.key !== "Delete") {
                         return;
                     }
-                    const cur: BlockInstance<TablebergCellBlockAttrs> = (
+                    const cur: TablebergCellInstance = (
                         select("core/block-editor") as any
                     ).getSelectedBlock();
 
@@ -160,6 +133,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             hasTableCreated: true,
             colWidths: Array(cols).fill(""),
             rowHeights: Array(rows).fill(""),
+            cells: initialInnerBlocks.length,
         });
         replaceInnerBlocks(
             clientId,
