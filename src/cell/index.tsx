@@ -322,28 +322,26 @@ const useMerging = (
             };
         }, []);
 
-    const { cell, storeSelect } = useSelect((select) => {
-        const storeSelect = select(
+    const storeSelect = useSelect((select) => {
+        return select(
             blockEditorStore,
         ) as BlockEditorStoreSelectors;
-        const cell = storeSelect.getBlock(clientId)!;
-        return { cell, storeSelect };
     }, []);
 
-    const docClickEvt = (evt: Event) => {};
-
     const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
-        if (!evt.ctrlKey) {
+        if (!evt.ctrlKey && getCurrentSelectedCells().size === 0) {
             return;
         }
-        evt.preventDefault();
-        evt.stopPropagation();
-        toggleCellSelection(cell as any);
+        const cell = storeSelect.getBlock(clientId) as any;
+        if (evt.ctrlKey) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            toggleCellSelection(cell);
+        } else if (!getCurrentSelectedCells().has(clientId)) {
+            endCellMultiSelect();
+        }
     };
 
-    const cleanUpMerging = () => {
-        document.removeEventListener("click", docClickEvt);
-    };
 
     const mergeCells = () => {
         const cells: TablebergCellInstance[] = [];
@@ -388,7 +386,6 @@ const useMerging = (
         addMergingEvt: (el?: HTMLElement) => {
             el?.addEventListener("mousedown", elClickEvt, { capture: true });
         },
-        cleanUpMerging,
         mergeCells,
     };
 };
@@ -402,7 +399,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     ) as BlockEditorStoreActions;
     const {
         isMergable,
-        cleanUpMerging,
         addMergingEvt,
         getClassName,
         mergeCells,
@@ -469,7 +465,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             { capture: true },
         );
         addMergingEvt(cellRef.current);
-        return cleanUpMerging;
     }, [cellRef.current]);
 
     const tableControls = [

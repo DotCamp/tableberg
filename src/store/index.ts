@@ -33,6 +33,10 @@ const isMergable = (state: ITBStoreState): boolean => {
         });
     });
 
+    if (filledBoxes.size < 2) {
+        return false;
+    }
+
     for (let row = state.minRow; row <= state.maxRow; row++) {
         for (let col = state.minCol; col <= state.maxCol; col++) {
             if (!filledBoxes.has(`${row}x${col}`)) {
@@ -142,12 +146,7 @@ export const store = createReduxStore("tableberg-store", {
                 attributes: cell.attributes,
             };
         },
-        endCellMultiSelect(doc?: Document) {
-            (doc || document)
-                .querySelectorAll(".is-multi-selected")
-                .forEach((cell) => {
-                    cell.classList.remove("is-multi-selected");
-                });
+        endCellMultiSelect() {
             return {
                 type: "END_CELL_MULTI_SELECT",
             };
