@@ -33,6 +33,7 @@ import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { createArray } from "./utils";
 import { TablebergCellInstance } from "./cell";
+import { setOwnerDocument } from "./store/const";
 
 const ALLOWED_BLOCKS = ["tableberg/cell"];
 
@@ -59,7 +60,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { replaceInnerBlocks, updateBlockAttributes } = useDispatch(
         blockEditorStore,
     ) as BlockEditorStoreActions;
-    
 
     const { hasEditorRedo, fixUndoAddingRowsOrCols } = useSelect((select) => {
         const fixUndoAddingRowsOrCols = () => {
@@ -101,8 +101,14 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     //     ? headerBackgroundColor
     //     : headerBackgroundGradient,
 
-    const headerBg = attributes.headerBackgroundColor ?? attributes.headerBackgroundGradient ?? undefined;
-    const footerBg = attributes.footerBackgroundColor ?? attributes.footerBackgroundGradient ?? undefined;
+    const headerBg =
+        attributes.headerBackgroundColor ??
+        attributes.headerBackgroundGradient ??
+        undefined;
+    const footerBg =
+        attributes.footerBackgroundColor ??
+        attributes.footerBackgroundGradient ??
+        undefined;
 
     useSelect(
         (select) => {
@@ -129,6 +135,13 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         },
         [tableRef.current],
     );
+
+    useEffect(() => {
+        if (!tableRef.current) {
+            return;
+        }
+        setOwnerDocument(tableRef.current.ownerDocument);
+    }, [tableRef.current]);
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
@@ -211,34 +224,40 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         let backgroundColor;
 
         if (i % 2 === 0) {
-            backgroundColor = attributes.oddRowBackgroundColor ??
+            backgroundColor =
+                attributes.oddRowBackgroundColor ??
                 attributes.oddRowBackgroundGradient ??
                 undefined;
         } else {
-            backgroundColor = attributes.evenRowBackgroundColor ??
+            backgroundColor =
+                attributes.evenRowBackgroundColor ??
                 attributes.evenRowBackgroundGradient ??
                 undefined;
         }
 
         if (i === 0 && attributes.enableTableHeader) {
-            backgroundColor = attributes.headerBackgroundColor ??
+            backgroundColor =
+                attributes.headerBackgroundColor ??
                 attributes.headerBackgroundGradient ??
-                undefined
+                undefined;
         }
 
         if (i + 1 === attributes.rows && attributes.enableTableFooter) {
-            backgroundColor = attributes.footerBackgroundColor ??
+            backgroundColor =
+                attributes.footerBackgroundColor ??
                 attributes.footerBackgroundGradient ??
-                undefined
+                undefined;
         }
 
-        return <tr
-            id={`tableberg-${clientId}-row-${i}`}
-            style={{
-                height: attributes.rowHeights[i],
-                backgroundColor
-            }}
-        ></tr>
+        return (
+            <tr
+                id={`tableberg-${clientId}-row-${i}`}
+                style={{
+                    height: attributes.rowHeights[i],
+                    backgroundColor,
+                }}
+            ></tr>
+        );
     });
 
     return (

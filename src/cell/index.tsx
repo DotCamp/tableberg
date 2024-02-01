@@ -34,6 +34,7 @@ import { useEffect, useRef, useState } from "react";
 import CellControls from "./controls";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
+import { getOwnerDocument } from "../store/const";
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
@@ -431,7 +432,8 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     const blockProps = useBlockProps({
         style: {
-            verticalAlign: attributes.vAlign === "center" ? "middle" : attributes.vAlign,
+            verticalAlign:
+                attributes.vAlign === "center" ? "middle" : attributes.vAlign,
             height: tableBlock.attributes.rowHeights[props.attributes.row],
         },
         ref: cellRef,
@@ -519,13 +521,8 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     const [targetEl, setTargetEl] = useState<Element>();
 
     useEffect(() => {
-        const iframe = document.querySelector<HTMLIFrameElement>(
-            'iframe[name="editor-canvas"]',
-        );
         const id = `#tableberg-${tableBlockId}-row-${attributes.row}`;
-        const el = (iframe?.contentWindow?.document || document).querySelector(
-            id,
-        )!;
+        const el = getOwnerDocument().querySelector(id)!;
         el && setTargetEl(el);
     }, [attributes.row]);
 
