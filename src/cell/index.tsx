@@ -70,6 +70,18 @@ const CELL_TEMPLATE: InnerBlockTemplate[] = [
     ],
 ];
 
+const createSingleCell = (row: number, col: number): TablebergCellInstance => {
+    return createBlocksFromInnerBlocksTemplate([
+        [
+            "tableberg/cell",
+            {
+                col: col,
+                row,
+            },
+        ],
+    ])[0] as TablebergCellInstance;
+};
+
 const addRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
     storeActions: BlockEditorStoreActions,
@@ -96,28 +108,14 @@ const addRow = (
         }
     });
 
-    const newCellTemplates: InnerBlockTemplate[] = Array(
-        tableBlock.attributes.cols - skipCount,
-    );
-    let newTemIdx = 0;
     for (let i = 0; i < tableBlock.attributes.cols; i++) {
         const skip = skipCols.get(i);
         if (skip) {
-            i += skip;
+            i += skip - 1;
         } else {
-            newCellTemplates[newTemIdx++] = [
-                "tableberg/cell",
-                {
-                    col: i,
-                    row: rowIndex,
-                },
-            ];
+            cellBlocks.push(createSingleCell(rowIndex, i));
         }
     }
-
-    createBlocksFromInnerBlocksTemplate(newCellTemplates).forEach((cell) => {
-        cellBlocks.push(cell as TablebergCellInstance);
-    });
 
     postCells.forEach((cell) => {
         cellBlocks.push(cell);
@@ -138,18 +136,6 @@ const addRow = (
         cells: cellBlocks.length,
         rowHeights,
     });
-};
-
-const createSingleCell = (row: number, col: number): TablebergCellInstance => {
-    return createBlocksFromInnerBlocksTemplate([
-        [
-            "tableberg/cell",
-            {
-                col: col,
-                row,
-            },
-        ],
-    ])[0] as TablebergCellInstance;
 };
 
 const addCol = (
@@ -366,7 +352,10 @@ const useMerging = (
             const cell = storeSelect.getBlock(cellId)! as TablebergCellInstance;
             if (!destination) {
                 destination = cell;
-            } else if (cell.attributes.col <= destination.attributes.col && cell.attributes.row <= destination.attributes.row) {
+            } else if (
+                cell.attributes.col <= destination.attributes.col &&
+                cell.attributes.row <= destination.attributes.row
+            ) {
                 destination = cell;
             }
             cells.push(cell);
@@ -382,7 +371,7 @@ const useMerging = (
             }
             return rowDiff;
         });
-        
+
         const toRemoves: string[] = [];
         for (let i = 0; i < cells.length; i++) {
             if (cells[i].clientId === destination.clientId) {
