@@ -135,7 +135,20 @@ const addRow = (
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         rows: tableBlock.attributes.rows + 1,
         cells: cellBlocks.length,
+        rowHeights,
     });
+};
+
+const createSingleCell = (row: number, col: number): TablebergCellInstance => {
+    return createBlocksFromInnerBlocksTemplate([
+        [
+            "tableberg/cell",
+            {
+                col: col,
+                row,
+            },
+        ],
+    ])[0] as TablebergCellInstance;
 };
 
 const addCol = (
@@ -146,41 +159,70 @@ const addCol = (
     const cellBlocks: TablebergCellInstance[] = Array(
         tableBlock.innerBlocks.length,
     );
+    const colWidths = tableBlock.attributes.colWidths;
+    let lastIndex = 0,
+        lastInsertedRow = -1,
+        lastRow = 0;
 
-    let lastIndex = 0;
+    tableBlock.innerBlocks.forEach((cell) => {
+        const attrs = cell.attributes as TablebergCellBlockAttrs;
+        if (attrs.col < colIndex && attrs.col + attrs.colspan > colIndex) {
+            attrs.colspan += 1;
 
-    // @ts-ignore
-    tableBlock.innerBlocks.forEach((cell: TablebergCellInstance) => {
-        const attrs = cell.attributes;
-        if (attrs.col === colIndex) {
-            cellBlocks[lastIndex++] = createBlocksFromInnerBlocksTemplate([
-                ["tableberg/cell", { col: attrs.col, row: attrs.row }],
-            ])[0] as any;
+            lastInsertedRow = attrs.row + attrs.rowspan - 1;
+
+            lastRow = attrs.row;
+            cellBlocks[lastIndex++] = cell as TablebergCellInstance;
+            return;
         }
-        if (attrs.col >= colIndex) {
-            cell.attributes.col += 1;
-        } else if (
-            attrs.col < colIndex &&
-            attrs.col + attrs.colspan > colIndex
-        ) {
-            cell.attributes.colspan += 1;
+
+        if (lastInsertedRow >= attrs.row) {
+            cellBlocks[lastIndex++] = cell as TablebergCellInstance;
+            return;
         }
-        cellBlocks[lastIndex++] = cell;
+
+        if (attrs.col < colIndex) {
+            const prevRow = attrs.row - 1;
+
+            if (lastInsertedRow == prevRow) {
+                cellBlocks[lastIndex++] = cell as TablebergCellInstance;
+                lastRow = attrs.row;
+                return;
+            }
+            const toInsertCount = prevRow - lastInsertedRow;
+
+            for (let i = 0; i < toInsertCount; i++) {
+                const row = prevRow + i;
+
+                cellBlocks[lastIndex++] = createSingleCell(row, colIndex);
+            }
+            lastInsertedRow = prevRow;
+        } else {
+            const missedCount = attrs.row - lastInsertedRow;
+
+            for (let i = 1; i <= missedCount; i++) {
+                const row = lastInsertedRow + i;
+
+                cellBlocks[lastIndex++] = createSingleCell(row, colIndex);
+            }
+            lastInsertedRow = attrs.row;
+        }
+
+        cellBlocks[lastIndex++] = cell as TablebergCellInstance;
+        lastRow = attrs.row;
     });
 
-    const colWidths = tableBlock.attributes.colWidths;
-    let toInsert = "";
-    for (let i = colIndex; i < colWidths.length; i++) {
-        const old = colWidths[i];
-        colWidths[i] = toInsert;
-        toInsert = old;
+    lastInsertedRow++;
+
+    for (; lastInsertedRow < tableBlock.attributes.rows; lastInsertedRow++) {
+        cellBlocks[lastIndex++] = createSingleCell(lastInsertedRow, colIndex);
     }
-    colWidths.push(toInsert);
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         cols: tableBlock.attributes.cols + 1,
         cells: cellBlocks.length,
+        colWidths,
     });
 };
 
@@ -209,12 +251,14 @@ const deleteCol = (
         }
         cellBlocks[lastIdx++] = cell as any;
     });
-    tableBlock.attributes.colWidths.splice(colIndex, 1);
+    const colWidths = tableBlock.attributes.colWidths;
+    colWidths.splice(colIndex, 1);
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         cols: tableBlock.attributes.cols - 1,
         cells: cellBlocks.length,
+        colWidths,
     });
 };
 
@@ -242,11 +286,14 @@ const deleteRow = (
         }
         cellBlocks[lastIdx++] = cell as any;
     });
-    storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
+    const rowHeights = tableBlock.attributes.rowHeights;
+    rowHeights.splice(rowIndex, 1);
 
+    storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         rows: tableBlock.attributes.rows - 1,
         cells: cellBlocks.length,
+        rowHeights,
     });
 };
 
@@ -282,9 +329,7 @@ const useMerging = (
         return { cell, storeSelect };
     }, []);
 
-    const docClickEvt = (evt: Event) => {
-        console.log("Document click");
-    };
+    const docClickEvt = (evt: Event) => {};
 
     const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
         if (!evt.ctrlKey) {

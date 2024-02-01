@@ -33,10 +33,6 @@ const isMergable = (state: ITBStoreState): boolean => {
         });
     });
 
-    if (filledBoxes.size % 2) {
-        return false;
-    }
-
     for (let row = state.minRow; row <= state.maxRow; row++) {
         for (let col = state.minCol; col <= state.maxCol; col++) {
             if (!filledBoxes.has(`${row}x${col}`)) {
