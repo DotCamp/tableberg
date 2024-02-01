@@ -146,15 +146,14 @@ const addCol = (
     const cellBlocks: TablebergCellInstance[] = Array(
         tableBlock.innerBlocks.length,
     );
-    const colWidths = tableBlock.attributes.colWidths;
     let lastIndex = 0,
-        lastInsertedRow = -1;
-
+    lastInsertedRow = -1;
+    
     tableBlock.innerBlocks.forEach((cell) => {
         const attrs = cell.attributes as TablebergCellBlockAttrs;
         if (attrs.col < colIndex && attrs.col + attrs.colspan > colIndex) {
             attrs.colspan += 1;
-
+            
             lastInsertedRow = attrs.row + attrs.rowspan - 1;
 
             cellBlocks[lastIndex++] = cell as TablebergCellInstance;
@@ -164,12 +163,12 @@ const addCol = (
         if (attrs.col >= colIndex) {
             cell.attributes.col += 1;
         }
-
+        
         if (lastInsertedRow >= attrs.row) {
             cellBlocks[lastIndex++] = cell as TablebergCellInstance;
             return;
         }
-
+        
         if (attrs.col < colIndex) {
             const prevRow = attrs.row - 1;
             if (lastInsertedRow == prevRow) {
@@ -193,14 +192,20 @@ const addCol = (
 
         cellBlocks[lastIndex++] = cell as TablebergCellInstance;
     });
-
+    
     lastInsertedRow++;
-    console.log("Insert2: ");
-
     for (; lastInsertedRow < tableBlock.attributes.rows; lastInsertedRow++) {
-        console.log(`    at ${lastIndex} row ${lastInsertedRow}`);
         cellBlocks[lastIndex++] = createSingleCell(lastInsertedRow, colIndex);
     }
+    
+    const colWidths = tableBlock.attributes.colWidths;
+    let toInsertRowHeight = "";
+    for (let i = colIndex; i < colWidths.length; i++) {
+        const old = colWidths[i];
+        colWidths[i] = toInsertRowHeight;
+        toInsertRowHeight = old;
+    }
+    colWidths.push(toInsertRowHeight);
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
@@ -283,6 +288,7 @@ const deleteRow = (
 
 const useMerging = (
     clientId: string,
+    tableBlock: BlockInstance<TablebergBlockAttrs>,
     storeActions: BlockEditorStoreActions,
 ) => {
     const { toggleCellSelection, endCellMultiSelect } = useDispatch(tbStore);
@@ -369,6 +375,8 @@ const useMerging = (
             return rowDiff;
         });
 
+        let { rowHeights, colWidths, rows, cols } = tableBlock.attributes;
+
         const toRemoves: string[] = [];
         for (let i = 0; i < cells.length; i++) {
             if (cells[i].clientId === destination.clientId) {
@@ -384,11 +392,50 @@ const useMerging = (
         }
 
         const newSpans = getSpans();
+        let removeRows = 0,
+            removeCols = 0;
+        if (newSpans.col == tableBlock.attributes.cols && newSpans.row > 1) {
+            removeRows = newSpans.row - 1;
+            rowHeights.splice(destination.attributes.row, removeCols);
+            newSpans.row = 1;
+        }
+        if (newSpans.row == tableBlock.attributes.rows && newSpans.col > 1) {
+            removeCols = newSpans.col - 1;
+            colWidths.splice(destination.attributes.col, removeCols);
+            newSpans.col = 1;
+        }
+
+        
+        if (removeRows || removeCols) {
+            const updatedCells: TablebergCellInstance[] = Array(tableBlock.innerBlocks.length);
+            let lastIdx = 0;
+            // @ts-ignore
+            tableBlock.innerBlocks.forEach((cell: TablebergCellInstance) => {
+                if (removeRows && cell.attributes.row > destination!.attributes.row) {
+                    cell.attributes.row -= removeRows;
+                }
+                if (removeCols && cell.attributes.col > destination!.attributes.col) {
+                    cell.attributes.col -= removeCols;
+                }
+                updatedCells[lastIdx++] = cell;
+            })
+            rows -= removeRows;
+            cols -= removeCols;
+            storeActions.replaceInnerBlocks(tableBlock.clientId, updatedCells);
+        }
+
         storeActions.updateBlockAttributes(destination.clientId, {
             colspan: newSpans.col,
             rowspan: newSpans.row,
         });
         storeActions.removeBlocks(toRemoves);
+        storeActions.updateBlockAttributes(tableBlock.clientId, {
+            cells: tableBlock.attributes.cells - toRemoves.length,
+            colWidths,
+            rowHeights,
+            rows,
+            cols
+        });
 
         endCellMultiSelect();
     };
@@ -412,10 +459,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     const storeActions = useDispatch(
         blockEditorStore,
     ) as BlockEditorStoreActions;
-    const { isMergable, addMergingEvt, getClassName, mergeCells } = useMerging(
-        clientId,
-        storeActions,
-    );
 
     const { storeSelect, tableBlock, tableBlockId } = useSelect((select) => {
         const storeSelect = select(
@@ -438,6 +481,11 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             tableBlockId,
         };
     }, []);
+    const { isMergable, addMergingEvt, getClassName, mergeCells } = useMerging(
+        clientId,
+        tableBlock,
+        storeActions,
+    );
 
     const blockProps = useBlockProps({
         style: {
