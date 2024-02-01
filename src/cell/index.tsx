@@ -172,25 +172,20 @@ const addCol = (
 
         if (attrs.col < colIndex) {
             const prevRow = attrs.row - 1;
-
             if (lastInsertedRow == prevRow) {
                 cellBlocks[lastIndex++] = cell as TablebergCellInstance;
                 return;
             }
             const toInsertCount = prevRow - lastInsertedRow;
-
-            for (let i = 0; i < toInsertCount; i++) {
-                const row = prevRow + i;
-
+            for (let i = 1; i <= toInsertCount; i++) {
+                const row = lastInsertedRow + i;
                 cellBlocks[lastIndex++] = createSingleCell(row, colIndex);
             }
             lastInsertedRow = prevRow;
         } else {
             const missedCount = attrs.row - lastInsertedRow;
-
             for (let i = 1; i <= missedCount; i++) {
                 const row = lastInsertedRow + i;
-
                 cellBlocks[lastIndex++] = createSingleCell(row, colIndex);
             }
             lastInsertedRow = attrs.row;
@@ -200,8 +195,10 @@ const addCol = (
     });
 
     lastInsertedRow++;
+    console.log("Insert2: ");
 
     for (; lastInsertedRow < tableBlock.attributes.rows; lastInsertedRow++) {
+        console.log(`    at ${lastIndex} row ${lastInsertedRow}`);
         cellBlocks[lastIndex++] = createSingleCell(lastInsertedRow, colIndex);
     }
 
