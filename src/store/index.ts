@@ -33,8 +33,6 @@ const isMergable = (state: ITBStoreState): boolean => {
         });
     });
 
-    console.log(filledBoxes);
-
     if (filledBoxes.size < 2) {
         return false;
     }
@@ -42,8 +40,6 @@ const isMergable = (state: ITBStoreState): boolean => {
     for (let row = state.minRow; row <= state.maxRow; row++) {
         for (let col = state.minCol; col <= state.maxCol; col++) {
             if (!filledBoxes.has(`${row}x${col}`)) {
-                console.log(`Fail at: ${row}x${col}`);
-                
                 return false;
             }
         }
@@ -94,34 +90,44 @@ export const store = createReduxStore("tableberg-store", {
                         attrs.col + attrs.colspan - 1,
                     );
                     state.minCol = Math.min(state.minCol, attrs.col);
-                } else if (
-                    attrs.col == state.minCol ||
-                    attrs.col == state.maxCol ||
-                    attrs.row == state.minRow ||
-                    attrs.row == state.maxRow
-                ) {
-                    let minCol = Number.MAX_VALUE,
-                        maxCol = -1,
-                        minRow = Number.MAX_VALUE,
-                        maxRow = -1;
-                    state.selectedCells.forEach((row) => {
-                        row.forEach((cell) => {
-                            maxRow = Math.max(
-                                maxRow,
-                                cell.row + cell.rowspan - 1,
-                            );
-                            minRow = Math.min(minRow, cell.row);
-                            maxCol = Math.max(
-                                maxCol,
-                                cell.col + cell.colspan - 1,
-                            );
-                            minCol = Math.min(minCol, cell.col);
+                } else {
+                    if (state.selectedIds.size < 2) {
+                        return {
+                            ...state,
+                            ...DEFAULT_STATE,
+                            selectedCells: new Map(),
+                            selectedIds: new Set(),
+                        };
+                    }
+                    if (
+                        attrs.col == state.minCol ||
+                        attrs.col == state.maxCol ||
+                        attrs.row == state.minRow ||
+                        attrs.row == state.maxRow
+                    ) {
+                        let minCol = Number.MAX_VALUE,
+                            maxCol = -1,
+                            minRow = Number.MAX_VALUE,
+                            maxRow = -1;
+                        state.selectedCells.forEach((row) => {
+                            row.forEach((cell) => {
+                                maxRow = Math.max(
+                                    maxRow,
+                                    cell.row + cell.rowspan - 1,
+                                );
+                                minRow = Math.min(minRow, cell.row);
+                                maxCol = Math.max(
+                                    maxCol,
+                                    cell.col + cell.colspan - 1,
+                                );
+                                minCol = Math.min(minCol, cell.col);
+                            });
                         });
-                    });
-                    state.minCol = minCol;
-                    state.maxCol = maxCol;
-                    state.minRow = minRow;
-                    state.maxRow = maxRow;
+                        state.minCol = minCol;
+                        state.maxCol = maxCol;
+                        state.minRow = minRow;
+                        state.maxRow = maxRow;
+                    }
                 }
 
                 state.isMergable = isMergable(state);
