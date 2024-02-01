@@ -1,4 +1,4 @@
-import { omitBy, isUndefined, trim, isEmpty, isNumber } from "lodash";
+import { omitBy, isUndefined, trim, isEmpty } from "lodash";
 import { getBorderVariablesCss, getSpacingCss } from "./utils/styling-helpers";
 import { PaddingTypes, TablebergBlockAttrs } from "./types";
 
@@ -6,20 +6,8 @@ export function getStyles(attributes: TablebergBlockAttrs) {
     const {
         cellPadding,
         enableInnerBorder,
-        evenRowBackgroundColor,
         innerBorder,
-        headerBackgroundColor,
-        oddRowBackgroundColor,
         tableBorder,
-        headerBackgroundGradient,
-        evenRowBackgroundGradient,
-        oddRowBackgroundGradient,
-        tableWidth,
-        footerBackgroundColor,
-        footerBackgroundGradient,
-        enableTableFooter,
-        tableAlignment,
-        enableTableHeader,
         fontColor,
         fontSize,
         linkColor,
@@ -31,19 +19,6 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         : {};
 
     let styles: Record<string, any> = {
-        "--tableber-table-width": tableWidth,
-        "--tableberg-footer-bg-color": !isEmpty(footerBackgroundColor)
-            ? footerBackgroundColor
-            : footerBackgroundGradient,
-        "--tableberg-header-bg-color": !isEmpty(headerBackgroundColor)
-            ? headerBackgroundColor
-            : headerBackgroundGradient,
-        "--tableberg-even-row-bg-color": !isEmpty(evenRowBackgroundColor)
-            ? evenRowBackgroundColor
-            : evenRowBackgroundGradient,
-        "--tableberg-odd-row-bg-color": !isEmpty(oddRowBackgroundColor)
-            ? oddRowBackgroundColor
-            : oddRowBackgroundGradient,
         "--tableberg-cell-padding-top": cellPaddingCSS?.top,
         "--tableberg-cell-padding-right": cellPaddingCSS?.right,
         "--tableberg-cell-padding-bottom": cellPaddingCSS?.bottom,

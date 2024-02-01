@@ -42,7 +42,10 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const blockProps = useBlockProps({
         ref: tableRef,
-        style: getStyles(props.attributes),
+        style: {
+            ...getStyles(props.attributes),
+            maxWidth: props.attributes.tableWidth,
+        },
         className: classNames(getStyleClass(props.attributes)),
     } as Record<string, any>);
 
@@ -90,6 +93,16 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     useEffect(() => {
         setColUpt((old) => old + 1);
     }, [attributes.cols]);
+
+    // "--tableberg-footer-bg-color": !isEmpty(footerBackgroundColor)
+    //     ? footerBackgroundColor
+    //     : footerBackgroundGradient,
+    // "--tableberg-header-bg-color": !isEmpty(headerBackgroundColor)
+    //     ? headerBackgroundColor
+    //     : headerBackgroundGradient,
+
+    const headerBg = attributes.headerBackgroundColor ?? attributes.headerBackgroundGradient ?? undefined;
+    const footerBg = attributes.footerBackgroundColor ?? attributes.footerBackgroundGradient ?? undefined;
 
     useSelect(
         (select) => {
@@ -194,6 +207,40 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         );
     }
 
+    const rowTemplate = createArray(attributes.rows).map((i) => {
+        let backgroundColor;
+
+        if (i % 2 === 0) {
+            backgroundColor = attributes.oddRowBackgroundColor ??
+                attributes.oddRowBackgroundGradient ??
+                undefined;
+        } else {
+            backgroundColor = attributes.evenRowBackgroundColor ??
+                attributes.evenRowBackgroundGradient ??
+                undefined;
+        }
+
+        if (i === 0 && attributes.enableTableHeader) {
+            backgroundColor = attributes.headerBackgroundColor ??
+                attributes.headerBackgroundGradient ??
+                undefined
+        }
+
+        if (i + 1 === attributes.rows && attributes.enableTableFooter) {
+            backgroundColor = attributes.footerBackgroundColor ??
+                attributes.footerBackgroundGradient ??
+                undefined
+        }
+
+        return <tr
+            id={`tableberg-${clientId}-row-${i}`}
+            style={{
+                height: attributes.rowHeights[i],
+                backgroundColor
+            }}
+        ></tr>
+    });
+
     return (
         <>
             <table {...blockProps}>
@@ -202,17 +249,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                         <col width={w} />
                     ))}
                 </colgroup>
-                {createArray(attributes.rows).map((i) => (
-                    <tr
-                        id={`tableberg-${clientId}-row-${i}`}
-                        style={
-                            {
-                                "--tableberg-row-height":
-                                    attributes.rowHeights[i],
-                            } as any
-                        }
-                    ></tr>
-                ))}
+                {rowTemplate}
             </table>
             <div style={{ display: "none" }} key={colUpt}>
                 <div {...innerBlocksProps} />

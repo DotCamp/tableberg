@@ -407,20 +407,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         mergeCells,
     } = useMerging(clientId, storeActions);
 
-    const blockProps = useBlockProps({
-        style: {
-            "--tableberg-cell-v-align":
-                attributes.vAlign === "center" ? "middle" : attributes.vAlign,
-        } as any,
-        ref: cellRef,
-        className: getClassName(clientId),
-    });
-
-    const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
-        allowedBlocks: ALLOWED_BLOCKS,
-        template: CELL_TEMPLATE,
-    });
-
     const { storeSelect, tableBlock, tableBlockId } = useSelect((select) => {
         const storeSelect = select(
             blockEditorStore,
@@ -442,6 +428,20 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             tableBlockId,
         };
     }, []);
+
+    const blockProps = useBlockProps({
+        style: {
+            verticalAlign: attributes.vAlign === "center" ? "middle" : attributes.vAlign,
+            height: tableBlock.attributes.rowHeights[props.attributes.row],
+        },
+        ref: cellRef,
+        className: getClassName(clientId),
+    });
+
+    const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
+        allowedBlocks: ALLOWED_BLOCKS,
+        template: CELL_TEMPLATE,
+    });
 
     useEffect(() => {
         cellRef.current?.addEventListener(
