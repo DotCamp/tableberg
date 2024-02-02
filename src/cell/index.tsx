@@ -34,7 +34,6 @@ import { useEffect, useRef, useState } from "react";
 import CellControls from "./controls";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
-import { getOwnerDocument } from "../store/const";
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
@@ -578,8 +577,13 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     const [targetEl, setTargetEl] = useState<Element>();
 
     useEffect(() => {
+        const iframe = document.querySelector<HTMLIFrameElement>(
+            'iframe[name="editor-canvas"]',
+        );
         const id = `#tableberg-${tableBlockId}-row-${attributes.row}`;
-        const el = getOwnerDocument().querySelector(id)!;
+        const el = (iframe?.contentWindow?.document || document).querySelector(
+            id,
+        )!;
         el && setTargetEl(el);
     }, [attributes.row]);
 

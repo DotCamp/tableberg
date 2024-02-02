@@ -33,7 +33,6 @@ import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { createArray } from "./utils";
 import { TablebergCellInstance } from "./cell";
-import { setOwnerDocument } from "./store/const";
 
 const ALLOWED_BLOCKS = ["tableberg/cell"];
 
@@ -135,13 +134,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         },
         [tableRef.current],
     );
-
-    useEffect(() => {
-        if (!tableRef.current) {
-            return;
-        }
-        setOwnerDocument(tableRef.current.ownerDocument);
-    }, [tableRef.current]);
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
