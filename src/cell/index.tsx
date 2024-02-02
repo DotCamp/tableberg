@@ -391,16 +391,17 @@ const useMerging = (
             toRemoves.push(cells[i].clientId);
         }
 
-        const newSpans = getSpans();
+        const oldSpans = getSpans();
+        const newSpans = {...oldSpans};
         let removeRows = 0,
             removeCols = 0;
-        if (newSpans.col == tableBlock.attributes.cols && newSpans.row > 1) {
-            removeRows = newSpans.row - 1;
+        if (oldSpans.col == tableBlock.attributes.cols && oldSpans.row > 1) {
+            removeRows = oldSpans.row - 1;
             rowHeights.splice(destination.attributes.row, removeCols);
             newSpans.row = 1;
         }
-        if (newSpans.row == tableBlock.attributes.rows && newSpans.col > 1) {
-            removeCols = newSpans.col - 1;
+        if (oldSpans.row == tableBlock.attributes.rows && oldSpans.col > 1) {
+            removeCols = oldSpans.col - 1;
             colWidths.splice(destination.attributes.col, removeCols);
             newSpans.col = 1;
         }
