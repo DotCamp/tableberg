@@ -2,10 +2,11 @@
 node_modules/
 .vscode
 build
-# Files
-tableberg.zip
-.DS_Store
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+# Files
+tableberg.zip
+.DS_Store
+.env
