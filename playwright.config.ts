@@ -13,6 +13,7 @@ export default defineConfig({
     workers: process.env.CI ? 1 : undefined,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: "html",
+    fullyParallel: true,
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
         /* Base URL to use in actions like `await page.goto("/")`. */
@@ -26,11 +27,11 @@ export default defineConfig({
     projects: [
         {
             name: "auth setup",
-            testMatch: /auth\.setup\.ts/,
+            testMatch: /.*auth\.setup\.ts/,
         },
         {
             name: "post setup",
-            testMatch: /post\.setup\.ts/,
+            testMatch: /.*post\.setup\.ts/,
             use: {
                 storageState: "playwright/.auth/user.json",
             },
@@ -39,7 +40,7 @@ export default defineConfig({
         },
         {
             name: "post delete",
-            testMatch: /post\.teardown\.ts/,
+            testMatch: /.*post\.teardown\.ts/,
             use: {
                 storageState: "playwright/.auth/user.json",
             },
