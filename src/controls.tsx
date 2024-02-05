@@ -2,7 +2,15 @@
  * WordPress Imports
  */
 import { __ } from "@wordpress/i18n";
-import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
+import {
+    justifyLeft,
+    justifyCenter,
+    justifyRight,
+    tableRowBefore,
+    tableRowAfter,
+    tableRowDelete,
+    table,
+} from "@wordpress/icons";
 import {
     InspectorControls,
     HeightControl,
@@ -13,7 +21,6 @@ import {
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
-    Button,
     PanelBody,
     ToggleControl,
     __experimentalToolsPanel as ToolsPanel,
@@ -49,6 +56,44 @@ const AVAILABLE_JUSTIFICATIONS = [
     },
 ];
 
+const HEADER_OPTIONS = [
+    {
+        value: "",
+        icon: tableRowDelete,
+        label: __("Disabled", "tableberg"),
+    },
+    {
+        value: "added",
+        icon: tableRowBefore,
+        label: __("Inserted", "tableberg"),
+    },
+
+    {
+        value: "converted",
+        icon: table,
+        label: __("First Row", "tableberg"),
+    },
+];
+
+const FOOTER_OPTIONS = [
+    {
+        value: "",
+        icon: tableRowDelete,
+        label: __("Disabled", "tableberg"),
+    },
+    {
+        value: "added",
+        icon: tableRowAfter,
+        label: __("Inserted", "tableberg"),
+    },
+
+    {
+        value: "converted",
+        icon: table,
+        label: __("Last Row", "tableberg"),
+    },
+];
+
 function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
     const { enableInnerBorder, tableAlignment } = attributes;
@@ -72,26 +117,17 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
         <>
             <InspectorControls>
                 <PanelBody>
-                    <ToggleControl
-                        checked={attributes.enableTableHeader}
+                    <CustomToggleGroupControl
+                        options={HEADER_OPTIONS}
+                        attributeKey="enableTableHeader"
                         label={__("Enable Table Header", "tableberg")}
-                        onChange={() =>
-                            setAttributes({
-                                enableTableHeader:
-                                    !attributes.enableTableHeader,
-                            })
-                        }
                     />
-                    <ToggleControl
-                        checked={attributes.enableTableFooter}
+                    <CustomToggleGroupControl
+                        options={FOOTER_OPTIONS}
+                        attributeKey="enableTableFooter"
                         label={__("Enable Table Footer", "tableberg")}
-                        onChange={() =>
-                            setAttributes({
-                                enableTableFooter:
-                                    !attributes.enableTableFooter,
-                            })
-                        }
                     />
+
                     <HeightControl
                         value={attributes.tableWidth}
                         label={__("Table Width", "tableberg")}

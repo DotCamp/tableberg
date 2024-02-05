@@ -60,4 +60,9 @@ table.wp-block-tableberg-table {
             border-left: var(--tableberg-inner-border-left, 1px solid #000000);
         }
     }
+
+    .tableberg-header,
+    .tableberg-footer {
+        font-weight: bold;
+    }
 }

@@ -39,12 +39,12 @@
             "default": {}
         },
         "enableTableHeader": {
-            "type": "boolean",
-            "default": false
+            "type": "string",
+            "default": ""
         },
         "enableTableFooter": {
-            "type": "boolean",
-            "default": false
+            "type": "string",
+            "default": ""
         },
         "tableWidth": {
             "type": "string",

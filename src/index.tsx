@@ -36,6 +36,150 @@ import { TablebergCellInstance } from "./cell";
 
 const ALLOWED_BLOCKS = ["tableberg/cell"];
 
+const useTableHeaderFooter = (
+    clientId: string,
+    actions: BlockEditorStoreActions
+) => {
+    const { tableBlock, attrs } = useSelect(
+        (select) => {
+            const storeSelect = select(
+                blockEditorStore
+            ) as BlockEditorStoreSelectors;
+            const tableBlock = storeSelect.getBlock(
+                clientId
+            )! as BlockInstance<TablebergBlockAttrs>;
+            return {
+                tableBlock,
+                attrs: tableBlock.attributes,
+            };
+        },
+        [clientId]
+    );
+
+    const prevHState = useRef(attrs.enableTableHeader);
+
+    useEffect(() => {
+        const from = prevHState.current;
+        const to = attrs.enableTableHeader;
+
+        if (
+            from === to ||
+            (!from && to === "converted") ||
+            (!to && from === "converted")
+        ) {
+            return;
+        }
+
+        if (to === "added") {
+            const newCells: TablebergCellInstance[] = Array(
+                tableBlock.attributes.cols
+            )
+                .fill(0)
+                .map((_, col) => {
+                    return createBlocksFromInnerBlocksTemplate([
+                        [
+                            "tableberg/cell",
+                            {
+                                row: 0,
+                                col,
+                            },
+                        ],
+                    ])[0] as TablebergCellInstance;
+                });
+            tableBlock.innerBlocks.forEach((cell) => {
+                cell.attributes.row += 1;
+                newCells.push(cell as TablebergCellInstance);
+            });
+
+            actions.replaceInnerBlocks(tableBlock.clientId, newCells);
+            actions.updateBlockAttributes(tableBlock.clientId, {
+                rows: tableBlock.attributes.rows + 1,
+                cells: newCells.length,
+            });
+        } else {
+            const newCells: TablebergCellInstance[] = [];
+            tableBlock.innerBlocks.forEach((cell) => {
+                if (cell.attributes.row === 0) {
+                    return;
+                }
+                cell.attributes.row -= 1;
+                newCells.push(cell as TablebergCellInstance);
+            });
+
+            actions.replaceInnerBlocks(tableBlock.clientId, newCells);
+            actions.updateBlockAttributes(tableBlock.clientId, {
+                rows: tableBlock.attributes.rows - 1,
+                cells: newCells.length,
+            });
+        }
+
+        prevHState.current = attrs.enableTableHeader;
+    }, [attrs.enableTableHeader]);
+
+    const prevFState = useRef(attrs.enableTableFooter);
+
+    useEffect(() => {
+        const from = prevFState.current;
+        const to = attrs.enableTableFooter;
+
+        if (
+            from === to ||
+            (!from && to === "converted") ||
+            (!to && from === "converted")
+        ) {
+            return;
+        }
+
+        if (to === "added") {
+            const newCells: TablebergCellInstance[] = [];
+            for (let col = 0; col < tableBlock.attributes.cols; col++) {
+                newCells.push(
+                    createBlocksFromInnerBlocksTemplate([
+                        [
+                            "tableberg/cell",
+                            {
+                                row: tableBlock.attributes.rows,
+                                col,
+                            },
+                        ],
+                    ])[0] as TablebergCellInstance
+                );
+            }
+
+            actions.insertBlocks(
+                newCells,
+                tableBlock.attributes.cells,
+                tableBlock.clientId,
+                false
+            );
+            actions.updateBlockAttributes(tableBlock.clientId, {
+                rows: tableBlock.attributes.rows + 1,
+                cells: tableBlock.attributes.cells + newCells.length,
+            });
+        } else {
+            const toRemoves: string[] = [];
+            const lastRow = tableBlock.attributes.rows - 1;
+
+            for (let i = tableBlock.innerBlocks.length - 1; i > -1; i--) {
+                const cell = tableBlock.innerBlocks[i];
+                if (cell.attributes.row !== lastRow) {
+                    break;
+                }
+                toRemoves.push(cell.clientId);
+            }
+
+            actions.removeBlocks(toRemoves, false);
+
+            actions.updateBlockAttributes(tableBlock.clientId, {
+                rows: tableBlock.attributes.rows - 1,
+                cells: tableBlock.attributes.cells - toRemoves.length,
+            });
+        }
+
+        prevFState.current = attrs.enableTableFooter;
+    }, [attrs.enableTableFooter]);
+};
+
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
     const tableRef = useRef<HTMLTableElement>();
@@ -56,9 +200,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         allowedBlocks: ALLOWED_BLOCKS,
     });
 
-    const { replaceInnerBlocks, updateBlockAttributes } = useDispatch(
-        blockEditorStore,
+    const storeActions = useDispatch(
+        blockEditorStore
     ) as BlockEditorStoreActions;
+
+    useTableHeaderFooter(clientId, storeActions);
 
     const { hasEditorRedo, fixUndoAddingRowsOrCols } = useSelect((select) => {
         const fixUndoAddingRowsOrCols = () => {
@@ -93,22 +239,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         setColUpt((old) => old + 1);
     }, [attributes.cols]);
 
-    // "--tableberg-footer-bg-color": !isEmpty(footerBackgroundColor)
-    //     ? footerBackgroundColor
-    //     : footerBackgroundGradient,
-    // "--tableberg-header-bg-color": !isEmpty(headerBackgroundColor)
-    //     ? headerBackgroundColor
-    //     : headerBackgroundGradient,
-
-    const headerBg =
-        attributes.headerBackgroundColor ??
-        attributes.headerBackgroundGradient ??
-        undefined;
-    const footerBg =
-        attributes.footerBackgroundColor ??
-        attributes.footerBackgroundGradient ??
-        undefined;
-
     useSelect(
         (select) => {
             tableRef.current?.addEventListener(
@@ -129,10 +259,10 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 },
                 {
                     capture: true,
-                },
+                }
             );
         },
-        [tableRef.current],
+        [tableRef.current]
     );
 
     function onCreateTable(event: FormEvent) {
@@ -153,9 +283,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             rowHeights: Array(rows).fill(""),
             cells: initialInnerBlocks.length,
         });
-        replaceInnerBlocks(
+        storeActions.replaceInnerBlocks(
             clientId,
-            createBlocksFromInnerBlocksTemplate(initialInnerBlocks),
+            createBlocksFromInnerBlocksTemplate(initialInnerBlocks)
         );
     }
 
@@ -214,7 +344,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const rowTemplate = createArray(attributes.rows).map((i) => {
         let backgroundColor;
-
+        let className = "";
         if (i % 2 === 0) {
             backgroundColor =
                 attributes.oddRowBackgroundColor ??
@@ -232,6 +362,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 attributes.headerBackgroundColor ??
                 attributes.headerBackgroundGradient ??
                 undefined;
+            className += "tableberg-header";
         }
 
         if (i + 1 === attributes.rows && attributes.enableTableFooter) {
@@ -239,6 +370,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 attributes.footerBackgroundColor ??
                 attributes.footerBackgroundGradient ??
                 undefined;
+            className += "tableberg-footer";
         }
 
         return (
@@ -248,6 +380,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                     height: attributes.rowHeights[i],
                     backgroundColor,
                 }}
+                className={className}
             ></tr>
         );
     });

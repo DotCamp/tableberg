@@ -8,8 +8,8 @@ export interface TablebergBlockAttrs {
     rowHeights: string[];
     hasTableCreated: boolean;
     tableWidth: string;
-    enableTableHeader: boolean;
-    enableTableFooter: boolean;
+    enableTableHeader: "" | "converted" | "added";
+    enableTableFooter: "" | "converted" | "added";
     tableAlignment: "center" | "full" | "left" | "right" | "wide";
     cellPadding: PaddingTypes;
     headerBackgroundColor: string | null;
