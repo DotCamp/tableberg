@@ -316,7 +316,7 @@ const useMerging = (
 
     const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
         const focus = storeSelect.getSelectedBlock();
-        if ((!evt.shiftKey && getCurrentSelectedCells().size === 0) || !focus) {
+        if ((!evt.ctrlKey && !evt.metaKey && getCurrentSelectedCells().size === 0) || !focus) {
             return;
         }
         const parentIds = storeSelect.getBlockParents(focus.clientId);
@@ -338,11 +338,11 @@ const useMerging = (
             toggleCellSelection(focusedCell);
         }
 
-        if (evt.shiftKey) {
+        if (evt.metaKey || evt.ctrlKey) {
             evt.stopPropagation();
             evt.preventDefault();
             toggleCellSelection(cell);
-        } else if (!getCurrentSelectedCells().has(clientId)) {
+        } else {
             endCellMultiSelect();
         }
     };
