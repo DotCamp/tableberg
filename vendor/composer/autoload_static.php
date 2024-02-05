@@ -16,7 +16,8 @@ class ComposerStaticInit5c4d43dcdd3f5361bd26ecb40ba79213
     public static $prefixDirsPsr4 = array (
         'Tableberg\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/includes',
+            0 => __DIR__ . '/../..' . '/',
+            1 => __DIR__ . '/../..' . '/includes',
         ),
     );
 
