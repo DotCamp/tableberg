@@ -316,7 +316,7 @@ const useMerging = (
 
     const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
         const focus = storeSelect.getSelectedBlock();
-        if ((!evt.ctrlKey && getCurrentSelectedCells().size === 0) || !focus) {
+        if ((!evt.shiftKey && getCurrentSelectedCells().size === 0) || !focus) {
             return;
         }
         const parentIds = storeSelect.getBlockParents(focus.clientId);
@@ -338,7 +338,7 @@ const useMerging = (
             toggleCellSelection(focusedCell);
         }
 
-        if (evt.ctrlKey) {
+        if (evt.shiftKey) {
             evt.stopPropagation();
             evt.preventDefault();
             toggleCellSelection(cell);
