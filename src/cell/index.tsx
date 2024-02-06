@@ -328,9 +328,6 @@ const useMerging = (
             return;
         }
 
-        evt.stopImmediatePropagation();
-        evt.preventDefault();
-
         const cell = storeSelect.getBlock(clientId) as any;
 
         if (getCurrentSelectedCells().size > 0) {
