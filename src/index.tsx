@@ -33,6 +33,7 @@ import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { createArray } from "./utils";
 import { TablebergCellInstance } from "./cell";
+import { store as tbStore } from "./store";
 
 const ALLOWED_BLOCKS = ["tableberg/cell"];
 
@@ -204,30 +205,46 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         blockEditorStore
     ) as BlockEditorStoreActions;
 
+    const tbStoreActions = useDispatch(tbStore);
+
     useTableHeaderFooter(clientId, storeActions);
 
-    const { hasEditorRedo, fixUndoAddingRowsOrCols } = useSelect((select) => {
-        const fixUndoAddingRowsOrCols = () => {
-            const thisBlock: BlockInstance<TablebergBlockAttrs> = (
-                select(blockEditorStore) as BlockEditorStoreSelectors
-            ).getBlock(clientId)! as any;
+    const { hasEditorRedo, fixUndoAddingRowsOrCols, selectedCells } = useSelect(
+        (select) => {
+            const storeSelect = select(
+                blockEditorStore
+            ) as BlockEditorStoreSelectors;
+            const fixUndoAddingRowsOrCols = () => {
+                const thisBlock: BlockInstance<TablebergBlockAttrs> =
+                    storeSelect.getBlock(clientId)! as any;
 
-            const cellBlocks: TablebergCellInstance[] =
-                thisBlock.innerBlocks as any;
+                const cellBlocks: TablebergCellInstance[] =
+                    thisBlock.innerBlocks as any;
 
-            if (cellBlocks?.length === thisBlock.attributes.cells) {
-                return;
-            }
-            //TODO: fix the undo problem
-        };
+                if (cellBlocks?.length === thisBlock.attributes.cells) {
+                    return;
+                }
+                //TODO: fix the undo problem
+            };
 
-        return {
-            hasEditorRedo: (
-                select(editorStore) as EditorStoreSelectors
-            ).hasEditorRedo(),
-            fixUndoAddingRowsOrCols,
-        };
-    }, []);
+            const selectedCells = storeSelect.getMultiSelectedBlocks();
+
+            return {
+                hasEditorRedo: (
+                    select(editorStore) as EditorStoreSelectors
+                ).hasEditorRedo(),
+                fixUndoAddingRowsOrCols,
+                selectedCells,
+            };
+        },
+        []
+    );
+
+    useEffect(() => {
+        if (selectedCells.length > 0) {
+            tbStoreActions.startMultiSelectNative(selectedCells as TablebergCellInstance[]);
+        }
+    }, [selectedCells]);
 
     if (hasEditorRedo) {
         fixUndoAddingRowsOrCols();
