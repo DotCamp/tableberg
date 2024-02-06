@@ -2,15 +2,7 @@
  * WordPress Imports
  */
 import { __ } from "@wordpress/i18n";
-import {
-    justifyLeft,
-    justifyCenter,
-    justifyRight,
-    tableRowBefore,
-    tableRowAfter,
-    tableRowDelete,
-    table,
-} from "@wordpress/icons";
+import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
 import {
     InspectorControls,
     HeightControl,
@@ -38,6 +30,15 @@ import {
 } from "./components";
 import { ColorSettingsWithGradient } from "./components";
 
+import {
+    AddHeaderIcon,
+    ConvertHeaderIcon,
+    NoHeaderIcon,
+    AddFooterIcon,
+    ConvertFooterIcon,
+    NoFooterIcon,
+} from "./icons/header-footer";
+
 const AVAILABLE_JUSTIFICATIONS = [
     {
         value: "left",
@@ -59,38 +60,38 @@ const AVAILABLE_JUSTIFICATIONS = [
 const HEADER_OPTIONS = [
     {
         value: "",
-        icon: tableRowDelete,
-        label: __("Disabled", "tableberg"),
+        icon: NoHeaderIcon,
+        label: __("Disable Header", "tableberg"),
     },
     {
         value: "added",
-        icon: tableRowBefore,
-        label: __("Inserted", "tableberg"),
+        icon: AddHeaderIcon,
+        label: __("Insert Header", "tableberg"),
     },
 
     {
         value: "converted",
-        icon: table,
-        label: __("First Row", "tableberg"),
+        icon: ConvertHeaderIcon,
+        label: __("Make Top Row Header", "tableberg"),
     },
 ];
 
 const FOOTER_OPTIONS = [
     {
         value: "",
-        icon: tableRowDelete,
-        label: __("Disabled", "tableberg"),
+        icon: NoFooterIcon,
+        label: __("Disable Footer", "tableberg"),
     },
     {
         value: "added",
-        icon: tableRowAfter,
-        label: __("Inserted", "tableberg"),
+        icon: AddFooterIcon,
+        label: __("Insert Footer", "tableberg"),
     },
 
     {
         value: "converted",
-        icon: table,
-        label: __("Last Row", "tableberg"),
+        icon: ConvertFooterIcon,
+        label: __("Make Bottom Row Footer", "tableberg"),
     },
 ];
 
@@ -120,12 +121,12 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                     <CustomToggleGroupControl
                         options={HEADER_OPTIONS}
                         attributeKey="enableTableHeader"
-                        label={__("Enable Table Header", "tableberg")}
+                        label={__("Table Header Setting", "tableberg")}
                     />
                     <CustomToggleGroupControl
                         options={FOOTER_OPTIONS}
                         attributeKey="enableTableFooter"
-                        label={__("Enable Table Footer", "tableberg")}
+                        label={__("Table Footer Setting", "tableberg")}
                     />
 
                     <HeightControl
