@@ -176,7 +176,7 @@ export const store = createReduxStore("tableberg-store", {
             clientId: string
         ): string | undefined {
             if (state.selectedBlocks.has(clientId)) {
-                return "tableberg-merge-selected";
+                return "tableberg-merge-selected is-multi-selected";
             }
         },
         isMergable(state: ITBStoreState): boolean {

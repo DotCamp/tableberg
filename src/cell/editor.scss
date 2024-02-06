@@ -4,11 +4,7 @@
  * Replace them with your own styles or remove the file completely.
  */
 td.wp-block-tableberg-cell {
-    &.is-multi-selected::after {
+    &.is-multi-selected:not(.tableberg-merge-selected):after {
         display: none !important;
-    }
-
-    &.tableberg-merge-selected {
-        border: 2px dashed blue !important;
     }
 }
