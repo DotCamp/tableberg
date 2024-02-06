@@ -3,144 +3,108 @@ import { BlockInstance } from "@wordpress/blocks";
 import { TablebergCellBlockAttrs } from "../cell";
 
 interface ITBStoreState {
-    selectedCells: Map<number, Map<string, TablebergCellBlockAttrs>>;
     selectedIds: Set<string>;
+    blockSizes: Map<
+        number,
+        {
+            start: number;
+            end: number;
+        }
+    >;
+
     minRow: number;
     maxRow: number;
     minCol: number;
     maxCol: number;
+    area: number;
     isMergable: boolean;
 }
 
 const DEFAULT_STATE = {
     minRow: Number.MAX_VALUE,
     maxRow: -1,
+
     minCol: Number.MAX_VALUE,
     maxCol: -1,
     isMergable: false,
+    area: 0,
 };
 
-const isMergable = (state: ITBStoreState): boolean => {
-    const rows = state.selectedCells;
-    const filledBoxes = new Set<string>();
-    rows.forEach((row) => {
-        row.forEach((cell) => {
-            for (let i = 0; i < cell.colspan; i++) {
-                for (let j = 0; j < cell.rowspan; j++) {
-                    filledBoxes.add(`${cell.row + j}x${cell.col + i}`);
-                }
-            }
-        });
-    });
-
-    if (filledBoxes.size < 2) {
-        return false;
-    }
-
-    for (let row = state.minRow; row <= state.maxRow; row++) {
-        for (let col = state.minCol; col <= state.maxCol; col++) {
-            if (!filledBoxes.has(`${row}x${col}`)) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-};
 
 export const store = createReduxStore("tableberg-store", {
     reducer(
         state: ITBStoreState = {
             ...DEFAULT_STATE,
-            selectedCells: new Map(),
             selectedIds: new Set(),
+            blockSizes: new Map(),
         },
-        action,
+        action
     ) {
         switch (action.type) {
             case "TOGGLE_CELL_SELECTION":
-                const updatedSelection = state.selectedCells;
-                const rowIdx = action.attributes.row;
-                const row = updatedSelection.get(rowIdx);
+                const updatedSelection = state.selectedIds;
                 const attrs = action.attributes as TablebergCellBlockAttrs;
 
-                if (!row) {
-                    const row = new Map();
-                    row.set(action.clientId, attrs);
-                    updatedSelection.set(rowIdx, row);
-                } else {
-                    if (!row.delete(action.clientId)) {
-                        row.set(action.clientId, attrs);
-                    }
-                    if (row.size === 0) {
-                        updatedSelection.delete(rowIdx);
-                    }
-                }
+                const rowEnd = attrs.row + attrs.rowspan;
+                const colEnd = attrs.col + attrs.colspan;
 
-                if (!state.selectedIds.delete(action.clientId)) {
-                    state.selectedIds.add(action.clientId);
+                const sizeInfo = state.blockSizes.get(attrs.row);
 
-                    state.maxRow = Math.max(
-                        state.maxRow,
-                        attrs.row + attrs.rowspan - 1,
-                    );
-                    state.minRow = Math.min(state.minRow, attrs.row);
-                    state.maxCol = Math.max(
-                        state.maxCol,
-                        attrs.col + attrs.colspan - 1,
-                    );
-                    state.minCol = Math.min(state.minCol, attrs.col);
-                } else {
-                    if (state.selectedIds.size < 2) {
-                        return {
-                            ...state,
-                            ...DEFAULT_STATE,
-                            selectedCells: new Map(),
-                            selectedIds: new Set(),
-                        };
-                    }
-                    if (
-                        attrs.col == state.minCol ||
-                        attrs.col == state.maxCol ||
-                        attrs.row == state.minRow ||
-                        attrs.row == state.maxRow
-                    ) {
-                        let minCol = Number.MAX_VALUE,
-                            maxCol = -1,
-                            minRow = Number.MAX_VALUE,
-                            maxRow = -1;
-                        state.selectedCells.forEach((row) => {
-                            row.forEach((cell) => {
-                                maxRow = Math.max(
-                                    maxRow,
-                                    cell.row + cell.rowspan - 1,
-                                );
-                                minRow = Math.min(minRow, cell.row);
-                                maxCol = Math.max(
-                                    maxCol,
-                                    cell.col + cell.colspan - 1,
-                                );
-                                minCol = Math.min(minCol, cell.col);
-                            });
+                if (!updatedSelection.delete(action.clientId)) {
+                    updatedSelection.add(action.clientId);
+                    if (sizeInfo) {
+                        sizeInfo.start = Math.min(attrs.col, sizeInfo.start);
+                        sizeInfo.end = Math.max(colEnd, sizeInfo.end);
+                    } else {
+                        state.blockSizes.set(attrs.row, {
+                            start: attrs.col,
+                            end: colEnd,
                         });
-                        state.minCol = minCol;
-                        state.maxCol = maxCol;
-                        state.minRow = minRow;
-                        state.maxRow = maxRow;
+                    }
+
+                    state.maxRow = Math.max(state.maxRow, rowEnd);
+                    state.minRow = Math.min(state.minRow, attrs.row);
+                    state.maxCol = Math.max(state.maxCol, colEnd);
+                    state.minCol = Math.min(state.minCol, attrs.col);
+
+                    state.area += attrs.rowspan * attrs.colspan;
+                } else {
+                    state.area -= attrs.rowspan * attrs.colspan;
+
+                    if (
+                        attrs.col <= state.minCol ||
+                        colEnd >= state.maxCol ||
+                        attrs.row <= state.minRow ||
+                        rowEnd >= state.maxRow
+                    ) {
+                        state.blockSizes.forEach((sizeInfo, row) => {
+                            state.minCol = Math.min(
+                                state.minCol,
+                                sizeInfo.start
+                            );
+                            state.maxCol = Math.max(state.maxCol, sizeInfo.end);
+
+                            state.minRow = Math.min(state.minRow, row);
+                            state.maxRow = Math.max(state.maxRow, row);
+                        });
                     }
                 }
+                
 
-                state.isMergable = isMergable(state);
+                state.isMergable =
+                    state.area > 0 &&
+                    state.area ==
+                        (state.maxCol - state.minCol) *
+                            (state.maxRow - state.minRow);
 
                 return {
                     ...state,
-                    selectedCells: updatedSelection,
+                    selectedIds: updatedSelection,
                 };
             case "END_CELL_MULTI_SELECT":
                 return {
-                    ...state,
                     ...DEFAULT_STATE,
-                    selectedCells: new Map(),
+                    blockSizes: new Map(),
                     selectedIds: new Set(),
                 };
         }
@@ -170,7 +134,7 @@ export const store = createReduxStore("tableberg-store", {
 
         getClassName(
             state: ITBStoreState,
-            clientId: string,
+            clientId: string
         ): string | undefined {
             if (state.selectedIds.has(clientId)) {
                 return "is-multi-selected";
