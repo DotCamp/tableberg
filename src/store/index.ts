@@ -110,7 +110,11 @@ export const store = createReduxStore("tableberg-store", {
                     selectedBlocks,
                 };
 
-                action.cells.forEach((cell: TablebergCellInstance) => {
+                for (let i = 0; i < action.cells.length; i++) {
+                    const cell = action.cells[i] as TablebergCellInstance;
+                    if (cell.name !== "tableberg/cell") {
+                        return state;
+                    }
                     selectedBlocks.set(cell.clientId, cell.attributes);
                     const attrs = cell.attributes;
                     newState.maxRow = Math.max(
@@ -124,7 +128,7 @@ export const store = createReduxStore("tableberg-store", {
                     );
                     newState.minCol = Math.min(newState.minCol, attrs.col);
                     newState.area += attrs.rowspan * attrs.colspan;
-                });
+                }
                 newState.isMergable =
                     newState.area > 0 &&
                     newState.area ==
