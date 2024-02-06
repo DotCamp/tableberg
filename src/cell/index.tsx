@@ -315,13 +315,31 @@ const useMerging = (
     }, []);
 
     const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
-        const focus = storeSelect.getSelectedBlock();
         if (
-            (!evt.ctrlKey &&
-                !evt.metaKey &&
-                getCurrentSelectedCells().size === 0) ||
-            !focus
+            !evt.ctrlKey &&
+            !evt.metaKey &&
+            getCurrentSelectedCells().size === 0
         ) {
+            return;
+        }
+
+        if (!evt.metaKey && !evt.ctrlKey) {
+            endCellMultiSelect();
+            return;
+        }
+
+        evt.stopImmediatePropagation();
+        evt.preventDefault();
+
+        const cell = storeSelect.getBlock(clientId) as any;
+
+        if (getCurrentSelectedCells().size > 0) {
+            toggleCellSelection(cell);
+            return;
+        }
+
+        const focus = storeSelect.getSelectedBlock();
+        if (!focus) {
             return;
         }
         const parentIds = storeSelect.getBlockParents(focus.clientId);
@@ -334,28 +352,20 @@ const useMerging = (
             }
         }
 
-        const cell = storeSelect.getBlock(clientId) as any;
-
         if (!focusedCell || focusedCell.clientId === clientId) {
             return;
         }
+        toggleCellSelection(cell);
+
         if (!getCurrentSelectedCells().has(focusedCell.clientId)) {
             toggleCellSelection(focusedCell);
-        }
-
-        if (evt.metaKey || evt.ctrlKey) {
-            evt.stopImmediatePropagation();
-            evt.preventDefault();
-            toggleCellSelection(cell);
-        } else {
-            endCellMultiSelect();
         }
     };
 
     const mergeCells = () => {
         const cells: TablebergCellInstance[] = [];
         let destination: TablebergCellInstance | undefined;
-        getCurrentSelectedCells().forEach((cellId) => {
+        getCurrentSelectedCells().forEach((_, cellId) => {
             const cell = storeSelect.getBlock(cellId)! as TablebergCellInstance;
             if (!destination) {
                 destination = cell;
@@ -363,9 +373,11 @@ const useMerging = (
                 cell.attributes.col <= destination.attributes.col &&
                 cell.attributes.row <= destination.attributes.row
             ) {
+                cells.push(destination);
                 destination = cell;
+            } else {
+                cells.push(cell);
             }
-            cells.push(cell);
         });
         if (!destination) {
             return;
@@ -383,9 +395,6 @@ const useMerging = (
 
         const toRemoves: string[] = [];
         for (let i = 0; i < cells.length; i++) {
-            if (cells[i].clientId === destination.clientId) {
-                continue;
-            }
             storeActions.moveBlocksToPosition(
                 cells[i].innerBlocks.map((b) => b.clientId),
                 cells[i].clientId,
@@ -490,7 +499,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         return {
             storeSelect,
             tableBlock,
-            tableBlockId
+            tableBlockId,
         };
     }, []);
     const { isMergable, addMergingEvt, getClassName, mergeCells } = useMerging(
