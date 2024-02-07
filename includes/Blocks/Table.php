@@ -15,7 +15,8 @@ use WP_Block;
 /**
  * Handle the block registration on server side and rendering.
  */
-class Table {
+class Table
+{
 
 	public static $lastRow = null;
 	public static $lastRows = 0;
@@ -25,8 +26,9 @@ class Table {
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		add_action( 'init', array( $this, 'block_registration' ) );
+	public function __construct()
+	{
+		add_action('init', array($this, 'block_registration'));
 	}
 
 	/**
@@ -35,32 +37,33 @@ class Table {
 	 * @param array $attributes - block attributes.
 	 * @return string Generated CSS styles.
 	 */
-	public static function get_styles( $attributes ) {
-		$header_bg_color   = Utils::get_background_color( $attributes, 'headerBackgroundColor', 'headerBackgroundGradient' );
-		$even_row_bg_color = Utils::get_background_color( $attributes, 'evenRowBackgroundColor', 'evenRowBackgroundGradient' );
-		$odd_row_bg_color  = Utils::get_background_color( $attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient' );
-		$footer_bg_color   = Utils::get_background_color( $attributes, 'footerBackgroundColor', 'footerBackgroundGradient' );
+	public static function get_styles($attributes)
+	{
+		$header_bg_color = Utils::get_background_color($attributes, 'headerBackgroundColor', 'headerBackgroundGradient');
+		$even_row_bg_color = Utils::get_background_color($attributes, 'evenRowBackgroundColor', 'evenRowBackgroundGradient');
+		$odd_row_bg_color = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
+		$footer_bg_color = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
 
 		$global_font_style = Utils::get_global_style_variables_css($attributes);
 
-		$cell_padding = Utils::get_spacing_css( $attributes['cellPadding'] );
+		$cell_padding = Utils::get_spacing_css($attributes['cellPadding']);
 
-		$table_border_variables = Utils::get_border_variables_css( $attributes['tableBorder'], 'table' );
-		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css( $attributes['innerBorder'], 'inner' ) : array();
+		$table_border_variables = Utils::get_border_variables_css($attributes['tableBorder'], 'table');
+		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : array();
 
 		$styles = array(
-			'--tableber-table-width'          => $attributes['tableWidth'],
-			'--tableberg-header-bg-color'     => $header_bg_color,
-			'--tableberg-even-row-bg-color'   => $even_row_bg_color,
-			'--tableberg-odd-row-bg-color'    => $odd_row_bg_color,
-			'--tableberg-footer-bg-color'     => $footer_bg_color,
-			'--tableberg-cell-padding-top'    => $cell_padding['top'] ?? '',
-			'--tableberg-cell-padding-right'  => $cell_padding['right'] ?? '',
+			'--tableber-table-width' => $attributes['tableWidth'],
+			'--tableberg-header-bg-color' => $header_bg_color,
+			'--tableberg-even-row-bg-color' => $even_row_bg_color,
+			'--tableberg-odd-row-bg-color' => $odd_row_bg_color,
+			'--tableberg-footer-bg-color' => $footer_bg_color,
+			'--tableberg-cell-padding-top' => $cell_padding['top'] ?? '',
+			'--tableberg-cell-padding-right' => $cell_padding['right'] ?? '',
 			'--tableberg-cell-padding-bottom' => $cell_padding['bottom'] ?? '',
-			'--tableberg-cell-padding-left'   => $cell_padding['left'] ?? '',
+			'--tableberg-cell-padding-left' => $cell_padding['left'] ?? '',
 		) + $table_border_variables + $inner_border_variables + $global_font_style;
 
-		return Utils::generate_css_string( $styles );
+		return Utils::generate_css_string($styles);
 	}
 
 	/**
@@ -69,33 +72,50 @@ class Table {
 	 * @param array $attributes The block attributes.
 	 * @return array CSS classes based on attributes.
 	 */
-	public function get_style_class( $attributes ) {
-		$table_width         = $attributes['tableWidth'];
-		$table_alignment     = $attributes['tableAlignment'];
+	public function get_style_class($attributes)
+	{
+		$table_width = $attributes['tableWidth'];
+		$table_alignment = $attributes['tableAlignment'];
 		$enable_inner_border = $attributes['enableInnerBorder'];
-		$classes             = array();
-		if ( $enable_inner_border ) {
+		$classes = array();
+		if ($enable_inner_border) {
 			$classes[] = 'has-inner-border';
 		}
-		$is_value_empty = function( $value ) {
+		$is_value_empty = function ($value) {
 			return (
-				is_null( $value ) ||
+				is_null($value) ||
 				false === $value ||
-				trim( $value ) === '' ||
-				trim( $value ) === 'undefined undefined undefined' ||
-				empty( $value )
+				trim($value) === '' ||
+				trim($value) === 'undefined undefined undefined' ||
+				empty($value)
 			);
 		};
 
-		if ( ! $is_value_empty( $table_width ) ) {
+		if (!$is_value_empty($table_width)) {
 			$classes[] = 'has-table-width';
 		}
-		if ( ! $is_value_empty( $table_alignment ) ) {
+		if (!$is_value_empty($table_alignment)) {
 			$classes[] = 'justify-table-' . $table_alignment;
 		}
 
 		return $classes;
 	}
+
+
+
+	private static function setRowHeights($content, $heights)
+	{
+		$lastIdx = 0;
+		foreach ($heights as $height) {
+			$idx = strpos($content, '<tr', $lastIdx);
+			if ($height) {
+				$content = HtmlUtils::append_attr_value($content, 'tr', "height:{$height} !important;", 'style', $idx);
+			}
+			$lastIdx = $idx + 1;
+		}
+		return $content;
+	}
+
 	/**
 	 * Renders the custom table block on the server.
 	 *
@@ -104,47 +124,54 @@ class Table {
 	 * @param WP_Block $block      The block object.
 	 * @return string Returns the HTML content for the custom table block.
 	 */
-	public function render_tableberg_table_block( $attributes, $content, $block ) {
-		$class_names        = $this->get_style_class( $attributes );
-		$style              = $this->get_styles( $attributes );
+	public function render_tableberg_table_block($attributes, $content, $block)
+	{
+		$class_names = $this->get_style_class($attributes);
+		$style = $this->get_styles($attributes);
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
-				'class' => trim( join( ' ', $class_names ) ),
+				'class' => trim(join(' ', $class_names)),
 				'style' => $style,
 			)
 		);
 
-		$colgroup = '<colgroup>';
-		foreach ($attributes['colWidths']??[] as $w) {
-			$colgroup.="<col width=\"$w\"/>";
-		}
-		$colgroup.='</colgroup>';
 		$content = HtmlUtils::replace_attrs_of_tag($content, 'table', $wrapper_attributes);
-		$content = HtmlUtils::replace_closing_tag($content, 'table', '</tr></table>');
+		$content = HtmlUtils::replace_closing_tag($content, 'table', '</tr></tbody></table>');
 
 		if ($attributes['enableTableHeader']) {
-			$content = HtmlUtils::add_class_to_tag($content, 'tr', 'tableberg-header');
+			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-header', 'class');
 		}
 		if ($attributes['enableTableFooter']) {
-			$content = HtmlUtils::add_class_to_tag($content, 'tr', 'tableberg-footer', strrpos($content, '<tr'));
+			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-footer', 'class', strrpos($content, '<tr'));
 		}
+
+		$colgroup = '<colgroup>';
+		foreach ($attributes['colWidths'] ?? [] as $w) {
+			$colgroup .= "<col width=\"$w\"/>";
+		}
+		$colgroup .= '</colgroup>';
+		$content = HtmlUtils::insert_inside_tag($content, 'table', $colgroup.'<tbody>');
+
+		$content = self::setRowHeights($content, $attributes['rowHeights']);
 
 		self::$lastRow = null;
 		return $content;
 	}
 
+
 	/**
 	 * Register the block.
 	 */
-	public function block_registration() {
-		$defaults         = new \Tableberg\Defaults();
+	public function block_registration()
+	{
+		$defaults = new \Tableberg\Defaults();
 		$tableberg_assets = new \Tableberg\Assets();
 		$tableberg_assets->register_blocks_assets();
 		register_block_type(
 			TABLEBERG_DIR_PATH . 'build/block.json',
 			array(
-				'attributes'      => $defaults->get_default_attributes( 'tableberg/table' ),
-				'render_callback' => array( $this, 'render_tableberg_table_block' ),
+				'attributes' => $defaults->get_default_attributes('tableberg/table'),
+				'render_callback' => array($this, 'render_tableberg_table_block'),
 			)
 		);
 	}

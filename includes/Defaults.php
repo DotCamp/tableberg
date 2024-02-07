@@ -29,6 +29,14 @@ class Defaults
 					'type' => 'number',
 					'default' => 2,
 				),
+				'colWidths' => array(
+					'type' => 'array',
+					'default' => ['', ''],
+				),
+				'rowHeights' => array(
+					'type' => 'array',
+					'default' => ['', ''],
+				),
 				'hasTableCreated' => array(
 					'type' => 'boolean',
 					'default' => false,
