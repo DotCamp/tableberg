@@ -158,7 +158,7 @@ class Table
 			}
 		}
 
-		$content = self::setRowColSizes($content, $attributes['rowHeights'], $attributes['heights']);
+		$content = self::setRowColSizes($content, $attributes['rowHeights'], $attributes['colWidths']);
 
 		self::$lastRow = null;
 		return $content;
