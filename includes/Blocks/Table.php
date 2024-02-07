@@ -39,10 +39,8 @@ class Table
 	 */
 	public static function get_styles($attributes)
 	{
-		$header_bg_color = Utils::get_background_color($attributes, 'headerBackgroundColor', 'headerBackgroundGradient');
 		$even_row_bg_color = Utils::get_background_color($attributes, 'evenRowBackgroundColor', 'evenRowBackgroundGradient');
 		$odd_row_bg_color = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
-		$footer_bg_color = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
 
 		$global_font_style = Utils::get_global_style_variables_css($attributes);
 
@@ -53,10 +51,8 @@ class Table
 
 		$styles = array(
 			'--tableber-table-width' => $attributes['tableWidth'],
-			'--tableberg-header-bg-color' => $header_bg_color,
 			'--tableberg-even-row-bg-color' => $even_row_bg_color,
 			'--tableberg-odd-row-bg-color' => $odd_row_bg_color,
-			'--tableberg-footer-bg-color' => $footer_bg_color,
 			'--tableberg-cell-padding-top' => $cell_padding['top'] ?? '',
 			'--tableberg-cell-padding-right' => $cell_padding['right'] ?? '',
 			'--tableberg-cell-padding-bottom' => $cell_padding['bottom'] ?? '',
@@ -103,7 +99,7 @@ class Table
 
 
 
-	private static function setRowHeights($content, $heights)
+	private static function setRowColSizes($content, $heights, $widths)
 	{
 		$lastIdx = 0;
 		foreach ($heights as $height) {
@@ -113,6 +109,12 @@ class Table
 			}
 			$lastIdx = $idx + 1;
 		}
+		$colgroup = '<colgroup>';
+		foreach ($widths as $w) {
+			$colgroup .= "<col width=\"$w\"/>";
+		}
+		$colgroup .= '</colgroup>';
+		$content = HtmlUtils::insert_inside_tag($content, 'table', $colgroup);
 		return $content;
 	}
 
@@ -135,24 +137,28 @@ class Table
 			)
 		);
 
+		$content = HtmlUtils::insert_inside_tag($content, 'table', '<tbody>');
 		$content = HtmlUtils::replace_attrs_of_tag($content, 'table', $wrapper_attributes);
 		$content = HtmlUtils::replace_closing_tag($content, 'table', '</tr></tbody></table>');
 
 		if ($attributes['enableTableHeader']) {
 			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-header', 'class');
+			$bg_color = Utils::get_background_color($attributes, 'headerBackgroundColor', 'headerBackgroundGradient');
+			if ($bg_color) {
+				$content = HtmlUtils::append_attr_value($content, 'tr', "background: {$bg_color} !important;", 'style');
+			}
+
 		}
 		if ($attributes['enableTableFooter']) {
-			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-footer', 'class', strrpos($content, '<tr'));
+			$footer_idx = strrpos($content, '<tr');
+			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-footer', 'class', $footer_idx);
+			$bg_color = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
+			if ($bg_color) {
+				$content = HtmlUtils::append_attr_value($content, 'tr', "background: {$bg_color} !important;", 'style', $footer_idx);
+			}
 		}
 
-		$colgroup = '<colgroup>';
-		foreach ($attributes['colWidths'] ?? [] as $w) {
-			$colgroup .= "<col width=\"$w\"/>";
-		}
-		$colgroup .= '</colgroup>';
-		$content = HtmlUtils::insert_inside_tag($content, 'table', $colgroup.'<tbody>');
-
-		$content = self::setRowHeights($content, $attributes['rowHeights']);
+		$content = self::setRowColSizes($content, $attributes['rowHeights'], $attributes['heights']);
 
 		self::$lastRow = null;
 		return $content;

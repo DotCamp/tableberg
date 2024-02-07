@@ -96,6 +96,7 @@ class HtmlUtils
      * @param string $content
      * @param string $tag
      * @param string $add
+     * @param string $attr
      * @param int $offset
      * @return string new content with added classes
      */
