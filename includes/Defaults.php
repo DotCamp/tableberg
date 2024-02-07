@@ -38,12 +38,12 @@ class Defaults
 					'default' => array(),
 				),
 				'enableTableHeader' => array(
-					'type' => 'boolean',
-					'default' => false,
+					'type' => 'string',
+					'default' => '',
 				),
 				'enableTableFooter' => array(
-					'type' => 'boolean',
-					'default' => false,
+					'type' => 'string',
+					'default' => '',
 				),
 				'tableWidth' => array(
 					'type' => 'string',
@@ -85,50 +85,30 @@ class Defaults
 		),
 		'tableberg/cell' => array(
 			'attributes' => array(
-				'vAlign' => array(
+				'vAlign' => [
 					'type' => 'string',
-					'default' => 'center',
-				),
-				"vAlign" => [
-					"type" => "string",
-					"default" => "center"
+					'default' => 'center'
 				],
-				"tagName" => [
-					"type" => "string",
-					"default" => "td"
+				'tagName' => [
+					'type' => 'string',
+					'default' => 'td'
 				],
-				"rowspan" => [
-					"type" => "number",
-					"default" => 1
+				'rowspan' => [
+					'type' => 'number',
+					'default' => 1
 				],
-				"colspan" => [
-					"type" => "number",
-					"default" => 1
+				'colspan' => [
+					'type' => 'number',
+					'default' => 1
 				],
-				"row" => [
-					"type" => "number",
-					"default" => 0
+				'row' => [
+					'type' => 'number',
+					'default' => 0
 				],
-				"col" => [
-					"type" => "number",
-					"default" => 0
+				'col' => [
+					'type' => 'number',
+					'default' => 0
 				]
-			),
-		),
-		'tableberg/row' => array(
-			'attributes' => array(
-				'tagName' => array(
-					'type' => 'string',
-					'default' => 'tr',
-				),
-				'isHeader' => array(
-					'type' => 'boolean',
-					'default' => false,
-				),
-				'isFooter' => array(
-					'type' => 'boolean',
-					'default' => false,
-				),
 			),
 		),
 		'tableberg/image' => array(

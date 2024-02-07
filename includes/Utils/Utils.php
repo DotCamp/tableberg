@@ -6,7 +6,7 @@
  * @package Tableberg
  */
 
-namespace Tableberg;
+namespace Tableberg\Utils;
 
 /**
  * Styling Help full functions utility class
@@ -314,66 +314,4 @@ class Utils
 		return $bg_color;
 	}
 
-
-	/**
-	 * Add attributes to the offset'th specified tag
-	 * 
-	 * @param string $content
-	 * @param string $tag
-	 * @param string $attr_str
-	 * @param int $offset
-	 * @return string new content with added attributes
-	 */
-	public static function add_attrs_to_tag($content, $tag, $attr_str, $offset = 0)
-	{
-		$tag = '<' . $tag;
-		$idx = strpos($content, $tag, $offset);
-		if ($idx === false) {
-			return $content;
-		}
-		return substr_replace($content, $tag . " " . $attr_str, $idx, 0);
-	}
-
-	/**
-	 * Replace attributes of the offset'th specified tag
-	 * 
-	 * @param string $content
-	 * @param string $tag
-	 * @param string $attr_str
-	 * @param int $offset
-	 * @return string new content with added attributes
-	 */
-	public static function replace_attrs_of_tag($content, $tag, $attr_str, $offset = 0)
-	{
-		$tag = '<' . $tag;
-		$fidx = strpos($content, $tag, $offset);
-		if ($fidx === false) {
-			return $content;
-		}
-		$lidx = strpos($content, '>', $fidx);
-		if ($lidx === false) {
-			return $content;
-		}
-		return substr_replace($content, $tag . " " . $attr_str . ">", $fidx, $lidx - $fidx + 1);
-	}
-
-	/**
-	 * Replace closing of the offset'th specified tag
-	 * 
-	 * @param string $content
-	 * @param string $tag
-	 * @param string $replacement
-	 * @param int $offset
-	 * @return string new content with added attributes
-	 */
-	public static function replace_closing_tag($content, $tag, $replacement, $offset = -1)
-	{
-		$tag = '</' . $tag.'>';
-		$idx = strrpos($content, $tag, $offset);
-		if ($idx === false) {
-			return $content;
-		}
-		
-		return substr_replace($content, $replacement, $idx, strlen($tag));
-	}
 }

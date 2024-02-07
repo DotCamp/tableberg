@@ -8,7 +8,8 @@
 namespace Tableberg\Blocks;
 
 use Tableberg;
-use Tableberg\Utils;
+use Tableberg\Utils\Utils;
+use Tableberg\Utils\HtmlUtils;
 use WP_Block;
 
 /**
@@ -35,17 +36,17 @@ class Table {
 	 * @return string Generated CSS styles.
 	 */
 	public static function get_styles( $attributes ) {
-		$header_bg_color   = \Tableberg\Utils::get_background_color( $attributes, 'headerBackgroundColor', 'headerBackgroundGradient' );
-		$even_row_bg_color = \Tableberg\Utils::get_background_color( $attributes, 'evenRowBackgroundColor', 'evenRowBackgroundGradient' );
-		$odd_row_bg_color  = \Tableberg\Utils::get_background_color( $attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient' );
-		$footer_bg_color   = \Tableberg\Utils::get_background_color( $attributes, 'footerBackgroundColor', 'footerBackgroundGradient' );
+		$header_bg_color   = Utils::get_background_color( $attributes, 'headerBackgroundColor', 'headerBackgroundGradient' );
+		$even_row_bg_color = Utils::get_background_color( $attributes, 'evenRowBackgroundColor', 'evenRowBackgroundGradient' );
+		$odd_row_bg_color  = Utils::get_background_color( $attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient' );
+		$footer_bg_color   = Utils::get_background_color( $attributes, 'footerBackgroundColor', 'footerBackgroundGradient' );
 
-		$global_font_style = \Tableberg\Utils::get_global_style_variables_css($attributes);
+		$global_font_style = Utils::get_global_style_variables_css($attributes);
 
-		$cell_padding = \Tableberg\Utils::get_spacing_css( $attributes['cellPadding'] );
+		$cell_padding = Utils::get_spacing_css( $attributes['cellPadding'] );
 
-		$table_border_variables = \Tableberg\Utils::get_border_variables_css( $attributes['tableBorder'], 'table' );
-		$inner_border_variables = $attributes['enableInnerBorder'] ? \Tableberg\Utils::get_border_variables_css( $attributes['innerBorder'], 'inner' ) : array();
+		$table_border_variables = Utils::get_border_variables_css( $attributes['tableBorder'], 'table' );
+		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css( $attributes['innerBorder'], 'inner' ) : array();
 
 		$styles = array(
 			'--tableber-table-width'          => $attributes['tableWidth'],
@@ -59,7 +60,7 @@ class Table {
 			'--tableberg-cell-padding-left'   => $cell_padding['left'] ?? '',
 		) + $table_border_variables + $inner_border_variables + $global_font_style;
 
-		return \Tableberg\Utils::generate_css_string( $styles );
+		return Utils::generate_css_string( $styles );
 	}
 
 	/**
@@ -118,8 +119,16 @@ class Table {
 			$colgroup.="<col width=\"$w\"/>";
 		}
 		$colgroup.='</colgroup>';
-		$content = Utils::replace_attrs_of_tag($content, 'table', $wrapper_attributes);
-		$content = Utils::replace_closing_tag($content, 'table', '</tr></table>');
+		$content = HtmlUtils::replace_attrs_of_tag($content, 'table', $wrapper_attributes);
+		$content = HtmlUtils::replace_closing_tag($content, 'table', '</tr></table>');
+
+		if ($attributes['enableTableHeader']) {
+			$content = HtmlUtils::add_class_to_tag($content, 'tr', 'tableberg-header');
+		}
+		if ($attributes['enableTableFooter']) {
+			$content = HtmlUtils::add_class_to_tag($content, 'tr', 'tableberg-footer', strrpos($content, '<tr'));
+		}
+
 		self::$lastRow = null;
 		return $content;
 	}
@@ -129,7 +138,7 @@ class Table {
 	 */
 	public function block_registration() {
 		$defaults         = new \Tableberg\Defaults();
-		$tableberg_assets = new Tableberg\Assets();
+		$tableberg_assets = new \Tableberg\Assets();
 		$tableberg_assets->register_blocks_assets();
 		register_block_type(
 			TABLEBERG_DIR_PATH . 'build/block.json',

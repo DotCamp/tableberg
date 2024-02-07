@@ -8,8 +8,7 @@
 namespace Tableberg\Blocks;
 
 use Tableberg;
-use Tableberg\Utils;
-use \WP_HTML_Tag_Processor;
+use Tableberg\Utils\HtmlUtils;
 
 /**
  * Handle the block registration on server side and rendering.
@@ -62,7 +61,7 @@ class Cell
 		}
 
 
-		return $pre . Utils::add_attrs_to_tag($content, 'td', $attrs_str) . $post;
+		return $pre . HtmlUtils::add_attrs_to_tag($content, 'td', $attrs_str) . $post;
 	}
 
 	/**

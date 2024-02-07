@@ -8,6 +8,7 @@
 namespace Tableberg\Blocks;
 
 use Tableberg;
+use Tableberg\Utils\Utils;
 
 /**
  * Handle the block registration on server side and rendering.
@@ -60,8 +61,8 @@ class Button {
 			$attributes['textColor'] = "";
 		}
 
-		$background_color       = \Tableberg\Utils::get_background_color( $attributes, 'backgroundColor', 'backgroundGradient' );
-		$background_hover_color = \Tableberg\Utils::get_background_color( $attributes, 'backgroundHoverColor', 'backgroundHoverGradient' );
+		$background_color       = Utils::get_background_color( $attributes, 'backgroundColor', 'backgroundGradient' );
+		$background_hover_color = Utils::get_background_color( $attributes, 'backgroundHoverColor', 'backgroundHoverGradient' );
 
 		$styles = array(
 			'--tableberg-button-background-color'       => $background_color,
@@ -70,7 +71,7 @@ class Button {
 			'--tableberg-button-text-color'             => $attributes['textColor'],
 		);
 
-		return \Tableberg\Utils::generate_css_string( $styles );
+		return Utils::generate_css_string( $styles );
 	}
 	/**
 	 * Get block classes.

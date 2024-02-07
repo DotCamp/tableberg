@@ -65,4 +65,12 @@ table.wp-block-tableberg-table {
     .tableberg-footer {
         font-weight: bold;
     }
+
+    .tableberg-header {
+        background: --tableberg-header-bg-color;
+    }
+
+    .tableberg-footer {
+        background: --tableberg-footer-bg-color;
+    }
 }
