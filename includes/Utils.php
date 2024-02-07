@@ -11,17 +11,19 @@ namespace Tableberg;
 /**
  * Styling Help full functions utility class
  */
-class Utils {
+class Utils
+{
 
 	/**
 	 * Get global font style variables for CSS.
 	 * @return array CSS styles for the global font.
 	 */
-	public static function get_global_style_variables_css( array $attributes) {
+	public static function get_global_style_variables_css(array $attributes)
+	{
 		return [
-			'--tableberg-global-text-color' => $attributes['fontColor']??'',
-			'--tableberg-global-link-color' => $attributes['linkColor']??'',
-			'--tableberg-global-font-size' => $attributes['fontSize']??'',
+			'--tableberg-global-text-color' => $attributes['fontColor'] ?? '',
+			'--tableberg-global-link-color' => $attributes['linkColor'] ?? '',
+			'--tableberg-global-font-size' => $attributes['fontSize'] ?? '',
 		];
 	}
 
@@ -30,26 +32,27 @@ class Utils {
 	 *
 	 * @return array
 	 */
-	public static function welcome_page() {
+	public static function welcome_page()
+	{
 		return array(
-			'welcome'       => array(
-				'title'   => 'Welcome to Tableberg!',
+			'welcome' => array(
+				'title' => 'Welcome to Tableberg!',
 				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Block Editor Plugin for Effortless Table Creation!',
 			),
 			'documentation' => array(
-				'title'   => 'Documentation',
+				'title' => 'Documentation',
 				'content' => 'Elevate your space with Tableberg: a sleek, modern table block for style and functionality. Crafted for timeless elegance and versatility.',
 			),
-			'support'       => array(
-				'title'   => 'Support',
+			'support' => array(
+				'title' => 'Support',
 				'content' => "Visit our Tableberg Support Page for quick solutions and assistance. We're here to ensure your Tableberg experience is seamless and satisfying.",
 			),
-			'community'     => array(
-				'title'   => 'Join Community',
+			'community' => array(
+				'title' => 'Join Community',
 				'content' => 'Join the vibrant Tableberg community. Connect, share, and discover endless possibilities together. Elevate your experience with like-minded enthusiasts now!',
 			),
-			'upgrade'       => array(
-				'title'   => 'Upgrade to Tableberg PRO!',
+			'upgrade' => array(
+				'title' => 'Upgrade to Tableberg PRO!',
 				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Block Editor Plugin for Effortless Table Creation!',
 			),
 		);
@@ -59,13 +62,14 @@ class Utils {
 	 *
 	 * @return array
 	 */
-	public static function individual_control() {
+	public static function individual_control()
+	{
 		return array(
 			array(
-				'title'   => 'Individual Control',
-				'name'    => 'individual_control',
+				'title' => 'Individual Control',
+				'name' => 'individual_control',
 				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Block Editor Plugin for Effortless Table Creation!',
-				'active'  => false,
+				'active' => false,
 			),
 		);
 	}
@@ -74,13 +78,14 @@ class Utils {
 	 *
 	 * @return array
 	 */
-	public static function global_control() {
+	public static function global_control()
+	{
 		return array(
 			array(
-				'title'   => 'Global Control',
-				'name'    => 'global_control',
+				'title' => 'Global Control',
+				'name' => 'global_control',
 				'content' => 'Elevate Your Content with Seamless Tables - The Ultimate WordPress Block Editor Plugin for Effortless Table Creation!',
-				'active'  => true,
+				'active' => true,
 			),
 		);
 	}
@@ -89,25 +94,26 @@ class Utils {
 	 *
 	 * @return array
 	 */
-	public static function default_block_properties() {
+	public static function default_block_properties()
+	{
 		return array(
 			array(
-				'title'   => 'Default Row Number',
-				'name'    => 'row_number',
+				'title' => 'Default Row Number',
+				'name' => 'row_number',
 				'content' => 'Set your default row number of the table when you add Tableberg to your site. Further you can increase or decrease it there simply.',
-				'value'   => 3,
+				'value' => 3,
 			),
 			array(
-				'title'   => 'Default Column Number',
-				'name'    => 'column_number',
+				'title' => 'Default Column Number',
+				'name' => 'column_number',
 				'content' => 'Set your default column number of the table when you add Tableberg to your site. Further you can increase or decrease it there simply.',
-				'value'   => 3,
+				'value' => 3,
 			),
 			array(
-				'title'   => 'Default Property Font Size',
-				'name'    => 'font_size',
+				'title' => 'Default Property Font Size',
+				'name' => 'font_size',
 				'content' => 'Set your default FONT SIZE of the PROPERTY of the table when you add Tableberg to your site. Further you can increase or decrease it there simply.',
-				'value'   => 18,
+				'value' => 18,
 			),
 		);
 	}
@@ -117,7 +123,8 @@ class Utils {
 	 * @param array $border - block border.
 	 * @return bool Whether the border has split sides.
 	 */
-	public static function has_split_borders($border = array()) {
+	public static function has_split_borders($border = array())
+	{
 		$sides = array('top', 'right', 'bottom', 'left');
 		foreach ($border as $side => $value) {
 			if (in_array($side, $sides, true)) {
@@ -134,14 +141,15 @@ class Utils {
 	 * @param array $object - block border.
 	 * @return array CSS styles for the border.
 	 */
-	public static function get_border_css($object) {
+	public static function get_border_css($object)
+	{
 		$css = array();
 
 		if (!self::has_split_borders($object)) {
-			$css['top']    = $object;
-			$css['right']  = $object;
+			$css['top'] = $object;
+			$css['right'] = $object;
 			$css['bottom'] = $object;
-			$css['left']   = $object;
+			$css['left'] = $object;
 			return $css;
 		}
 
@@ -155,7 +163,8 @@ class Utils {
 	 * @param string $side - border side.
 	 * @return string CSS value for the specified side.
 	 */
-	public static function get_single_side_border_value($border, $side) {
+	public static function get_single_side_border_value($border, $side)
+	{
 		$width = $border[$side]['width'] ?? '';
 		$style = $border[$side]['style'] ?? '';
 		$color = $border[$side]['color'] ?? '';
@@ -168,7 +177,8 @@ class Utils {
 	 * @param mixed $value - The value to check.
 	 * @return bool Whether the value is considered empty.
 	 */
-	public static function is_value_empty($value) {
+	public static function is_value_empty($value)
+	{
 		return (
 			self::is_undefined($value) ||
 			false === $value ||
@@ -184,14 +194,15 @@ class Utils {
 	 * @param string $slug - slug to use in variable.
 	 * @return array CSS styles for the border variables.
 	 */
-	public static function get_border_variables_css($border, $slug) {
+	public static function get_border_variables_css($border, $slug)
+	{
 		$border_in_dimensions = self::get_border_css($border);
-		$border_sides         = array('top', 'right', 'bottom', 'left');
-		$borders              = array();
+		$border_sides = array('top', 'right', 'bottom', 'left');
+		$borders = array();
 
 		foreach ($border_sides as $side) {
-			$side_property             = "--tableberg-{$slug}-border-{$side}";
-			$side_value                = self::get_single_side_border_value($border_in_dimensions, $side);
+			$side_property = "--tableberg-{$slug}-border-{$side}";
+			$side_value = self::get_single_side_border_value($border_in_dimensions, $side);
 			$borders[$side_property] = $side_value;
 		}
 
@@ -204,7 +215,8 @@ class Utils {
 	 * @param string $value - spacing value.
 	 * @return bool Whether the value is a preset or custom spacing.
 	 */
-	public static function is_value_spacing_preset($value) {
+	public static function is_value_spacing_preset($value)
+	{
 		if (!$value || !is_string($value)) {
 			return false;
 		}
@@ -217,7 +229,8 @@ class Utils {
 	 * @param string $value - spacing value.
 	 * @return string CSS variable or the original value.
 	 */
-	public static function get_spacing_preset_css_var($value) {
+	public static function get_spacing_preset_css_var($value)
+	{
 		if (!$value) {
 			return null;
 		}
@@ -237,7 +250,8 @@ class Utils {
 	 * @param array $object - spacing object.
 	 * @return array CSS styles for spacing.
 	 */
-	public static function get_spacing_css($object) {
+	public static function get_spacing_css($object)
+	{
 		$css = array();
 
 		foreach ($object as $key => $value) {
@@ -257,7 +271,8 @@ class Utils {
 	 * @param mixed $value - value.
 	 * @return bool Whether the value is undefined.
 	 */
-	public static function is_undefined($value) {
+	public static function is_undefined($value)
+	{
 		return null === $value || !isset($value) || empty($value);
 	}
 
@@ -267,7 +282,8 @@ class Utils {
 	 * @param array $styles - CSS styles.
 	 * @return string Generated CSS string.
 	 */
-	public static function generate_css_string($styles) {
+	public static function generate_css_string($styles)
+	{
 		$css_string = '';
 
 		foreach ($styles as $key => $value) {
@@ -287,7 +303,8 @@ class Utils {
 	 * @param string $gradient_attr_key - block background gradient attribute key.
 	 * @return string Background color or gradient.
 	 */
-	public static function get_background_color($attributes, $color_attr_key, $gradient_attr_key) {
+	public static function get_background_color($attributes, $color_attr_key, $gradient_attr_key)
+	{
 		$bg_color = '';
 		if (!empty($attributes[$color_attr_key])) {
 			$bg_color = $attributes[$color_attr_key];
@@ -295,5 +312,68 @@ class Utils {
 			$bg_color = $attributes[$gradient_attr_key];
 		}
 		return $bg_color;
+	}
+
+
+	/**
+	 * Add attributes to the offset'th specified tag
+	 * 
+	 * @param string $content
+	 * @param string $tag
+	 * @param string $attr_str
+	 * @param int $offset
+	 * @return string new content with added attributes
+	 */
+	public static function add_attrs_to_tag($content, $tag, $attr_str, $offset = 0)
+	{
+		$tag = '<' . $tag;
+		$idx = strpos($content, $tag, $offset);
+		if ($idx === false) {
+			return $content;
+		}
+		return substr_replace($content, $tag . " " . $attr_str, $idx, 0);
+	}
+
+	/**
+	 * Replace attributes of the offset'th specified tag
+	 * 
+	 * @param string $content
+	 * @param string $tag
+	 * @param string $attr_str
+	 * @param int $offset
+	 * @return string new content with added attributes
+	 */
+	public static function replace_attrs_of_tag($content, $tag, $attr_str, $offset = 0)
+	{
+		$tag = '<' . $tag;
+		$fidx = strpos($content, $tag, $offset);
+		if ($fidx === false) {
+			return $content;
+		}
+		$lidx = strpos($content, '>', $fidx);
+		if ($lidx === false) {
+			return $content;
+		}
+		return substr_replace($content, $tag . " " . $attr_str . ">", $fidx, $lidx - $fidx + 1);
+	}
+
+	/**
+	 * Replace closing of the offset'th specified tag
+	 * 
+	 * @param string $content
+	 * @param string $tag
+	 * @param string $replacement
+	 * @param int $offset
+	 * @return string new content with added attributes
+	 */
+	public static function replace_closing_tag($content, $tag, $replacement, $offset = -1)
+	{
+		$tag = '</' . $tag.'>';
+		$idx = strrpos($content, $tag, $offset);
+		if ($idx === false) {
+			return $content;
+		}
+		
+		return substr_replace($content, $replacement, $idx, strlen($tag));
 	}
 }

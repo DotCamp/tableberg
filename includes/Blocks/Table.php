@@ -8,12 +8,16 @@
 namespace Tableberg\Blocks;
 
 use Tableberg;
+use Tableberg\Utils;
 use WP_Block;
 
 /**
  * Handle the block registration on server side and rendering.
  */
 class Table {
+
+	public static $lastRow = null;
+	public static $lastRows = 0;
 
 	/**
 	 * Constructor
@@ -114,12 +118,9 @@ class Table {
 			$colgroup.="<col width=\"$w\"/>";
 		}
 		$colgroup.='</colgroup>';
-
-		$pattern = '/<table[^>]*>/s';
-		if ( preg_match( $pattern, $content, $matches ) ) {
-			$table_element = $matches[0];
-			$content = str_replace( $table_element, '<table ' . $wrapper_attributes . ' >'.$colgroup, $content );
-		}
+		$content = Utils::replace_attrs_of_tag($content, 'table', $wrapper_attributes);
+		$content = Utils::replace_closing_tag($content, 'table', '</tr></table>');
+		self::$lastRow = null;
 		return $content;
 	}
 
