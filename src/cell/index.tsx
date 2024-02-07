@@ -555,7 +555,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         {
             icon: tableRowAfter,
             title: "Insert row after",
-            onClick: () => addRow(tableBlock, storeActions, attributes.row + 1),
+            onClick: () => addRow(tableBlock, storeActions, attributes.row + attributes.rowspan),
         },
         {
             icon: tableColumnBefore,
