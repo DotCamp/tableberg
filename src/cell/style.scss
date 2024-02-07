@@ -4,4 +4,11 @@
     padding-right: var(--tableberg-cell-padding-right, 8px);
     padding-bottom: var(--tableberg-cell-padding-bottom, 8px);
     padding-left: var(--tableberg-cell-padding-left, 8px);
+
+    &.tableberg-v-align-top {
+        vertical-align: top;
+    }
+    &.tableberg-v-align-bottom {
+        vertical-align: bottom;
+    }
 }

@@ -31,7 +31,7 @@ class Cell
 	 *
 	 * @param array    $attributes The block attributes.
 	 * @param string   $content    The block content.
-	 * @param WP_Block $block      The block object.
+	 * @param \WP_Block $block      The block object.
 	 * @return string Returns the HTML content for the custom cell block.
 	 */
 	public function render_tableberg_cell_block($attributes, $content, $block)
@@ -49,6 +49,7 @@ class Cell
 		$rowspan = isset($attributes['rowspan']) ? $attributes['rowspan'] : 1;
 
 		$attrs_str = '';
+		$classes = 'tableberg-v-align-'.$attributes['vAlign'];
 
 		// Add colspan attribute if it's greater than 1
 		if ($colspan > 1) {
@@ -60,8 +61,11 @@ class Cell
 			$attrs_str .= ' rowspan="' . esc_attr($rowspan) . '"';
 		}
 
+		$content = HtmlUtils::append_attr_value($content, 'td', ' '.$classes, 'class');
 
-		return $pre . HtmlUtils::add_attrs_to_tag($content, 'td', $attrs_str) . $post;
+		$content = HtmlUtils::add_attrs_to_tag($content, 'td', $attrs_str);
+
+		return $pre . $content . $post;
 	}
 
 	/**
