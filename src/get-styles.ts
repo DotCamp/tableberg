@@ -5,18 +5,44 @@ import { PaddingTypes, TablebergBlockAttrs } from "./types";
 export function getStyles(attributes: TablebergBlockAttrs) {
     const {
         cellPadding,
+        cellSpacing,
         enableInnerBorder,
         innerBorder,
         tableBorder,
+        headerBackgroundGradient,
+        evenRowBackgroundGradient,
+        oddRowBackgroundGradient,
+        tableWidth,
+        footerBackgroundColor,
+        footerBackgroundGradient,
         fontColor,
         fontSize,
         linkColor,
     } = attributes;
     const cellPaddingCSS: PaddingTypes = getSpacingCss(cellPadding);
-    const tableBorderVar = getBorderVariablesCss(tableBorder, "table");
+    const cellSpacingCSS: PaddingTypes = getSpacingCss(cellSpacing);
     const tableInnerBorder = enableInnerBorder
         ? getBorderVariablesCss(innerBorder, "inner")
         : {};
+
+    let spacingDependantStyles: Record<string, any> = {};
+    if (
+        (cellSpacingCSS?.top??'0') !== "0" ||
+        (cellSpacingCSS.left??'0') !== "0"
+    ) {
+        spacingDependantStyles = {
+            "--tableberg-border-collapse" : "separate",
+            "--tableberg-table-border-top": "none",
+            "--tableberg-table-border-right": "none",
+            "--tableberg-table-border-bottom": "none",
+            "--tableberg-table-border-left": "none",
+            "--tableberg-cell-spacing-top": cellSpacingCSS?.top,
+            "--tableberg-cell-spacing-left": cellSpacingCSS?.left,
+        };
+    } else {
+        spacingDependantStyles = getBorderVariablesCss(tableBorder, "table");
+    }
+
 
     let styles: Record<string, any> = {
         "--tableberg-cell-padding-top": cellPaddingCSS?.top,
@@ -26,7 +52,7 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         "--tableberg-global-text-color": fontColor,
         "--tableberg-global-link-color": linkColor,
         "--tableberg-global-font-size": fontSize,
-        ...tableBorderVar,
+        ...spacingDependantStyles,
         ...tableInnerBorder,
     };
 

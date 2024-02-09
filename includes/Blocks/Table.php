@@ -45,6 +45,9 @@ class Table
 		$global_font_style = Utils::get_global_style_variables_css($attributes);
 
 		$cell_padding = Utils::get_spacing_css($attributes['cellPadding']);
+		$cellSpacing = $attributes['cellSpacing']??[];
+		$table_spacing = \Tableberg\Utils::get_spacing_css( $cellSpacing);
+		
 
 		$table_border_variables = Utils::get_border_variables_css($attributes['tableBorder'], 'table');
 		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : array();
@@ -56,10 +59,16 @@ class Table
 			'--tableberg-cell-padding-top' => $cell_padding['top'] ?? '',
 			'--tableberg-cell-padding-right' => $cell_padding['right'] ?? '',
 			'--tableberg-cell-padding-bottom' => $cell_padding['bottom'] ?? '',
-			'--tableberg-cell-padding-left' => $cell_padding['left'] ?? '',
+			'--tableberg-cell-padding-left'   => $cell_padding['left'] ?? '',
+			'--tableberg-cell-spacing-top'    => $table_spacing['top'] ?? '',
+			'--tableberg-cell-spacing-left'   => $table_spacing['left'] ?? '',
 		) + $table_border_variables + $inner_border_variables + $global_font_style;
 
-		return Utils::generate_css_string($styles);
+		if ($cellSpacing['top']??'0' !== '0' || $cellSpacing['left']??'0' !== '0') {
+			$styles['--tableberg-border-collapse'] = 'separate';
+		}
+
+		return Utils::generate_css_string( $styles );
 	}
 
 	/**

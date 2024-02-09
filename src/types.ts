@@ -12,6 +12,7 @@ export interface TablebergBlockAttrs {
     enableTableFooter: "" | "converted" | "added";
     tableAlignment: "center" | "full" | "left" | "right" | "wide";
     cellPadding: PaddingTypes;
+    cellSpacing: PaddingTypes;
     headerBackgroundColor: string | null;
     headerBackgroundGradient: string | null;
     evenRowBackgroundColor: string | null;

@@ -216,6 +216,12 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                     label={__("Cell Padding", "tableberg")}
                     showByDefault
                 />
+                <SpacingControl
+                    attrKey="cellSpacing"
+                    label={__("Cell Spacing", "tableberg")}
+                    sides={["horizontal", "vertical"]}
+                    showByDefault
+                />
             </InspectorControls>
 
             <InspectorControls group="border">

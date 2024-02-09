@@ -38,6 +38,10 @@
             "type": "object",
             "default": {}
         },
+        "cellSpacing": {
+            "type": "object",
+            "default": {}
+        },
         "enableTableHeader": {
             "type": "string",
             "default": ""
