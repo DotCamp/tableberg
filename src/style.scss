@@ -21,9 +21,6 @@ table.wp-block-tableberg-table {
         color: var(--tableberg-global-link-color);
     }
 
-    &.has-table-width {
-        max-width: var(--tableber-table-width) !important;
-    }
     &[id*="block-"] {
         &.justify-table-left {
             margin-left: 0 !important;
@@ -50,28 +47,6 @@ table.wp-block-tableberg-table {
         margin-left: auto !important;
         margin-right: 0 !important;
     }
-    .tableberg-row {
-        &:not(.tableberg-header):not(.tableberg-footer) {
-            &:nth-child(even) {
-                background: var(--tableberg-even-row-bg-color);
-            }
-            &:nth-child(odd) {
-                background: var(--tableberg-odd-row-bg-color);
-            }
-        }
-
-        &.tableberg-footer {
-            background: var(--tableberg-footer-bg-color);
-        }
-
-        &.tableberg-header {
-            background: var(--tableberg-header-bg-color);
-        }
-
-        > * {
-            height: var(--tableberg-row-height);
-        }
-    }
     &.has-inner-border {
         .wp-block-tableberg-cell {
             border-top: var(--tableberg-inner-border-top, 1px solid #000000);
@@ -85,5 +60,18 @@ table.wp-block-tableberg-table {
             );
             border-left: var(--tableberg-inner-border-left, 1px solid #000000);
         }
+    }
+
+    .tableberg-header,
+    .tableberg-footer {
+        font-weight: bold;
+    }
+
+    .tableberg-header {
+        background: --tableberg-header-bg-color;
+    }
+
+    .tableberg-footer {
+        background: --tableberg-footer-bg-color;
     }
 }

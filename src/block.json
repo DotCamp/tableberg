@@ -18,7 +18,15 @@
             "type": "number",
             "default": 2
         },
+        "cells" : {
+            "type": "number",
+            "default": 0
+        },
         "colWidths": {
+            "type": "array",
+            "default": []
+        },
+        "rowHeights": {
             "type": "array",
             "default": []
         },
@@ -35,12 +43,12 @@
             "default": {}
         },
         "enableTableHeader": {
-            "type": "boolean",
-            "default": false
+            "type": "string",
+            "default": ""
         },
         "enableTableFooter": {
-            "type": "boolean",
-            "default": false
+            "type": "string",
+            "default": ""
         },
         "tableWidth": {
             "type": "string",

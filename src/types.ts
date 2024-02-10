@@ -3,11 +3,13 @@ import { BorderTypes, PaddingTypes } from "./utils/common-types";
 export interface TablebergBlockAttrs {
     rows: number;
     cols: number;
+    cells: number;
     colWidths: string[];
+    rowHeights: string[];
     hasTableCreated: boolean;
     tableWidth: string;
-    enableTableHeader: boolean;
-    enableTableFooter: boolean;
+    enableTableHeader: "" | "converted" | "added";
+    enableTableFooter: "" | "converted" | "added";
     tableAlignment: "center" | "full" | "left" | "right" | "wide";
     cellPadding: PaddingTypes;
     cellSpacing: PaddingTypes;
