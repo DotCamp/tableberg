@@ -46,7 +46,7 @@ class Table
 
 		$cell_padding = Utils::get_spacing_css($attributes['cellPadding']);
 		$cellSpacing = $attributes['cellSpacing']??[];
-		$table_spacing = \Tableberg\Utils::get_spacing_css( $cellSpacing);
+		$table_spacing = Utils::get_spacing_css( $cellSpacing);
 		
 
 		$table_border_variables = Utils::get_border_variables_css($attributes['tableBorder'], 'table');
