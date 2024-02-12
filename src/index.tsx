@@ -10,7 +10,7 @@ import {
     store as blockEditorStore,
     BlockIcon,
 } from "@wordpress/block-editor";
-const editorStore = "core/editor";
+
 import {
     BlockEditProps,
     InnerBlockTemplate,
