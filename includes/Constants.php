@@ -15,7 +15,7 @@ namespace Tableberg;
  */
 class Constants {
 
-	const PLUGIN_VERSION = '0.2.1';
+	const PLUGIN_VERSION = '0.3.0';
 
 	const PLUGIN_NAME = 'tableberg';
 
