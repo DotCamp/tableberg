@@ -100,7 +100,7 @@ class HtmlUtils
      * @param int $offset
      * @return string new content with added classes
      */
-    public static function append_attr_value($content, $tag, $add, $attr, $offset = 0)
+    public static function append_attr_value($content, $tag, $add, $attr, $offset = 0, &$cursor = false)
     {
         $idx = strpos($content, '<' . $tag, $offset);
         if ($idx === false) {
@@ -110,6 +110,7 @@ class HtmlUtils
         if ($lidx === false) {
             return $content;
         }
+        $cursor = $lidx;
         $tagDes = substr($content, $idx, $lidx - $idx);
         $count = 0;
         $tagDes = preg_replace("/$attr=\"(.*)\"/", "$attr=\"$1" . $add . "\"", $tagDes, -1, $count);
