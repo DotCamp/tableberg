@@ -129,6 +129,37 @@ class Table
 		return $content;
 	}
 
+	private function even_odd_rows($attributes, $content)
+	{
+		$even_color = Utils::get_background_color($attributes, 'evenRowBackgroundColor', 'evenRowBackgroundGradient');
+		$odd_color = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
+
+		if (!$even_color && !$odd_color) {
+			return $content;
+		}
+
+		$even_color = "background: {$even_color} !important;";
+		$odd_color = "background: {$odd_color} !important;";
+
+		$cursor = 0;
+		$i = 1;
+		$end = $attributes['rows'];
+		if ($attributes['enableTableHeader']) {
+			$i = 2;
+			$content = HtmlUtils::append_attr_value($content, 'tr', '', 'style', 0, $cursor);
+		}
+		if ($attributes['enableTableFooter']) {
+			$end -= 1;
+		}
+
+
+		for (; $i <= $end; $i++) {
+			$content = HtmlUtils::append_attr_value($content, 'tr', $i % 2 ? $odd_color : $even_color, 'style', $cursor + 1, $cursor);
+		}
+
+		return $content;
+	}
+
 	/**
 	 * Renders the custom table block on the server.
 	 *
@@ -170,6 +201,7 @@ class Table
 		}
 
 		$content = self::setRowColSizes($content, $attributes['rowHeights'], $attributes['colWidths']);
+		$content = self::even_odd_rows($attributes, $content);
 
 		self::$lastRow = null;
 		return $content;
