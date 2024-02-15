@@ -1,6 +1,7 @@
 import { BorderTypes, PaddingTypes } from "./utils/common-types";
 
 export interface TablebergBlockAttrs {
+    version: string;
     rows: number;
     cols: number;
     cells: number;

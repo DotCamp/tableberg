@@ -10,7 +10,7 @@ import {
     store as blockEditorStore,
     BlockIcon,
 } from "@wordpress/block-editor";
-const editorStore = "core/editor";
+
 import {
     BlockEditProps,
     InnerBlockTemplate,
@@ -37,25 +37,55 @@ import { store as tbStore } from "./store";
 
 const ALLOWED_BLOCKS = ["tableberg/cell"];
 
+const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
+    const newCells: TablebergCellInstance[] = [];
+    const { cols } = tableBlock.attributes;
+    let lastRow = 0;
+    let lastCol = 0;
+    tableBlock.innerBlocks.forEach((row) => {
+        if (row.name !== "tableberg/row" && row.name !== "core/missing") {
+            console.log("[TableBerg] Invalid block encountered while recovering rows: ", row.name);
+            return;
+        }
+        row.innerBlocks.forEach((cell) => {
+            if (cell.name !== "tableberg/cell") {
+                console.log("[TableBerg] Invalid block encountered while recovering rows: ", cell.name);
+                return;
+            }
+            cell.attributes.row = lastRow;
+            cell.attributes.col = lastCol;
+            cell.attributes.tagName = "td";
+            cell.attributes.colspan = 1;
+            cell.attributes.rowspan = 1;
+
+            newCells.push(cell as TablebergCellInstance);
+            lastCol++;
+            if (lastCol % cols !== lastCol) {
+                lastRow++;
+                lastCol = 0;
+            }
+        });
+    });
+    if (lastCol !== 0) {
+        for (let col = lastCol; col < cols; col++) {
+            newCells.push(createBlocksFromInnerBlocksTemplate([
+                ["tableberg/cell"], 
+                {
+                    // @ts-ignore
+                    row: lastRow,
+                    col
+                }
+            ])[0] as TablebergCellInstance);
+        }
+    }
+    return [newCells, cols];
+};
+
 const useTableHeaderFooter = (
-    clientId: string,
+    tableBlock: BlockInstance<TablebergBlockAttrs>,
     actions: BlockEditorStoreActions
 ) => {
-    const { tableBlock, attrs } = useSelect(
-        (select) => {
-            const storeSelect = select(
-                blockEditorStore
-            ) as BlockEditorStoreSelectors;
-            const tableBlock = storeSelect.getBlock(
-                clientId
-            )! as BlockInstance<TablebergBlockAttrs>;
-            return {
-                tableBlock,
-                attrs: tableBlock.attributes,
-            };
-        },
-        [clientId]
-    );
+    const attrs = tableBlock.attributes;
 
     const prevHState = useRef(attrs.enableTableHeader);
 
@@ -207,48 +237,45 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const tbStoreActions = useDispatch(tbStore);
 
-    useTableHeaderFooter(clientId, storeActions);
+    const { tableBlock, selectedCells } = useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore
+        ) as BlockEditorStoreSelectors;
+        const tableBlock = storeSelect.getBlock(
+            clientId
+        )! as BlockInstance<TablebergBlockAttrs>;
+        const selectedCells = storeSelect.getMultiSelectedBlocks();
 
-    const { hasEditorRedo, fixUndoAddingRowsOrCols, selectedCells } = useSelect(
-        (select) => {
-            const storeSelect = select(
-                blockEditorStore
-            ) as BlockEditorStoreSelectors;
-            const fixUndoAddingRowsOrCols = () => {
-                const thisBlock: BlockInstance<TablebergBlockAttrs> =
-                    storeSelect.getBlock(clientId)! as any;
-
-                const cellBlocks: TablebergCellInstance[] =
-                    thisBlock.innerBlocks as any;
-
-                if (cellBlocks?.length === thisBlock.attributes.cells) {
-                    return;
-                }
-                //TODO: fix the undo problem
-            };
-
-            const selectedCells = storeSelect.getMultiSelectedBlocks();
-
-            return {
-                hasEditorRedo: (
-                    select(editorStore) as EditorStoreSelectors
-                ).hasEditorRedo(),
-                fixUndoAddingRowsOrCols,
-                selectedCells,
-            };
-        },
-        []
-    );
+        return {
+            tableBlock,
+            selectedCells,
+        };
+    }, []);
 
     useEffect(() => {
         if (selectedCells.length > 0) {
-            tbStoreActions.startMultiSelectNative(selectedCells as TablebergCellInstance[]);
+            tbStoreActions.startMultiSelectNative(
+                selectedCells as TablebergCellInstance[]
+            );
         }
     }, [selectedCells]);
 
-    if (hasEditorRedo) {
-        fixUndoAddingRowsOrCols();
-    }
+    useEffect(() => {
+        if (!tableBlock.attributes.version) {
+            const [newCells, cols] = getCellsOfRows(tableBlock);
+            const rows = newCells.length / cols;
+            storeActions.replaceInnerBlocks(clientId, newCells);
+            setAttributes({
+                version: metadata.version,
+                cells: newCells.length,
+                rows,
+                rowHeights: Array(rows).fill(""),
+                colWidths: Array(cols).fill("")
+            });
+        }
+    }, []);
+
+    useTableHeaderFooter(tableBlock, storeActions);
 
     const [colUpt, setColUpt] = useState(0);
 
@@ -295,6 +322,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         }
 
         setAttributes({
+            version: metadata.version,
             hasTableCreated: true,
             colWidths: Array(cols).fill(""),
             rowHeights: Array(rows).fill(""),
