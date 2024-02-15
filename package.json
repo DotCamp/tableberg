@@ -1,6 +1,6 @@
 {
     "name": "tableberg",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Table Block By Tableberg - Advanced Table Block for Block Editor",
     "author": "Dotcamp",
     "license": "GPL-2.0-or-later",
@@ -16,22 +16,28 @@
     "scripts": {
         "build": "wp-scripts build",
         "export": "wp-scripts build && wp-scripts plugin-zip",
-        "start": "wp-scripts start"
+        "start": "wp-scripts start",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test --ui"
     },
     "devDependencies": {
+        "@playwright/test": "^1.41.1",
         "@types/lodash": "^4.14.202",
+        "@types/node": "^20.11.13",
         "@types/react": "^18.2.14",
         "@types/react-dom": "^18.2.6",
         "@types/wordpress__block-editor": "^11.5.1",
         "@types/wordpress__blocks": "^12.5.4",
         "@types/wordpress__editor": "^13.6.7",
         "@wordpress/base-styles": "^4.39.0",
-        "@wordpress/scripts": "^26.6.0"
+        "@wordpress/scripts": "^26.6.0",
+        "dotenv": "^16.4.1",
+        "playwright": "^1.41.1"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-svg-core": "^6.3.0",
-        "@fortawesome/free-brands-svg-icons": "^6.3.0",
-        "@fortawesome/free-solid-svg-icons": "^6.3.0",
+        "@fortawesome/fontawesome-svg-core": "^6.5.1",
+        "@fortawesome/free-brands-svg-icons": "^6.5.1",
+        "@fortawesome/free-solid-svg-icons": "^6.5.1",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@wordpress/blob": "^3.37.0",
         "@wordpress/components": "^25.3.0",

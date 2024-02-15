@@ -2,6 +2,11 @@
 node_modules/
 .vscode
 build
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 # Files
 tableberg.zip
 .DS_Store
+.env

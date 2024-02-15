@@ -10,7 +10,8 @@ namespace Tableberg;
 /**
  * Handles default attributes of blocks.
  */
-class Defaults {
+class Defaults
+{
 
 	/**
 	 * Default Block Attributes
@@ -20,152 +21,164 @@ class Defaults {
 	public $default_values = array(
 		'tableberg/table' => array(
 			'attributes' => array(
-				'rows'                     => array(
-					'type'    => 'number',
+				'rows' => array(
+					'type' => 'number',
 					'default' => 2,
 				),
-				'cellPadding'              => array(
-					'type'    => 'array',
+				'cols' => array(
+					'type' => 'number',
+					'default' => 2,
+				),
+				'colWidths' => array(
+					'type' => 'array',
+					'default' => ['', ''],
+				),
+				'rowHeights' => array(
+					'type' => 'array',
+					'default' => ['', ''],
+				),
+				'hasTableCreated' => array(
+					'type' => 'boolean',
+					'default' => false,
+				),
+				'cellPadding' => array(
+					'type' => 'array',
 					'default' => array(),
 				),
-				'cols'                     => array(
-					'type'    => 'number',
-					'default' => 2,
-				),
-				'hasTableCreated'          => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'enableTableHeader'        => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'enableTableFooter'        => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'tableWidth'               => array(
-					'type'    => 'string',
+				'enableTableHeader' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'tableAlignment'           => array(
-					'type'    => 'string',
+				'enableTableFooter' => array(
+					'type' => 'string',
+					'default' => '',
+				),
+				'tableWidth' => array(
+					'type' => 'string',
+					'default' => '',
+				),
+				'tableAlignment' => array(
+					'type' => 'string',
 					'default' => 'center',
 				),
-				'headerBackgroundColor'    => array(
-					'type'    => 'string',
+				'headerBackgroundColor' => array(
+					'type' => 'string',
 					'default' => null,
 				),
-				'evenRowBackgroundColor'   => array(
-					'type'    => 'string',
+				'evenRowBackgroundColor' => array(
+					'type' => 'string',
 					'default' => null,
 				),
-				'oddRowBackgroundColor'    => array(
-					'type'    => 'string',
+				'oddRowBackgroundColor' => array(
+					'type' => 'string',
 					'default' => null,
 				),
 				'footerRowBackgroundColor' => array(
-					'type'    => 'string',
+					'type' => 'string',
 					'default' => null,
 				),
-				'tableBorder'              => array(
-					'type'    => 'object',
+				'tableBorder' => array(
+					'type' => 'object',
 					'default' => array(),
 				),
-				'innerBorder'              => array(
-					'type'    => 'object',
+				'innerBorder' => array(
+					'type' => 'object',
 					'default' => array(),
 				),
-				'enableInnerBorder'        => array(
-					'type'    => 'boolean',
+				'enableInnerBorder' => array(
+					'type' => 'boolean',
 					'default' => true,
 				),
 			),
 		),
-		'tableberg/cell'  => array(
+		'tableberg/cell' => array(
 			'attributes' => array(
-				'vAlign' => array(
-					'type'    => 'string',
-					'default' => 'center',
-				),
-			),
-		),
-		'tableberg/row'   => array(
-			'attributes' => array(
-				'tagName'  => array(
-					'type'    => 'string',
-					'default' => 'tr',
-				),
-				'isHeader' => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'isFooter' => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
+				'vAlign' => [
+					'type' => 'string',
+					'default' => 'center'
+				],
+				'tagName' => [
+					'type' => 'string',
+					'default' => 'td'
+				],
+				'rowspan' => [
+					'type' => 'number',
+					'default' => 1
+				],
+				'colspan' => [
+					'type' => 'number',
+					'default' => 1
+				],
+				'row' => [
+					'type' => 'number',
+					'default' => 0
+				],
+				'col' => [
+					'type' => 'number',
+					'default' => 0
+				]
 			),
 		),
 		'tableberg/image' => array(
 			'attributes' => array(
-				'media'           => array(
-					'type'    => 'object',
+				'media' => array(
+					'type' => 'object',
 					'default' => array(),
 				),
-				'height'          => array(
-					'type'    => 'string',
+				'height' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'width'           => array(
-					'type'    => 'string',
+				'width' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'alt'             => array(
-					'type'    => 'string',
+				'alt' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'aspectRatio'     => array(
-					'type'    => 'string',
+				'aspectRatio' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'scale'           => array(
-					'type'    => 'string',
+				'scale' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'sizeSlug'        => array(
-					'type'    => 'string',
+				'sizeSlug' => array(
+					'type' => 'string',
 					'default' => 'large',
 				),
-				'caption'         => array(
-					'type'    => 'string',
+				'caption' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'href'            => array(
-					'type'    => 'string',
+				'href' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'linkClass'       => array(
-					'type'    => 'string',
+				'linkClass' => array(
+					'type' => 'string',
 					'default' => '',
 				),
 				'linkDestination' => array(
-					'type'    => 'string',
+					'type' => 'string',
 					'default' => '',
 				),
-				'rel'             => array(
-					'type'    => 'string',
+				'rel' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'linkTarget'      => array(
-					'type'    => 'string',
+				'linkTarget' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'border'          => array(
-					'type'    => 'object',
+				'border' => array(
+					'type' => 'object',
 					'default' => array(),
 				),
-				'borderRadius'    => array(
-					'type'    => 'object',
+				'borderRadius' => array(
+					'type' => 'object',
 					'default' => array(),
 				),
 			),
@@ -178,7 +191,8 @@ class Defaults {
 	 *
 	 * @return void
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 	}
 
 	/**
@@ -187,7 +201,8 @@ class Defaults {
 	 * @param string $block_name block name.
 	 * @return array block attributes
 	 */
-	public function get_default_attributes( $block_name ) {
-		return $this->default_values[ $block_name ]['attributes'];
+	public function get_default_attributes($block_name)
+	{
+		return $this->default_values[$block_name]['attributes'];
 	}
 }

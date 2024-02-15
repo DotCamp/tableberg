@@ -24,6 +24,9 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Manager for version synchronization.
  */
+if (class_exists('Tableberg\Version_Sync_Manager')){
+	return;
+}
 class Version_Sync_Manager {
 	use Manager_Base_Trait;
 

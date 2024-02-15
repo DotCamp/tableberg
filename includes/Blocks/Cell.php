@@ -8,20 +8,22 @@
 namespace Tableberg\Blocks;
 
 use Tableberg;
-use \WP_HTML_Tag_Processor;
+use Tableberg\Utils\HtmlUtils;
 
 /**
  * Handle the block registration on server side and rendering.
  */
-class Cell {
+class Cell
+{
 
 	/**
 	 * Constructor
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		add_action( 'init', array( $this, 'block_registration' ) );
+	public function __construct()
+	{
+		add_action('init', array($this, 'block_registration'));
 	}
 
 	/**
@@ -29,31 +31,54 @@ class Cell {
 	 *
 	 * @param array    $attributes The block attributes.
 	 * @param string   $content    The block content.
-	 * @param WP_Block $block      The block object.
+	 * @param \WP_Block $block      The block object.
 	 * @return string Returns the HTML content for the custom cell block.
 	 */
-	public function render_tableberg_cell_block( $attributes, $content, $block ) {
-		$vertical_align = $attributes['vAlign'] ?? '';
+	public function render_tableberg_cell_block($attributes, $content, $block)
+	{
+		$pre = '';
+		$post = '';
+		if (is_null(Table::$lastRow)) {
+			Table::$lastRow = $attributes['row'];
+			$pre = '<tr>';
+		} else if (Table::$lastRow != $attributes['row']) {
+			$pre = '</tr><tr>';
+			Table::$lastRow = $attributes['row'];
+		}
+		$colspan = isset($attributes['colspan']) ? $attributes['colspan'] : 1;
+		$rowspan = isset($attributes['rowspan']) ? $attributes['rowspan'] : 1;
 
-		$td = new WP_HTML_Tag_Processor( $content );
+		$attrs_str = '';
+		$classes = 'tableberg-v-align-'.$attributes['vAlign'];
 
-		if ( $td->next_tag( 'td' ) && $vertical_align ) {
-			$td->add_class( "align-v-{$vertical_align}" );
+		// Add colspan attribute if it's greater than 1
+		if ($colspan > 1) {
+			$attrs_str .= ' colspan="' . esc_attr($colspan) . '"';
 		}
 
-		return $td;
+		// Add rowspan attribute if it's greater than 1
+		if ($rowspan > 1) {
+			$attrs_str .= ' rowspan="' . esc_attr($rowspan) . '"';
+		}
+
+		$content = HtmlUtils::append_attr_value($content, 'td', ' '.$classes, 'class');
+
+		$content = HtmlUtils::add_attrs_to_tag($content, 'td', $attrs_str);
+
+		return $pre . $content . $post;
 	}
 
 	/**
 	 * Register the block.
 	 */
-	public function block_registration() {
+	public function block_registration()
+	{
 		$defaults = new \Tableberg\Defaults();
 		register_block_type(
 			TABLEBERG_DIR_PATH . 'build/cell/block.json',
 			array(
-				'attributes'      => $defaults->get_default_attributes( 'tableberg/cell' ),
-				'render_callback' => array( $this, 'render_tableberg_cell_block' ),
+				'attributes' => $defaults->get_default_attributes('tableberg/cell'),
+				'render_callback' => array($this, 'render_tableberg_cell_block'),
 			)
 		);
 	}

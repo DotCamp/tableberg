@@ -4,7 +4,7 @@
  * Plugin Name:       Tableberg
  * Plugin URI:        https://tableberg.com/
  * Description:       Table Block by Tableberg - Create Better Tables With Block Editor
- * Version:           0.2.0
+ * Version:           0.3.0
  * Requires at least: 6.1
  * Requires PHP:      7.0
  * Author:            Tableberg
@@ -88,7 +88,6 @@ if (!class_exists('Tableberg')) {
 			new Tableberg\Blocks\Image();
 			new Tableberg\Blocks\Table();
 			new Tableberg\Blocks\Cell();
-			new Tableberg\Blocks\Row();
 			register_activation_hook(__FILE__, array($this, 'activate_plugin'));
 			register_deactivation_hook(__FILE__, array($this, 'deactivate_plugin'));
 		}

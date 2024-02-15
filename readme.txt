@@ -5,7 +5,7 @@ Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.4
 Requires PHP: 7.0
-Stable tag: 0.2.0
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,17 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 1. Core Table Block vs Tableberg Block
 
 == Changelog ==
+
+= 0.3.0 =
+
+* FIX: Adding non-cell blocks to table block breaks the layout.
+* IMPROVE: Row block removed. Cell blocks are added directly to tableberg table block.
+* IMPOVE: Multiple cells can be merged now.
+* NEW: Add cell spacing functionality.
+
+= 0.2.1 =
+
+* FIX: (Button Block) Fixed PHP errors on frontend.
 
 = 0.2.0 =
 

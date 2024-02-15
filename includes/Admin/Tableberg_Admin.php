@@ -152,7 +152,7 @@ class Tableberg_Admin {
 			),
 		);
 
-		$data = array_merge( $data, Tableberg\Utils::welcome_page() );
+		$data = array_merge( $data, Tableberg\Utils\Utils::welcome_page() );
 		return $data;
 	}
 	/**

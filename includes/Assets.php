@@ -1,9 +1,11 @@
 <?php
+
 /**
  * The file register assets for the plugin
  *
  *  @package Tableberg
  */
+
 namespace Tableberg;
 
 /**
@@ -28,21 +30,21 @@ class Assets {
 				'wp-i18n',
 				'wp-primitives',
 			),
-			'0.2.0',
+			'0.3.0',
 			false
 		);
 		wp_register_style(
 			'tableberg-editor-style',
 			TABLEBERG_URL . 'build/tableberg-editor-style.css',
 			array(),
-			'0.2.0',
+			'0.3.0',
 			false
 		);
 		wp_register_style(
 			'tableberg-style',
 			TABLEBERG_URL . 'build/tableberg-frontend-style.css',
 			array(),
-			'0.2.0',
+			'0.3.0',
 			false
 		);
 	}
@@ -64,16 +66,16 @@ class Assets {
 				'wp-i18n',
 				'wp-primitives',
 			),
-			'0.2.0',
+			'0.3.0',
 			true
 		);
-		$frontend_script_data = apply_filters( 'tableberg/filter/admin_settings_menu_data', array() );
-		wp_localize_script( 'tableberg-admin-script', 'tablebergAdminMenuData', $frontend_script_data );
+		$frontend_script_data = apply_filters('tableberg/filter/admin_settings_menu_data', array());
+		wp_localize_script('tableberg-admin-script', 'tablebergAdminMenuData', $frontend_script_data);
 		wp_enqueue_style(
 			'tableberg-admin-style',
 			TABLEBERG_URL . 'build/tableberg-admin-style.css',
 			array(),
-			'0.2.0',
+			'0.3.0',
 			'all'
 		);
 	}
