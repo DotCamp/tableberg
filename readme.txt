@@ -35,7 +35,15 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 
 == Changelog ==
 
+= 0.3.0 =
+
+* FIX: Adding non-cell blocks to table block breaks the layout.
+* IMPROVE: Row block removed. Cell blocks are added directly to tableberg table block.
+* IMPOVE: Multiple cells can be merged now.
+* NEW: Add cell spacing functionality.
+
 = 0.2.1 =
+
 * FIX: (Button Block) Fixed PHP errors on frontend.
 
 = 0.2.0 =
