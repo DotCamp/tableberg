@@ -6,9 +6,7 @@
  */
 
 namespace Tableberg;
-
-use Tableberg\Utils;
-use Tableberg;
+use Tableberg\Utils\Utils;
 
 /**
  * Fired during plugin activation.
@@ -32,8 +30,6 @@ class Activator {
 
 		set_transient( '_welcome_redirect_tableberg', true, 60 );
 
-		require_once TABLEBERG_DIR_PATH . 'includes/Utils.php';
-
 		$individual_control = get_option( 'tableberg_individual_control', false );
 		$block_properties   = get_option( 'tableberg_block_properties', false );
 		$global_control     = get_option( 'tableberg_global_control', false );
@@ -49,7 +45,7 @@ class Activator {
 		}
 
 		if ( ! get_option( 'tableberg_version' ) ) {
-			add_option( 'tableberg_version', Tableberg\Constants::plugin_version() );
+			add_option( 'tableberg_version', Constants::plugin_version() );
 		}
 	}
 

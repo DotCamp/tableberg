@@ -7,7 +7,6 @@
 
 namespace Tableberg\Blocks;
 
-use Tableberg;
 use Tableberg\Utils\Utils;
 
 /**
@@ -32,7 +31,7 @@ class Button {
 	 */
 	public function get_border_style( $border_style ) {
 		if ( ! is_array( $border_style ) ) {
-			return;
+			return "";
 		}
 
 		$radius = $border_style['radius'];
@@ -46,6 +45,7 @@ class Button {
 				"border-bottom-right-radius: {$border_style['radius']['bottomRight']};" .
 				"border-top-right-radius: {$border_style['radius']['topRight']};";
 		}
+		return "";
 	}
 	/**
 	 * Get block styles.
@@ -102,10 +102,10 @@ class Button {
 		$classes = join(
 			' ',
 			array(
-				! Tableberg\Utils::is_value_empty( $attributes['backgroundColor'] ) || ! Tableberg\Utils::is_value_empty( $attributes['backgroundGradient'] ) ? 'has-background-color' : '',
-				! Tableberg\Utils::is_value_empty( $attributes['backgroundHoverColor'] ) || ! Tableberg\Utils::is_value_empty( $attributes['backgroundHoverGradient'] ) ? 'has-hover-background-color' : '',
-				! Tableberg\Utils::is_value_empty( $attributes['textHoverColor'] ) ? 'has-hover-text-color' : '',
-				! Tableberg\Utils::is_value_empty( $attributes['textColor'] ) ? 'has-text-color' : '',
+				! Utils::is_value_empty( $attributes['backgroundColor'] ) || ! Utils::is_value_empty( $attributes['backgroundGradient'] ) ? 'has-background-color' : '',
+				! Utils::is_value_empty( $attributes['backgroundHoverColor'] ) || ! Utils::is_value_empty( $attributes['backgroundHoverGradient'] ) ? 'has-hover-background-color' : '',
+				! Utils::is_value_empty( $attributes['textHoverColor'] ) ? 'has-hover-text-color' : '',
+				! Utils::is_value_empty( $attributes['textColor'] ) ? 'has-text-color' : '',
 			)
 		);
 		return $classes;
