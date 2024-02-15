@@ -339,6 +339,12 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }
 
     if (!attributes.hasTableCreated) {
+        if (attributes.rows < 1 || attributes.cols > 1) {
+            setAttributes({
+                rows: metadata.attributes.rows.default,
+                cols: metadata.attributes.cols.default,
+            });
+        }
         return (
             <div {...innerBlocksProps}>
                 <Placeholder
