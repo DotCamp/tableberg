@@ -44,12 +44,18 @@ const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
     let lastCol = 0;
     tableBlock.innerBlocks.forEach((row) => {
         if (row.name !== "tableberg/row" && row.name !== "core/missing") {
-            console.log("[TableBerg] Invalid block encountered while recovering rows: ", row.name);
+            console.log(
+                "[TableBerg] Invalid block encountered while recovering rows: ",
+                row.name
+            );
             return;
         }
         row.innerBlocks.forEach((cell) => {
             if (cell.name !== "tableberg/cell") {
-                console.log("[TableBerg] Invalid block encountered while recovering rows: ", cell.name);
+                console.log(
+                    "[TableBerg] Invalid block encountered while recovering rows: ",
+                    cell.name
+                );
                 return;
             }
             cell.attributes.row = lastRow;
@@ -68,14 +74,16 @@ const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
     });
     if (lastCol !== 0) {
         for (let col = lastCol; col < cols; col++) {
-            newCells.push(createBlocksFromInnerBlocksTemplate([
-                ["tableberg/cell"], 
-                {
-                    // @ts-ignore
-                    row: lastRow,
-                    col
-                }
-            ])[0] as TablebergCellInstance);
+            newCells.push(
+                createBlocksFromInnerBlocksTemplate([
+                    ["tableberg/cell"],
+                    {
+                        // @ts-ignore
+                        row: lastRow,
+                        col,
+                    },
+                ])[0] as TablebergCellInstance
+            );
         }
     }
     return [newCells, cols];
@@ -270,7 +278,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 cells: newCells.length,
                 rows,
                 rowHeights: Array(rows).fill(""),
-                colWidths: Array(cols).fill("")
+                colWidths: Array(cols).fill(""),
             });
         }
     }, []);
@@ -339,9 +347,20 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }
 
     if (!attributes.hasTableCreated) {
-        if (attributes.rows < 1 || attributes.cols > 1) {
+        /**
+         * This shouln't be needed
+         * Problem: default value of row is not set correctly
+         * TODO: Figure out if it's WP bug or us thing
+         * Added check for cols as cols maybe 0 too
+         */
+        if (attributes.rows < 1) {
             setAttributes({
                 rows: metadata.attributes.rows.default,
+            });
+        }
+
+        if (attributes.cols < 1) {
+            setAttributes({
                 cols: metadata.attributes.cols.default,
             });
         }
