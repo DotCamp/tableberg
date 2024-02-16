@@ -1,0 +1,29 @@
+version: '3'
+services:
+  db:
+    container_name: tableberg_test_db
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "dotcamp"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  wordpress:
+    container_name: tableberg_test
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    depends_on:
+      db: 
+        condition: service_healthy
+    ports:
+      - "8000:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: 1234
+      WORDPRESS_DB_NAME: dotcamp
