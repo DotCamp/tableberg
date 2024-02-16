@@ -413,22 +413,22 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }
 
     const rowTemplate = createArray(attributes.rows).map((i) => {
-        let backgroundColor;
+        let background;
         let className = "";
         if (i % 2 === 0) {
-            backgroundColor =
+            background =
                 attributes.oddRowBackgroundColor ??
                 attributes.oddRowBackgroundGradient ??
                 undefined;
         } else {
-            backgroundColor =
+            background =
                 attributes.evenRowBackgroundColor ??
                 attributes.evenRowBackgroundGradient ??
                 undefined;
         }
 
         if (i === 0 && attributes.enableTableHeader) {
-            backgroundColor =
+            background =
                 attributes.headerBackgroundColor ??
                 attributes.headerBackgroundGradient ??
                 undefined;
@@ -436,7 +436,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         }
 
         if (i + 1 === attributes.rows && attributes.enableTableFooter) {
-            backgroundColor =
+            background =
                 attributes.footerBackgroundColor ??
                 attributes.footerBackgroundGradient ??
                 undefined;
@@ -448,7 +448,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 id={`tableberg-${clientId}-row-${i}`}
                 style={{
                     height: attributes.rowHeights[i],
-                    backgroundColor,
+                    background,
                 }}
                 className={className}
             ></tr>
