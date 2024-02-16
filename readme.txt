@@ -5,7 +5,7 @@ Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.4
 Requires PHP: 7.0
-Stable tag: 0.3.1
+Stable tag: 0.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,10 +35,14 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 
 == Changelog ==
 
+= 0.3.2 =
+
+* FIX: Default value of column and row in blank table creator dialog
+* FIX: Row color problem
+
 = 0.3.1 =
 
 * HOTFIX: Fixed the issue where plugin could not be activated.
-
 
 = 0.3.0 =
 

@@ -44,12 +44,18 @@ const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
     let lastCol = 0;
     tableBlock.innerBlocks.forEach((row) => {
         if (row.name !== "tableberg/row" && row.name !== "core/missing") {
-            console.log("[TableBerg] Invalid block encountered while recovering rows: ", row.name);
+            console.log(
+                "[TableBerg] Invalid block encountered while recovering rows: ",
+                row.name
+            );
             return;
         }
         row.innerBlocks.forEach((cell) => {
             if (cell.name !== "tableberg/cell") {
-                console.log("[TableBerg] Invalid block encountered while recovering rows: ", cell.name);
+                console.log(
+                    "[TableBerg] Invalid block encountered while recovering rows: ",
+                    cell.name
+                );
                 return;
             }
             cell.attributes.row = lastRow;
@@ -68,14 +74,16 @@ const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
     });
     if (lastCol !== 0) {
         for (let col = lastCol; col < cols; col++) {
-            newCells.push(createBlocksFromInnerBlocksTemplate([
-                ["tableberg/cell"], 
-                {
-                    // @ts-ignore
-                    row: lastRow,
-                    col
-                }
-            ])[0] as TablebergCellInstance);
+            newCells.push(
+                createBlocksFromInnerBlocksTemplate([
+                    ["tableberg/cell"],
+                    {
+                        // @ts-ignore
+                        row: lastRow,
+                        col,
+                    },
+                ])[0] as TablebergCellInstance
+            );
         }
     }
     return [newCells, cols];
@@ -270,7 +278,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 cells: newCells.length,
                 rows,
                 rowHeights: Array(rows).fill(""),
-                colWidths: Array(cols).fill("")
+                colWidths: Array(cols).fill(""),
             });
         }
     }, []);
@@ -339,6 +347,23 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }
 
     if (!attributes.hasTableCreated) {
+        /**
+         * This shouln't be needed
+         * Problem: default value of row is not set correctly
+         * TODO: Figure out if it's WP bug or us thing
+         * Added check for cols as cols maybe 0 too
+         */
+        if (attributes.rows < 1) {
+            setAttributes({
+                rows: metadata.attributes.rows.default,
+            });
+        }
+
+        if (attributes.cols < 1) {
+            setAttributes({
+                cols: metadata.attributes.cols.default,
+            });
+        }
         return (
             <div {...innerBlocksProps}>
                 <Placeholder
@@ -388,22 +413,22 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }
 
     const rowTemplate = createArray(attributes.rows).map((i) => {
-        let backgroundColor;
+        let background;
         let className = "";
         if (i % 2 === 0) {
-            backgroundColor =
+            background =
                 attributes.oddRowBackgroundColor ??
                 attributes.oddRowBackgroundGradient ??
                 undefined;
         } else {
-            backgroundColor =
+            background =
                 attributes.evenRowBackgroundColor ??
                 attributes.evenRowBackgroundGradient ??
                 undefined;
         }
 
         if (i === 0 && attributes.enableTableHeader) {
-            backgroundColor =
+            background =
                 attributes.headerBackgroundColor ??
                 attributes.headerBackgroundGradient ??
                 undefined;
@@ -411,7 +436,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         }
 
         if (i + 1 === attributes.rows && attributes.enableTableFooter) {
-            backgroundColor =
+            background =
                 attributes.footerBackgroundColor ??
                 attributes.footerBackgroundGradient ??
                 undefined;
@@ -423,7 +448,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 id={`tableberg-${clientId}-row-${i}`}
                 style={{
                     height: attributes.rowHeights[i],
-                    backgroundColor,
+                    background,
                 }}
                 className={className}
             ></tr>
