@@ -17,6 +17,7 @@ RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh
 
 
 COPY tableberg.zip /tmp/
+COPY docker/init.sh /tmp/
 
 
 RUN mkdir -p /var/www/html/wp-content/plugins/tableberg \
@@ -24,18 +25,6 @@ RUN mkdir -p /var/www/html/wp-content/plugins/tableberg \
 
 
 RUN sed '$d' /usr/local/bin/docker-entrypoint.sh > /tmp/docker-entrypoint.sh \
-    && echo ' \
-    \necho "Installing tableberg..."\
-    \nwp core install --path=/var/www/html \
-     --url="http://localhost:8000" \
-     --title="Tableberg Test - Docker" \
-     --admin_user="admin" \
-     --admin_email="admin@dotcamp.com" \
-     --admin_password="admin"  \
-     --allow-root \
-    \nwp plugin activate tableberg --allow-root \
-    \nexec "$@"\
-    ' \
-    >> /tmp/docker-entrypoint.sh \
+    && cat /tmp/init.sh >> /tmp/docker-entrypoint.sh \
     && mv /tmp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
