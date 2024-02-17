@@ -33,6 +33,7 @@ RUN sed '$d' /usr/local/bin/docker-entrypoint.sh > /tmp/docker-entrypoint.sh \
      --admin_email="admin@dotcamp.com" \
      --admin_password="admin"  \
      --allow-root \
+    \nwp plugin activate tableberg --allow-root \
     \nexec "$@"\
     ' \
     >> /tmp/docker-entrypoint.sh \
