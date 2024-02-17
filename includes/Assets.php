@@ -30,21 +30,21 @@ class Assets {
 				'wp-i18n',
 				'wp-primitives',
 			),
-			'0.3.1',
+			Constants::plugin_version(),
 			false
 		);
 		wp_register_style(
 			'tableberg-editor-style',
 			TABLEBERG_URL . 'build/tableberg-editor-style.css',
 			array(),
-			'0.3.1',
+			Constants::plugin_version(),
 			false
 		);
 		wp_register_style(
 			'tableberg-style',
 			TABLEBERG_URL . 'build/tableberg-frontend-style.css',
 			array(),
-			'0.3.1',
+			Constants::plugin_version(),
 			false
 		);
 	}
@@ -66,7 +66,7 @@ class Assets {
 				'wp-i18n',
 				'wp-primitives',
 			),
-			'0.3.1',
+			Constants::plugin_version(),
 			true
 		);
 		$frontend_script_data = apply_filters('tableberg/filter/admin_settings_menu_data', array());
@@ -75,7 +75,7 @@ class Assets {
 			'tableberg-admin-style',
 			TABLEBERG_URL . 'build/tableberg-admin-style.css',
 			array(),
-			'0.3.1',
+			Constants::plugin_version(),
 			'all'
 		);
 	}
