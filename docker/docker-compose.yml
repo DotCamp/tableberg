@@ -3,6 +3,8 @@ services:
   db:
     container_name: tableberg_test_db
     image: mariadb:latest
+    volumes:
+      - db_data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: "1234"
       MYSQL_DATABASE: "dotcamp"
@@ -27,3 +29,5 @@ services:
       WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: 1234
       WORDPRESS_DB_NAME: dotcamp
+volumes:
+  db_data:
