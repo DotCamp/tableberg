@@ -30,6 +30,7 @@
         "@types/wordpress__blocks": "^12.5.4",
         "@types/wordpress__editor": "^13.6.7",
         "@wordpress/base-styles": "^4.39.0",
+        "@wordpress/element": "^5.28.0",
         "@wordpress/scripts": "^26.6.0",
         "dotenv": "^16.4.1",
         "playwright": "^1.41.1"

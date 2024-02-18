@@ -1,5 +1,6 @@
 import { createReduxStore, register } from "@wordpress/data";
 import { BlockInstance } from "@wordpress/blocks";
+import { createContext } from "@wordpress/element";
 import { TablebergCellBlockAttrs, TablebergCellInstance } from "../cell";
 
 interface ITBStoreState {
@@ -196,3 +197,6 @@ export const store = createReduxStore("tableberg-store", {
 });
 
 register(store);
+
+
+export const RootElContext = createContext<HTMLElement | null>(null);

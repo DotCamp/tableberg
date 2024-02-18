@@ -29,7 +29,7 @@ import { TablebergBlockAttrs } from "./types";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { TablebergCellInstance } from "./cell";
-import { store as tbStore } from "./store";
+import { store as tbStore, RootElContext } from "./store";
 import { PrimaryTable } from "./table";
 
 const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
@@ -216,9 +216,9 @@ const useTableHeaderFooter = (
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
-    const tableRef = useRef<HTMLTableElement>();
+    const rootRef = useRef<HTMLTableElement>();
     const blockProps = useBlockProps({
-        ref: tableRef,
+        ref: rootRef,
         className: "wp-block-tableberg-wrapper",
     });
 
@@ -270,7 +270,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     useSelect(
         (select) => {
-            tableRef.current?.addEventListener(
+            rootRef.current?.addEventListener(
                 "keydown",
                 (evt: KeyboardEvent) => {
                     if (evt.key !== "Backspace" && evt.key !== "Delete") {
@@ -291,7 +291,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 }
             );
         },
-        [tableRef.current]
+        [rootRef.current]
     );
 
     function onCreateTable(event: FormEvent) {
@@ -392,7 +392,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     return (
         <>
             <div {...blockProps}>
-                <PrimaryTable {...props} />
+                <RootElContext.Provider value={rootRef.current!}>
+                    <PrimaryTable {...props} />
+                </RootElContext.Provider>
             </div>
             <TablebergControls {...props} />
         </>

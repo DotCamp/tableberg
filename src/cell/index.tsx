@@ -24,7 +24,7 @@ import {
     table,
 } from "@wordpress/icons";
 
-import { store as tbStore } from "../store";
+import { store as tbStore, RootElContext } from "../store";
 
 import "./style.scss";
 import "./editor.scss";
@@ -555,7 +555,12 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         {
             icon: tableRowAfter,
             title: "Insert row after",
-            onClick: () => addRow(tableBlock, storeActions, attributes.row + attributes.rowspan),
+            onClick: () =>
+                addRow(
+                    tableBlock,
+                    storeActions,
+                    attributes.row + attributes.rowspan
+                ),
         },
         {
             icon: tableColumnBefore,
@@ -592,19 +597,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     const TagName = attributes.tagName ?? "td";
 
-    const [targetEl, setTargetEl] = useState<Element>();
-
-    useEffect(() => {
-        const iframe = document.querySelector<HTMLIFrameElement>(
-            'iframe[name="editor-canvas"]'
-        );
-        const id = `#tableberg-${tableBlockId}-row-${attributes.row}`;
-        const el = (iframe?.contentWindow?.document || document).querySelector(
-            id
-        )!;
-        el && setTargetEl(el);
-    }, [attributes.row]);
-
     const setVAlign = (newValue: "bottom" | "center" | "top") => {
         setAttributes({ vAlign: newValue });
     };
@@ -626,22 +618,27 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     return (
         <>
-            {targetEl ? (
-                createPortal(
-                    <TagName
-                        {...innerBlocksProps}
-                        rowSpan={attributes.rowspan}
-                        colSpan={attributes.colspan}
-                    />,
-                    targetEl
-                )
-            ) : (
-                <TagName
-                    {...innerBlocksProps}
-                    rowSpan={attributes.rowspan}
-                    colSpan={attributes.colspan}
-                />
-            )}
+            <RootElContext.Consumer>
+                {(value: HTMLElement | null) => {
+                    const targetEl = value?.firstElementChild?.children?.[attributes.row];
+                    return targetEl ? (
+                        createPortal(
+                            <TagName
+                                {...innerBlocksProps}
+                                rowSpan={attributes.rowspan}
+                                colSpan={attributes.colspan}
+                            />,
+                            targetEl
+                        )
+                    ) : (
+                        <TagName
+                            {...innerBlocksProps}
+                            rowSpan={attributes.rowspan}
+                            colSpan={attributes.colspan}
+                        />
+                    )
+                }}
+            </RootElContext.Consumer>
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
                     value={attributes.vAlign}
