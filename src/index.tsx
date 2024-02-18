@@ -23,14 +23,20 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useEffect, useRef } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { TablebergCellInstance } from "./cell";
-import { store as tbStore, RootElContext } from "./store";
+import { store as tbStore, TablebergCtx } from "./store";
 import { PrimaryTable } from "./table";
+import StackRowTable from "./table/StackRowTable";
+
+const DESKTOP_MIN_WIDTH = 1024;
+const TABLET_MIN_WIDTH = 720;
+
+type TableTypes = "stack" | "primary";
 
 const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
     const newCells: TablebergCellInstance[] = [];
@@ -214,6 +220,38 @@ const useTableHeaderFooter = (
     }, [attrs.enableTableFooter]);
 };
 
+const useResponsiveDetector = (
+    responsive: TablebergBlockAttrs["responsive"]
+): [TableTypes, any] =>  {
+    const [tableType, setType] = useState<TableTypes>("primary");
+    const [cellTag, setCellTag] = useState<"" | "div">("");
+    const prevTableType = useRef("primary");
+
+    useEffect(() => {
+        const resizeEvt = () => {
+            let tableType = prevTableType.current;
+            if (responsive.type === "stack") {
+                tableType = "primary";
+                if (window.innerWidth < DESKTOP_MIN_WIDTH) {
+                    tableType = "stack";
+                }
+            }
+            if (prevTableType.current !== tableType) {
+                prevTableType.current = tableType;
+                setType(tableType as any);
+                setCellTag(tableType === "primary" ? "":"div");
+            }
+        };
+
+        window.addEventListener("resize", resizeEvt);
+        return () => {
+            window.removeEventListener("resize", resizeEvt);
+        };
+    }, [responsive]);
+
+    return [tableType, cellTag];
+};
+
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
     const rootRef = useRef<HTMLTableElement>();
@@ -267,6 +305,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, []);
 
     useTableHeaderFooter(tableBlock, storeActions);
+    const [tableTag, cellTag] = useResponsiveDetector(attributes.responsive);
 
     useSelect(
         (select) => {
@@ -392,9 +431,17 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     return (
         <>
             <div {...blockProps}>
-                <RootElContext.Provider value={rootRef.current!}>
-                    <PrimaryTable {...props} />
-                </RootElContext.Provider>
+                <TablebergCtx.Provider
+                    value={{
+                        rootEl: rootRef.current!,
+                        cellTag: cellTag as any,
+                    }}
+                >
+                    {
+                        (tableTag === "primary" && <PrimaryTable {...props}/> ) ||
+                        (tableTag === "stack" && <StackRowTable {...props}/>)
+                    }
+                </TablebergCtx.Provider>
             </div>
             <TablebergControls {...props} />
         </>

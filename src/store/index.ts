@@ -199,4 +199,9 @@ export const store = createReduxStore("tableberg-store", {
 register(store);
 
 
-export const RootElContext = createContext<HTMLElement | null>(null);
+interface TablebergCtx {
+    rootEl?: HTMLElement;
+    cellTag?: "div";
+}
+
+export const TablebergCtx = createContext<TablebergCtx>({});

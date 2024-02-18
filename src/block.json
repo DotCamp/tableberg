@@ -121,6 +121,12 @@
         "linkColor": {
             "type": "string",
             "default": ""
+        },
+        "responsive" : {
+            "type": "object",
+            "default": {
+                "enabled": true
+            }
         }
     },
     "example": {

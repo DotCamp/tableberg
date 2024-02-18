@@ -24,13 +24,13 @@ import {
     table,
 } from "@wordpress/icons";
 
-import { store as tbStore, RootElContext } from "../store";
+import { store as tbStore, TablebergCtx } from "../store";
 
 import "./style.scss";
 import "./editor.scss";
 
 import metadata from "./block.json";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import CellControls from "./controls";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
@@ -618,9 +618,14 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     return (
         <>
-            <RootElContext.Consumer>
-                {(value: HTMLElement | null) => {
-                    const targetEl = value?.firstElementChild?.children?.[attributes.row];
+            <TablebergCtx.Consumer>
+                {({ rootEl, cellTag }) => {
+                    const TagName = cellTag || attributes.tagName || "td";
+                    const targetEl = cellTag
+                        ? null
+                        : rootEl?.firstElementChild?.children?.[
+                              attributes.row + 1
+                          ];
                     return targetEl ? (
                         createPortal(
                             <TagName
@@ -636,9 +641,9 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                             rowSpan={attributes.rowspan}
                             colSpan={attributes.colspan}
                         />
-                    )
+                    );
                 }}
-            </RootElContext.Consumer>
+            </TablebergCtx.Consumer>
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
                     value={attributes.vAlign}

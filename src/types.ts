@@ -1,5 +1,16 @@
 import { BorderTypes, PaddingTypes } from "./utils/common-types";
 
+interface BaseResponsive {
+    target: "window" | "container";
+    enabled: boolean;
+    type?: "" | "stack";
+}
+interface ResponsiveStack extends BaseResponsive {
+    type: "stack";
+    cellStack: "column" | "row";
+    stackCount: number;
+}
+
 export interface TablebergBlockAttrs {
     version: string;
     rows: number;
@@ -29,6 +40,7 @@ export interface TablebergBlockAttrs {
     fontColor: string;
     fontSize: string;
     linkColor: string;
+    responsive: BaseResponsive | ResponsiveStack
 }
 
 export { PaddingTypes } from "./utils/common-types";

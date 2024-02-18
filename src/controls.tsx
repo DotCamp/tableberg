@@ -9,7 +9,6 @@ import {
     BlockControls,
     BlockAlignmentToolbar,
     FontSizePicker,
-    __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
@@ -98,7 +97,6 @@ const FOOTER_OPTIONS = [
 function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
     const { enableInnerBorder, tableAlignment } = attributes;
-    const colorGradientSettings = useMultipleOriginColorsAndGradients();
 
     const blockAlignChange = (newValue: "left" | "right" | "center") => {
         setAttributes({ tableAlignment: newValue });
@@ -262,6 +260,21 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                     showBorder={attributes.enableInnerBorder}
                     attrBorderKey="innerBorder"
                     borderLabel={__("Inner Border Size", "tableberg")}
+                />
+            </InspectorControls>
+            <InspectorControls group="settings">
+                <ToggleControl
+                    label={__("Enable Responsiveness", "tableberg")}
+                    checked={!!attributes?.responsive?.enabled}
+                    onChange={() =>
+                        setAttributes({
+                            responsive: {
+                                ...(attributes?.responsive || {}),
+                                enabled: !attributes?.responsive?.enabled,
+                                type: "stack",
+                            },
+                        })
+                    }
                 />
             </InspectorControls>
             <BlockControls>
