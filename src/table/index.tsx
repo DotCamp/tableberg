@@ -7,16 +7,16 @@ import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
 
-const ALLOWED_BLOCKS = ["tableberg/cell"];
+export const ALLOWED_BLOCKS = ["tableberg/cell"];
 
 export const PrimaryTable = (props: BlockEditProps<TablebergBlockAttrs>) => {
-    const { attributes, clientId } = props;
+    const { attributes } = props;
     const blockProps = {
         style: {
             ...getStyles(props.attributes),
             maxWidth: props.attributes.tableWidth,
         },
-        className: classNames(getStyleClass(props.attributes), 'scroll-x'),
+        className: classNames(getStyleClass(props.attributes), "scroll-x"),
     } as Record<string, any>;
 
     const innerBlocksProps = useInnerBlocksProps({
@@ -59,7 +59,6 @@ export const PrimaryTable = (props: BlockEditProps<TablebergBlockAttrs>) => {
 
         return (
             <tr
-                id={`tableberg-${clientId}-row-${i}`}
                 style={{
                     height: attributes.rowHeights[i],
                     background,

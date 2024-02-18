@@ -1,11 +1,11 @@
 import { BorderTypes, PaddingTypes } from "./utils/common-types";
 
-interface BaseResponsive {
+export interface BaseResponsive {
     target: "window" | "container";
     enabled: boolean;
     type?: "" | "stack";
 }
-interface ResponsiveStack extends BaseResponsive {
+export interface ResponsiveStack extends BaseResponsive {
     type: "stack";
     cellStack: "column" | "row";
     stackCount: number;

@@ -32,6 +32,10 @@
         "col": {
             "type": "number",
             "default": 0
+        },
+        "responsiveTarget": {
+            "type": "string",
+            "default": ""
         }
     },
     "supports": {

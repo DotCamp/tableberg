@@ -18,6 +18,7 @@ import {
     registerBlockType,
     BlockInstance,
 } from "@wordpress/blocks";
+import { createContext } from "@wordpress/element";
 /**
  * Internal Imports
  */
@@ -29,9 +30,17 @@ import { TablebergBlockAttrs } from "./types";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { TablebergCellInstance } from "./cell";
-import { store as tbStore, TablebergCtx } from "./store";
+import { store as tbStore } from "./store";
 import { PrimaryTable } from "./table";
 import StackRowTable from "./table/StackRowTable";
+
+
+interface TablebergCtx {
+    rootEl?: HTMLElement;
+    render?: "stack" | "";
+}
+
+export const TablebergCtx = createContext<TablebergCtx>({});
 
 const DESKTOP_MIN_WIDTH = 1024;
 const TABLET_MIN_WIDTH = 720;
@@ -222,9 +231,8 @@ const useTableHeaderFooter = (
 
 const useResponsiveDetector = (
     responsive: TablebergBlockAttrs["responsive"]
-): [TableTypes, any] =>  {
+): [TableTypes] =>  {
     const [tableType, setType] = useState<TableTypes>("primary");
-    const [cellTag, setCellTag] = useState<"" | "div">("");
     const prevTableType = useRef("primary");
 
     useEffect(() => {
@@ -239,7 +247,6 @@ const useResponsiveDetector = (
             if (prevTableType.current !== tableType) {
                 prevTableType.current = tableType;
                 setType(tableType as any);
-                setCellTag(tableType === "primary" ? "":"div");
             }
         };
 
@@ -249,7 +256,7 @@ const useResponsiveDetector = (
         };
     }, [responsive]);
 
-    return [tableType, cellTag];
+    return [tableType];
 };
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
@@ -305,7 +312,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, []);
 
     useTableHeaderFooter(tableBlock, storeActions);
-    const [tableTag, cellTag] = useResponsiveDetector(attributes.responsive);
+    const [renderMode] = useResponsiveDetector(attributes.responsive);
 
     useSelect(
         (select) => {
@@ -434,12 +441,12 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 <TablebergCtx.Provider
                     value={{
                         rootEl: rootRef.current!,
-                        cellTag: cellTag as any,
+                        render: renderMode as any,
                     }}
                 >
                     {
-                        (tableTag === "primary" && <PrimaryTable {...props}/> ) ||
-                        (tableTag === "stack" && <StackRowTable {...props}/>)
+                        (renderMode === "primary" && <PrimaryTable {...props}/> ) ||
+                        (renderMode === "stack" && <StackRowTable {...props} tableBlock={tableBlock}/>)
                     }
                 </TablebergCtx.Provider>
             </div>

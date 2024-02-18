@@ -24,7 +24,8 @@ import {
     table,
 } from "@wordpress/icons";
 
-import { store as tbStore, TablebergCtx } from "../store";
+import { store as tbStore } from "../store";
+import { TablebergCtx } from "../";
 
 import "./style.scss";
 import "./editor.scss";
@@ -42,6 +43,7 @@ export interface TablebergCellBlockAttrs {
     colspan: number;
     row: number;
     col: number;
+    responsiveTarget: string;
 }
 
 export type TablebergCellInstance = BlockInstance<TablebergCellBlockAttrs>;
@@ -619,13 +621,20 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     return (
         <>
             <TablebergCtx.Consumer>
-                {({ rootEl, cellTag }) => {
-                    const TagName = cellTag || attributes.tagName || "td";
-                    const targetEl = cellTag
-                        ? null
-                        : rootEl?.firstElementChild?.children?.[
-                              attributes.row + 1
-                          ];
+                {({ rootEl, render }) => {
+                    console.log(render);
+
+                    let targetEl;
+                    if (render === "stack") {
+                        if (attributes.responsiveTarget) {
+                            targetEl = rootEl?.querySelector(
+                                attributes.responsiveTarget
+                            );
+                        }
+                    } else {
+                        targetEl = rootEl?.firstElementChild?.children?.[attributes.row + 1];
+                    }
+                    
                     return targetEl ? (
                         createPortal(
                             <TagName
