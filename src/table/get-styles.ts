@@ -1,6 +1,6 @@
 import { omitBy, isUndefined, trim, isEmpty } from "lodash";
-import { getBorderVariablesCss, getSpacingCss } from "./utils/styling-helpers";
-import { PaddingTypes, TablebergBlockAttrs } from "./types";
+import { getBorderVariablesCss, getSpacingCss } from "../utils/styling-helpers";
+import { PaddingTypes, TablebergBlockAttrs } from "../types";
 
 export function getStyles(attributes: TablebergBlockAttrs) {
     const {
