@@ -24,6 +24,8 @@ import {
     table,
 } from "@wordpress/icons";
 
+import classNames from "classnames";
+
 import { store as tbStore } from "../store";
 import { TablebergCtx } from "../";
 
@@ -514,7 +516,9 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             height: tableBlock.attributes.rowHeights[props.attributes.row],
         },
         ref: cellRef,
-        className: getClassName(clientId),
+        className: classNames(getClassName(clientId), {
+            'tableberg-header-cell': attributes.row == 0 && tableBlock.attributes.enableTableHeader,
+        }),
     });
 
     const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
@@ -617,6 +621,10 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             colWidths,
         });
     };
+
+    useEffect(() => {
+        console.log("Empty Effect Cell");
+    }, []);
 
     return (
         <>

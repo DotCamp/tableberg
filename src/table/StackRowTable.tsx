@@ -1,8 +1,9 @@
 import { BlockEditProps, BlockInstance } from "@wordpress/blocks";
 import { ResponsiveStack, TablebergBlockAttrs } from "../types";
 import { useInnerBlocksProps } from "@wordpress/block-editor";
+import { useEffect, useState } from "react";
+import classNames from "classnames";
 import { ALLOWED_BLOCKS } from ".";
-import { useEffect, useState } from "@wordpress/element";
 
 export default function StackRowTable(
     props: BlockEditProps<TablebergBlockAttrs> & {
@@ -50,7 +51,14 @@ export default function StackRowTable(
 
     return (
         <>
-            <table className="tableberg-block-stack">{rowTemplates}</table>
+            <table
+                className={classNames({
+                    "tableberg-rowstack-table": true,
+                    "tableberg-has-header": attributes.enableTableHeader,
+                })}
+            >
+                {rowTemplates}
+            </table>
             <div style={{ display: "none" }}>
                 <div {...innerBlocksProps} />
             </div>

@@ -18,13 +18,12 @@ import {
     registerBlockType,
     BlockInstance,
 } from "@wordpress/blocks";
-import { createContext } from "@wordpress/element";
 /**
  * Internal Imports
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState, createContext } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import exampleImage from "./example.png";

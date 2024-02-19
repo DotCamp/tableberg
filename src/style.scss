@@ -7,7 +7,7 @@
 
 
 
-.wp-block-tableberg-wrapper.wp-block-tableberg-table {
+.wp-block-tableberg-wrapper {
     overflow-x: auto;
     box-sizing: border-box;
 
@@ -86,8 +86,11 @@
         }
     
         .tableberg-header,
-        .tableberg-footer {
+        .tableberg-footer,
+        .tableberg-header-cell {
             font-weight: bold;
+            background: blue;
+            color: white;
         }
     
     }
