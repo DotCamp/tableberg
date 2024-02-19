@@ -11,7 +11,13 @@ import {
     BlockControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import { useBlockProps, useInnerBlocksProps } from "@wordpress/block-editor";
+
+import {
+    useBlockProps,
+    useInnerBlocksProps,
+    // @ts-ignore
+    useBlockEditingMode,
+} from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ToolbarDropdownMenu } from "@wordpress/components";
 import {
@@ -46,6 +52,7 @@ export interface TablebergCellBlockAttrs {
     row: number;
     col: number;
     responsiveTarget: string;
+    isTmp: boolean;
 }
 
 export type TablebergCellInstance = BlockInstance<TablebergCellBlockAttrs>;
@@ -98,6 +105,9 @@ const addRow = (
 
     tableBlock.innerBlocks.forEach((cell) => {
         const attrs: TablebergCellBlockAttrs = cell.attributes as any;
+        if (attrs.isTmp) {
+            return;
+        }
         if (attrs.row >= rowIndex) {
             cell.attributes.row += 1;
             postCells.push(cell as TablebergCellInstance);
@@ -154,6 +164,9 @@ const addCol = (
 
     tableBlock.innerBlocks.forEach((cell) => {
         const attrs = cell.attributes as TablebergCellBlockAttrs;
+        if (attrs.isTmp) {
+            return;
+        }
         if (attrs.col < colIndex && attrs.col + attrs.colspan > colIndex) {
             attrs.colspan += 1;
 
@@ -230,7 +243,7 @@ const deleteCol = (
     let lastIdx = 0;
 
     tableBlock.innerBlocks.forEach((cell) => {
-        if (cell.attributes.col === colIndex) {
+        if (cell.attributes.col === colIndex || cell.attributes.isTmp) {
             return;
         }
         if (cell.attributes.col > colIndex) {
@@ -265,7 +278,7 @@ const deleteRow = (
     let lastIdx = 0;
 
     tableBlock.innerBlocks.forEach((cell) => {
-        if (cell.attributes.row === rowIndex) {
+        if (cell.attributes.row === rowIndex || cell.attributes.isTmp) {
             return;
         }
         if (cell.attributes.row > rowIndex) {
@@ -477,6 +490,7 @@ const useMerging = (
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     const { clientId, attributes, setAttributes } = props;
     const cellRef = useRef<HTMLTableCellElement>();
+    useBlockEditingMode(attributes.isTmp ? "disabled" : "default");
 
     const storeActions = useDispatch(
         blockEditorStore
@@ -517,7 +531,8 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         },
         ref: cellRef,
         className: classNames(getClassName(clientId), {
-            'tableberg-header-cell': attributes.row == 0 && tableBlock.attributes.enableTableHeader,
+            "tableberg-header-cell":
+                attributes.row == 0 && tableBlock.attributes.enableTableHeader,
         }),
     });
 
@@ -622,16 +637,10 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         });
     };
 
-    useEffect(() => {
-        console.log("Empty Effect Cell");
-    }, []);
-
     return (
         <>
             <TablebergCtx.Consumer>
                 {({ rootEl, render }) => {
-                    console.log(render);
-
                     let targetEl;
                     if (render === "stack") {
                         if (attributes.responsiveTarget) {
@@ -639,10 +648,13 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                                 attributes.responsiveTarget
                             );
                         }
-                    } else {
-                        targetEl = rootEl?.firstElementChild?.children?.[attributes.row + 1];
+                    } else if (!attributes.isTmp) {
+                        targetEl =
+                            rootEl?.firstElementChild?.children?.[
+                                attributes.row + 1
+                            ];
                     }
-                    
+
                     return targetEl ? (
                         createPortal(
                             <TagName

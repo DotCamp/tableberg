@@ -1,16 +1,24 @@
-import { BlockEditProps } from "@wordpress/blocks";
+import { BlockEditProps, BlockInstance } from "@wordpress/blocks";
 import { TablebergBlockAttrs } from "../types";
 import { createArray } from "../utils";
 import { useEffect, useState } from "react";
-import { useInnerBlocksProps } from "@wordpress/block-editor";
+import {
+    useInnerBlocksProps,
+    store as blockEditorStore,
+} from "@wordpress/block-editor";
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
+import { useDispatch } from "@wordpress/data";
 
 export const ALLOWED_BLOCKS = ["tableberg/cell"];
 
-export const PrimaryTable = (props: BlockEditProps<TablebergBlockAttrs>) => {
-    const { attributes } = props;
+export const PrimaryTable = (
+    props: BlockEditProps<TablebergBlockAttrs> & {
+        tableBlock: BlockInstance<TablebergBlockAttrs>;
+    }
+) => {
+    const { attributes, tableBlock, setAttributes } = props;
     const blockProps = {
         style: {
             ...getStyles(props.attributes),
@@ -25,6 +33,33 @@ export const PrimaryTable = (props: BlockEditProps<TablebergBlockAttrs>) => {
         renderAppender: false,
         allowedBlocks: ALLOWED_BLOCKS,
     });
+
+    const storeActions = useDispatch(
+        blockEditorStore
+    ) as BlockEditorStoreActions;
+    const [colUpt, setColUpt] = useState(0);
+
+    useEffect(() => {
+        setColUpt((old) => old + 1);
+    }, [attributes.cols]);
+
+    useEffect(() => {
+        if (attributes.responsive?.last === "stack") {
+            const toRemoves: string[] = [];
+            tableBlock.innerBlocks.forEach((cell) => {
+                if (cell.attributes.isTmp) {
+                    toRemoves.push(cell.clientId);
+                }
+            });
+            setAttributes({
+                responsive: {
+                    ...(attributes.responsive || {}),
+                    last: "",
+                },
+            });
+            storeActions.removeBlocks(toRemoves);
+        }
+    }, []);
 
     const rowTemplate = createArray(attributes.rows).map((i) => {
         let background;
@@ -67,12 +102,6 @@ export const PrimaryTable = (props: BlockEditProps<TablebergBlockAttrs>) => {
             ></tr>
         );
     });
-
-    const [colUpt, setColUpt] = useState(0);
-
-    useEffect(() => {
-        setColUpt((old) => old + 1);
-    }, [attributes.cols]);
 
     return (
         <>

@@ -33,7 +33,6 @@ import { store as tbStore } from "./store";
 import { PrimaryTable } from "./table";
 import StackRowTable from "./table/StackRowTable";
 
-
 interface TablebergCtx {
     rootEl?: HTMLElement;
     render?: "stack" | "";
@@ -230,12 +229,19 @@ const useTableHeaderFooter = (
 
 const useResponsiveDetector = (
     responsive: TablebergBlockAttrs["responsive"]
-): [TableTypes] =>  {
+): [TableTypes] => {
     const [tableType, setType] = useState<TableTypes>("primary");
     const prevTableType = useRef("primary");
 
     useEffect(() => {
         const resizeEvt = () => {
+            if (!responsive.enabled) {
+                if (prevTableType.current !== "primary") {
+                    setType("primary");
+                    prevTableType.current = "primary";
+                }
+                return;
+            }
             let tableType = prevTableType.current;
             if (responsive.type === "stack") {
                 tableType = "primary";
@@ -248,6 +254,8 @@ const useResponsiveDetector = (
                 setType(tableType as any);
             }
         };
+
+        resizeEvt();
 
         window.addEventListener("resize", resizeEvt);
         return () => {
@@ -443,10 +451,12 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                         render: renderMode as any,
                     }}
                 >
-                    {
-                        (renderMode === "primary" && <PrimaryTable {...props}/> ) ||
-                        (renderMode === "stack" && <StackRowTable {...props} tableBlock={tableBlock}/>)
-                    }
+                    {(renderMode === "primary" && (
+                        <PrimaryTable {...props} tableBlock={tableBlock} />
+                    )) ||
+                        (renderMode === "stack" && (
+                            <StackRowTable {...props} tableBlock={tableBlock} />
+                        ))}
                 </TablebergCtx.Provider>
             </div>
             <TablebergControls {...props} />

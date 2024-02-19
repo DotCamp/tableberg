@@ -13,6 +13,8 @@ import {
 import { BlockEditProps } from "@wordpress/blocks";
 import {
     PanelBody,
+    SelectControl,
+    __experimentalNumberControl as NumberControl,
     ToggleControl,
     __experimentalToolsPanel as ToolsPanel,
     __experimentalToolsPanelItem as ToolsPanelItem,
@@ -20,7 +22,7 @@ import {
 /**
  * Internal Imports
  */
-import { TablebergBlockAttrs } from "./types";
+import { ResponsiveStack, TablebergBlockAttrs } from "./types";
 import {
     BorderControl,
     ColorPickerDropdown,
@@ -96,7 +98,7 @@ const FOOTER_OPTIONS = [
 
 function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
-    const { enableInnerBorder, tableAlignment } = attributes;
+    const { enableInnerBorder, tableAlignment, responsive } = attributes;
 
     const blockAlignChange = (newValue: "left" | "right" | "center") => {
         setAttributes({ tableAlignment: newValue });
@@ -110,6 +112,17 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     };
     const onLinkColorChange = (value: any) => {
         setAttributes({ linkColor: value });
+    };
+
+    const setResponsive = (
+        options: Partial<TablebergBlockAttrs["responsive"]>
+    ) => {
+        setAttributes({
+            responsive: {
+                ...(attributes.responsive || {}),
+                ...options,
+            } as any,
+        });
     };
 
     return (
@@ -263,19 +276,51 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                 />
             </InspectorControls>
             <InspectorControls group="settings">
-                <ToggleControl
-                    label={__("Enable Responsiveness", "tableberg")}
-                    checked={!!attributes?.responsive?.enabled}
-                    onChange={() =>
-                        setAttributes({
-                            responsive: {
-                                ...(attributes?.responsive || {}),
-                                enabled: !attributes?.responsive?.enabled,
-                                type: "stack",
-                            },
-                        })
-                    }
-                />
+                <ToolsPanel
+                    label={__("Responsive Settings", "tableberg")}
+                    resetAll={() => {}}
+                >
+                    <ToolsPanelItem
+                        label={__("Enable Responsive Table", "tableberg")}
+                        hasValue={() => true}
+                    >
+                        <ToggleControl
+                            label={__("Enable Responsive Table", "tableberg")}
+                            checked={responsive.enabled}
+                            onChange={() =>
+                                setResponsive({
+                                    enabled: !responsive.enabled,
+                                })
+                            }
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem
+                        label={__("Stack Direction", "tableberg")}
+                        hasValue={() => true}
+                    >
+                        <SelectControl
+                            label="Stack Direction"
+                            value="row"
+                            options={[{ label: "Row", value: "row" }]}
+                            __nextHasNoMarginBottom
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem
+                        label={__("Items per Head", "tableberg")}
+                        hasValue={() => true}
+                    >
+                        <NumberControl
+                            label={__("Items per Head", "tableberg")}
+                            onChange={(val) =>
+                                setResponsive({
+                                    stackCount: parseInt(val || "0"),
+                                })
+                            }
+                            min={1}
+                            value={(responsive as ResponsiveStack).stackCount}
+                        />
+                    </ToolsPanelItem>
+                </ToolsPanel>
             </InspectorControls>
             <BlockControls>
                 <BlockAlignmentToolbar

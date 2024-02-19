@@ -125,6 +125,7 @@
         "responsive" : {
             "type": "object",
             "default": {
+                "last": "primary",
                 "enabled": true
             }
         }
