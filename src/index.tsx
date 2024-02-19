@@ -261,7 +261,7 @@ const useResponsiveDetector = (
         return () => {
             window.removeEventListener("resize", resizeEvt);
         };
-    }, [responsive]);
+    }, [responsive.type, responsive.enabled]);
 
     return [tableType];
 };

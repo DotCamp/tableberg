@@ -290,6 +290,7 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                             onChange={() =>
                                 setResponsive({
                                     enabled: !responsive.enabled,
+                                    type: responsive.enabled?"":"stack"
                                 })
                             }
                         />
