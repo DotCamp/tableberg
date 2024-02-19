@@ -79,9 +79,6 @@ devDependencies:
   '@wordpress/base-styles':
     specifier: ^4.39.0
     version: 4.39.0
-  '@wordpress/element':
-    specifier: ^5.28.0
-    version: 5.28.0
   '@wordpress/scripts':
     specifier: ^26.6.0
     version: 26.6.0(@types/node@20.11.13)(react-dom@18.2.0)(react@18.2.0)(typescript@5.3.3)
