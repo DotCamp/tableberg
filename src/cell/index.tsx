@@ -69,13 +69,18 @@ const CELL_TEMPLATE: InnerBlockTemplate[] = [
     ],
 ];
 
-const createSingleCell = (row: number, col: number): TablebergCellInstance => {
+const createSingleCell = (
+    row: number,
+    col: number,
+    isHeader: boolean
+): TablebergCellInstance => {
     return createBlocksFromInnerBlocksTemplate([
         [
             "tableberg/cell",
             {
                 col: col,
                 row,
+                tagName: isHeader ? "th" : "td",
             },
         ],
     ])[0] as TablebergCellInstance;
@@ -112,7 +117,7 @@ const addRow = (
         if (skip) {
             i += skip - 1;
         } else {
-            cellBlocks.push(createSingleCell(rowIndex, i));
+            cellBlocks.push(createSingleCell(rowIndex, i, false));
         }
     }
 
@@ -148,6 +153,8 @@ const addCol = (
     let lastIndex = 0,
         lastInsertedRow = -1;
 
+    const lastRow = tableBlock.attributes.rows - 1;
+
     tableBlock.innerBlocks.forEach((cell) => {
         const attrs = cell.attributes as TablebergCellBlockAttrs;
         if (attrs.col < colIndex && attrs.col + attrs.colspan > colIndex) {
@@ -177,14 +184,30 @@ const addCol = (
             const toInsertCount = prevRow - lastInsertedRow;
             for (let i = 1; i <= toInsertCount; i++) {
                 const row = lastInsertedRow + i;
-                cellBlocks[lastIndex++] = createSingleCell(row, colIndex);
+                cellBlocks[lastIndex++] = createSingleCell(
+                    row,
+                    colIndex,
+                    !!(
+                        (tableBlock.attributes.enableTableHeader && row == 0) ||
+                        (tableBlock.attributes.enableTableFooter &&
+                            row == lastRow)
+                    )
+                );
             }
             lastInsertedRow = prevRow;
         } else {
             const missedCount = attrs.row - lastInsertedRow;
             for (let i = 1; i <= missedCount; i++) {
                 const row = lastInsertedRow + i;
-                cellBlocks[lastIndex++] = createSingleCell(row, colIndex);
+                cellBlocks[lastIndex++] = createSingleCell(
+                    row,
+                    colIndex,
+                    !!(
+                        (tableBlock.attributes.enableTableHeader && row == 0) ||
+                        (tableBlock.attributes.enableTableFooter &&
+                            row == lastRow)
+                    )
+                );
             }
             lastInsertedRow = attrs.row;
         }
@@ -194,7 +217,11 @@ const addCol = (
 
     lastInsertedRow++;
     for (; lastInsertedRow < tableBlock.attributes.rows; lastInsertedRow++) {
-        cellBlocks[lastIndex++] = createSingleCell(lastInsertedRow, colIndex);
+        cellBlocks[lastIndex++] = createSingleCell(
+            lastInsertedRow,
+            colIndex,
+            !!(tableBlock.attributes.enableTableHeader && lastInsertedRow == 0)
+        );
     }
 
     const colWidths = tableBlock.attributes.colWidths;
@@ -555,7 +582,12 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         {
             icon: tableRowAfter,
             title: "Insert row after",
-            onClick: () => addRow(tableBlock, storeActions, attributes.row + attributes.rowspan),
+            onClick: () =>
+                addRow(
+                    tableBlock,
+                    storeActions,
+                    attributes.row + attributes.rowspan
+                ),
         },
         {
             icon: tableColumnBefore,

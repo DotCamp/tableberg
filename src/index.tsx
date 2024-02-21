@@ -89,6 +89,66 @@ const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
     return [newCells, cols];
 };
 
+const removeFirstRow = (
+    innrBlocks: TablebergCellInstance[]
+): TablebergCellInstance[] => {
+    const newCells: TablebergCellInstance[] = [];
+    for (let i = 0; i < innrBlocks.length; i++) {
+        const cell = innrBlocks[i];
+        if (cell.attributes.row === 0) {
+            continue;
+        }
+        cell.attributes.row -= 1;
+        newCells.push(cell);
+    }
+    return newCells;
+};
+
+const changeFirstRowTagName = (
+    innrBlocks: TablebergCellInstance[],
+    tagName: "td" | "th"
+) => {
+    for (let i = 0; i < innrBlocks.length; i++) {
+        const cell = innrBlocks[i];
+        if (cell.attributes.row != 0) {
+            return;
+        }
+        cell.attributes.tagName = tagName;
+    }
+};
+
+const removeLastRow = (
+    innrBlocks: TablebergCellInstance[],
+    lastRow: number
+): TablebergCellInstance[] => {
+    const clientIds: string[] = [];
+    let lastRowFirstColIdx = innrBlocks.length - 1;
+    while (lastRowFirstColIdx > -1) {
+        const cell = innrBlocks[lastRowFirstColIdx];
+        if (cell.attributes.row >= lastRow) {
+            clientIds.push(cell.clientId);
+        } else {
+            break;
+        }
+        lastRowFirstColIdx--;
+    }
+
+    return innrBlocks.slice(0, lastRowFirstColIdx + 1);
+};
+
+const changeLastRowTagName = (
+    innrBlocks: TablebergCellInstance[],
+    tagName: "td" | "th",
+    lastRow: number
+) => {
+    for (let i = innrBlocks.length - 1; i > -1; i--) {
+        const cell = innrBlocks[i];
+        if (cell.attributes.row !== lastRow) {
+            return;
+        }
+        cell.attributes.tagName = tagName;
+    }
+};
 const useTableHeaderFooter = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
     actions: BlockEditorStoreActions
@@ -101,56 +161,61 @@ const useTableHeaderFooter = (
         const from = prevHState.current;
         const to = attrs.enableTableHeader;
 
-        if (
-            from === to ||
-            (!from && to === "converted") ||
-            (!to && from === "converted")
-        ) {
+        if (from === to) {
             return;
         }
 
+        let newCells: TablebergCellInstance[] = [];
+        let rowCount = attrs.rows;
+
         if (to === "added") {
-            const newCells: TablebergCellInstance[] = Array(
-                tableBlock.attributes.cols
-            )
-                .fill(0)
-                .map((_, col) => {
-                    return createBlocksFromInnerBlocksTemplate([
+            rowCount++;
+            if (from === "converted") {
+                changeFirstRowTagName(tableBlock.innerBlocks as any, "td");
+            }
+            for (let col = 0; col < attrs.cols; col++) {
+                newCells.push(
+                    createBlocksFromInnerBlocksTemplate([
                         [
                             "tableberg/cell",
                             {
                                 row: 0,
                                 col,
+                                tagName: "th",
                             },
                         ],
-                    ])[0] as TablebergCellInstance;
-                });
+                    ])[0] as TablebergCellInstance
+                );
+            }
             tableBlock.innerBlocks.forEach((cell) => {
                 cell.attributes.row += 1;
                 newCells.push(cell as TablebergCellInstance);
             });
-
-            actions.replaceInnerBlocks(tableBlock.clientId, newCells);
-            actions.updateBlockAttributes(tableBlock.clientId, {
-                rows: tableBlock.attributes.rows + 1,
-                cells: newCells.length,
-            });
+            rowCount++;
+        } else if (to === "converted") {
+            if (from === "added") {
+                newCells = removeFirstRow(tableBlock.innerBlocks as any);
+                changeFirstRowTagName(newCells, "th");
+                rowCount--;
+            } else {
+                changeFirstRowTagName(tableBlock.innerBlocks as any, "th");
+                newCells = tableBlock.innerBlocks as any;
+            }
         } else {
-            const newCells: TablebergCellInstance[] = [];
-            tableBlock.innerBlocks.forEach((cell) => {
-                if (cell.attributes.row === 0) {
-                    return;
-                }
-                cell.attributes.row -= 1;
-                newCells.push(cell as TablebergCellInstance);
-            });
-
-            actions.replaceInnerBlocks(tableBlock.clientId, newCells);
-            actions.updateBlockAttributes(tableBlock.clientId, {
-                rows: tableBlock.attributes.rows - 1,
-                cells: newCells.length,
-            });
+            if (from === "added") {
+                newCells = removeFirstRow(tableBlock.innerBlocks as any);
+                rowCount--;
+            } else {
+                changeFirstRowTagName(tableBlock.innerBlocks as any, "td");
+                newCells = tableBlock.innerBlocks as any;
+            }
         }
+
+        actions.replaceInnerBlocks(tableBlock.clientId, newCells);
+        actions.updateBlockAttributes(tableBlock.clientId, {
+            rows: rowCount,
+            cells: newCells.length,
+        });
 
         prevHState.current = attrs.enableTableHeader;
     }, [attrs.enableTableHeader]);
@@ -160,60 +225,75 @@ const useTableHeaderFooter = (
     useEffect(() => {
         const from = prevFState.current;
         const to = attrs.enableTableFooter;
-
-        if (
-            from === to ||
-            (!from && to === "converted") ||
-            (!to && from === "converted")
-        ) {
+        if (from === to) {
             return;
         }
 
+        let rowCount = attrs.rows;
+        let cellCount = attrs.cells;
+        const lastRow = rowCount - 1;
+
         if (to === "added") {
+            if (from === "converted") {
+                changeLastRowTagName(
+                    tableBlock.innerBlocks as any,
+                    "td",
+                    lastRow
+                );
+            }
+
             const newCells: TablebergCellInstance[] = [];
-            for (let col = 0; col < tableBlock.attributes.cols; col++) {
+            for (let col = 0; col < attrs.cols; col++) {
                 newCells.push(
                     createBlocksFromInnerBlocksTemplate([
                         [
                             "tableberg/cell",
                             {
-                                row: tableBlock.attributes.rows,
+                                row: attrs.rows,
                                 col,
+                                tagName: "th",
                             },
                         ],
                     ])[0] as TablebergCellInstance
                 );
             }
-
             actions.insertBlocks(
                 newCells,
-                tableBlock.attributes.cells,
-                tableBlock.clientId,
-                false
+                tableBlock.innerBlocks.length,
+                tableBlock.clientId
             );
-            actions.updateBlockAttributes(tableBlock.clientId, {
-                rows: tableBlock.attributes.rows + 1,
-                cells: tableBlock.attributes.cells + newCells.length,
-            });
-        } else {
-            const toRemoves: string[] = [];
-            const lastRow = tableBlock.attributes.rows - 1;
 
-            for (let i = tableBlock.innerBlocks.length - 1; i > -1; i--) {
-                const cell = tableBlock.innerBlocks[i];
-                if (cell.attributes.row !== lastRow) {
-                    break;
+            rowCount++;
+            cellCount += newCells.length;
+        } else {
+            let newCells: TablebergCellInstance[] = [];
+            if (from === "added") {
+                newCells = removeLastRow(
+                    tableBlock.innerBlocks as any,
+                    lastRow
+                );
+                cellCount = newCells.length;
+                rowCount--;
+            } else {
+                newCells = [...tableBlock.innerBlocks] as any;
+            }
+            if (to === "converted") {
+                if (from === "added") {
+                    changeLastRowTagName(newCells, "th", lastRow - 1);
+                } else {
+                    changeLastRowTagName(newCells, "th", lastRow);
                 }
-                toRemoves.push(cell.clientId);
+            } else if (from !== "added") {
+                changeLastRowTagName(newCells, "td", lastRow);
             }
 
-            actions.removeBlocks(toRemoves, false);
-
-            actions.updateBlockAttributes(tableBlock.clientId, {
-                rows: tableBlock.attributes.rows - 1,
-                cells: tableBlock.attributes.cells - toRemoves.length,
-            });
+            actions.replaceInnerBlocks(tableBlock.clientId, newCells);
         }
+
+        actions.updateBlockAttributes(tableBlock.clientId, {
+            rows: rowCount,
+            cells: cellCount,
+        });
 
         prevFState.current = attrs.enableTableFooter;
     }, [attrs.enableTableFooter]);
