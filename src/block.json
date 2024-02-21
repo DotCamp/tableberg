@@ -126,7 +126,9 @@
             "type": "object",
             "default": {
                 "last": "primary",
-                "enabled": true
+                "enabled": false,
+                "type": "",
+                "stackCount": 2
             }
         }
     },
