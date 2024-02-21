@@ -485,6 +485,99 @@ const useMerging = (
         endCellMultiSelect();
     };
 
+    const unMergeCells = () => {
+        let startIdx = 0,
+            cell: TablebergCellInstance | null = null;
+        const newCells: TablebergCellInstance[] = [];
+        for (; startIdx < tableBlock.innerBlocks.length; startIdx++) {
+            cell = tableBlock.innerBlocks[startIdx] as any;
+            newCells.push(cell as any);
+            if (cell?.clientId === clientId) {
+                break;
+            }
+        }
+        if (!cell) {
+            return;
+        }
+
+        let curCol = cell.attributes.col;
+        let curRow = cell.attributes.row;
+        let toCol = curCol + cell.attributes.colspan;
+        let toRow = curRow + cell.attributes.rowspan;
+
+        const toInsertMap = new Map();
+        if (cell.attributes.colspan > 1) {
+            toInsertMap.set(curRow, {
+                from: curCol + 1,
+                to: toCol,
+            });
+        }
+        
+        if (cell.attributes.rowspan > 1) {
+            for (let row = curRow + 1; row < toRow; row++) {
+                toInsertMap.set(row, {
+                    from: curCol,
+                    to: toCol,
+                });
+            }
+        }
+
+        cell.attributes.colspan = 1;
+        cell.attributes.rowspan = 1;
+        let lastInseredRow = -1;
+        startIdx++;
+        for (; startIdx < tableBlock.innerBlocks.length; startIdx++) {
+            const cell = tableBlock.innerBlocks[
+                startIdx
+            ] as TablebergCellInstance;
+            const row = cell.attributes.row;
+
+            if (row === lastInseredRow || row >= toRow) {
+                newCells.push(cell);
+                continue;
+            }
+
+            const toInserts = toInsertMap.get(row);
+            if (!toInserts) {
+                newCells.push(cell);
+                continue;
+            }
+            const prevRow = cell.attributes.row - 1;
+            if (lastInseredRow !== prevRow && lastInseredRow > -1) {
+                const prevInsert = toInsertMap.get(prevRow);
+                for (let col = prevInsert.from; col < prevInsert.to; col++) {
+                    newCells.push(createSingleCell(prevRow, col, false));
+                }
+                lastInseredRow = prevRow;
+            }
+
+            if (toInserts.from > cell.attributes.col) {
+                newCells.push(cell);
+                continue;
+            }
+
+            for (let col = toInserts.from; col < toInserts.to; col++) {
+                newCells.push(createSingleCell(row, col, false));
+            }
+            lastInseredRow = row;
+            newCells.push(cell);
+        }
+
+        const lastToRow = toRow - 1;
+
+        if (lastInseredRow < lastToRow) {
+            const toInserts = toInsertMap.get(lastToRow);
+            for (let col = toInserts.from; col < toInserts.to; col++) {
+                newCells.push(createSingleCell(lastToRow, col, false));
+            }
+        }
+
+        storeActions.replaceInnerBlocks(tableBlock.clientId, newCells);
+        storeActions.updateBlockAttributes(tableBlock.clientId, {
+            cells: newCells.length,
+        });
+    };
+
     return {
         toggleCellSelection,
         endCellMultiSelect,
@@ -494,6 +587,7 @@ const useMerging = (
             el?.addEventListener("mousedown", elClickEvt, { capture: true });
         },
         mergeCells,
+        unMergeCells,
     };
 };
 
@@ -526,11 +620,13 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             tableBlockId,
         };
     }, []);
-    const { isMergable, addMergingEvt, getClassName, mergeCells } = useMerging(
-        clientId,
-        tableBlock,
-        storeActions
-    );
+    const {
+        isMergable,
+        addMergingEvt,
+        getClassName,
+        mergeCells,
+        unMergeCells,
+    } = useMerging(clientId, tableBlock, storeActions);
 
     const blockProps = useBlockProps({
         style: {
@@ -573,7 +669,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         addMergingEvt(cellRef.current);
     }, [cellRef.current]);
 
-    const tableControls = [
+    const tableControls: Record<string, any>[] = [
         {
             icon: tableRowBefore,
             title: "Insert row before",
@@ -614,13 +710,23 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             title: "Delete column",
             onClick: () => deleteCol(tableBlock, storeActions, attributes.col),
         },
-        {
+    ];
+
+    if (isMergable()) {
+        tableControls.push({
             icon: table,
             title: "Merge",
             onClick: mergeCells,
-            isDisabled: !isMergable(),
-        },
-    ];
+        });
+    }
+
+    if (attributes.colspan > 1 || attributes.rowspan > 1) {
+        tableControls.push({
+            icon: table,
+            title: "Split Cells",
+            onClick: unMergeCells,
+        });
+    }
 
     const TagName = attributes.tagName ?? "td";
 
