@@ -153,6 +153,8 @@ const addCol = (
     let lastIndex = 0,
         lastInsertedRow = -1;
 
+    const lastRow = tableBlock.attributes.rows - 1;
+
     tableBlock.innerBlocks.forEach((cell) => {
         const attrs = cell.attributes as TablebergCellBlockAttrs;
         if (attrs.col < colIndex && attrs.col + attrs.colspan > colIndex) {
@@ -185,7 +187,11 @@ const addCol = (
                 cellBlocks[lastIndex++] = createSingleCell(
                     row,
                     colIndex,
-                    !!(tableBlock.attributes.enableTableHeader && row == 0)
+                    !!(
+                        (tableBlock.attributes.enableTableHeader && row == 0) ||
+                        (tableBlock.attributes.enableTableFooter &&
+                            row == lastRow)
+                    )
                 );
             }
             lastInsertedRow = prevRow;
@@ -196,7 +202,11 @@ const addCol = (
                 cellBlocks[lastIndex++] = createSingleCell(
                     row,
                     colIndex,
-                    !!(tableBlock.attributes.enableTableHeader && row == 0)
+                    !!(
+                        (tableBlock.attributes.enableTableHeader && row == 0) ||
+                        (tableBlock.attributes.enableTableFooter &&
+                            row == lastRow)
+                    )
                 );
             }
             lastInsertedRow = attrs.row;
