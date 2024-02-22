@@ -126,10 +126,12 @@
             "type": "object",
             "default": {
                 "last": "primary",
-                "enabled": false,
-                "type": "",
-                "stackCount": 2
+                "breakpoints": {}
             }
+        },
+        "__tmp_preview": {
+            "type": "string",
+            "default": "desktop"
         }
     },
     "example": {

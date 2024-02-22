@@ -642,17 +642,16 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             <TablebergCtx.Consumer>
                 {({ rootEl, render }) => {
                     let targetEl;
-                    if (render === "stack") {
-                        if (attributes.responsiveTarget) {
-                            targetEl = rootEl?.querySelector(
-                                attributes.responsiveTarget
-                            );
-                        }
-                    } else if (!attributes.isTmp) {
-                        targetEl =
-                            rootEl?.firstElementChild?.children?.[
-                                attributes.row + 1
-                            ];
+                    if (render === "primary") {
+                        if (!attributes.isTmp)
+                            targetEl =
+                                rootEl?.firstElementChild?.children?.[
+                                    attributes.row + 1
+                                ];
+                    } else if (attributes.responsiveTarget) {
+                        targetEl = rootEl?.querySelector(
+                            attributes.responsiveTarget
+                        );
                     }
 
                     return targetEl ? (

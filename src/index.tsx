@@ -2,7 +2,7 @@
  * WordPress Imports
  */
 import { Placeholder, TextControl, Button } from "@wordpress/components";
-import { blockTable } from "@wordpress/icons";
+import { blockTable, mobile, previous } from "@wordpress/icons";
 import { useDispatch, useSelect } from "@wordpress/data";
 import {
     useBlockProps,
@@ -33,17 +33,13 @@ import { store as tbStore } from "./store";
 import { PrimaryTable } from "./table";
 import StackRowTable from "./table/StackRowTable";
 
+export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
 interface TablebergCtx {
     rootEl?: HTMLElement;
-    render?: "stack" | "";
+    render?: TablebergRenderMode;
 }
 
 export const TablebergCtx = createContext<TablebergCtx>({});
-
-const DESKTOP_MIN_WIDTH = 1024;
-const TABLET_MIN_WIDTH = 720;
-
-type TableTypes = "stack" | "primary";
 
 const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
     const newCells: TablebergCellInstance[] = [];
@@ -227,45 +223,6 @@ const useTableHeaderFooter = (
     }, [attrs.enableTableFooter]);
 };
 
-const useResponsiveDetector = (
-    responsive: TablebergBlockAttrs["responsive"]
-): [TableTypes] => {
-    const [tableType, setType] = useState<TableTypes>("primary");
-    const prevTableType = useRef("primary");
-
-    useEffect(() => {
-        const resizeEvt = () => {
-            if (!responsive.enabled) {
-                if (prevTableType.current !== "primary") {
-                    setType("primary");
-                    prevTableType.current = "primary";
-                }
-                return;
-            }
-            let tableType = prevTableType.current;
-            if (responsive.type === "stack") {
-                tableType = "primary";
-                if (window.innerWidth < DESKTOP_MIN_WIDTH) {
-                    tableType = "stack";
-                }
-            }
-            if (prevTableType.current !== tableType) {
-                prevTableType.current = tableType;
-                setType(tableType as any);
-            }
-        };
-
-        resizeEvt();
-
-        window.addEventListener("resize", resizeEvt);
-        return () => {
-            window.removeEventListener("resize", resizeEvt);
-        };
-    }, [responsive.type, responsive.enabled]);
-
-    return [tableType];
-};
-
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
     const rootRef = useRef<HTMLTableElement>();
@@ -319,7 +276,34 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, []);
 
     useTableHeaderFooter(tableBlock, storeActions);
-    const [renderMode] = useResponsiveDetector(attributes.responsive);
+
+    const preview = attributes.__tmp_preview;
+    const [renderMode, setRenderMode] =
+        useState<TablebergRenderMode>("primary");
+    const prevRenderMode = useRef<TablebergRenderMode>("primary");
+    
+    useEffect(() => {
+        let newRMode: TablebergRenderMode = "primary";
+        if (preview === "desktop") {
+            newRMode = "primary";
+        } else {
+            let breakpoint = attributes.responsive?.breakpoints?.[preview];
+            if (!breakpoint && preview === "mobile") {
+                breakpoint = attributes.responsive?.breakpoints?.tablet;
+            }
+            if (!breakpoint) {
+                newRMode = "primary";
+            } else if (breakpoint.enabled && breakpoint.mode === "stack") {
+                newRMode = `stack-${breakpoint.direction}`;
+                console.log(newRMode);
+            }
+        }
+
+        if (newRMode !== prevRenderMode.current) {
+            setRenderMode(newRMode);
+            prevRenderMode.current = newRMode;
+        }
+    }, [preview, attributes.responsive.breakpoints]);
 
     useSelect(
         (select) => {
@@ -454,12 +438,23 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                     {(renderMode === "primary" && (
                         <PrimaryTable {...props} tableBlock={tableBlock} />
                     )) ||
-                        (renderMode === "stack" && (
-                            <StackRowTable {...props} tableBlock={tableBlock} />
+                        (renderMode === "stack-row" && (
+                            <StackRowTable
+                                {...props}
+                                tableBlock={tableBlock}
+                                preview={preview}
+                            />
+                        )) ||
+                        (renderMode === "stack-col" && (
+                            <StackRowTable
+                                {...props}
+                                tableBlock={tableBlock}
+                                preview={preview}
+                            />
                         ))}
                 </TablebergCtx.Provider>
             </div>
-            <TablebergControls {...props} />
+            <TablebergControls {...props} preview={preview} />
         </>
     );
 }

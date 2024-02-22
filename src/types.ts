@@ -1,20 +1,23 @@
 import { BorderTypes, PaddingTypes } from "./utils/common-types";
 
-export type ResponsiveMode = "" | "stack";
+export type ResponsiveMode = "" | "stack" | "scroll";
 
-export interface BaseResponsive {
+export interface Breakpoint {
     enabled: boolean;
+    headerAsCol: boolean;
+    maxWidth: number;
+    mode: "" | "scroll" | "stack";
+    direction: "row" | "col";
+    stackCount: number;
+}
+export interface ResponsiveOptions {
     last: ResponsiveMode;
     target: "window" | "container";
-}
-
-export interface ResponsivePrimary extends BaseResponsive{
-    type?: "";
-}
-export interface ResponsiveStack extends BaseResponsive {
-    type: "stack";
-    cellStack: "column" | "row";
-    stackCount: number;
+    breakpoints: {
+        desktop?: Breakpoint;
+        tablet?: Breakpoint;
+        mobile?: Breakpoint;
+    };
 }
 
 export interface TablebergBlockAttrs {
@@ -46,7 +49,8 @@ export interface TablebergBlockAttrs {
     fontColor: string;
     fontSize: string;
     linkColor: string;
-    responsive: ResponsivePrimary | ResponsiveStack
+    responsive: ResponsiveOptions;
+    __tmp_preview: "desktop" | "mobile" | "tablet";
 }
 
 export { PaddingTypes } from "./utils/common-types";

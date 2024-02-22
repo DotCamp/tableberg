@@ -1,5 +1,5 @@
 import { BlockEditProps, BlockInstance, cloneBlock } from "@wordpress/blocks";
-import { ResponsiveStack, TablebergBlockAttrs } from "../types";
+import { TablebergBlockAttrs } from "../types";
 import {
     useInnerBlocksProps,
     store as blockEditorStore,
@@ -12,9 +12,10 @@ import { useDispatch } from "@wordpress/data";
 export default function StackRowTable(
     props: BlockEditProps<TablebergBlockAttrs> & {
         tableBlock: BlockInstance<TablebergBlockAttrs>;
+        preview: keyof TablebergBlockAttrs['responsive']['breakpoints']
     }
 ) {
-    const { attributes, tableBlock, clientId, setAttributes } = props;
+    const { attributes, tableBlock, clientId, setAttributes, preview } = props;
 
     const innerBlocksProps = useInnerBlocksProps({
         // @ts-ignore false can obviously be assigned to renderAppender as does
@@ -33,6 +34,8 @@ export default function StackRowTable(
         blockEditorStore
     ) as BlockEditorStoreActions;
 
+    const breakpoint = tableBlock.attributes.responsive.breakpoints[preview];
+    
     useEffect(() => {
         const newCells: TablebergCellInstance[] = [];
         const masterRowMap = new Map<
@@ -42,11 +45,11 @@ export default function StackRowTable(
 
         let headerArr: TablebergCellInstance[] = [];
         let colCount = Math.max(
-            (attributes.responsive as ResponsiveStack).stackCount,
+            breakpoint?.stackCount || 1,
             1
         );
 
-        if (attributes.enableTableHeader) {
+        if (attributes.enableTableHeader && breakpoint?.headerAsCol) {
             colCount++;
             headerArr = tableBlock.innerBlocks.slice(0, attributes.cols) as any;
         }
@@ -78,7 +81,7 @@ export default function StackRowTable(
                 rowCount++;
             } else if (masterRow.count == colCount) {
                 let thisRowColCount = 1;
-                if (attributes.enableTableHeader) {
+                if (attributes.enableTableHeader && breakpoint?.headerAsCol) {
                     const headerCell = cloneBlock(headerArr[subRow], {
                         responsiveTarget: `#tableberg-${clientId}-${rowCount}`,
                         isTmp: true,
@@ -117,8 +120,9 @@ export default function StackRowTable(
         setColUpt((old) => old + 1);
     }, [
         attributes.cells,
-        (attributes.responsive as ResponsiveStack).stackCount,
         attributes.enableTableHeader,
+        breakpoint?.stackCount,
+        breakpoint?.headerAsCol
     ]);
 
     useEffect(() => {
