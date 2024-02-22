@@ -486,8 +486,13 @@ const useMerging = (
         mergeCells,
     };
 };
+const previewChangeHandler = (e: Event) => {
+    console.log("preview changed", (e as CustomEvent).detail.currentPreview);
+};
 
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
+    document.addEventListener("GutenbergPreviewChange", previewChangeHandler);
+
     const { clientId, attributes, setAttributes } = props;
     const cellRef = useRef<HTMLTableCellElement>();
     useBlockEditingMode(attributes.isTmp ? "disabled" : "default");
