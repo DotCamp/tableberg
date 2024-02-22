@@ -224,40 +224,6 @@ const useTableHeaderFooter = (
 };
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
-    useEffect(() => {
-        const previewEl = document.querySelector(
-            ".is-tablet-preview, .is-desktop-preview, .is-mobile-preview"
-        )!;
-
-        const previewObserver = new MutationObserver((mutationList) => {
-            for (let mutation of mutationList) {
-                if (mutation.attributeName === "class") {
-                    const currentPreview = (mutation.target as HTMLDivElement)
-                        .className.match(/is-(\w*)-preview/)![1];
-                    if (!currentPreview) {
-                        return
-                    }
-
-                    const event = new CustomEvent("GutenbergPreviewChange", {
-                        detail: {
-                            currentPreview
-                        }
-                    });
-                    document.dispatchEvent(event);
-                    return
-                }
-            }
-        });
-
-        previewObserver.observe(previewEl, {
-            attributes: true,
-            attributeFilter: ["class"],
-            attributeOldValue: true
-        });
-
-        return () => previewObserver.disconnect();
-    }, []);
-
     const { attributes, setAttributes, clientId } = props;
     const rootRef = useRef<HTMLTableElement>();
     const blockProps = useBlockProps({

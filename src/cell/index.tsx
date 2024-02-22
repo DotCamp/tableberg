@@ -487,11 +487,12 @@ const useMerging = (
     };
 };
 const previewChangeHandler = (e: Event) => {
-    console.log("preview changed", (e as CustomEvent).detail.currentPreview);
+    console.log("preview device changed", (e as CustomEvent).detail.currentPreview);
 };
 
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
-    document.addEventListener("GutenbergPreviewChange", previewChangeHandler);
+    registerTablebergPreviewDeviceChangeObserver();
+    document.addEventListener("TablebergPreviewDeviceChange", previewChangeHandler);
 
     const { clientId, attributes, setAttributes } = props;
     const cellRef = useRef<HTMLTableCellElement>();
