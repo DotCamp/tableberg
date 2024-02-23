@@ -34,7 +34,9 @@ export default function StackRowTable(
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const breakpoint = tableBlock.attributes.responsive.breakpoints[preview];
+
+    const breakpoints = tableBlock.attributes.responsive.breakpoints;
+    const breakpoint = preview == "mobile" && !breakpoints[preview]? breakpoints.tablet : breakpoints[preview];
     
     useEffect(() => {
         const newCells: TablebergCellInstance[] = [];

@@ -15,6 +15,7 @@ export default function StackColTable(
         preview: keyof TablebergBlockAttrs["responsive"]["breakpoints"];
     }
 ) {
+    
     const { attributes, tableBlock, clientId, setAttributes, preview } = props;
 
     const innerBlocksProps = useInnerBlocksProps({
@@ -34,7 +35,8 @@ export default function StackColTable(
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const breakpoint = tableBlock.attributes.responsive.breakpoints[preview];
+    const breakpoints = tableBlock.attributes.responsive.breakpoints;
+    const breakpoint = preview == "mobile" && !breakpoints[preview]? breakpoints.tablet : breakpoints[preview];
 
     useEffect(() => {
         const newCells: TablebergCellInstance[] = [];
