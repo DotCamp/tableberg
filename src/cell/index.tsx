@@ -486,13 +486,8 @@ const useMerging = (
         mergeCells,
     };
 };
-const previewChangeHandler = (e: Event) => {
-    console.log("preview device changed", (e as CustomEvent).detail.currentPreview);
-};
 
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
-    registerTablebergPreviewDeviceChangeObserver();
-    document.addEventListener("TablebergPreviewDeviceChange", previewChangeHandler);
 
     const { clientId, attributes, setAttributes } = props;
     const cellRef = useRef<HTMLTableCellElement>();

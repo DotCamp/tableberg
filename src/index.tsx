@@ -224,6 +224,8 @@ const useTableHeaderFooter = (
 };
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
+    // @ts-ignore
+    registerTablebergPreviewDeviceChangeObserver();
     const { attributes, setAttributes, clientId } = props;
     const rootRef = useRef<HTMLTableElement>();
     const blockProps = useBlockProps({
@@ -260,6 +262,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         }
     }, [selectedCells]);
 
+    const [previewDevice, updatePreview] = useState<
+        keyof TablebergBlockAttrs["responsive"]["breakpoints"]
+        // @ts-ignore
+    >(tablebergGetLastDevice() || "desktop");
+
     useEffect(() => {
         if (!tableBlock.attributes.version) {
             const [newCells, cols] = getCellsOfRows(tableBlock);
@@ -273,29 +280,38 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 colWidths: Array(cols).fill(""),
             });
         }
+        const localUpdater = (evt: any) => {
+            updatePreview(evt.detail.currentPreview);
+        };
+        document.addEventListener("TablebergPreviewDeviceChange", localUpdater);
+        return () =>
+            document.removeEventListener(
+                "TablebergPreviewDeviceChange",
+                localUpdater
+            );
     }, []);
 
     useTableHeaderFooter(tableBlock, storeActions);
 
-    const preview = attributes.__tmp_preview;
     const [renderMode, setRenderMode] =
         useState<TablebergRenderMode>("primary");
     const prevRenderMode = useRef<TablebergRenderMode>("primary");
 
     useEffect(() => {
+
         let newRMode: TablebergRenderMode = "primary";
-        if (preview === "desktop") {
+        if (previewDevice === "desktop") {
             newRMode = "primary";
         } else {
-            let breakpoint = attributes.responsive?.breakpoints?.[preview];
-            if (!breakpoint && preview === "mobile") {
+            let breakpoint =
+                attributes.responsive?.breakpoints?.[previewDevice];
+            if (!breakpoint && previewDevice === "mobile") {
                 breakpoint = attributes.responsive?.breakpoints?.tablet;
             }
             if (!breakpoint) {
                 newRMode = "primary";
             } else if (breakpoint.enabled && breakpoint.mode === "stack") {
                 newRMode = `stack-${breakpoint.direction}`;
-                console.log(newRMode);
             }
         }
 
@@ -303,7 +319,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             setRenderMode(newRMode);
             prevRenderMode.current = newRMode;
         }
-    }, [preview, attributes.responsive.breakpoints]);
+    }, [previewDevice, attributes.responsive.breakpoints]);
 
     useSelect(
         (select) => {
@@ -442,19 +458,19 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                             <StackRowTable
                                 {...props}
                                 tableBlock={tableBlock}
-                                preview={preview}
+                                preview={previewDevice}
                             />
                         )) ||
                         (renderMode === "stack-col" && (
                             <StackRowTable
                                 {...props}
                                 tableBlock={tableBlock}
-                                preview={preview}
+                                preview={previewDevice}
                             />
                         ))}
                 </TablebergCtx.Provider>
             </div>
-            <TablebergControls {...props} preview={preview} />
+            <TablebergControls {...props} preview={previewDevice} />
         </>
     );
 }

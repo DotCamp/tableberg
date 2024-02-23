@@ -128,10 +128,6 @@
                 "last": "primary",
                 "breakpoints": {}
             }
-        },
-        "__tmp_preview": {
-            "type": "string",
-            "default": "desktop"
         }
     },
     "example": {

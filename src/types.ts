@@ -50,7 +50,6 @@ export interface TablebergBlockAttrs {
     fontSize: string;
     linkColor: string;
     responsive: ResponsiveOptions;
-    __tmp_preview: "desktop" | "mobile" | "tablet";
 }
 
 export { PaddingTypes } from "./utils/common-types";

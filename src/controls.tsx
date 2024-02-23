@@ -344,13 +344,8 @@ function TablebergControls(
                 />
             </InspectorControls>
             <InspectorControls group="settings">
-                <PanelBody title="Responsiveness Settings" initialOpen={true}>
+                <PanelBody title={`Responsiveness Settings [${preview}]`} initialOpen={true}>
                     <BaseControl __nextHasNoMarginBottom>
-                        <CustomToggleGroupControl
-                            options={MOCK_PRIVIEW}
-                            attributeKey="__tmp_preview"
-                            label={__("Mock Preview", "tableberg")}
-                        />
                         <ToggleControl
                             label={__("Enable Breakpoint", "tableberg")}
                             checked={breakpoint?.enabled}
