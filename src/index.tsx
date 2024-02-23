@@ -366,10 +366,15 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     useTableHeaderFooter(tableBlock, storeActions);
 
     const [colUpt, setColUpt] = useState(0);
+    const lastRowCount = useRef(attributes.rows);
 
     useEffect(() => {
-        setColUpt((old) => old + 1);
-    }, [attributes.cols]);
+        if (lastRowCount.current === attributes.rows) {
+            setColUpt((old) => old + 1);
+        } else {
+            lastRowCount.current = attributes.rows;
+        }
+    }, [attributes.rows, attributes.cells]);
 
     useSelect(
         (select) => {
