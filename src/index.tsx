@@ -32,6 +32,7 @@ import { TablebergCellInstance } from "./cell";
 import { store as tbStore } from "./store";
 import { PrimaryTable } from "./table";
 import StackRowTable from "./table/StackRowTable";
+import StackColTable from "./table/StackColTable";
 
 export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
 interface TablebergCtx {
@@ -462,7 +463,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                             />
                         )) ||
                         (renderMode === "stack-col" && (
-                            <StackRowTable
+                            <StackColTable
                                 {...props}
                                 tableBlock={tableBlock}
                                 preview={previewDevice}
