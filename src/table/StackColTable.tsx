@@ -15,7 +15,6 @@ export default function StackColTable(
         preview: keyof TablebergBlockAttrs["responsive"]["breakpoints"];
     }
 ) {
-    
     const { attributes, tableBlock, clientId, setAttributes, preview } = props;
 
     const innerBlocksProps = useInnerBlocksProps({
@@ -36,7 +35,10 @@ export default function StackColTable(
     ) as BlockEditorStoreActions;
 
     const breakpoints = tableBlock.attributes.responsive.breakpoints;
-    const breakpoint = preview == "mobile" && !breakpoints[preview]? breakpoints.tablet : breakpoints[preview];
+    const breakpoint =
+        preview == "mobile" && !breakpoints[preview]
+            ? breakpoints.tablet
+            : breakpoints[preview];
 
     useEffect(() => {
         const newCells: TablebergCellInstance[] = [];
@@ -50,7 +52,7 @@ export default function StackColTable(
             lastRow = -1,
             stackTrack = 0;
 
-        if (attributes.enableTableHeader && breakpoint?.headerAsCol) {
+        if (attributes.enableTableHeader) {
             stackRowCount++;
             rowCount++;
             templates.push(<tr id={`tableberg-${clientId}-${rowCount}`} />);
@@ -89,7 +91,6 @@ export default function StackColTable(
                 lastRow = cell.attributes.row;
 
                 if (
-                    breakpoint?.headerAsCol &&
                     tableBlock.attributes.enableTableHeader &&
                     stackTrack == stackRowCount
                 ) {
@@ -106,7 +107,6 @@ export default function StackColTable(
                         });
                         newCells.push(headerCell);
                     }
-                    
                 }
 
                 rowCount++;

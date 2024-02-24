@@ -99,7 +99,6 @@ const FOOTER_OPTIONS = [
     },
 ];
 
-
 const MOCK_PRIVIEW = [
     {
         value: "desktop",
@@ -118,7 +117,6 @@ const MOCK_PRIVIEW = [
         label: __("Mobile", "tableberg"),
     },
 ];
-
 
 const DEFAULT_BREAKPOINT_OPTIONS = {
     desktop: {
@@ -344,7 +342,10 @@ function TablebergControls(
                 />
             </InspectorControls>
             <InspectorControls group="settings">
-                <PanelBody title={`Responsiveness Settings [${preview}]`} initialOpen={true}>
+                <PanelBody
+                    title={`Responsiveness Settings [${preview}]`}
+                    initialOpen={true}
+                >
                     <BaseControl __nextHasNoMarginBottom>
                         <ToggleControl
                             label={__("Enable Breakpoint", "tableberg")}
@@ -374,9 +375,8 @@ function TablebergControls(
                         />
                         <SelectControl
                             label="Mode"
-                            value={breakpoint?.mode}
+                            value={breakpoint?.mode || "scroll"}
                             options={[
-                                { label: "None", value: "" },
                                 { label: "Scroll", value: "scroll" },
                                 { label: "Stack Cells", value: "stack" },
                             ]}
@@ -388,45 +388,55 @@ function TablebergControls(
                             disabled={isDisabled}
                             __nextHasNoMarginBottom
                         />
-                        <SelectControl
-                            label="Stack Direction"
-                            value={breakpoint?.direction}
-                            options={[
-                                { label: "Row", value: "row" },
-                                { label: "Column", value: "col" },
-                            ]}
-                            onChange={(direction: any) =>
-                                setResponsive({
-                                    direction,
-                                })
-                            }
-                            disabled={isDisabled}
-                            __nextHasNoMarginBottom
-                        />
-                        <ToggleControl
-                            label={__(
-                                "Show header in first column",
-                                "tableberg"
-                            )}
-                            checked={breakpoint?.headerAsCol}
-                            onChange={() =>
-                                setResponsive({
-                                    headerAsCol: !breakpoint?.headerAsCol,
-                                })
-                            }
-                            disabled={isDisabled}
-                        />
-                        <NumberControl
-                            label={__("Items per row", "tableberg")}
-                            onChange={(val: any) =>
-                                setResponsive({
-                                    stackCount: Math.max(1, parseInt(val)),
-                                })
-                            }
-                            min={1}
-                            value={breakpoint?.stackCount}
-                            disabled={isDisabled}
-                        />
+                        {breakpoint?.mode === "stack" && (
+                            <>
+                                <SelectControl
+                                    label="Stack Direction"
+                                    value={breakpoint?.direction}
+                                    options={[
+                                        { label: "Row", value: "row" },
+                                        { label: "Column", value: "col" },
+                                    ]}
+                                    onChange={(direction: any) =>
+                                        setResponsive({
+                                            direction,
+                                        })
+                                    }
+                                    disabled={isDisabled}
+                                    __nextHasNoMarginBottom
+                                />
+                                {breakpoint?.direction === "row" && (
+                                    <ToggleControl
+                                        label={__(
+                                            "Show header in first column",
+                                            "tableberg"
+                                        )}
+                                        checked={breakpoint?.headerAsCol}
+                                        onChange={() =>
+                                            setResponsive({
+                                                headerAsCol:
+                                                    !breakpoint?.headerAsCol,
+                                            })
+                                        }
+                                        disabled={isDisabled}
+                                    />
+                                )}
+                                <NumberControl
+                                    label={__("Items per row", "tableberg")}
+                                    onChange={(val: any) =>
+                                        setResponsive({
+                                            stackCount: Math.max(
+                                                1,
+                                                parseInt(val)
+                                            ),
+                                        })
+                                    }
+                                    min={1}
+                                    value={breakpoint?.stackCount}
+                                    disabled={isDisabled}
+                                />
+                            </>
+                        )}
                         <Notice isDismissible={false}>
                             Use the block editor preview modes to configure and
                             preview the table at different breakpoints
