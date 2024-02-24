@@ -43,7 +43,7 @@
                     );
                 }
             } else {
-                //
+                reviveTable(table);
             }
         } else if (
             opts.tablebergTabletWidth &&
@@ -71,8 +71,10 @@
                     );
                 }
             } else {
-                //
+                reviveTable(table);
             }
+        } else {
+            reviveTable(table);
         }
     }
 
@@ -182,7 +184,7 @@
             .forEach((el) => el.remove());
 
         const cells = Array.from(table.querySelectorAll("th,td"));
-        
+
         if (oldMode && oldMode.match("stack-row")) {
             cells.sort((a, b) => {
                 const aRow = parseInt(a.dataset.tablebergRow);
@@ -250,6 +252,57 @@
                 lastRowEl = document.createElement("tr");
                 tbody.appendChild(lastRowEl);
                 stackTrack++;
+            }
+
+            lastRowEl.appendChild(cell);
+        }
+    }
+
+    /**
+     *
+     * @param {HTMLTableElement} table
+     * @returns
+     */
+
+    function reviveTable(table) {
+        const oldMode = table.dataset.tablebergLast;
+        if (!oldMode) {
+            return;
+        }
+        table.removeAttribute("data-tableberg-last");
+
+        table
+            .querySelectorAll("[data-tableberg-tmp]")
+            .forEach((el) => el.remove());
+
+        if (!oldMode || !oldMode.match("stack")) {
+            return;
+        }
+        const cells = Array.from(table.querySelectorAll("th,td"));
+        cells.sort((a, b) => {
+            const aRow = parseInt(a.dataset.tablebergRow);
+            const bRow = parseInt(b.dataset.tablebergRow);
+            const diff1 = aRow - bRow;
+            if (diff1 !== 0) {
+                return diff1;
+            }
+            const aCol = parseInt(a.dataset.tablebergCol);
+            const bCol = parseInt(b.dataset.tablebergCol);
+            return aCol - bCol;
+        });
+
+        const tbody = table.querySelector("tbody") || table;
+        tbody.innerHTML = "";
+
+        let lastRow = -1,
+            lastRowEl;
+
+        for (const cell of cells) {
+            if (lastRow != cell.dataset.tablebergRow) {
+                lastRow = cell.dataset.tablebergRow;
+
+                lastRowEl = document.createElement("tr");
+                tbody.appendChild(lastRowEl);
             }
 
             lastRowEl.appendChild(cell);
