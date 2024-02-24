@@ -160,6 +160,27 @@ class Table
 		return $content;
 	}
 
+	private static function get_responsiveness_metadata($attributes, $device)
+	{
+		if (!isset($attributes["responsive"])) {
+			return '';
+		}
+		$responsive = $attributes["responsive"]["breakpoints"];
+		$str = " ";
+		if (isset($responsive[$device]) && $responsive[$device]["enabled"]) {
+			$deviceOpts = $responsive[$device];
+			$str .= 'data-tableberg-' . $device . '-width="' . $deviceOpts["maxWidth"] . '" ';
+			$str .= 'data-tableberg-' . $device . '-mode="' . $deviceOpts["mode"] . '" ';
+			$str .= 'data-tableberg-' . $device . '-direction="' . $deviceOpts["direction"] . '" ';
+			$str .= 'data-tableberg-' . $device . '-count="' . $deviceOpts["stackCount"] . '" ';
+
+			if ($deviceOpts["headerAsCol"]) {
+				$str .= 'data-tableberg-' . $device . '-header="' . $deviceOpts["headerAsCol"] . '" ';
+			}
+		}
+		return $str;
+	}
+
 	/**
 	 * Renders the custom table block on the server.
 	 *
@@ -200,8 +221,16 @@ class Table
 			}
 		}
 
+
 		$content = self::setRowColSizes($content, $attributes['rowHeights'], $attributes['colWidths']);
 		$content = self::even_odd_rows($attributes, $content);
+
+		$responsive = trim(self::get_responsiveness_metadata($attributes, 'mobile') . self::get_responsiveness_metadata($attributes, 'tablet'));
+
+		if ($responsive) {
+			$responsive = 'data-tableberg-responsive data-tableberg-rows="' . $attributes['rows'] . '" data-tableberg-cols="' . $attributes['cols'] . '" ' . $responsive;
+			$content = HtmlUtils::add_attrs_to_tag($content, 'table', $responsive);
+		}
 
 		self::$lastRow = null;
 		return $content;
@@ -216,6 +245,9 @@ class Table
 		$defaults = new \Tableberg\Defaults();
 		$tableberg_assets = new \Tableberg\Assets();
 		$tableberg_assets->register_blocks_assets();
+		if (!is_admin()) {
+			$tableberg_assets->register_frontend_assets();
+		}
 		register_block_type(
 			TABLEBERG_DIR_PATH . 'build/block.json',
 			array(
