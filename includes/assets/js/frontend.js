@@ -116,8 +116,7 @@
 
         let rowCount = 0;
         for (const cell of cells) {
-
-            const subRow = cell.dataset.tablebergCol;
+            const subRow = parseInt(cell.dataset.tablebergCol);
             const masterRow = masterRowMap.get(subRow);
 
             if (!masterRow) {
@@ -169,7 +168,8 @@
      */
 
     function toColStack(table, header, count, tag) {
-        if (table.dataset.tablebergLast === tag) {
+        const oldMode = table.dataset.tablebergLast;
+        if (oldMode === tag) {
             return;
         }
         table.setAttribute("data-tableberg-last", tag);
@@ -177,21 +177,82 @@
             return;
         }
         count = parseInt(count);
-
         table
             .querySelectorAll("[data-tableberg-tmp]")
             .forEach((el) => el.remove());
 
-        const trs = table.querySelectorAll("tr");
+        const cells = Array.from(table.querySelectorAll("th,td"));
+        
+        if (oldMode && oldMode.match("stack-row")) {
+            cells.sort((a, b) => {
+                const aRow = parseInt(a.dataset.tablebergRow);
+                const bRow = parseInt(b.dataset.tablebergRow);
+                const diff1 = aRow - bRow;
+                if (diff1 !== 0) {
+                    return diff1;
+                }
+                const aCol = parseInt(a.dataset.tablebergCol);
+                const bCol = parseInt(b.dataset.tablebergCol);
+                return aCol - bCol;
+            });
+        }
 
-        for (let i = count; i < trs.length; i += count) {
-            const before = trs[i + 1];
-            if (!before) {
-                return;
+        const tbody = table.querySelector("tbody") || table;
+        tbody.innerHTML = "";
+
+        const headerArr = [];
+        let stackRowCount = Math.max(count || 1, 1);
+
+        let rowIdxStart = 0;
+        let rowCount = -1,
+            lastRow = -1,
+            stackTrack = 0,
+            lastRowEl;
+
+        if (header) {
+            stackRowCount++;
+            rowCount++;
+            lastRowEl = document.createElement("tr");
+            tbody.appendChild(lastRowEl);
+            stackTrack++;
+
+            for (; rowIdxStart < cells.length; rowIdxStart++) {
+                const cell = cells[rowIdxStart];
+                if (cell.dataset.tablebergRow > 0) {
+                    break;
+                }
+                lastRowEl.appendChild(cell);
+                headerArr.push(cell);
             }
-            const header = trs[0].cloneNode(true);
-            before.parentElement.insertBefore(header, before);
-            header.setAttribute("data-tableberg-tmp", "1");
+        }
+
+        for (let idx = rowIdxStart; idx < cells.length; idx++) {
+            const cell = cells[idx];
+
+            if (lastRow != cell.dataset.tablebergRow) {
+                lastRow = cell.dataset.tablebergRow;
+
+                if (header && stackTrack == stackRowCount) {
+                    rowCount++;
+
+                    lastRowEl = document.createElement("tr");
+                    lastRowEl.setAttribute("data-tableberg-tmp", "1");
+                    tbody.appendChild(lastRowEl);
+
+                    stackTrack = 1;
+
+                    for (const cell of headerArr) {
+                        lastRowEl.appendChild(cell.cloneNode(true));
+                    }
+                }
+
+                rowCount++;
+                lastRowEl = document.createElement("tr");
+                tbody.appendChild(lastRowEl);
+                stackTrack++;
+            }
+
+            lastRowEl.appendChild(cell);
         }
     }
 })();
