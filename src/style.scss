@@ -74,4 +74,12 @@ table.wp-block-tableberg-table {
     .tableberg-footer {
         background: --tableberg-footer-bg-color;
     }
+
+    .rich-text [data-rich-text-placeholder]::after {
+        content: "Type here"
+    }
+
+    .rich-text:focus [data-rich-text-placeholder]::after {
+        content: "Type / to choose a block"
+    }
 }
