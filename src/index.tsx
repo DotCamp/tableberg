@@ -225,6 +225,7 @@ const useTableHeaderFooter = (
     useEffect(() => {
         const from = prevFState.current;
         const to = attrs.enableTableFooter;
+
         if (from === to) {
             return;
         }
@@ -260,7 +261,8 @@ const useTableHeaderFooter = (
             actions.insertBlocks(
                 newCells,
                 tableBlock.innerBlocks.length,
-                tableBlock.clientId
+                tableBlock.clientId,
+                false
             );
 
             rowCount++;
