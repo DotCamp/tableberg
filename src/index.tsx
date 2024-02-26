@@ -169,7 +169,6 @@ const useTableHeaderFooter = (
         let rowCount = attrs.rows;
 
         if (to === "added") {
-            rowCount++;
             if (from === "converted") {
                 changeFirstRowTagName(tableBlock.innerBlocks as any, "td");
             }
