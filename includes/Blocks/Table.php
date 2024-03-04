@@ -62,6 +62,7 @@ class Table
 			'--tableberg-cell-padding-left' => $cell_padding['left'] ?? '',
 			'--tableberg-cell-spacing-top' => $table_spacing['top'] ?? '',
 			'--tableberg-cell-spacing-left' => $table_spacing['left'] ?? '',
+			'max-width' => $attributes['tableWidth'] ?? '',
 		) + $table_border_variables + $inner_border_variables + $global_font_style;
 
 		foreach (['top', 'left'] as $k) {
