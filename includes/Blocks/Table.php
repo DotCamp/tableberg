@@ -122,7 +122,7 @@ class Table
 		}
 		$colgroup = '<colgroup>';
 		foreach ($widths as $w) {
-			$colgroup .= "<col width=\"$w\"/>";
+			$colgroup .= "<col width=\"$w\" style=\"min-width:$w;\"/>";
 		}
 		$colgroup .= '</colgroup>';
 		$content = HtmlUtils::insert_inside_tag($content, 'table', $colgroup);
