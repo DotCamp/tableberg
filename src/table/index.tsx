@@ -24,7 +24,7 @@ export const PrimaryTable = (
             ...getStyles(props.attributes),
             maxWidth: props.attributes.tableWidth,
         },
-        className: classNames(getStyleClass(props.attributes), "scroll-x"),
+        className: classNames(getStyleClass(props.attributes)),
     } as Record<string, any>;
 
     const innerBlocksProps = useInnerBlocksProps({
@@ -108,7 +108,7 @@ export const PrimaryTable = (
             <table {...blockProps}>
                 <colgroup>
                     {attributes.colWidths.map((w) => (
-                        <col width={w} />
+                        <col width={w} style={{ minWidth: w }} />
                     ))}
                 </colgroup>
                 {rowTemplate}

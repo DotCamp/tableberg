@@ -2,7 +2,7 @@
  * WordPress Imports
  */
 import { Placeholder, TextControl, Button } from "@wordpress/components";
-import { blockTable, mobile, previous } from "@wordpress/icons";
+import { blockTable } from "@wordpress/icons";
 import { useDispatch, useSelect } from "@wordpress/data";
 import {
     useBlockProps,
@@ -33,6 +33,7 @@ import { store as tbStore } from "./store";
 import { PrimaryTable } from "./table";
 import StackRowTable from "./table/StackRowTable";
 import StackColTable from "./table/StackColTable";
+import classNames from "classnames";
 
 export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
 interface TablebergCtx {
@@ -229,9 +230,14 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     registerTablebergPreviewDeviceChangeObserver();
     const { attributes, setAttributes, clientId } = props;
     const rootRef = useRef<HTMLTableElement>();
+
+    const [isScrollMode, setIsScrollMode] = useState<boolean>(false);
+
     const blockProps = useBlockProps({
         ref: rootRef,
-        className: "wp-block-tableberg-wrapper",
+        className: classNames("wp-block-tableberg-wrapper", {
+            "tableberg-scroll-x": isScrollMode,
+        }),
     });
 
     const storeActions = useDispatch(
@@ -299,7 +305,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const prevRenderMode = useRef<TablebergRenderMode>("primary");
 
     useEffect(() => {
-
         let newRMode: TablebergRenderMode = "primary";
         if (previewDevice === "desktop") {
             newRMode = "primary";
@@ -311,8 +316,13 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             }
             if (!breakpoint) {
                 newRMode = "primary";
-            } else if (breakpoint.enabled && breakpoint.mode === "stack") {
-                newRMode = `stack-${breakpoint.direction}`;
+                setIsScrollMode(false);
+            } else if (breakpoint.enabled) {
+                if (breakpoint.mode === "stack") {
+                    newRMode = `stack-${breakpoint.direction}`;
+                } else {
+                    setIsScrollMode(true);
+                }
             }
         }
 

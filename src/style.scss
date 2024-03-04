@@ -5,10 +5,7 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-
-
 .wp-block-tableberg-wrapper {
-    overflow-x: auto;
     box-sizing: border-box;
 
     &::after {
@@ -45,11 +42,19 @@
         margin-right: 0 !important;
     }
 
-    table.scroll-x {
-        width: 100%;
+    &.tableberg-scroll-x {
+        overflow-x: auto;
+        white-space: nowrap;
+        table {
+            width: 100%;
+            width: auto;
+            min-width: 100%;
 
-        tr, td, th {
-            width: max-content;
+            tr,
+            td,
+            th {
+                min-width: max-content;
+            }
         }
     }
 
@@ -59,20 +64,23 @@
         border-bottom: var(--tableberg-table-border-bottom, 1px solid black);
         border-left: var(--tableberg-table-border-left, 1px solid black);
         border-collapse: var(--tableberg-border-collapse, collapse);
-        border-spacing: var(--tableberg-cell-spacing-left, 0) var(--tableberg-cell-spacing-top, 0);
+        border-spacing: var(--tableberg-cell-spacing-left, 0)
+            var(--tableberg-cell-spacing-top, 0);
         width: 100%;
-    
+
         color: var(--tableberg-global-text-color);
         font-size: var(--tableberg-global-font-size);
-    
+
         a {
             color: var(--tableberg-global-link-color);
         }
-    
-        
+
         &.has-inner-border {
             .wp-block-tableberg-cell {
-                border-top: var(--tableberg-inner-border-top, 1px solid #000000);
+                border-top: var(
+                    --tableberg-inner-border-top,
+                    1px solid #000000
+                );
                 border-right: var(
                     --tableberg-inner-border-right,
                     1px solid #000000
@@ -81,10 +89,13 @@
                     --tableberg-inner-border-bottom,
                     1px solid #000000
                 );
-                border-left: var(--tableberg-inner-border-left, 1px solid #000000);
+                border-left: var(
+                    --tableberg-inner-border-left,
+                    1px solid #000000
+                );
             }
         }
-    
+
         .tableberg-header,
         .tableberg-footer,
         .tableberg-header-cell {
@@ -92,8 +103,5 @@
             background: blue;
             color: white;
         }
-    
     }
-
-    
 }
