@@ -53,7 +53,6 @@ class Table
 		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : array();
 
 		$styles = array(
-			'--tableber-table-width' => $attributes['tableWidth'],
 			'--tableberg-even-row-bg-color' => $even_row_bg_color,
 			'--tableberg-odd-row-bg-color' => $odd_row_bg_color,
 			'--tableberg-cell-padding-top' => $cell_padding['top'] ?? '',
@@ -63,11 +62,13 @@ class Table
 			'--tableberg-cell-spacing-top' => $table_spacing['top'] ?? '',
 			'--tableberg-cell-spacing-left' => $table_spacing['left'] ?? '',
 			'max-width' => $attributes['tableWidth'] ?? '',
-		) + $table_border_variables + $inner_border_variables + $global_font_style;
+		) + $inner_border_variables + $global_font_style;
 
 		foreach (['top', 'left'] as $k) {
 			if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
 				$styles['--tableberg-border-collapse'] = 'separate';
+			} else {
+				$styles += $table_border_variables;
 			}
 		}
 
