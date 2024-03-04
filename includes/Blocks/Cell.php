@@ -61,9 +61,11 @@ class Cell
 			$attrs_str .= ' rowspan="' . esc_attr($rowspan) . '"';
 		}
 
-		$content = HtmlUtils::append_attr_value($content, 'td', ' '.$classes, 'class');
+		$tagName = isset($attributes['tagName']) ? $attributes['tagName'] : 'td';
 
-		$content = HtmlUtils::add_attrs_to_tag($content, 'td', $attrs_str);
+		$content = HtmlUtils::append_attr_value($content, $tagName, ' '.$classes, 'class');
+
+		$content = HtmlUtils::add_attrs_to_tag($content, $tagName, $attrs_str);
 
 		return $pre . $content . $post;
 	}

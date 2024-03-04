@@ -6,10 +6,10 @@
  */
 
 table.wp-block-tableberg-table {
-    border-top: var(--tableberg-table-border-top, 1px solid black);
-    border-right: var(--tableberg-table-border-right, 1px solid black);
-    border-bottom: var(--tableberg-table-border-bottom, 1px solid black);
-    border-left: var(--tableberg-table-border-left, 1px solid black);
+    border-top: var(--tableberg-table-border-top);
+    border-right: var(--tableberg-table-border-right);
+    border-bottom: var(--tableberg-table-border-bottom);
+    border-left: var(--tableberg-table-border-left);
     border-collapse: var(--tableberg-border-collapse, collapse);
     border-spacing: var(--tableberg-cell-spacing-left, 0) var(--tableberg-cell-spacing-top, 0);
     width: 100%;
@@ -73,5 +73,13 @@ table.wp-block-tableberg-table {
 
     .tableberg-footer {
         background: --tableberg-footer-bg-color;
+    }
+
+    .rich-text [data-rich-text-placeholder]::after {
+        content: "Type here"
+    }
+
+    .rich-text:focus [data-rich-text-placeholder]::after {
+        content: "Type / to choose a block"
     }
 }

@@ -69,13 +69,18 @@ const CELL_TEMPLATE: InnerBlockTemplate[] = [
     ],
 ];
 
-const createSingleCell = (row: number, col: number): TablebergCellInstance => {
+const createSingleCell = (
+    row: number,
+    col: number,
+    isHeader: boolean
+): TablebergCellInstance => {
     return createBlocksFromInnerBlocksTemplate([
         [
             "tableberg/cell",
             {
                 col: col,
                 row,
+                tagName: isHeader ? "th" : "td",
             },
         ],
     ])[0] as TablebergCellInstance;
@@ -112,7 +117,7 @@ const addRow = (
         if (skip) {
             i += skip - 1;
         } else {
-            cellBlocks.push(createSingleCell(rowIndex, i));
+            cellBlocks.push(createSingleCell(rowIndex, i, false));
         }
     }
 
@@ -148,6 +153,8 @@ const addCol = (
     let lastIndex = 0,
         lastInsertedRow = -1;
 
+    const lastRow = tableBlock.attributes.rows - 1;
+
     tableBlock.innerBlocks.forEach((cell) => {
         const attrs = cell.attributes as TablebergCellBlockAttrs;
         if (attrs.col < colIndex && attrs.col + attrs.colspan > colIndex) {
@@ -177,14 +184,30 @@ const addCol = (
             const toInsertCount = prevRow - lastInsertedRow;
             for (let i = 1; i <= toInsertCount; i++) {
                 const row = lastInsertedRow + i;
-                cellBlocks[lastIndex++] = createSingleCell(row, colIndex);
+                cellBlocks[lastIndex++] = createSingleCell(
+                    row,
+                    colIndex,
+                    !!(
+                        (tableBlock.attributes.enableTableHeader && row == 0) ||
+                        (tableBlock.attributes.enableTableFooter &&
+                            row == lastRow)
+                    )
+                );
             }
             lastInsertedRow = prevRow;
         } else {
             const missedCount = attrs.row - lastInsertedRow;
             for (let i = 1; i <= missedCount; i++) {
                 const row = lastInsertedRow + i;
-                cellBlocks[lastIndex++] = createSingleCell(row, colIndex);
+                cellBlocks[lastIndex++] = createSingleCell(
+                    row,
+                    colIndex,
+                    !!(
+                        (tableBlock.attributes.enableTableHeader && row == 0) ||
+                        (tableBlock.attributes.enableTableFooter &&
+                            row == lastRow)
+                    )
+                );
             }
             lastInsertedRow = attrs.row;
         }
@@ -194,7 +217,11 @@ const addCol = (
 
     lastInsertedRow++;
     for (; lastInsertedRow < tableBlock.attributes.rows; lastInsertedRow++) {
-        cellBlocks[lastIndex++] = createSingleCell(lastInsertedRow, colIndex);
+        cellBlocks[lastIndex++] = createSingleCell(
+            lastInsertedRow,
+            colIndex,
+            !!(tableBlock.attributes.enableTableHeader && lastInsertedRow == 0)
+        );
     }
 
     const colWidths = tableBlock.attributes.colWidths;
@@ -458,6 +485,99 @@ const useMerging = (
         endCellMultiSelect();
     };
 
+    const unMergeCells = () => {
+        let startIdx = 0,
+            cell: TablebergCellInstance | null = null;
+        const newCells: TablebergCellInstance[] = [];
+        for (; startIdx < tableBlock.innerBlocks.length; startIdx++) {
+            cell = tableBlock.innerBlocks[startIdx] as any;
+            newCells.push(cell as any);
+            if (cell?.clientId === clientId) {
+                break;
+            }
+        }
+        if (!cell) {
+            return;
+        }
+
+        let curCol = cell.attributes.col;
+        let curRow = cell.attributes.row;
+        let toCol = curCol + cell.attributes.colspan;
+        let toRow = curRow + cell.attributes.rowspan;
+
+        const toInsertMap = new Map();
+        if (cell.attributes.colspan > 1) {
+            toInsertMap.set(curRow, {
+                from: curCol + 1,
+                to: toCol,
+            });
+        }
+        
+        if (cell.attributes.rowspan > 1) {
+            for (let row = curRow + 1; row < toRow; row++) {
+                toInsertMap.set(row, {
+                    from: curCol,
+                    to: toCol,
+                });
+            }
+        }
+
+        cell.attributes.colspan = 1;
+        cell.attributes.rowspan = 1;
+        let lastInseredRow = -1;
+        startIdx++;
+        for (; startIdx < tableBlock.innerBlocks.length; startIdx++) {
+            const cell = tableBlock.innerBlocks[
+                startIdx
+            ] as TablebergCellInstance;
+            const row = cell.attributes.row;
+
+            if (row === lastInseredRow || row >= toRow) {
+                newCells.push(cell);
+                continue;
+            }
+
+            const toInserts = toInsertMap.get(row);
+            if (!toInserts) {
+                newCells.push(cell);
+                continue;
+            }
+            const prevRow = cell.attributes.row - 1;
+            if (lastInseredRow !== prevRow && lastInseredRow > -1) {
+                const prevInsert = toInsertMap.get(prevRow);
+                for (let col = prevInsert.from; col < prevInsert.to; col++) {
+                    newCells.push(createSingleCell(prevRow, col, false));
+                }
+                lastInseredRow = prevRow;
+            }
+
+            if (toInserts.from > cell.attributes.col) {
+                newCells.push(cell);
+                continue;
+            }
+
+            for (let col = toInserts.from; col < toInserts.to; col++) {
+                newCells.push(createSingleCell(row, col, false));
+            }
+            lastInseredRow = row;
+            newCells.push(cell);
+        }
+
+        const lastToRow = toRow - 1;
+
+        if (lastInseredRow < lastToRow) {
+            const toInserts = toInsertMap.get(lastToRow);
+            for (let col = toInserts.from; col < toInserts.to; col++) {
+                newCells.push(createSingleCell(lastToRow, col, false));
+            }
+        }
+
+        storeActions.replaceInnerBlocks(tableBlock.clientId, newCells);
+        storeActions.updateBlockAttributes(tableBlock.clientId, {
+            cells: newCells.length,
+        });
+    };
+
     return {
         toggleCellSelection,
         endCellMultiSelect,
@@ -467,6 +587,7 @@ const useMerging = (
             el?.addEventListener("mousedown", elClickEvt, { capture: true });
         },
         mergeCells,
+        unMergeCells,
     };
 };
 
@@ -499,11 +620,13 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             tableBlockId,
         };
     }, []);
-    const { isMergable, addMergingEvt, getClassName, mergeCells } = useMerging(
-        clientId,
-        tableBlock,
-        storeActions
-    );
+    const {
+        isMergable,
+        addMergingEvt,
+        getClassName,
+        mergeCells,
+        unMergeCells,
+    } = useMerging(clientId, tableBlock, storeActions);
 
     const blockProps = useBlockProps({
         style: {
@@ -546,7 +669,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         addMergingEvt(cellRef.current);
     }, [cellRef.current]);
 
-    const tableControls = [
+    const tableControls: Record<string, any>[] = [
         {
             icon: tableRowBefore,
             title: "Insert row before",
@@ -555,7 +678,12 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         {
             icon: tableRowAfter,
             title: "Insert row after",
-            onClick: () => addRow(tableBlock, storeActions, attributes.row + attributes.rowspan),
+            onClick: () =>
+                addRow(
+                    tableBlock,
+                    storeActions,
+                    attributes.row + attributes.rowspan
+                ),
         },
         {
             icon: tableColumnBefore,
@@ -582,13 +710,23 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             title: "Delete column",
             onClick: () => deleteCol(tableBlock, storeActions, attributes.col),
         },
-        {
+    ];
+
+    if (isMergable()) {
+        tableControls.push({
             icon: table,
             title: "Merge",
             onClick: mergeCells,
-            isDisabled: !isMergable(),
-        },
-    ];
+        });
+    }
+
+    if (attributes.colspan > 1 || attributes.rowspan > 1) {
+        tableControls.push({
+            icon: table,
+            title: "Split Cells",
+            onClick: unMergeCells,
+        });
+    }
 
     const TagName = attributes.tagName ?? "td";
 

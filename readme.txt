@@ -5,7 +5,7 @@ Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.4
 Requires PHP: 7.0
-Stable tag: 0.3.2
+Stable tag: 0.3.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,12 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 1. Core Table Block vs Tableberg Block
 
 == Changelog ==
+
+= 0.3.3 =
+* FIX: Use th tags in header and footer
+* IMPROVE: Change table header and footer controls
+* NEW: Split merged cells
+* IMPROVE: Paragraph block placeholder text shortened
 
 = 0.3.2 =
 
