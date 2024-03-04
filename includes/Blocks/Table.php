@@ -233,7 +233,7 @@ class Table
 		}
 
 		self::$lastRow = null;
-		return $content;
+		return '<div class="wp-block-tableberg-wrapper">'.$content.'</div>';
 	}
 
 
