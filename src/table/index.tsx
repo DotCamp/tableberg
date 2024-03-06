@@ -21,10 +21,10 @@ export const PrimaryTable = (
     const { attributes, tableBlock, setAttributes } = props;
     const blockProps = {
         style: {
-            ...getStyles(props.attributes),
-            maxWidth: props.attributes.tableWidth,
+            ...getStyles(attributes),
+            maxWidth: attributes.tableWidth,
         },
-        className: classNames(getStyleClass(props.attributes)),
+        className: classNames(getStyleClass(attributes)),
     } as Record<string, any>;
 
     const innerBlocksProps = useInnerBlocksProps({

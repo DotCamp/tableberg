@@ -9,6 +9,10 @@ import { ALLOWED_BLOCKS } from ".";
 import { TablebergCellInstance } from "../cell";
 import { useDispatch } from "@wordpress/data";
 
+import { getStyles } from "./get-styles";
+import classNames from "classnames";
+import { getStyleClass } from "./get-classes";
+
 export default function StackRowTable(
     props: BlockEditProps<TablebergBlockAttrs> & {
         tableBlock: BlockInstance<TablebergBlockAttrs>;
@@ -23,6 +27,14 @@ export default function StackRowTable(
         renderAppender: false,
         allowedBlocks: ALLOWED_BLOCKS,
     });
+    const blockProps = {
+        style: {
+            ...getStyles(attributes),
+            maxWidth: attributes.tableWidth,
+        },
+        className: classNames(getStyleClass(attributes), "tableberg-rowstack-table"),
+    } as Record<string, any>;
+
     const [rowTemplates, setRowTemplates] = useState([]);
     const [colUpt, setColUpt] = useState(0);
 
@@ -138,7 +150,7 @@ export default function StackRowTable(
 
     return (
         <>
-            <table className="tableberg-rowstack-table">{rowTemplates}</table>
+            <table {...blockProps}>{rowTemplates}</table>
             <div style={{ display: "none" }} key={colUpt}>
                 <div {...innerBlocksProps} />
             </div>
