@@ -41,7 +41,6 @@ import {
     ConvertFooterIcon,
     NoFooterIcon,
 } from "./icons/header-footer";
-import { useState } from "react";
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -99,25 +98,6 @@ const FOOTER_OPTIONS = [
     },
 ];
 
-const MOCK_PRIVIEW = [
-    {
-        value: "desktop",
-        icon: NoHeaderIcon,
-        label: __("Desktop", "tableberg"),
-    },
-    {
-        value: "tablet",
-        icon: AddHeaderIcon,
-        label: __("Tablet", "tableberg"),
-    },
-
-    {
-        value: "mobile",
-        icon: ConvertHeaderIcon,
-        label: __("Mobile", "tableberg"),
-    },
-];
-
 const DEFAULT_BREAKPOINT_OPTIONS = {
     desktop: {
         enabled: false,
@@ -143,6 +123,12 @@ const DEFAULT_BREAKPOINT_OPTIONS = {
         direction: "row",
         stackCount: 3,
     },
+} as const;
+
+const DEVICE_TYPE_IDX = {
+    desktop: 0,
+    tablet: 1,
+    mobile: 2,
 } as const;
 
 function TablebergControls(
@@ -343,10 +329,43 @@ function TablebergControls(
             </InspectorControls>
             <InspectorControls group="settings">
                 <PanelBody
-                    title={`Responsiveness Settings [${preview}]`}
+                    title={`Responsiveness Settings`}
                     initialOpen={true}
                 >
                     <BaseControl __nextHasNoMarginBottom>
+                        <SelectControl
+                            label="Preview Mode"
+                            value={preview}
+                            options={[
+                                { label: "Desktop", value: "desktop" },
+                                { label: "Tablet", value: "tablet" },
+                                { label: "Mobile", value: "mobile" },
+                            ]}
+                            onChange={(previewMode: any) => {
+                                const previewBtn = document.querySelector<HTMLButtonElement>('button[aria-label="Preview"]');
+                                if (!previewBtn) {
+                                    return
+                                }
+                                previewBtn.click();
+                                let tries = 0;
+
+                                const changePreview = () => {
+                                    const menu = document.querySelector('div[role="menu"][aria-label="View options"]')?.querySelectorAll('button');
+                                    if (!menu || menu.length === 0) {
+                                        if (tries < 10) {
+                                            tries++;
+                                            setTimeout(changePreview, 500);
+                                        }
+                                        return;
+                                    }
+                                    // @ts-ignore
+                                    const idx = DEVICE_TYPE_IDX[previewMode];
+                                    menu[idx].click();
+                                    previewBtn.click();
+                                }
+                                changePreview();
+                            }}
+                        />
                         <ToggleControl
                             label={__("Enable Breakpoint", "tableberg")}
                             checked={breakpoint?.enabled}
