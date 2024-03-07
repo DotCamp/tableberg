@@ -175,7 +175,7 @@ class Table
 			$str .= 'data-tableberg-' . $device . '-direction="' . $deviceOpts["direction"] . '" ';
 			$str .= 'data-tableberg-' . $device . '-count="' . $deviceOpts["stackCount"] . '" ';
 
-			if ($deviceOpts["headerAsCol"]) {
+			if ($deviceOpts["headerAsCol"] && $attributes['enableTableHeader']) {
 				$str .= 'data-tableberg-' . $device . '-header="' . $deviceOpts["headerAsCol"] . '" ';
 			}
 		}
