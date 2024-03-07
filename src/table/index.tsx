@@ -23,6 +23,7 @@ export const PrimaryTable = (
         style: {
             ...getStyles(attributes),
             maxWidth: attributes.tableWidth,
+            width: attributes.tableWidth,
         },
         className: classNames(getStyleClass(attributes)),
     } as Record<string, any>;

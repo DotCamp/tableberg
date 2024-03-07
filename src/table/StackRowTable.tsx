@@ -31,6 +31,7 @@ export default function StackRowTable(
         style: {
             ...getStyles(attributes),
             maxWidth: attributes.tableWidth,
+            width: attributes.tableWidth,
         },
         className: classNames(getStyleClass(attributes), "tableberg-rowstack-table"),
     } as Record<string, any>;
