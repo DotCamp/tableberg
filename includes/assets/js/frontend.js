@@ -90,11 +90,9 @@
         if (table.dataset.tablebergLast === tag) {
             return;
         }
+        reviveTable(table);
         table.setAttribute("data-tableberg-last", tag);
-        table
-            .querySelectorAll("[data-tableberg-tmp]")
-            .forEach((el) => el.remove());
-
+        
         const cells = table.querySelectorAll("th,td");
 
         const tbody = table.querySelector("tbody") || table;
