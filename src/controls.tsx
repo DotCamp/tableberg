@@ -333,6 +333,10 @@ function TablebergControls(
                     initialOpen={true}
                 >
                     <BaseControl __nextHasNoMarginBottom>
+                        <Notice className="add-margin-bottom" isDismissible={false}>
+                            Use the block editor preview modes to configure and
+                            preview the table at different breakpoints
+                        </Notice>
                         {/*
                         <SelectControl
                             label="Preview Mode"
@@ -458,10 +462,6 @@ function TablebergControls(
                                 />
                             </>
                         )}
-                        <Notice isDismissible={false}>
-                            Use the block editor preview modes to configure and
-                            preview the table at different breakpoints
-                        </Notice>
                     </BaseControl>
                 </PanelBody>
             </InspectorControls>
