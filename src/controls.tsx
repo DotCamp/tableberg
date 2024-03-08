@@ -329,10 +329,11 @@ function TablebergControls(
             </InspectorControls>
             <InspectorControls group="settings">
                 <PanelBody
-                    title={`Responsiveness Settings`}
+                    title={`Responsiveness Settings [${preview.toUpperCase()}]`}
                     initialOpen={true}
                 >
                     <BaseControl __nextHasNoMarginBottom>
+                        {/*
                         <SelectControl
                             label="Preview Mode"
                             value={preview}
@@ -366,6 +367,7 @@ function TablebergControls(
                                 changePreview();
                             }}
                         />
+                        */}
                         <ToggleControl
                             label={__("Enable Breakpoint", "tableberg")}
                             checked={breakpoint?.enabled}
