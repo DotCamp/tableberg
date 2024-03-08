@@ -92,6 +92,10 @@
         }
         reviveTable(table);
         table.setAttribute("data-tableberg-last", tag);
+        const colGroup = table.querySelector('colgroup');
+        if (colGroup) {
+            colGroup.style.display = 'none';
+        }
         
         const cells = table.querySelectorAll("th,td");
 
@@ -177,9 +181,8 @@
             return;
         }
         count = parseInt(count);
-        table
-            .querySelectorAll("[data-tableberg-tmp]")
-            .forEach((el) => el.remove());
+        
+        reviveTable(table);
 
         const cells = Array.from(table.querySelectorAll("th,td"));
 
@@ -276,6 +279,12 @@
         if (!oldMode || !oldMode.match("stack")) {
             return;
         }
+
+        const colGroup = table.querySelector('colgroup');
+        if (colGroup) {
+            colGroup.removeAttribute('style');
+        }
+
         const cells = Array.from(table.querySelectorAll("th,td"));
         cells.sort((a, b) => {
             const aRow = parseInt(a.dataset.tablebergRow);
