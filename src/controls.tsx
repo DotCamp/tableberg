@@ -9,20 +9,22 @@ import {
     BlockControls,
     BlockAlignmentToolbar,
     FontSizePicker,
-    __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
     BaseControl,
     PanelBody,
+    SelectControl,
+    __experimentalNumberControl as NumberControl,
     ToggleControl,
     __experimentalToolsPanel as ToolsPanel,
     __experimentalToolsPanelItem as ToolsPanelItem,
+    Notice,
 } from "@wordpress/components";
 /**
  * Internal Imports
  */
-import { TablebergBlockAttrs } from "./types";
+import { Breakpoint, ResponsiveOptions, TablebergBlockAttrs } from "./types";
 import {
     BorderControl,
     ColorPickerDropdown,
@@ -49,10 +51,47 @@ const AVAILABLE_JUSTIFICATIONS = [
     },
 ];
 
-function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
-    const { attributes, setAttributes, clientId } = props;
+
+const DEFAULT_BREAKPOINT_OPTIONS = {
+    desktop: {
+        enabled: false,
+        headerAsCol: true,
+        maxWidth: 1024,
+        mode: "",
+        direction: "row",
+        stackCount: 3,
+    },
+    mobile: {
+        enabled: false,
+        headerAsCol: true,
+        maxWidth: 700,
+        mode: "",
+        direction: "row",
+        stackCount: 1,
+    },
+    tablet: {
+        enabled: false,
+        headerAsCol: true,
+        maxWidth: 1024,
+        mode: "",
+        direction: "row",
+        stackCount: 3,
+    },
+} as const;
+
+const DEVICE_TYPE_IDX = {
+    desktop: 0,
+    tablet: 1,
+    mobile: 2,
+} as const;
+
+function TablebergControls(
+    props: BlockEditProps<TablebergBlockAttrs> & {
+        preview: keyof ResponsiveOptions["breakpoints"];
+    }
+) {
+    const { attributes, setAttributes, clientId, preview } = props;
     const { enableInnerBorder, tableAlignment } = attributes;
-    const colorGradientSettings = useMultipleOriginColorsAndGradients();
 
     const blockAlignChange = (newValue: "left" | "right" | "center") => {
         setAttributes({ tableAlignment: newValue });
@@ -66,6 +105,30 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
     };
     const onLinkColorChange = (value: any) => {
         setAttributes({ linkColor: value });
+    };
+
+    const isDisabled = preview === "desktop";
+    const breakpoint =
+        // @ts-ignore
+        attributes.responsive?.breakpoints?.[preview] ||
+        DEFAULT_BREAKPOINT_OPTIONS[preview];
+
+    const setResponsive = (options: Partial<Breakpoint>) => {
+        if (isDisabled) {
+            return;
+        }
+        setAttributes({
+            responsive: {
+                ...(attributes.responsive || {}),
+                breakpoints: {
+                    ...(attributes.responsive.breakpoints || {}),
+                    [preview]: {
+                        ...breakpoint,
+                        ...options,
+                    } as any,
+                },
+            },
+        });
     };
 
     return (
@@ -254,6 +317,144 @@ function TablebergControls(props: BlockEditProps<TablebergBlockAttrs>) {
                     attrBorderKey="innerBorder"
                     borderLabel={__("Inner Border Size", "tableberg")}
                 />
+            </InspectorControls>
+            <InspectorControls group="settings">
+                <PanelBody
+                    title={`Responsiveness Settings [${preview.toUpperCase()}]`}
+                    initialOpen={true}
+                >
+                    <BaseControl __nextHasNoMarginBottom>
+                        <Notice className="add-margin-bottom" isDismissible={false}>
+                            Use the block editor preview modes to configure and
+                            preview the table at different breakpoints
+                        </Notice>
+                        {/*
+                        <SelectControl
+                            label="Preview Mode"
+                            value={preview}
+                            options={[
+                                { label: "Desktop", value: "desktop" },
+                                { label: "Tablet", value: "tablet" },
+                                { label: "Mobile", value: "mobile" },
+                            ]}
+                            onChange={(previewMode: any) => {
+                                const previewBtn = document.querySelector<HTMLButtonElement>('button[aria-label="Preview"]');
+                                if (!previewBtn) {
+                                    return
+                                }
+                                previewBtn.click();
+                                let tries = 0;
+
+                                const changePreview = () => {
+                                    const menu = document.querySelector('div[role="menu"][aria-label="View options"]')?.querySelectorAll('button');
+                                    if (!menu || menu.length === 0) {
+                                        if (tries < 10) {
+                                            tries++;
+                                            setTimeout(changePreview, 500);
+                                        }
+                                        return;
+                                    }
+                                    // @ts-ignore
+                                    const idx = DEVICE_TYPE_IDX[previewMode];
+                                    menu[idx].click();
+                                    previewBtn.click();
+                                }
+                                changePreview();
+                            }}
+                        />
+                        */}
+                        <ToggleControl
+                            label={__("Enable Breakpoint", "tableberg")}
+                            checked={breakpoint?.enabled}
+                            onChange={() =>
+                                setResponsive({
+                                    enabled: !breakpoint?.enabled,
+                                })
+                            }
+                            disabled={isDisabled}
+                        />
+                        <NumberControl
+                            label={__("Max Width", "tableberg")}
+                            onChange={(val) =>
+                                setResponsive({
+                                    maxWidth: parseInt(val || "0"),
+                                })
+                            }
+                            min={1}
+                            value={breakpoint?.maxWidth}
+                            labelPosition="side"
+                            suffix="px"
+                            spinControls="none"
+                            size="small"
+                            help="These responsiveness settings will be active until the viewport reaches this width (Frontend only)."
+                            disabled={isDisabled}
+                        />
+                        <SelectControl
+                            label="Mode"
+                            value={breakpoint?.mode || "scroll"}
+                            options={[
+                                { label: "Scroll", value: "scroll" },
+                                { label: "Stack Cells", value: "stack" },
+                            ]}
+                            onChange={(mode: any) =>
+                                setResponsive({
+                                    mode,
+                                })
+                            }
+                            disabled={isDisabled}
+                            __nextHasNoMarginBottom
+                        />
+                        {breakpoint?.mode === "stack" && (
+                            <>
+                                <SelectControl
+                                    label="Stack Direction"
+                                    value={breakpoint?.direction}
+                                    options={[
+                                        { label: "Row", value: "row" },
+                                        { label: "Column", value: "col" },
+                                    ]}
+                                    onChange={(direction: any) =>
+                                        setResponsive({
+                                            direction,
+                                        })
+                                    }
+                                    disabled={isDisabled}
+                                    __nextHasNoMarginBottom
+                                />
+                                {breakpoint?.direction === "row" && (
+                                    <ToggleControl
+                                        label={__(
+                                            "Show header in first column",
+                                            "tableberg"
+                                        )}
+                                        checked={breakpoint?.headerAsCol}
+                                        onChange={() =>
+                                            setResponsive({
+                                                headerAsCol:
+                                                    !breakpoint?.headerAsCol,
+                                            })
+                                        }
+                                        disabled={isDisabled}
+                                    />
+                                )}
+                                <NumberControl
+                                    label={__("Items per row", "tableberg")}
+                                    onChange={(val: any) =>
+                                        setResponsive({
+                                            stackCount: Math.max(
+                                                1,
+                                                parseInt(val)
+                                            ),
+                                        })
+                                    }
+                                    min={1}
+                                    value={breakpoint?.stackCount}
+                                    disabled={isDisabled}
+                                />
+                            </>
+                        )}
+                    </BaseControl>
+                </PanelBody>
             </InspectorControls>
             <BlockControls>
                 <BlockAlignmentToolbar

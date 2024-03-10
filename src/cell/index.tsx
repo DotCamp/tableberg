@@ -11,7 +11,13 @@ import {
     BlockControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import { useBlockProps, useInnerBlocksProps } from "@wordpress/block-editor";
+
+import {
+    useBlockProps,
+    useInnerBlocksProps,
+    // @ts-ignore
+    useBlockEditingMode,
+} from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ToolbarDropdownMenu } from "@wordpress/components";
 import {
@@ -24,13 +30,16 @@ import {
     table,
 } from "@wordpress/icons";
 
+import classNames from "classnames";
+
 import { store as tbStore } from "../store";
+import { TablebergCtx } from "../";
 
 import "./style.scss";
 import "./editor.scss";
 
 import metadata from "./block.json";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import CellControls from "./controls";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
@@ -42,6 +51,8 @@ export interface TablebergCellBlockAttrs {
     colspan: number;
     row: number;
     col: number;
+    responsiveTarget: string;
+    isTmp: boolean;
 }
 
 export type TablebergCellInstance = BlockInstance<TablebergCellBlockAttrs>;
@@ -99,6 +110,9 @@ const addRow = (
 
     tableBlock.innerBlocks.forEach((cell) => {
         const attrs: TablebergCellBlockAttrs = cell.attributes as any;
+        if (attrs.isTmp) {
+            return;
+        }
         if (attrs.row >= rowIndex) {
             cell.attributes.row += 1;
             postCells.push(cell as TablebergCellInstance);
@@ -157,6 +171,9 @@ const addCol = (
 
     tableBlock.innerBlocks.forEach((cell) => {
         const attrs = cell.attributes as TablebergCellBlockAttrs;
+        if (attrs.isTmp) {
+            return;
+        }
         if (attrs.col < colIndex && attrs.col + attrs.colspan > colIndex) {
             attrs.colspan += 1;
 
@@ -253,7 +270,7 @@ const deleteCol = (
     let lastIdx = 0;
 
     tableBlock.innerBlocks.forEach((cell) => {
-        if (cell.attributes.col === colIndex) {
+        if (cell.attributes.col === colIndex || cell.attributes.isTmp) {
             return;
         }
         if (cell.attributes.col > colIndex) {
@@ -288,7 +305,7 @@ const deleteRow = (
     let lastIdx = 0;
 
     tableBlock.innerBlocks.forEach((cell) => {
-        if (cell.attributes.row === rowIndex) {
+        if (cell.attributes.row === rowIndex || cell.attributes.isTmp) {
             return;
         }
         if (cell.attributes.row > rowIndex) {
@@ -592,8 +609,10 @@ const useMerging = (
 };
 
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
+
     const { clientId, attributes, setAttributes } = props;
     const cellRef = useRef<HTMLTableCellElement>();
+    useBlockEditingMode(attributes.isTmp ? "disabled" : "default");
 
     const storeActions = useDispatch(
         blockEditorStore
@@ -635,7 +654,10 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             height: tableBlock.attributes.rowHeights[props.attributes.row],
         },
         ref: cellRef,
-        className: getClassName(clientId),
+        className: classNames(getClassName(clientId), {
+            "tableberg-header-cell":
+                attributes.row == 0 && tableBlock.attributes.enableTableHeader,
+        }),
     });
 
     const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
@@ -730,19 +752,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     const TagName = attributes.tagName ?? "td";
 
-    const [targetEl, setTargetEl] = useState<Element>();
-
-    useEffect(() => {
-        const iframe = document.querySelector<HTMLIFrameElement>(
-            'iframe[name="editor-canvas"]'
-        );
-        const id = `#tableberg-${tableBlockId}-row-${attributes.row}`;
-        const el = (iframe?.contentWindow?.document || document).querySelector(
-            id
-        )!;
-        el && setTargetEl(el);
-    }, [attributes.row]);
-
     const setVAlign = (newValue: "bottom" | "center" | "top") => {
         setAttributes({ vAlign: newValue });
     };
@@ -764,22 +773,39 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     return (
         <>
-            {targetEl ? (
-                createPortal(
-                    <TagName
-                        {...innerBlocksProps}
-                        rowSpan={attributes.rowspan}
-                        colSpan={attributes.colspan}
-                    />,
-                    targetEl
-                )
-            ) : (
-                <TagName
-                    {...innerBlocksProps}
-                    rowSpan={attributes.rowspan}
-                    colSpan={attributes.colspan}
-                />
-            )}
+            <TablebergCtx.Consumer>
+                {({ rootEl, render }) => {
+                    let targetEl;
+                    if (render === "primary") {
+                        if (!attributes.isTmp)
+                            targetEl =
+                                rootEl?.firstElementChild?.children?.[
+                                    attributes.row + 1
+                                ];
+                    } else if (attributes.responsiveTarget) {
+                        targetEl = rootEl?.querySelector(
+                            attributes.responsiveTarget
+                        );
+                    }
+
+                    return targetEl ? (
+                        createPortal(
+                            <TagName
+                                {...innerBlocksProps}
+                                rowSpan={attributes.rowspan}
+                                colSpan={attributes.colspan}
+                            />,
+                            targetEl
+                        )
+                    ) : (
+                        <TagName
+                            {...innerBlocksProps}
+                            rowSpan={attributes.rowspan}
+                            colSpan={attributes.colspan}
+                        />
+                    );
+                }}
+            </TablebergCtx.Consumer>
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
                     value={attributes.vAlign}

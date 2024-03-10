@@ -36,6 +36,9 @@ class Cell
 	 */
 	public function render_tableberg_cell_block($attributes, $content, $block)
 	{
+		if (isset($attributes['isTmp']) && $attributes['isTmp']) {
+			return '';
+		}
 		$pre = '';
 		$post = '';
 		if (is_null(Table::$lastRow)) {
@@ -48,7 +51,7 @@ class Cell
 		$colspan = isset($attributes['colspan']) ? $attributes['colspan'] : 1;
 		$rowspan = isset($attributes['rowspan']) ? $attributes['rowspan'] : 1;
 
-		$attrs_str = '';
+		$attrs_str = 'data-tableberg-row="'.$attributes['row'].'" data-tableberg-col="'.$attributes['col'].'"';
 		$classes = 'tableberg-v-align-'.$attributes['vAlign'];
 
 		// Add colspan attribute if it's greater than 1

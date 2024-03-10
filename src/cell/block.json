@@ -32,6 +32,14 @@
         "col": {
             "type": "number",
             "default": 0
+        },
+        "responsiveTarget": {
+            "type": "string",
+            "default": ""
+        },
+        "isTmp": {
+            "type": "boolean",
+            "default": false
         }
     },
     "supports": {

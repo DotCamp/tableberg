@@ -11,11 +11,27 @@ namespace Tableberg;
 /**
  * Handle plugin assets
  */
-class Assets {
+class Assets
+{
+	/**
+	 * Register block assets for frontend.
+	 * I.e. dynamic responsiveness
+	 */
+	public function register_frontend_assets()
+	{
+		wp_enqueue_script(
+			'tableberg-frontend-script',
+			TABLEBERG_URL . 'includes/assets/js/frontend.js',
+			[],
+			Constants::plugin_version(),
+			true
+		);
+	}
 	/**
 	 * Register blocks assets
 	 */
-	public function register_blocks_assets() {
+	public function register_blocks_assets()
+	{
 		wp_register_script(
 			'tableberg-script',
 			TABLEBERG_URL . 'build/tableberg.build.js',
@@ -51,7 +67,8 @@ class Assets {
 	/**
 	 * Enqueue Admin assets
 	 */
-	public function register_admin_assets() {
+	public function register_admin_assets()
+	{
 		wp_enqueue_script(
 			'tableberg-admin-script',
 			TABLEBERG_URL . 'build/tableberg-admin.build.js',
@@ -66,6 +83,13 @@ class Assets {
 				'wp-i18n',
 				'wp-primitives',
 			),
+			Constants::plugin_version(),
+			true
+		);
+		wp_enqueue_script(
+			'tableberg-preview-device-change-observer',
+			TABLEBERG_URL . 'includes/assets/js/PreviewDeviceChangeObserver.js',
+			[],
 			Constants::plugin_version(),
 			true
 		);

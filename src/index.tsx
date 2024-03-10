@@ -23,19 +23,25 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState, createContext } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
-import { getStyles } from "./get-styles";
-import classNames from "classnames";
-import { getStyleClass } from "./get-classes";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
-import { createArray } from "./utils";
 import { TablebergCellInstance } from "./cell";
 import { store as tbStore } from "./store";
+import { PrimaryTable } from "./table";
+import StackRowTable from "./table/StackRowTable";
+import StackColTable from "./table/StackColTable";
+import classNames from "classnames";
 
-const ALLOWED_BLOCKS = ["tableberg/cell"];
+export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
+interface TablebergCtx {
+    rootEl?: HTMLElement;
+    render?: TablebergRenderMode;
+}
+
+export const TablebergCtx = createContext<TablebergCtx>({});
 
 const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
     const newCells: TablebergCellInstance[] = [];
@@ -301,23 +307,18 @@ const useTableHeaderFooter = (
 };
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
+    // @ts-ignore
+    registerTablebergPreviewDeviceChangeObserver();
     const { attributes, setAttributes, clientId } = props;
-    const tableRef = useRef<HTMLTableElement>();
+    const rootRef = useRef<HTMLTableElement>();
+
+    const [isScrollMode, setIsScrollMode] = useState<boolean>(false);
 
     const blockProps = useBlockProps({
-        ref: tableRef,
-        style: {
-            ...getStyles(props.attributes),
-            maxWidth: props.attributes.tableWidth,
-        },
-        className: classNames(getStyleClass(props.attributes)),
-    } as Record<string, any>);
-
-    const innerBlocksProps = useInnerBlocksProps({
-        // @ts-ignore false can obviously be assigned to renderAppender as does
-        // wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
-        renderAppender: false,
-        allowedBlocks: ALLOWED_BLOCKS,
+        ref: rootRef,
+        className: classNames("wp-block-tableberg-wrapper", {
+            "tableberg-scroll-x": isScrollMode,
+        }),
     });
 
     const storeActions = useDispatch(
@@ -349,6 +350,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         }
     }, [selectedCells]);
 
+    const [previewDevice, updatePreview] = useState<
+        keyof TablebergBlockAttrs["responsive"]["breakpoints"]
+        // @ts-ignore
+    >(tablebergGetLastDevice() || "desktop");
+
     useEffect(() => {
         if (!tableBlock.attributes.version) {
             const [newCells, cols] = getCellsOfRows(tableBlock);
@@ -362,10 +368,50 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 colWidths: Array(cols).fill(""),
             });
         }
+        const localUpdater = (evt: any) => {
+            updatePreview(evt.detail.currentPreview);
+        };
+        document.addEventListener("TablebergPreviewDeviceChange", localUpdater);
+        return () =>
+            document.removeEventListener(
+                "TablebergPreviewDeviceChange",
+                localUpdater
+            );
     }, []);
 
     useTableHeaderFooter(tableBlock, storeActions);
 
+    const [renderMode, setRenderMode] =
+        useState<TablebergRenderMode>("primary");
+    const prevRenderMode = useRef<TablebergRenderMode>("primary");
+
+    useEffect(() => {
+        let newRMode: TablebergRenderMode = "primary";
+        if (previewDevice === "desktop") {
+            newRMode = "primary";
+        } else {
+            let breakpoint =
+                attributes.responsive?.breakpoints?.[previewDevice];
+            if (!breakpoint && previewDevice === "mobile") {
+                breakpoint = attributes.responsive?.breakpoints?.tablet;
+            }
+            if (!breakpoint) {
+                newRMode = "primary";
+                setIsScrollMode(false);
+            } else if (breakpoint.enabled) {
+                if (breakpoint.mode === "stack") {
+                    newRMode = `stack-${breakpoint.direction}`;
+                } else {
+                    setIsScrollMode(true);
+                }
+            }
+        }
+
+        if (newRMode !== prevRenderMode.current) {
+            setRenderMode(newRMode);
+            prevRenderMode.current = newRMode;
+        }
+    }, [previewDevice, attributes.responsive.breakpoints]);
     const [colUpt, setColUpt] = useState(0);
     const lastRowCount = useRef(attributes.rows);
 
@@ -379,7 +425,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     useSelect(
         (select) => {
-            tableRef.current?.addEventListener(
+            rootRef.current?.addEventListener(
                 "keydown",
                 (evt: KeyboardEvent) => {
                     if (evt.key !== "Backspace" && evt.key !== "Delete") {
@@ -400,7 +446,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 }
             );
         },
-        [tableRef.current]
+        [rootRef.current]
     );
 
     function onCreateTable(event: FormEvent) {
@@ -451,7 +497,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             });
         }
         return (
-            <div {...innerBlocksProps}>
+            <div>
                 <Placeholder
                     label={"Create Tableberg Table"}
                     icon={<BlockIcon icon={blockTable} showColors />}
@@ -498,63 +544,35 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         );
     }
 
-    const rowTemplate = createArray(attributes.rows).map((i) => {
-        let background;
-        let className = "";
-        if (i % 2 === 0) {
-            background =
-                attributes.oddRowBackgroundColor ??
-                attributes.oddRowBackgroundGradient ??
-                undefined;
-        } else {
-            background =
-                attributes.evenRowBackgroundColor ??
-                attributes.evenRowBackgroundGradient ??
-                undefined;
-        }
-
-        if (i === 0 && attributes.enableTableHeader) {
-            background =
-                attributes.headerBackgroundColor ??
-                attributes.headerBackgroundGradient ??
-                undefined;
-            className += "tableberg-header";
-        }
-
-        if (i + 1 === attributes.rows && attributes.enableTableFooter) {
-            background =
-                attributes.footerBackgroundColor ??
-                attributes.footerBackgroundGradient ??
-                undefined;
-            className += "tableberg-footer";
-        }
-
-        return (
-            <tr
-                id={`tableberg-${clientId}-row-${i}`}
-                style={{
-                    height: attributes.rowHeights[i],
-                    background,
-                }}
-                className={className}
-            ></tr>
-        );
-    });
-
     return (
         <>
-            <table {...blockProps}>
-                <colgroup>
-                    {attributes.colWidths.map((w) => (
-                        <col width={w} />
-                    ))}
-                </colgroup>
-                {rowTemplate}
-            </table>
-            <div style={{ display: "none" }} key={colUpt}>
-                <div {...innerBlocksProps} />
+            <div {...blockProps}>
+                <TablebergCtx.Provider
+                    value={{
+                        rootEl: rootRef.current!,
+                        render: renderMode as any,
+                    }}
+                >
+                    {(renderMode === "primary" && (
+                        <PrimaryTable {...props} tableBlock={tableBlock} />
+                    )) ||
+                        (renderMode === "stack-row" && (
+                            <StackRowTable
+                                {...props}
+                                tableBlock={tableBlock}
+                                preview={previewDevice}
+                            />
+                        )) ||
+                        (renderMode === "stack-col" && (
+                            <StackColTable
+                                {...props}
+                                tableBlock={tableBlock}
+                                preview={previewDevice}
+                            />
+                        ))}
+                </TablebergCtx.Provider>
             </div>
-            <TablebergControls {...props} />
+            <TablebergControls {...props} preview={previewDevice} />
         </>
     );
 }
