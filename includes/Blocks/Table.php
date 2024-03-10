@@ -68,6 +68,8 @@ class Table
 		foreach (['top', 'left'] as $k) {
 			if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
 				$styles['--tableberg-border-collapse'] = 'separate';
+			} else {
+				$styles += $table_border_variables;
 			}
 		}
 

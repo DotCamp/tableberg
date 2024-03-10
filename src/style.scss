@@ -106,6 +106,14 @@
             font-weight: bold;
         }
     }
+
+    .rich-text [data-rich-text-placeholder]::after {
+        content: "Type here"
+    }
+
+    .rich-text:focus [data-rich-text-placeholder]::after {
+        content: "Type / to choose a block"
+    }
 }
 
 .add-margin-bottom {

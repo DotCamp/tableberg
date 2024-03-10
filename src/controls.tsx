@@ -12,13 +12,13 @@ import {
 } from "@wordpress/block-editor";
 import { BlockEditProps } from "@wordpress/blocks";
 import {
+    BaseControl,
     PanelBody,
     SelectControl,
     __experimentalNumberControl as NumberControl,
     ToggleControl,
     __experimentalToolsPanel as ToolsPanel,
     __experimentalToolsPanelItem as ToolsPanelItem,
-    BaseControl,
     Notice,
 } from "@wordpress/components";
 /**
@@ -32,15 +32,6 @@ import {
     SpacingControl,
 } from "./components";
 import { ColorSettingsWithGradient } from "./components";
-
-import {
-    AddHeaderIcon,
-    ConvertHeaderIcon,
-    NoHeaderIcon,
-    AddFooterIcon,
-    ConvertFooterIcon,
-    NoFooterIcon,
-} from "./icons/header-footer";
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -60,43 +51,6 @@ const AVAILABLE_JUSTIFICATIONS = [
     },
 ];
 
-const HEADER_OPTIONS = [
-    {
-        value: "",
-        icon: NoHeaderIcon,
-        label: __("Disable Header", "tableberg"),
-    },
-    {
-        value: "added",
-        icon: AddHeaderIcon,
-        label: __("Insert Header", "tableberg"),
-    },
-
-    {
-        value: "converted",
-        icon: ConvertHeaderIcon,
-        label: __("Make Top Row Header", "tableberg"),
-    },
-];
-
-const FOOTER_OPTIONS = [
-    {
-        value: "",
-        icon: NoFooterIcon,
-        label: __("Disable Footer", "tableberg"),
-    },
-    {
-        value: "added",
-        icon: AddFooterIcon,
-        label: __("Insert Footer", "tableberg"),
-    },
-
-    {
-        value: "converted",
-        icon: ConvertFooterIcon,
-        label: __("Make Bottom Row Footer", "tableberg"),
-    },
-];
 
 const DEFAULT_BREAKPOINT_OPTIONS = {
     desktop: {
@@ -181,17 +135,54 @@ function TablebergControls(
         <>
             <InspectorControls>
                 <PanelBody>
-                    <CustomToggleGroupControl
-                        options={HEADER_OPTIONS}
-                        attributeKey="enableTableHeader"
-                        label={__("Table Header Setting", "tableberg")}
-                    />
-                    <CustomToggleGroupControl
-                        options={FOOTER_OPTIONS}
-                        attributeKey="enableTableFooter"
-                        label={__("Table Footer Setting", "tableberg")}
-                    />
-
+                    <BaseControl
+                        __nextHasNoMarginBottom
+                    >
+                        <BaseControl.VisualLabel>
+                            Header Settings
+                        </BaseControl.VisualLabel>
+                        <ToggleControl
+                            checked={attributes.enableTableHeader === ""}
+                            label="Disable Header"
+                            onChange={(val) => { setAttributes({ enableTableHeader: val ? "" : "added" }) }}
+                        />
+                        <ToggleControl
+                            checked={attributes.enableTableHeader === "converted"}
+                            label="Make Top Row Header"
+                            onChange={(val) => { setAttributes({ enableTableHeader: val ? "converted" : "" }) }}
+                        />
+                        <ToggleControl
+                            checked={attributes.enableTableHeader === "added"}
+                            label="Insert Header"
+                            onChange={(val) => { setAttributes({ enableTableHeader: val ? "added" : "" }) }}
+                        />
+                    </BaseControl>
+                </PanelBody>
+                <PanelBody>
+                    <BaseControl
+                        __nextHasNoMarginBottom
+                    >
+                        <BaseControl.VisualLabel>
+                            Footer Settings
+                        </BaseControl.VisualLabel>
+                        <ToggleControl
+                            checked={attributes.enableTableFooter === ""}
+                            label="Disable Footer"
+                            onChange={(val) => { setAttributes({ enableTableFooter: val ? "" : "added" }) }}
+                        />
+                        <ToggleControl
+                            checked={attributes.enableTableFooter === "converted"}
+                            label="Make Bottom Row Footer"
+                            onChange={(val) => { setAttributes({ enableTableFooter: val ? "converted" : "" }) }}
+                        />
+                        <ToggleControl
+                            checked={attributes.enableTableFooter === "added"}
+                            label="Insert Footer"
+                            onChange={(val) => { setAttributes({ enableTableFooter: val ? "added" : "" }) }}
+                        />
+                    </BaseControl>
+                </PanelBody>
+                <PanelBody>
                     <HeightControl
                         value={attributes.tableWidth}
                         label={__("Table Width", "tableberg")}
