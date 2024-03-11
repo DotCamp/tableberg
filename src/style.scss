@@ -5,7 +5,7 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-.wp-block-tableberg-wrapper {
+div.wp-block-tableberg-wrapper {
     box-sizing: border-box;
 
     &::after {
@@ -40,10 +40,6 @@
     &.justify-table-right {
         margin-left: auto !important;
         margin-right: 0 !important;
-    }
-
-    &:not(.tableberg-scroll-x){
-        width: max-content;
     }
 
     &.tableberg-scroll-x {
