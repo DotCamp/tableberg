@@ -1,4 +1,4 @@
-import { omitBy, isUndefined, trim, isEmpty, isNumber } from "lodash";
+import { omitBy, isUndefined, trim, isEmpty } from "lodash";
 import { ButtonBlockTypes } from "./type";
 
 export function getStyles(attributes: ButtonBlockTypes) {
@@ -11,17 +11,20 @@ export function getStyles(attributes: ButtonBlockTypes) {
         textHoverColor,
     } = attributes;
 
+    let computedBackgroundColor = backgroundColor ? backgroundColor : backgroundGradient;
+    let computedBackgroundHoverColor = backgroundHoverColor ? backgroundHoverColor : backgroundHoverGradient;
+
+    if (!computedBackgroundHoverColor) {
+        computedBackgroundHoverColor = computedBackgroundColor;
+    }
+
     let styles = {
-        "--tableberg-button-background-color": !isEmpty(backgroundColor)
-            ? backgroundColor
-            : backgroundGradient,
-        "--tableberg-button-text-hover-color": textHoverColor,
         "--tableberg-button-text-color": textColor,
-        "--tableberg-button-hover-background-color": !isEmpty(
-            backgroundHoverColor
-        )
-            ? backgroundHoverColor
-            : backgroundHoverGradient,
+        "--tableberg-button-text-hover-color": isEmpty(textHoverColor)
+            ? textColor
+            : textHoverColor,
+        "--tableberg-button-background-color": computedBackgroundColor,
+        "--tableberg-button-hover-background-color": computedBackgroundHoverColor,
     };
 
     return omitBy(
