@@ -84,8 +84,8 @@ class Table
 	 */
 	public function get_style_class($attributes)
 	{
-		$table_width         = $attributes['tableWidth'];
-		$table_alignment     = $attributes['tableAlignment'];
+		$table_width = $attributes['tableWidth'];
+
 		$enable_inner_border = $attributes['enableInnerBorder'];
 		$classes             = array();
 		if ($enable_inner_border) {
@@ -104,9 +104,7 @@ class Table
 		if (!$is_value_empty($table_width)) {
 			$classes[] = 'has-table-width';
 		}
-		if (!$is_value_empty($table_alignment)) {
-			$classes[] = 'justify-table-' . $table_alignment;
-		}
+
 
 		return $classes;
 	}
@@ -194,17 +192,13 @@ class Table
 	 */
 	public function render_tableberg_table_block($attributes, $content, $block)
 	{
-		$class_names        = $this->get_style_class($attributes);
-		$style              = $this->get_styles($attributes);
-		$wrapper_attributes = get_block_wrapper_attributes(
-			array(
-				'class' => trim(join(' ', $class_names)),
-				'style' => $style,
-			)
-		);
+		$table_class_names = $this->get_style_class($attributes);
+		$table_style       = $this->get_styles($attributes);
+
+		$table_attrs = 'class = "' . trim(join(' ', $table_class_names)) . '" style="' . $table_style . '"';
 
 		$content = HtmlUtils::insert_inside_tag($content, 'table', '<tbody>');
-		$content = HtmlUtils::replace_attrs_of_tag($content, 'table', $wrapper_attributes);
+		$content = HtmlUtils::replace_attrs_of_tag($content, 'table', $table_attrs);
 		$content = HtmlUtils::replace_closing_tag($content, 'table', '</tr></tbody></table>');
 
 		if ($attributes['enableTableHeader']) {
@@ -236,7 +230,17 @@ class Table
 		}
 
 		self::$lastRow = null;
-		return '<div class="wp-block-tableberg-wrapper">' . $content . '</div>';
+
+		$wrapper_classes = ['wp-block-tableberg-wrapper'];
+		$table_alignment = $attributes['tableAlignment'];
+		if ($table_alignment && $table_alignment !== "center") {
+			$wrapper_classes[] = 'justify-table-' . $table_alignment;
+		}
+		$wrapper_attributes = get_block_wrapper_attributes([
+			'class' => trim(join(' ', $wrapper_classes)),
+		]);
+
+		return '<div ' . $wrapper_attributes . ' >' . $content . '</div>';
 	}
 
 

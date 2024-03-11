@@ -318,6 +318,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         ref: rootRef,
         className: classNames("wp-block-tableberg-wrapper", {
             "tableberg-scroll-x": isScrollMode,
+            [`justify-table-${attributes.tableAlignment}`]: !!attributes.tableAlignment
         }),
     });
 
