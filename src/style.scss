@@ -103,11 +103,11 @@ div.wp-block-tableberg-wrapper {
         }
     }
 
-    .rich-text [data-rich-text-placeholder]::after {
+    .wp-block-paragraph [data-rich-text-placeholder]::after {
         content: "Type here"
     }
 
-    .rich-text:focus [data-rich-text-placeholder]::after {
+    .wp-block-paragraph:focus [data-rich-text-placeholder]::after {
         content: "Type / to choose a block"
     }
 }
