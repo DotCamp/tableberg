@@ -1,7 +1,7 @@
 import { isEmpty, get } from "lodash";
 import { __ } from "@wordpress/i18n";
 import { useDispatch } from "@wordpress/data";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { BlockEditProps } from "@wordpress/blocks";
 import CustomMediaPlaceholder from "./media-placeholder";
 import { ResizableBox } from "@wordpress/components";
@@ -54,6 +54,26 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
     const numericWidth = width ? parseInt(width, 10) : undefined;
     const numericHeight = height ? parseInt(height, 10) : undefined;
 
+    useEffect(() => {
+        if (!numericWidth || !naturalWidth || !naturalHeight) {
+            return;
+        }
+        let ratio = 1;
+
+        if (!attributes.aspectRatio) {
+            ratio = (naturalWidth || 1) / (naturalHeight || 1);
+        } else {
+            const sratio = attributes.aspectRatio.split("/", 2);
+            if (sratio.length > 1) {
+                ratio = parseInt(sratio[0]) / parseInt(sratio[1]);
+            }
+        }
+        let h = numericWidth / ratio;
+        setAttributes({
+            height: `${h}px`,
+        });
+    }, [attributes.aspectRatio]);
+
     return (
         <figure {...blockProps}>
             {hasImage && (
@@ -79,7 +99,7 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                                 top: false,
                                 right: true,
                                 bottom: true,
-                                left: false
+                                left: false,
                             }}
                             onResizeStart={onResizeStart}
                             onResizeStop={(_, direction, elt) => {
@@ -92,10 +112,14 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                                         (naturalWidth || 1) /
                                         (naturalHeight || 1);
                                 } else {
-                                    const sratio = attributes.aspectRatio
-                                        .split("/", 2);
+                                    const sratio = attributes.aspectRatio.split(
+                                        "/",
+                                        2
+                                    );
                                     if (sratio.length > 1) {
-                                        ratio = parseInt(sratio[0]) / parseInt(sratio[1]);
+                                        ratio =
+                                            parseInt(sratio[0]) /
+                                            parseInt(sratio[1]);
                                     }
                                 }
                                 let w = elt.offsetWidth;
@@ -112,7 +136,6 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                                     height: `${h}px`,
                                 });
                             }}
-                            
                         >
                             <Image
                                 imageRef={imageRef}
