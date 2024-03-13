@@ -22,7 +22,11 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
     const [showCaption, setShowCaption] = useState(!!caption);
     const [isImageEditing, setIsEditingImage] = useState(false);
     const imageRef = useRef<HTMLImageElement>(null);
-    const blockProps = useBlockProps();
+    const blockProps = useBlockProps({
+        style: {
+            width: "max-content",
+        },
+    });
     const hasImage = !isEmpty(media);
     const { toggleSelection } = useDispatch("core/block-editor");
     const { naturalWidth, naturalHeight } = useMemo(() => {
@@ -70,24 +74,45 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                             showHandle={isSelected}
                             minWidth={"50"}
                             minHeight={"50"}
+                            maxWidth="720px"
                             enable={{
                                 top: false,
                                 right: true,
                                 bottom: true,
-                                left: false,
+                                left: false
                             }}
                             onResizeStart={onResizeStart}
-                            onResizeStop={(event, direction, elt) => {
+                            onResizeStop={(_, direction, elt) => {
                                 onResizeStop();
-                                // Since the aspect ratio is locked when resizing, we can
-                                // use the width of the resized element to calculate the
-                                // height in CSS to prevent stretching when the max-width
-                                // is reached.
+
+                                let ratio = 1;
+
+                                if (!attributes.aspectRatio) {
+                                    ratio =
+                                        (naturalWidth || 1) /
+                                        (naturalHeight || 1);
+                                } else {
+                                    const sratio = attributes.aspectRatio
+                                        .split("/", 2);
+                                    if (sratio.length > 1) {
+                                        ratio = parseInt(sratio[0]) / parseInt(sratio[1]);
+                                    }
+                                }
+                                let w = elt.offsetWidth;
+                                let h = elt.offsetHeight;
+
+                                if (direction === "bottom") {
+                                    w = h * ratio;
+                                } else {
+                                    h = w / ratio;
+                                }
+
                                 setAttributes({
-                                    width: `${elt.offsetWidth}px`,
-                                    height: `${elt.offsetHeight}px`,
+                                    width: `${w}px`,
+                                    height: `${h}px`,
                                 });
                             }}
+                            
                         >
                             <Image
                                 imageRef={imageRef}

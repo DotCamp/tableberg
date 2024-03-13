@@ -1,4 +1,9 @@
 .wp-block-tableberg-image {
+
+    img {
+        max-width: 100%;
+    }
+    
     line-height: 1;
     &.aligncenter {
         width: fit-content;
