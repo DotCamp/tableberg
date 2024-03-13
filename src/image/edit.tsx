@@ -30,12 +30,8 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
     const hasImage = !isEmpty(media);
     const { toggleSelection } = useDispatch("core/block-editor");
     const { naturalWidth, naturalHeight, imageUrl } = useMemo(() => {
-        let imageUrl = "";
-        if (imageRef.current?.src) {
-            imageUrl = imageRef.current?.src;
-        }
         return {
-            imageUrl,
+            imageUrl: imageRef.current?.src || "",
             naturalWidth: imageRef.current?.naturalWidth || undefined,
             naturalHeight: imageRef.current?.naturalHeight || undefined,
         };
