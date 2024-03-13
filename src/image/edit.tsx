@@ -29,8 +29,13 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
     });
     const hasImage = !isEmpty(media);
     const { toggleSelection } = useDispatch("core/block-editor");
-    const { naturalWidth, naturalHeight } = useMemo(() => {
+    const { naturalWidth, naturalHeight, imageUrl } = useMemo(() => {
+        let imageUrl = "";
+        if (imageRef.current?.src) {
+            imageUrl = imageRef.current?.src;
+        }
         return {
+            imageUrl,
             naturalWidth: imageRef.current?.naturalWidth || undefined,
             naturalHeight: imageRef.current?.naturalHeight || undefined,
         };
@@ -49,10 +54,10 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
     const fallbackClientWidth = imageRef.current?.width;
     const id = get(media, "id", "");
     const sizeSlug = get(attributes, "sizeSlug", "large") as keyof MediaSizes;
-    const url = get(media, `sizes.${sizeSlug}.url`, "");
     // The only supported unit is px, so we can parseInt to strip the px here.
     const numericWidth = width ? parseInt(width, 10) : undefined;
     const numericHeight = height ? parseInt(height, 10) : undefined;
+    
 
     useEffect(() => {
         if (!numericWidth || !naturalWidth || !naturalHeight) {
@@ -170,7 +175,7 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                     {isImageEditing && (
                         <ImageEditor
                             id={id}
-                            url={url}
+                            url={imageUrl}
                             width={numericWidth}
                             height={numericHeight}
                             clientWidth={fallbackClientWidth}
