@@ -8,6 +8,7 @@ import {
 } from "@wordpress/blocks";
 import {
     BlockVerticalAlignmentToolbar,
+    BlockAlignmentToolbar,
     BlockControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
@@ -618,7 +619,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const { storeSelect, tableBlock, tableBlockId } = useSelect((select) => {
+    const { storeSelect, tableBlock, tableBlockId, childBlocks } = useSelect((select) => {
         const storeSelect = select(
             blockEditorStore
         ) as BlockEditorStoreSelectors;
@@ -633,10 +634,13 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         const tableBlock: BlockInstance<TablebergBlockAttrs> =
             storeSelect.getBlock(tableBlockId)! as any;
 
+        const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
+
         return {
             storeSelect,
             tableBlock,
             tableBlockId,
+            childBlocks
         };
     }, []);
     const {
@@ -771,6 +775,12 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         });
     };
 
+    const changeChildrenAlign = (align: BlockAlignmentToolbar.Control) => {
+        childBlocks?.forEach((block) => {
+            storeActions.updateBlockAttributes(block.clientId, { align });
+        });
+    }
+
     return (
         <>
             <TablebergCtx.Consumer>
@@ -810,6 +820,10 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                 <BlockVerticalAlignmentToolbar
                     value={attributes.vAlign}
                     onChange={setVAlign}
+                />
+                <BlockAlignmentToolbar
+                    onChange={changeChildrenAlign}
+                    value={undefined}
                 />
             </BlockControls>
 
