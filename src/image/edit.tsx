@@ -53,7 +53,6 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
     // The only supported unit is px, so we can parseInt to strip the px here.
     const numericWidth = width ? parseInt(width, 10) : undefined;
     const numericHeight = height ? parseInt(height, 10) : undefined;
-    
 
     useEffect(() => {
         if (!numericWidth || !naturalWidth || !naturalHeight) {
@@ -102,10 +101,7 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                                 bottom: true,
                                 left: false,
                             }}
-                            onResizeStart={onResizeStart}
-                            onResizeStop={(_, direction, elt) => {
-                                onResizeStop();
-
+                            onResize={(_, direction, elt) => {
                                 let ratio = 1;
 
                                 if (!attributes.aspectRatio) {
@@ -136,6 +132,10 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                                     width: `${w}px`,
                                     height: `${h}px`,
                                 });
+                            }}
+                            onResizeStart={onResizeStart}
+                            onResizeStop={() => {
+                                onResizeStop();
                             }}
                         >
                             <Image
