@@ -4,7 +4,32 @@
  * Replace them with your own styles or remove the file completely.
  */
 td.wp-block-tableberg-cell {
+
+    position: relative;
+
     &.is-multi-selected:not(.tableberg-merge-selected):after {
         display: none !important;
+    }
+
+    .tableberg-appender-wrapper .block-editor-inserter {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+
+    .tablberg-block-appender {
+        background: #1e1e1e;
+        box-shadow: none;
+        color: #fff;
+        flex-direction: row;
+        height: 24px;
+        min-width: 24px;
+        padding: 0 !important;
+        width: 24px;
+        display: none;
+    }
+
+    &:hover .tablberg-block-appender {
+        display: block;
     }
 }

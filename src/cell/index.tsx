@@ -11,6 +11,7 @@ import {
     BlockAlignmentToolbar,
     BlockControls,
     store as blockEditorStore,
+    ButtonBlockAppender,
 } from "@wordpress/block-editor";
 
 import {
@@ -40,7 +41,7 @@ import "./style.scss";
 import "./editor.scss";
 
 import metadata from "./block.json";
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import CellControls from "./controls";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
@@ -530,7 +531,7 @@ const useMerging = (
                 to: toCol,
             });
         }
-        
+
         if (cell.attributes.rowspan > 1) {
             for (let row = curRow + 1; row < toRow; row++) {
                 toInsertMap.set(row, {
@@ -610,8 +611,7 @@ const useMerging = (
 };
 
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
-
-    const { clientId, attributes, setAttributes } = props;
+    const { clientId, attributes, setAttributes, isSelected } = props;
     const cellRef = useRef<HTMLTableCellElement>();
     useBlockEditingMode(attributes.isTmp ? "disabled" : "default");
 
@@ -664,7 +664,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         }),
     });
 
-    const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
+    const innerBlocksProps = useInnerBlocksProps({
         allowedBlocks: ALLOWED_BLOCKS,
         template: CELL_TEMPLATE,
     });
@@ -801,10 +801,20 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                     return targetEl ? (
                         createPortal(
                             <TagName
-                                {...innerBlocksProps}
+                                {...blockProps}
                                 rowSpan={attributes.rowspan}
                                 colSpan={attributes.colspan}
-                            />,
+                            >
+                                <Fragment {...innerBlocksProps} />
+                                {!isSelected && (
+                                    <div className="tableberg-appender-wrapper">
+                                        <ButtonBlockAppender
+                                            className="tablberg-block-appender"
+                                            rootClientId={clientId}
+                                        />
+                                    </div>
+                                )}
+                            </TagName>,
                             targetEl
                         )
                     ) : (
