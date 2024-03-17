@@ -32,4 +32,11 @@ td.wp-block-tableberg-cell {
     &.tableberg-has-selected .tablberg-block-appender {
         display: block;
     }
+
+    & > p:first-of-type {
+        margin-top: 0;
+    }
+    & > p:last-of-type {
+        margin-bottom: 0;
+    }
 }
