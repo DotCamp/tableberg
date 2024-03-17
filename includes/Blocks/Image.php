@@ -174,20 +174,20 @@ class Image {
 
 		$classes = join(
 			' ',
-			array(
-				'wp - block - tableberg - image',
+			[
+				'wp-block-tableberg-image',
 				'align' . $align,
-				'size - ' . $size_slug,
-				( $width || $height ) ? 'is - resized' : '',
-			)
+				'size-' . $size_slug,
+				( $width || $height ) ? 'is-resized' : '',
+			]
 		);
 
 		$image_classes = join(
 			' ',
 			array_filter(
-				array(
-					$id ? 'wp - image - ' . esc_attr( $id ) : '',
-				)
+				[
+					$id ? 'wp-image-' . esc_attr( $id ) : '',
+				]
 			)
 		);
 

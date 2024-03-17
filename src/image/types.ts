@@ -61,6 +61,7 @@ export interface AttributesTypes {
     height: string;
     width: string;
     alt: string;
+    align: "left" | "center" | "right";
     aspectRatio: string;
     scale: string;
     sizeSlug: string;
