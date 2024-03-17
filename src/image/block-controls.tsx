@@ -6,6 +6,7 @@ import {
     BlockControls as WPBlockControls,
     MediaReplaceFlow,
     __experimentalImageURLInputUI as ImageURLInputUI,
+    BlockAlignmentToolbar,
 } from "@wordpress/block-editor";
 import { usePrevious } from "@wordpress/compose";
 import { ToolbarButton, ToolbarGroup } from "@wordpress/components";
@@ -27,6 +28,7 @@ function BlockControls(props: ExtendMainPropTypes) {
         linkTarget,
         href,
         rel,
+        align,
     } = attributes;
     const prevCaption = usePrevious(caption);
 
@@ -44,6 +46,13 @@ function BlockControls(props: ExtendMainPropTypes) {
     return (
         <>
             <WPBlockControls group={"block"}>
+                <BlockAlignmentToolbar
+                    value={align}
+                    onChange={(newVal) => {
+                        setAttributes({ align: newVal });
+                    }}
+                    controls={["left", "center", "right"]}
+                />
                 <ToolbarButton
                     onClick={() => {
                         setShowCaption(!showCaption);

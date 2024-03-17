@@ -15,17 +15,19 @@ import Image from "./image";
 import Inspector from "./inspector";
 import BlockControls from "./block-controls";
 import type { AttributesTypes, MediaSizes } from "./types";
+import classNames from "classnames";
 
 function Edit(props: BlockEditProps<AttributesTypes>) {
     const { attributes, setAttributes, isSelected } = props;
-    const { media, height, width, caption } = attributes;
+    const { media, height, width, caption, align } = attributes;
     const [showCaption, setShowCaption] = useState(!!caption);
     const [isImageEditing, setIsEditingImage] = useState(false);
     const imageRef = useRef<HTMLImageElement>(null);
     const blockProps = useBlockProps({
-        style: {
-            width: "max-content",
-        },
+        className: classNames({
+            "tableberg-image-center": align === "center",
+            "tableberg-image-right": align === "right",
+        }),
     });
     const hasImage = !isEmpty(media);
     const { toggleSelection } = useDispatch("core/block-editor");
