@@ -4,7 +4,6 @@
  * Replace them with your own styles or remove the file completely.
  */
 td.wp-block-tableberg-cell {
-
     position: relative;
 
     &.is-multi-selected:not(.tableberg-merge-selected):after {
@@ -29,7 +28,8 @@ td.wp-block-tableberg-cell {
         display: none;
     }
 
-    &:hover .tablberg-block-appender {
+    &:hover .tablberg-block-appender,
+    &.tableberg-has-selected .tablberg-block-appender {
         display: block;
     }
 }

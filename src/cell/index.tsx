@@ -619,30 +619,33 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const { storeSelect, tableBlock, tableBlockId, childBlocks } = useSelect((select) => {
-        const storeSelect = select(
-            blockEditorStore
-        ) as BlockEditorStoreSelectors;
+    const { storeSelect, tableBlock, tableBlockId, childBlocks } = useSelect(
+        (select) => {
+            const storeSelect = select(
+                blockEditorStore
+            ) as BlockEditorStoreSelectors;
 
-        const parentBlocks = storeSelect.getBlockParents(clientId);
+            const parentBlocks = storeSelect.getBlockParents(clientId);
 
-        const tableBlockId = parentBlocks.find(
-            (parentId: string) =>
-                storeSelect.getBlockName(parentId) === "tableberg/table"
-        )!;
+            const tableBlockId = parentBlocks.find(
+                (parentId: string) =>
+                    storeSelect.getBlockName(parentId) === "tableberg/table"
+            )!;
 
-        const tableBlock: BlockInstance<TablebergBlockAttrs> =
-            storeSelect.getBlock(tableBlockId)! as any;
+            const tableBlock: BlockInstance<TablebergBlockAttrs> =
+                storeSelect.getBlock(tableBlockId)! as any;
 
-        const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
+            const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
 
-        return {
-            storeSelect,
-            tableBlock,
-            tableBlockId,
-            childBlocks
-        };
-    }, []);
+            return {
+                storeSelect,
+                tableBlock,
+                tableBlockId,
+                childBlocks,
+            };
+        },
+        []
+    );
     const {
         isMergable,
         addMergingEvt,
@@ -650,6 +653,31 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         mergeCells,
         unMergeCells,
     } = useMerging(clientId, tableBlock, storeActions);
+
+    const { hasSelected } = useSelect(
+        (select) => {
+            let hasSelected = false;
+
+            if (isSelected) {
+                return {
+                    hasSelected,
+                };
+            }
+
+            const sel = select(blockEditorStore) as BlockEditorStoreSelectors;
+            const selectedBlock = sel.getSelectedBlockClientId();
+            if (!selectedBlock) {
+                return { hasSelected };
+            }
+
+            const selParents = sel.getBlockParents(selectedBlock);
+
+            hasSelected = selParents.findIndex((val) => val === clientId) > -1;
+
+            return { hasSelected };
+        },
+        [isSelected]
+    );
 
     const blockProps = useBlockProps({
         style: {
@@ -661,6 +689,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         className: classNames(getClassName(clientId), {
             "tableberg-header-cell":
                 attributes.row == 0 && tableBlock.attributes.enableTableHeader,
+            "tableberg-has-selected": hasSelected,
         }),
     });
 
@@ -779,7 +808,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         childBlocks?.forEach((block) => {
             storeActions.updateBlockAttributes(block.clientId, { align });
         });
-    }
+    };
 
     return (
         <>
