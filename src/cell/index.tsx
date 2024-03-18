@@ -693,7 +693,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         }),
     });
 
-    const innerBlocksProps = useInnerBlocksProps({
+    const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
         allowedBlocks: ALLOWED_BLOCKS,
         template: CELL_TEMPLATE,
     });
@@ -830,20 +830,10 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                     return targetEl ? (
                         createPortal(
                             <TagName
-                                {...blockProps}
+                                {...innerBlocksProps}
                                 rowSpan={attributes.rowspan}
                                 colSpan={attributes.colspan}
-                            >
-                                <Fragment {...innerBlocksProps} />
-                                {!isSelected && (
-                                    <div className="tableberg-appender-wrapper">
-                                        <ButtonBlockAppender
-                                            className="tablberg-block-appender"
-                                            rootClientId={clientId}
-                                        />
-                                    </div>
-                                )}
-                            </TagName>,
+                            />,
                             targetEl
                         )
                     ) : (
@@ -855,6 +845,17 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                     );
                 }}
             </TablebergCtx.Consumer>
+            {cellRef.current &&
+                !isSelected &&
+                createPortal(
+                    <div className="tableberg-appender-wrapper">
+                        <ButtonBlockAppender
+                            className="tablberg-block-appender"
+                            rootClientId={clientId}
+                        />
+                    </div>,
+                    cellRef.current
+                )}
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
                     value={attributes.vAlign}
