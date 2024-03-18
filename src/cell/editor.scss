@@ -25,13 +25,8 @@ td.wp-block-tableberg-cell {
         min-width: 24px;
         padding: 0 !important;
         width: 24px;
-        display: none;
     }
 
-    &:hover .tablberg-block-appender,
-    &.tableberg-has-selected .tablberg-block-appender {
-        display: block;
-    }
 
     & > p:first-of-type {
         margin-top: 0;

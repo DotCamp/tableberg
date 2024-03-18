@@ -847,6 +847,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             </TablebergCtx.Consumer>
             {cellRef.current &&
                 !isSelected &&
+                hasSelected &&
                 createPortal(
                     <div className="tableberg-appender-wrapper">
                         <ButtonBlockAppender
