@@ -335,48 +335,30 @@ const useMerging = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
     storeActions: BlockEditorStoreActions
 ) => {
-    const { toggleCellSelection, endCellMultiSelect } = useDispatch(tbStore);
-    const { getCurrentSelectedCells, getClassName, isMergable, getSpans } =
-        useSelect((select) => {
-            const {
-                getCurrentSelectedCells,
-                isMergable,
-                getClassName,
-                getSpans,
-            } = select(tbStore);
-            const isInMultiSelectMode = () =>
-                getCurrentSelectedCells().size > 0;
+    const { selectForMerge, endCellMultiSelect } = useDispatch(tbStore);
+    const { getClassName, isMergable, getSpans, getIndexes } = useSelect(
+        (select) => {
+            const { getIndexes, getClassName, getSpans } = select(tbStore);
+
             return {
-                getCurrentSelectedCells,
-                isInMultiSelectMode,
-                isMergable,
+                getIndexes,
+                isMergable: () => getIndexes().length > 0,
                 getClassName,
                 getSpans,
             };
-        }, []);
+        },
+        []
+    );
 
     const storeSelect = useSelect((select) => {
         return select(blockEditorStore) as BlockEditorStoreSelectors;
     }, []);
 
     const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
-        if (
-            !evt.ctrlKey &&
-            !evt.metaKey &&
-            getCurrentSelectedCells().size === 0
-        ) {
-            return;
-        }
-
-        if (!evt.metaKey && !evt.ctrlKey) {
-            endCellMultiSelect();
-            return;
-        }
-
-        const cell = storeSelect.getBlock(clientId) as any;
-
-        if (getCurrentSelectedCells().size > 0) {
-            toggleCellSelection(cell);
+        if (!evt.shiftKey) {
+            if (getIndexes().length > 0) {
+                endCellMultiSelect();
+            }
             return;
         }
 
@@ -397,41 +379,60 @@ const useMerging = (
         if (!focusedCell || focusedCell.clientId === clientId) {
             return;
         }
-        toggleCellSelection(cell);
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
 
-        if (!getCurrentSelectedCells().has(focusedCell.clientId)) {
-            toggleCellSelection(focusedCell);
+        const cell: TablebergCellInstance = storeSelect.getBlock(
+            clientId
+        ) as any;
+
+        let from: any, to: any;
+
+        if (
+            cell.attributes.col <= focusedCell.attributes.col &&
+            cell.attributes.row <= focusedCell.attributes.row
+        ) {
+            from = {
+                col: cell.attributes.col,
+                row: cell.attributes.row,
+            };
+            to = {
+                col:
+                    focusedCell.attributes.col + focusedCell.attributes.colspan,
+                row:
+                    focusedCell.attributes.row + focusedCell.attributes.rowspan,
+            };
+        } else {
+            to = {
+                col: cell.attributes.col + cell.attributes.colspan,
+                row: cell.attributes.row + cell.attributes.rowspan,
+            };
+            from = {
+                col: focusedCell.attributes.col,
+                row: focusedCell.attributes.row,
+            };
         }
+
+        selectForMerge(tableBlock.innerBlocks as any, from, to);
     };
 
     const mergeCells = () => {
         const cells: TablebergCellInstance[] = [];
+
         let destination: TablebergCellInstance | undefined;
-        getCurrentSelectedCells().forEach((_, cellId) => {
-            const cell = storeSelect.getBlock(cellId)! as TablebergCellInstance;
+
+        getIndexes().forEach((idx) => {
+            const cell = tableBlock.innerBlocks[idx] as TablebergCellInstance;
             if (!destination) {
-                destination = cell;
-            } else if (
-                cell.attributes.col <= destination.attributes.col &&
-                cell.attributes.row <= destination.attributes.row
-            ) {
-                cells.push(destination);
                 destination = cell;
             } else {
                 cells.push(cell);
             }
         });
+
         if (!destination) {
             return;
         }
-
-        cells.sort((b, a) => {
-            const rowDiff = a.attributes.row - b.attributes.row;
-            if (rowDiff == 0) {
-                return a.attributes.col - b.attributes.col;
-            }
-            return rowDiff;
-        });
 
         let { rowHeights, colWidths, rows, cols } = tableBlock.attributes;
 
@@ -530,7 +531,7 @@ const useMerging = (
                 to: toCol,
             });
         }
-        
+
         if (cell.attributes.rowspan > 1) {
             for (let row = curRow + 1; row < toRow; row++) {
                 toInsertMap.set(row, {
@@ -597,12 +598,11 @@ const useMerging = (
     };
 
     return {
-        toggleCellSelection,
         endCellMultiSelect,
         getClassName,
         isMergable,
         addMergingEvt: (el?: HTMLElement) => {
-            el?.addEventListener("mousedown", elClickEvt, { capture: true });
+            el?.addEventListener("pointerdown", elClickEvt, { capture: true });
         },
         mergeCells,
         unMergeCells,
@@ -610,7 +610,6 @@ const useMerging = (
 };
 
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
-
     const { clientId, attributes, setAttributes } = props;
     const cellRef = useRef<HTMLTableCellElement>();
     useBlockEditingMode(attributes.isTmp ? "disabled" : "default");
@@ -619,30 +618,33 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const { storeSelect, tableBlock, tableBlockId, childBlocks } = useSelect((select) => {
-        const storeSelect = select(
-            blockEditorStore
-        ) as BlockEditorStoreSelectors;
+    const { storeSelect, tableBlock, tableBlockId, childBlocks } = useSelect(
+        (select) => {
+            const storeSelect = select(
+                blockEditorStore
+            ) as BlockEditorStoreSelectors;
 
-        const parentBlocks = storeSelect.getBlockParents(clientId);
+            const parentBlocks = storeSelect.getBlockParents(clientId);
 
-        const tableBlockId = parentBlocks.find(
-            (parentId: string) =>
-                storeSelect.getBlockName(parentId) === "tableberg/table"
-        )!;
+            const tableBlockId = parentBlocks.find(
+                (parentId: string) =>
+                    storeSelect.getBlockName(parentId) === "tableberg/table"
+            )!;
 
-        const tableBlock: BlockInstance<TablebergBlockAttrs> =
-            storeSelect.getBlock(tableBlockId)! as any;
+            const tableBlock: BlockInstance<TablebergBlockAttrs> =
+                storeSelect.getBlock(tableBlockId)! as any;
 
-        const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
+            const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
 
-        return {
-            storeSelect,
-            tableBlock,
-            tableBlockId,
-            childBlocks
-        };
-    }, []);
+            return {
+                storeSelect,
+                tableBlock,
+                tableBlockId,
+                childBlocks,
+            };
+        },
+        []
+    );
     const {
         isMergable,
         addMergingEvt,
@@ -658,7 +660,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             height: tableBlock.attributes.rowHeights[props.attributes.row],
         },
         ref: cellRef,
-        className: classNames(getClassName(clientId), {
+        className: classNames(getClassName(attributes.row, attributes.col), {
             "tableberg-header-cell":
                 attributes.row == 0 && tableBlock.attributes.enableTableHeader,
         }),
@@ -779,7 +781,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         childBlocks?.forEach((block) => {
             storeActions.updateBlockAttributes(block.clientId, { align });
         });
-    }
+    };
 
     return (
         <>

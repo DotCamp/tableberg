@@ -8,12 +8,6 @@
 div.wp-block-tableberg-wrapper {
     box-sizing: border-box;
 
-    &::after {
-        display: none !important;
-    }
-    &.is-selected {
-        border: 2px solid blue;
-    }
 
     &[id*="block-"] {
         &.justify-table-left {
