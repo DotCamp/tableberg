@@ -413,6 +413,8 @@ const useMerging = (
             };
         }
 
+        tableBlock = storeSelect.getBlock(tableBlock.clientId) as any;
+
         selectForMerge(tableBlock.innerBlocks as any, from, to);
     };
 
