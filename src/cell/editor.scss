@@ -3,3 +3,31 @@
  *
  * Replace them with your own styles or remove the file completely.
  */
+
+td.wp-block-tableberg-cell {
+    position: relative;
+
+    .tableberg-appender-wrapper .block-editor-inserter {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+
+    .tablberg-block-appender {
+        background: #1e1e1e;
+        box-shadow: none;
+        color: #fff;
+        flex-direction: row;
+        height: 24px;
+        min-width: 24px;
+        padding: 0 !important;
+        width: 24px;
+    }
+
+    & > p:first-of-type {
+        margin-top: 0;
+    }
+    & > p:last-of-type {
+        margin-bottom: 0;
+    }
+}

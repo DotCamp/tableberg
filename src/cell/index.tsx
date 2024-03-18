@@ -11,6 +11,7 @@ import {
     BlockAlignmentToolbar,
     BlockControls,
     store as blockEditorStore,
+    ButtonBlockAppender,
 } from "@wordpress/block-editor";
 
 import {
@@ -40,7 +41,7 @@ import "./style.scss";
 import "./editor.scss";
 
 import metadata from "./block.json";
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import CellControls from "./controls";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
@@ -617,7 +618,7 @@ const useMerging = (
 };
 
 function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
-    const { clientId, attributes, setAttributes } = props;
+    const { clientId, attributes, setAttributes, isSelected } = props;
     const cellRef = useRef<HTMLTableCellElement>();
     useBlockEditingMode(attributes.isTmp ? "disabled" : "default");
 
@@ -660,6 +661,31 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         unMergeCells,
     } = useMerging(clientId, tableBlock, storeActions);
 
+    const { hasSelected } = useSelect(
+        (select) => {
+            let hasSelected = false;
+
+            if (isSelected) {
+                return {
+                    hasSelected,
+                };
+            }
+
+            const sel = select(blockEditorStore) as BlockEditorStoreSelectors;
+            const selectedBlock = sel.getSelectedBlockClientId();
+            if (!selectedBlock) {
+                return { hasSelected };
+            }
+
+            const selParents = sel.getBlockParents(selectedBlock);
+
+            hasSelected = selParents.findIndex((val) => val === clientId) > -1;
+
+            return { hasSelected };
+        },
+        [isSelected]
+    );
+
     const blockProps = useBlockProps({
         style: {
             verticalAlign:
@@ -667,14 +693,11 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             height: tableBlock.attributes.rowHeights[props.attributes.row],
         },
         ref: cellRef,
-        className: classNames(
-            getClassName(tableBlock.clientId, attributes.row, attributes.col),
-            {
-                "tableberg-header-cell":
-                    attributes.row == 0 &&
-                    tableBlock.attributes.enableTableHeader,
-            }
-        ),
+        className: classNames(getClassName(tableBlock.clientId, attributes.row, attributes.col), {
+            "tableberg-header-cell":
+                attributes.row == 0 && tableBlock.attributes.enableTableHeader,
+            "tableberg-has-selected": hasSelected,
+        }),
     });
 
     const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
@@ -829,6 +852,18 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                     );
                 }}
             </TablebergCtx.Consumer>
+            {cellRef.current &&
+                !isSelected &&
+                hasSelected &&
+                createPortal(
+                    <div className="tableberg-appender-wrapper">
+                        <ButtonBlockAppender
+                            className="tablberg-block-appender"
+                            rootClientId={clientId}
+                        />
+                    </div>,
+                    cellRef.current
+                )}
             <BlockControls group="block">
                 <BlockVerticalAlignmentToolbar
                     value={attributes.vAlign}
