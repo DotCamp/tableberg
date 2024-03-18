@@ -3,6 +3,7 @@ import { BlockInstance } from "@wordpress/blocks";
 import { TablebergCellBlockAttrs, TablebergCellInstance } from "../cell";
 
 interface ITBStoreState {
+    tableId: string;
     minRow: number;
     maxRow: number;
     minCol: number;
@@ -11,7 +12,9 @@ interface ITBStoreState {
     indexes: number[];
 }
 
+
 const DEFAULT_STATE: ITBStoreState = {
+    tableId: '',
     indexes: [],
 
     minRow: Number.MAX_VALUE,
@@ -22,18 +25,14 @@ const DEFAULT_STATE: ITBStoreState = {
 };
 
 export const store = createReduxStore("tableberg-store", {
-    reducer(
-        state: ITBStoreState = {
-            ...DEFAULT_STATE,
-        },
-        action
-    ) {
+    reducer(state: ITBStoreState = DEFAULT_STATE, action) {
         switch (action.type) {
             case "TOGGLE_CELL_SELECTION":
                 const cells = action.cells as TablebergCellInstance[];
 
                 // @ts-ignore
                 const newState: ITBStoreState = {
+                    tableId: action.tableId,
                     minRow: action.from.row,
                     maxRow: action.to.row,
 
@@ -97,10 +96,7 @@ export const store = createReduxStore("tableberg-store", {
                 return newState;
 
             case "END_CELL_MULTI_SELECT":
-                return {
-                    ...DEFAULT_STATE,
-                    selectedBlocks: new Map(),
-                };
+                return {...DEFAULT_STATE};
         }
 
         return state;
@@ -108,6 +104,7 @@ export const store = createReduxStore("tableberg-store", {
 
     actions: {
         selectForMerge(
+            tableId: string,
             cells: TablebergCellInstance[],
             from: {
                 row: number;
@@ -120,14 +117,16 @@ export const store = createReduxStore("tableberg-store", {
         ) {
             return {
                 type: "TOGGLE_CELL_SELECTION",
+                tableId,
                 cells,
                 from,
                 to,
             };
         },
-        endCellMultiSelect() {
+        endCellMultiSelect(tableId: string) {
             return {
                 type: "END_CELL_MULTI_SELECT",
+                tableId,
             };
         },
     },
@@ -135,11 +134,13 @@ export const store = createReduxStore("tableberg-store", {
     selectors: {
         getClassName(
             state: ITBStoreState,
+            tableId: string,
             row: number,
             col: number
         ): string | undefined {
+            
             if (
-                state.indexes.length > 0 &&
+                state.tableId === tableId &&
                 state.minCol <= col &&
                 state.maxCol > col &&
                 state.minRow <= row &&
@@ -148,14 +149,19 @@ export const store = createReduxStore("tableberg-store", {
                 return "is-multi-selected";
             }
         },
-        getSpans(state: ITBStoreState): { row: number; col: number } {
+        getSpans(
+            state: ITBStoreState,
+        ): { row: number; col: number } {
             return {
                 row: state.maxRow - state.minRow,
                 col: state.maxCol - state.minCol,
             };
         },
 
-        getIndexes(state: ITBStoreState): number[] {
+        getIndexes(state: ITBStoreState, tableId: string): number[] | undefined {
+            if (state.tableId !== tableId) {
+                return;
+            }
             return state.indexes;
         },
     },

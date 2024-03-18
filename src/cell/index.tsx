@@ -342,7 +342,7 @@ const useMerging = (
 
             return {
                 getIndexes,
-                isMergable: () => getIndexes().length > 0,
+                isMergable: () => getIndexes(tableBlock.clientId),
                 getClassName,
                 getSpans,
             };
@@ -356,8 +356,8 @@ const useMerging = (
 
     const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
         if (!evt.shiftKey) {
-            if (getIndexes().length > 0) {
-                endCellMultiSelect();
+            if (getIndexes(tableBlock.clientId)) {
+                endCellMultiSelect(tableBlock.clientId);
             }
             return;
         }
@@ -415,7 +415,12 @@ const useMerging = (
 
         tableBlock = storeSelect.getBlock(tableBlock.clientId) as any;
 
-        selectForMerge(tableBlock.innerBlocks as any, from, to);
+        selectForMerge(
+            tableBlock.clientId,
+            tableBlock.innerBlocks as any,
+            from,
+            to
+        );
     };
 
     const mergeCells = () => {
@@ -423,7 +428,7 @@ const useMerging = (
 
         let destination: TablebergCellInstance | undefined;
 
-        getIndexes().forEach((idx) => {
+        getIndexes(tableBlock.clientId)?.forEach((idx) => {
             const cell = tableBlock.innerBlocks[idx] as TablebergCellInstance;
             if (!destination) {
                 destination = cell;
@@ -503,7 +508,7 @@ const useMerging = (
             cols,
         });
 
-        endCellMultiSelect();
+        endCellMultiSelect(tableBlock.clientId);
     };
 
     const unMergeCells = () => {
@@ -662,10 +667,14 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             height: tableBlock.attributes.rowHeights[props.attributes.row],
         },
         ref: cellRef,
-        className: classNames(getClassName(attributes.row, attributes.col), {
-            "tableberg-header-cell":
-                attributes.row == 0 && tableBlock.attributes.enableTableHeader,
-        }),
+        className: classNames(
+            getClassName(tableBlock.clientId, attributes.row, attributes.col),
+            {
+                "tableberg-header-cell":
+                    attributes.row == 0 &&
+                    tableBlock.attributes.enableTableHeader,
+            }
+        ),
     });
 
     const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
