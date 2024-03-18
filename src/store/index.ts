@@ -82,10 +82,10 @@ export const store = createReduxStore("tableberg-store", {
                         }
 
                         if (
-                            newState.minCol <= col &&
-                            newState.maxCol > col &&
-                            newState.minRow <= row &&
-                            newState.maxRow > row
+                            col >= newState.minCol &&
+                            col < newState.maxCol &&
+                            row >= newState.minRow &&
+                            row < newState.maxRow
                         ) {
                             selectedIndexes.push(i);
                         }
