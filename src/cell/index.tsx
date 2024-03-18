@@ -453,7 +453,7 @@ const useMerging = (
             removeCols = 0;
         if (oldSpans.col == tableBlock.attributes.cols && oldSpans.row > 1) {
             removeRows = oldSpans.row - 1;
-            rowHeights.splice(destination.attributes.row, removeCols);
+            rowHeights.splice(destination.attributes.row, removeRows);
             newSpans.row = 1;
         }
         if (oldSpans.row == tableBlock.attributes.rows && oldSpans.col > 1) {
