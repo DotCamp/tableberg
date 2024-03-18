@@ -6,10 +6,6 @@
 td.wp-block-tableberg-cell {
     position: relative;
 
-    &.is-multi-selected:not(.tableberg-merge-selected):after {
-        display: none !important;
-    }
-
     .tableberg-appender-wrapper .block-editor-inserter {
         position: absolute;
         right: 0;
@@ -26,7 +22,6 @@ td.wp-block-tableberg-cell {
         padding: 0 !important;
         width: 24px;
     }
-
 
     & > p:first-of-type {
         margin-top: 0;

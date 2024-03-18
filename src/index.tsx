@@ -29,7 +29,6 @@ import { TablebergBlockAttrs } from "./types";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
 import { TablebergCellInstance } from "./cell";
-import { store as tbStore } from "./store";
 import { PrimaryTable } from "./table";
 import StackRowTable from "./table/StackRowTable";
 import StackColTable from "./table/StackColTable";
@@ -326,30 +325,19 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const tbStoreActions = useDispatch(tbStore);
-
-    const { tableBlock, selectedCells } = useSelect((select) => {
+    const { tableBlock } = useSelect((select) => {
         const storeSelect = select(
             blockEditorStore
         ) as BlockEditorStoreSelectors;
         const tableBlock = storeSelect.getBlock(
             clientId
         )! as BlockInstance<TablebergBlockAttrs>;
-        const selectedCells = storeSelect.getMultiSelectedBlocks();
-
+        
         return {
             tableBlock,
-            selectedCells,
         };
     }, []);
 
-    useEffect(() => {
-        if (selectedCells.length > 0) {
-            tbStoreActions.startMultiSelectNative(
-                selectedCells as TablebergCellInstance[]
-            );
-        }
-    }, [selectedCells]);
 
     const [previewDevice, updatePreview] = useState<
         keyof TablebergBlockAttrs["responsive"]["breakpoints"]
