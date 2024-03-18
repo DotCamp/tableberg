@@ -17,6 +17,7 @@ import {
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
     BlockInstance,
+    createBlock,
 } from "@wordpress/blocks";
 /**
  * Internal Imports
@@ -317,7 +318,8 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         ref: rootRef,
         className: classNames("wp-block-tableberg-wrapper", {
             "tableberg-scroll-x": isScrollMode,
-            [`justify-table-${attributes.tableAlignment}`]: !!attributes.tableAlignment
+            [`justify-table-${attributes.tableAlignment}`]:
+                !!attributes.tableAlignment,
         }),
     });
 
@@ -332,12 +334,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         const tableBlock = storeSelect.getBlock(
             clientId
         )! as BlockInstance<TablebergBlockAttrs>;
-        
+
         return {
             tableBlock,
         };
     }, []);
-
 
     const [previewDevice, updatePreview] = useState<
         keyof TablebergBlockAttrs["responsive"]["breakpoints"]
@@ -582,4 +583,64 @@ registerBlockType(metadata.name, {
     attributes: metadata.attributes,
     edit,
     save,
+    transforms: {
+        from: [
+            {
+                type: "block",
+                blocks: ["core/table"],
+                transform: (data: any) => {
+                    const innerBlocks: TablebergCellInstance[] = [];
+                    let cols = 0,
+                        cells = 0;
+
+                    data.body.forEach((row: any, rowIdx: number) => {
+                        cols = row.cells.length;
+                        row.cells.forEach((cell: any, colIdx: number) => {
+                            cells++;
+                            innerBlocks.push(
+                                createBlock(
+                                    "tableberg/cell",
+                                    {
+                                        row: rowIdx,
+                                        col: colIdx,
+                                        tagName:
+                                            cell.tag === "th" ? "th" : "td",
+                                    },
+                                    [
+                                        createBlock("core/paragraph", {
+                                            content: cell.content,
+                                        }),
+                                    ]
+                                ) as any
+                            );
+                        });
+                    });
+
+                    if (cells === 0) {
+                        return createBlock("tableberg/table");
+                    }
+
+                    return createBlock(
+                        "tableberg/table",
+                        {
+                            version: metadata.version,
+                            hasTableCreated: true,
+                            rows: data.body.length,
+                            cols,
+                            cells,
+                            responsive: {
+                                last: "primary",
+                                breakpoints: {},
+                            },
+
+                            colWidths: Array(cols).fill(""),
+                            rowHeights: Array(data.body.length).fill(""),
+                        },
+                        innerBlocks
+                    );
+                },
+            },
+        ],
+        to: [],
+    },
 });
