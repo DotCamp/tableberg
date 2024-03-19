@@ -402,7 +402,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             prevRenderMode.current = newRMode;
         }
     }, [previewDevice, attributes.responsive.breakpoints]);
-    
 
     useSelect(
         (select) => {
@@ -523,7 +522,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 </Placeholder>
             </div>
         );
-    }    
+    }
 
     return (
         <>
@@ -598,25 +597,53 @@ registerBlockType(metadata.name, {
                         cols: 0,
                     };
 
-                    if (data.fontSize) {
-                        attrs.fontSize = ({
-                            small: "0.9rem",
-                            medium: "1.05rem",
-                            large: "1.85rem",
-                            "x-large": "2.5rem",
-                            "xx-large": "3.27rem"
-                        } as any)[data.fontSize];
+                    if (data.textColor) {
+                        const textColor = window
+                            .getComputedStyle(document.body)
+                            .getPropertyValue(
+                                "--wp--preset--color--" + data.textColor
+                            );
+                        attrs.fontColor = textColor;
                     }
-                    
-                    if (data.style?.border?.width) {
+
+                    if (data.borderColor) {
+                        const borderColor = window
+                            .getComputedStyle(document.body)
+                            .getPropertyValue(
+                                "--wp--preset--color--" + data.borderColor
+                            );
                         attrs.innerBorder = {
-                            width: data.style.border.width,
+                            color: borderColor,
                         };
                         attrs.tableBorder = {
-                            width: data.style.border.width,
+                            color: borderColor,
                         };
                     }
-                    
+
+                    if (data.fontSize) {
+                        attrs.fontSize = (
+                            {
+                                small: "0.9rem",
+                                medium: "1.05rem",
+                                large: "1.85rem",
+                                "x-large": "2.5rem",
+                                "xx-large": "3.27rem",
+                            } as any
+                        )[data.fontSize];
+                    }
+
+                    if (data.style?.border?.width) {
+                        const innerBorder = attrs.innerBorder || {};
+                        innerBorder.width = data.style.border.width;
+
+                        const tableBorder = attrs.tableBorder || {};
+                        tableBorder.width = data.style.border.width;
+                    }
+
+                    if (/is\-style\-stripes/.test(data.className)) {
+                        attrs.oddRowBackgroundColor = "#f0f0f0";
+                    }
+
                     const head = data.head[0]?.cells;
                     if (head) {
                         attrs.cols = head.length;
