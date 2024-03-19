@@ -590,21 +590,37 @@ registerBlockType(metadata.name, {
                 blocks: ["core/table"],
                 transform: (data: any) => {
                     const innerBlocks: TablebergCellInstance[] = [];
-                    let cols = 0,
-                        cells = 0;
-
-                    data.body.forEach((row: any, rowIdx: number) => {
-                        cols = row.cells.length;
-                        row.cells.forEach((cell: any, colIdx: number) => {
-                            cells++;
+                    const attrs: Partial<TablebergBlockAttrs> & {
+                        cells: number;
+                        rows: number;
+                        cols: number;
+                    } = {
+                        version: metadata.version,
+                        hasTableCreated: true,
+                        cells: 0,
+                        responsive: {
+                            target: "window",
+                            last: "",
+                            breakpoints: {},
+                        },
+                        rows: 0,
+                        cols: 0,
+                    };
+                    
+                    
+                    const head = data.head[0]?.cells;
+                    if (head) {
+                        attrs.cols = head.length;
+                        attrs.enableTableHeader = "converted";
+                        head.forEach((cell: any, colIdx: number) => {
+                            attrs.cells++;
                             innerBlocks.push(
                                 createBlock(
                                     "tableberg/cell",
                                     {
-                                        row: rowIdx,
+                                        row: 0,
                                         col: colIdx,
-                                        tagName:
-                                            cell.tag === "th" ? "th" : "td",
+                                        tagName: "th",
                                     },
                                     [
                                         createBlock("core/paragraph", {
@@ -614,30 +630,65 @@ registerBlockType(metadata.name, {
                                 ) as any
                             );
                         });
-                    });
-
-                    if (cells === 0) {
-                        return createBlock("tableberg/table");
+                        attrs.rows++;
                     }
 
-                    return createBlock(
-                        "tableberg/table",
-                        {
-                            version: metadata.version,
-                            hasTableCreated: true,
-                            rows: data.body.length,
-                            cols,
-                            cells,
-                            responsive: {
-                                last: "primary",
-                                breakpoints: {},
-                            },
+                    data.body.forEach((row: any, rowIdx: number) => {
+                        attrs.cols = row.cells.length;
+                        row.cells.forEach((cell: any, colIdx: number) => {
+                            // @ts-ignore
+                            attrs.cells++;
+                            innerBlocks.push(
+                                createBlock(
+                                    "tableberg/cell",
+                                    {
+                                        row: attrs.rows,
+                                        col: colIdx,
+                                        tagName: "td",
+                                    },
+                                    [
+                                        createBlock("core/paragraph", {
+                                            content: cell.content,
+                                        }),
+                                    ]
+                                ) as any
+                            );
+                        });
+                        attrs.rows++;
+                    });
 
-                            colWidths: Array(cols).fill(""),
-                            rowHeights: Array(data.body.length).fill(""),
-                        },
-                        innerBlocks
-                    );
+                    const foot = data.foot[0]?.cells;
+                    if (foot) {
+                        attrs.cols = foot.length;
+                        attrs.enableTableFooter = "converted";
+                        foot.forEach((cell: any, colIdx: number) => {
+                            attrs.cells++;
+                            innerBlocks.push(
+                                createBlock(
+                                    "tableberg/cell",
+                                    {
+                                        row: attrs.rows,
+                                        col: colIdx,
+                                        tagName: "td",
+                                    },
+                                    [
+                                        createBlock("core/paragraph", {
+                                            content: cell.content,
+                                        }),
+                                    ]
+                                ) as any
+                            );
+                        });
+                        attrs.rows++;
+                    }
+
+                    if (attrs.cells === 0) {
+                        return createBlock("tableberg/table");
+                    }
+                    attrs.colWidths = Array(attrs.cols).fill("");
+                    attrs.rowHeights = Array(attrs.rows).fill("");
+
+                    return createBlock("tableberg/table", attrs, innerBlocks);
                 },
             },
         ],
