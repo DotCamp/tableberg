@@ -523,7 +523,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 </Placeholder>
             </div>
         );
-    }
+    }    
 
     return (
         <>
@@ -597,7 +597,25 @@ registerBlockType(metadata.name, {
                         rows: 0,
                         cols: 0,
                     };
+
+                    if (data.fontSize) {
+                        attrs.fontSize = ({
+                            small: "0.9rem",
+                            medium: "1.05rem",
+                            large: "1.85rem",
+                            "x-large": "2.5rem",
+                            "xx-large": "3.27rem"
+                        } as any)[data.fontSize];
+                    }
                     
+                    if (data.style?.border?.width) {
+                        attrs.innerBorder = {
+                            width: data.style.border.width,
+                        };
+                        attrs.tableBorder = {
+                            width: data.style.border.width,
+                        };
+                    }
                     
                     const head = data.head[0]?.cells;
                     if (head) {

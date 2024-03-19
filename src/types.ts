@@ -1,4 +1,4 @@
-import { BorderTypes, PaddingTypes } from "./utils/common-types";
+import { BorderTypes, PaddingTypes, SingleBorderTypes } from "./utils/common-types";
 
 export type ResponsiveMode = "" | "stack" | "scroll";
 
@@ -42,8 +42,8 @@ export interface TablebergBlockAttrs {
     oddRowBackgroundGradient: string | null;
     footerBackgroundColor: string | null;
     footerBackgroundGradient: string | null;
-    tableBorder: BorderTypes;
-    innerBorder: BorderTypes;
+    tableBorder: SingleBorderTypes;
+    innerBorder: SingleBorderTypes;
     enableInnerBorder: boolean;
     isExample: boolean;
     fontColor: string;
