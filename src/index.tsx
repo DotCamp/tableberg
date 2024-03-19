@@ -402,16 +402,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             prevRenderMode.current = newRMode;
         }
     }, [previewDevice, attributes.responsive.breakpoints]);
-    const [colUpt, setColUpt] = useState(0);
-    const lastRowCount = useRef(attributes.rows);
-
-    useEffect(() => {
-        if (lastRowCount.current === attributes.rows) {
-            setColUpt((old) => old + 1);
-        } else {
-            lastRowCount.current = attributes.rows;
-        }
-    }, [attributes.rows, attributes.cells]);
+    
 
     useSelect(
         (select) => {

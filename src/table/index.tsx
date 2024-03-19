@@ -1,7 +1,7 @@
 import { BlockEditProps, BlockInstance } from "@wordpress/blocks";
 import { TablebergBlockAttrs } from "../types";
 import { createArray } from "../utils";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     useInnerBlocksProps,
     store as blockEditorStore,
@@ -38,11 +38,16 @@ export const PrimaryTable = (
     const storeActions = useDispatch(
         blockEditorStore
     ) as BlockEditorStoreActions;
-    const [colUpt, setColUpt] = useState(0);
 
+    const [colUpt, setColUpt] = useState(0);
+    const lastRowCount = useRef(attributes.rows);
     useEffect(() => {
-        setColUpt((old) => old + 1);
-    }, [attributes.cols]);
+        if (lastRowCount.current === attributes.rows) {
+            setColUpt((old) => old + 1);
+        } else {
+            lastRowCount.current = attributes.rows;
+        }
+    }, [attributes.rows, attributes.cells]);
 
     useEffect(() => {
         if (attributes.responsive?.last === "stack") {
