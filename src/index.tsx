@@ -606,6 +606,18 @@ registerBlockType(metadata.name, {
                         attrs.fontColor = textColor;
                     }
 
+                    if (data.backgroundColor) {
+                        const backgroundColor = window
+                            .getComputedStyle(document.body)
+                            .getPropertyValue(
+                                "--wp--preset--color--" + data.backgroundColor
+                            );
+                        attrs.headerBackgroundColor = backgroundColor;
+                        attrs.oddRowBackgroundColor = backgroundColor;
+                        attrs.evenRowBackgroundColor = backgroundColor;
+                        attrs.footerBackgroundColor = backgroundColor;
+                    }
+
                     if (data.borderColor) {
                         const borderColor = window
                             .getComputedStyle(document.body)
@@ -641,7 +653,7 @@ registerBlockType(metadata.name, {
                     }
 
                     if (/is\-style\-stripes/.test(data.className)) {
-                        attrs.oddRowBackgroundColor = "#f0f0f0";
+                        attrs.evenRowBackgroundColor = "#f0f0f0";
                     }
 
                     const head = data.head[0]?.cells;
