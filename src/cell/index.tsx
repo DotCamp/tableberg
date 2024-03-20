@@ -1,10 +1,10 @@
 import {
     BlockEditProps,
     registerBlockType,
-    createBlocksFromInnerBlocksTemplate,
     BlockInstance,
     BlockSaveProps,
     InnerBlockTemplate,
+    createBlock,
 } from "@wordpress/blocks";
 import {
     BlockVerticalAlignmentToolbar,
@@ -87,16 +87,11 @@ const createSingleCell = (
     col: number,
     isHeader: boolean
 ): TablebergCellInstance => {
-    return createBlocksFromInnerBlocksTemplate([
-        [
-            "tableberg/cell",
-            {
-                col: col,
-                row,
-                tagName: isHeader ? "th" : "td",
-            },
-        ],
-    ])[0] as TablebergCellInstance;
+    return createBlock("tableberg/cell", {
+        col: col,
+        row,
+        tagName: isHeader ? "th" : "td",
+    }) as TablebergCellInstance;
 };
 
 const addRow = (
@@ -693,11 +688,15 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             height: tableBlock.attributes.rowHeights[props.attributes.row],
         },
         ref: cellRef,
-        className: classNames(getClassName(tableBlock.clientId, attributes.row, attributes.col), {
-            "tableberg-header-cell":
-                attributes.row == 0 && tableBlock.attributes.enableTableHeader,
-            "tableberg-has-selected": hasSelected,
-        }),
+        className: classNames(
+            getClassName(tableBlock.clientId, attributes.row, attributes.col),
+            {
+                "tableberg-header-cell":
+                    attributes.row == 0 &&
+                    tableBlock.attributes.enableTableHeader,
+                "tableberg-has-selected": hasSelected,
+            }
+        ),
     });
 
     const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
