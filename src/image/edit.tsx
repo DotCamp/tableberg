@@ -1,7 +1,7 @@
 import { isEmpty, get } from "lodash";
 import { __ } from "@wordpress/i18n";
 import { useDispatch } from "@wordpress/data";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { BlockEditProps } from "@wordpress/blocks";
 import CustomMediaPlaceholder from "./media-placeholder";
 import { ResizableBox } from "@wordpress/components";
@@ -15,18 +15,25 @@ import Image from "./image";
 import Inspector from "./inspector";
 import BlockControls from "./block-controls";
 import type { AttributesTypes, MediaSizes } from "./types";
+import classNames from "classnames";
 
 function Edit(props: BlockEditProps<AttributesTypes>) {
     const { attributes, setAttributes, isSelected } = props;
-    const { media, height, width, caption } = attributes;
+    const { media, height, width, caption, align } = attributes;
     const [showCaption, setShowCaption] = useState(!!caption);
     const [isImageEditing, setIsEditingImage] = useState(false);
     const imageRef = useRef<HTMLImageElement>(null);
-    const blockProps = useBlockProps();
+    const blockProps = useBlockProps({
+        className: classNames({
+            "tableberg-image-center": align === "center",
+            "tableberg-image-right": align === "right",
+        }),
+    });
     const hasImage = !isEmpty(media);
     const { toggleSelection } = useDispatch("core/block-editor");
-    const { naturalWidth, naturalHeight } = useMemo(() => {
+    const { naturalWidth, naturalHeight, imageUrl } = useMemo(() => {
         return {
+            imageUrl: imageRef.current?.src || "",
             naturalWidth: imageRef.current?.naturalWidth || undefined,
             naturalHeight: imageRef.current?.naturalHeight || undefined,
         };
@@ -45,10 +52,29 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
     const fallbackClientWidth = imageRef.current?.width;
     const id = get(media, "id", "");
     const sizeSlug = get(attributes, "sizeSlug", "large") as keyof MediaSizes;
-    const url = get(media, `sizes.${sizeSlug}.url`, "");
     // The only supported unit is px, so we can parseInt to strip the px here.
     const numericWidth = width ? parseInt(width, 10) : undefined;
     const numericHeight = height ? parseInt(height, 10) : undefined;
+
+    useEffect(() => {
+        if (!numericWidth || !naturalWidth || !naturalHeight) {
+            return;
+        }
+        let ratio = 1;
+
+        if (!attributes.aspectRatio) {
+            ratio = (naturalWidth || 1) / (naturalHeight || 1);
+        } else {
+            const sratio = attributes.aspectRatio.split("/", 2);
+            if (sratio.length > 1) {
+                ratio = parseInt(sratio[0]) / parseInt(sratio[1]);
+            }
+        }
+        let h = numericWidth / ratio;
+        setAttributes({
+            height: `${h}px`,
+        });
+    }, [attributes.aspectRatio]);
 
     return (
         <figure {...blockProps}>
@@ -70,23 +96,48 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                             showHandle={isSelected}
                             minWidth={"50"}
                             minHeight={"50"}
+                            maxWidth="720px"
                             enable={{
                                 top: false,
                                 right: true,
                                 bottom: true,
                                 left: false,
                             }}
-                            onResizeStart={onResizeStart}
-                            onResizeStop={(event, direction, elt) => {
-                                onResizeStop();
-                                // Since the aspect ratio is locked when resizing, we can
-                                // use the width of the resized element to calculate the
-                                // height in CSS to prevent stretching when the max-width
-                                // is reached.
+                            onResize={(_, direction, elt) => {
+                                let ratio = 1;
+
+                                if (!attributes.aspectRatio) {
+                                    ratio =
+                                        (naturalWidth || 1) /
+                                        (naturalHeight || 1);
+                                } else {
+                                    const sratio = attributes.aspectRatio.split(
+                                        "/",
+                                        2
+                                    );
+                                    if (sratio.length > 1) {
+                                        ratio =
+                                            parseInt(sratio[0]) /
+                                            parseInt(sratio[1]);
+                                    }
+                                }
+                                let w = elt.offsetWidth;
+                                let h = elt.offsetHeight;
+
+                                if (direction === "bottom") {
+                                    w = h * ratio;
+                                } else {
+                                    h = w / ratio;
+                                }
+
                                 setAttributes({
-                                    width: `${elt.offsetWidth}px`,
-                                    height: `${elt.offsetHeight}px`,
+                                    width: `${w}px`,
+                                    height: `${h}px`,
                                 });
+                            }}
+                            onResizeStart={onResizeStart}
+                            onResizeStop={() => {
+                                onResizeStop();
                             }}
                         >
                             <Image
@@ -122,7 +173,7 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                     {isImageEditing && (
                         <ImageEditor
                             id={id}
-                            url={url}
+                            url={imageUrl}
                             width={numericWidth}
                             height={numericHeight}
                             clientWidth={fallbackClientWidth}

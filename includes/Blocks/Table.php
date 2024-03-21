@@ -40,19 +40,21 @@ class Table
 	public static function get_styles($attributes)
 	{
 		$even_row_bg_color = Utils::get_background_color($attributes, 'evenRowBackgroundColor', 'evenRowBackgroundGradient');
-		$odd_row_bg_color = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
+		$odd_row_bg_color  = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
 
 		$global_font_style = Utils::get_global_style_variables_css($attributes);
 
-		$cell_padding = Utils::get_spacing_css($attributes['cellPadding']);
-		$cellSpacing = $attributes['cellSpacing'] ?? [];
+		$cell_padding  = Utils::get_spacing_css($attributes['cellPadding']);
+		$cellSpacing   = $attributes['cellSpacing'] ?? [];
 		$table_spacing = Utils::get_spacing_css($cellSpacing);
 
 
 		$table_border_variables = Utils::get_border_variables_css($attributes['tableBorder'], 'table');
 		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : array();
 
-		$styles = array(
+		$styles = [
+			'width' => $attributes['tableWidth'],
+			'max-width' => $attributes['tableWidth'],
 			'--tableberg-even-row-bg-color' => $even_row_bg_color,
 			'--tableberg-odd-row-bg-color' => $odd_row_bg_color,
 			'--tableberg-cell-padding-top' => $cell_padding['top'] ?? '',
@@ -61,8 +63,7 @@ class Table
 			'--tableberg-cell-padding-left' => $cell_padding['left'] ?? '',
 			'--tableberg-cell-spacing-top' => $table_spacing['top'] ?? '',
 			'--tableberg-cell-spacing-left' => $table_spacing['left'] ?? '',
-			'max-width' => $attributes['tableWidth'] ?? '',
-		) + $inner_border_variables + $global_font_style;
+		] + $table_border_variables + $inner_border_variables + $global_font_style;
 
 		foreach (['top', 'left'] as $k) {
 			if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
@@ -84,9 +85,9 @@ class Table
 	public function get_style_class($attributes)
 	{
 		$table_width = $attributes['tableWidth'];
-		$table_alignment = $attributes['tableAlignment'];
+
 		$enable_inner_border = $attributes['enableInnerBorder'];
-		$classes = array();
+		$classes             = array();
 		if ($enable_inner_border) {
 			$classes[] = 'has-inner-border';
 		}
@@ -96,16 +97,14 @@ class Table
 				false === $value ||
 				trim($value) === '' ||
 				trim($value) === 'undefined undefined undefined' ||
-				empty($value)
+				empty ($value)
 			);
 		};
 
 		if (!$is_value_empty($table_width)) {
 			$classes[] = 'has-table-width';
 		}
-		if (!$is_value_empty($table_alignment)) {
-			$classes[] = 'justify-table-' . $table_alignment;
-		}
+
 
 		return $classes;
 	}
@@ -124,30 +123,30 @@ class Table
 		}
 		$colgroup = '<colgroup>';
 		foreach ($widths as $w) {
-			$colgroup .= "<col width=\"$w\"/>";
+			$colgroup .= "<col width=\"$w\" style=\"min-width:$w;\"/>";
 		}
 		$colgroup .= '</colgroup>';
-		$content = HtmlUtils::insert_inside_tag($content, 'table', $colgroup);
+		$content  = HtmlUtils::insert_inside_tag($content, 'table', $colgroup);
 		return $content;
 	}
 
 	private function even_odd_rows($attributes, $content)
 	{
 		$even_color = Utils::get_background_color($attributes, 'evenRowBackgroundColor', 'evenRowBackgroundGradient');
-		$odd_color = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
+		$odd_color  = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
 
 		if (!$even_color && !$odd_color) {
 			return $content;
 		}
 
 		$even_color = "background: {$even_color} !important;";
-		$odd_color = "background: {$odd_color} !important;";
+		$odd_color  = "background: {$odd_color} !important;";
 
 		$cursor = 0;
-		$i = 1;
-		$end = $attributes['rows'];
+		$i      = 1;
+		$end    = $attributes['rows'];
 		if ($attributes['enableTableHeader']) {
-			$i = 2;
+			$i       = 2;
 			$content = HtmlUtils::append_attr_value($content, 'tr', '', 'style', 0, $cursor);
 		}
 		if ($attributes['enableTableFooter']) {
@@ -162,6 +161,27 @@ class Table
 		return $content;
 	}
 
+	private static function get_responsiveness_metadata($attributes, $device)
+	{
+		if (!isset($attributes["responsive"])) {
+			return '';
+		}
+		$responsive = $attributes["responsive"]["breakpoints"];
+		$str        = " ";
+		if (isset($responsive[$device]) && $responsive[$device]["enabled"]) {
+			$deviceOpts = $responsive[$device];
+			$str .= 'data-tableberg-' . $device . '-width="' . $deviceOpts["maxWidth"] . '" ';
+			$str .= 'data-tableberg-' . $device . '-mode="' . $deviceOpts["mode"] . '" ';
+			$str .= 'data-tableberg-' . $device . '-direction="' . $deviceOpts["direction"] . '" ';
+			$str .= 'data-tableberg-' . $device . '-count="' . $deviceOpts["stackCount"] . '" ';
+
+			if ($deviceOpts["headerAsCol"] && $attributes['enableTableHeader']) {
+				$str .= 'data-tableberg-' . $device . '-header="' . $deviceOpts["headerAsCol"] . '" ';
+			}
+		}
+		return $str;
+	}
+
 	/**
 	 * Renders the custom table block on the server.
 	 *
@@ -172,21 +192,17 @@ class Table
 	 */
 	public function render_tableberg_table_block($attributes, $content, $block)
 	{
-		$class_names = $this->get_style_class($attributes);
-		$style = $this->get_styles($attributes);
-		$wrapper_attributes = get_block_wrapper_attributes(
-			array(
-				'class' => trim(join(' ', $class_names)),
-				'style' => $style,
-			)
-		);
+		$table_class_names = $this->get_style_class($attributes);
+		$table_style       = $this->get_styles($attributes);
+
+		$table_attrs = 'class = "' . trim(join(' ', $table_class_names)) . '" style="' . $table_style . '"';
 
 		$content = HtmlUtils::insert_inside_tag($content, 'table', '<tbody>');
-		$content = HtmlUtils::replace_attrs_of_tag($content, 'table', $wrapper_attributes);
+		$content = HtmlUtils::replace_attrs_of_tag($content, 'table', $table_attrs);
 		$content = HtmlUtils::replace_closing_tag($content, 'table', '</tr></tbody></table>');
 
 		if ($attributes['enableTableHeader']) {
-			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-header', 'class');
+			$content  = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-header', 'class');
 			$bg_color = Utils::get_background_color($attributes, 'headerBackgroundColor', 'headerBackgroundGradient');
 			if ($bg_color) {
 				$content = HtmlUtils::append_attr_value($content, 'tr', "background: {$bg_color} !important;", 'style');
@@ -195,18 +211,36 @@ class Table
 		}
 		if ($attributes['enableTableFooter']) {
 			$footer_idx = strrpos($content, '<tr');
-			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-footer', 'class', $footer_idx);
-			$bg_color = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
+			$content    = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-footer', 'class', $footer_idx);
+			$bg_color   = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
 			if ($bg_color) {
 				$content = HtmlUtils::append_attr_value($content, 'tr', "background: {$bg_color} !important;", 'style', $footer_idx);
 			}
 		}
 
+
 		$content = self::setRowColSizes($content, $attributes['rowHeights'], $attributes['colWidths']);
 		$content = self::even_odd_rows($attributes, $content);
 
+		$responsive = trim(self::get_responsiveness_metadata($attributes, 'mobile') . self::get_responsiveness_metadata($attributes, 'tablet'));
+
+		if ($responsive) {
+			$responsive = 'data-tableberg-responsive data-tableberg-rows="' . $attributes['rows'] . '" data-tableberg-cols="' . $attributes['cols'] . '" ' . $responsive;
+			$content    = HtmlUtils::add_attrs_to_tag($content, 'table', $responsive);
+		}
+
 		self::$lastRow = null;
-		return $content;
+
+		$wrapper_classes = ['wp-block-tableberg-wrapper'];
+		$table_alignment = $attributes['tableAlignment'];
+		if ($table_alignment && $table_alignment !== "center") {
+			$wrapper_classes[] = 'justify-table-' . $table_alignment;
+		}
+		$wrapper_attributes = get_block_wrapper_attributes([
+			'class' => trim(join(' ', $wrapper_classes)),
+		]);
+
+		return '<div ' . $wrapper_attributes . ' >' . $content . '</div>';
 	}
 
 
@@ -215,9 +249,12 @@ class Table
 	 */
 	public function block_registration()
 	{
-		$defaults = new \Tableberg\Defaults();
+		$defaults         = new \Tableberg\Defaults();
 		$tableberg_assets = new \Tableberg\Assets();
 		$tableberg_assets->register_blocks_assets();
+		if (!is_admin()) {
+			$tableberg_assets->register_frontend_assets();
+		}
 		register_block_type(
 			TABLEBERG_DIR_PATH . 'build/block.json',
 			array(

@@ -121,6 +121,13 @@
         "linkColor": {
             "type": "string",
             "default": ""
+        },
+        "responsive" : {
+            "type": "object",
+            "default": {
+                "last": "primary",
+                "breakpoints": {}
+            }
         }
     },
     "example": {

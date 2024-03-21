@@ -8,11 +8,19 @@ $blocks-block__margin: 0.5em;
     &.has-background-color {
         .wp-block-button__link {
             background: var(--tableberg-button-background-color);
+
+            &:hover, &:focus {
+                background: var(--tableberg-button-hover-background-color);
+            }
         }
     }
     &.has-text-color {
         .wp-block-button__link {
             color: var(--tableberg-button-text-color);
+
+            &:hover, &:focus {
+                color: var(--tableberg-button-text-hover-color);
+            }
         }
     }
     &.has-hover-background-color {

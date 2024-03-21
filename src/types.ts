@@ -1,4 +1,24 @@
-import { BorderTypes, PaddingTypes } from "./utils/common-types";
+import { BorderTypes, PaddingTypes, SingleBorderTypes } from "./utils/common-types";
+
+export type ResponsiveMode = "" | "stack" | "scroll";
+
+export interface Breakpoint {
+    enabled: boolean;
+    headerAsCol: boolean;
+    maxWidth: number;
+    mode: "" | "scroll" | "stack";
+    direction: "row" | "col";
+    stackCount: number;
+}
+export interface ResponsiveOptions {
+    last: ResponsiveMode;
+    target: "window" | "container";
+    breakpoints: {
+        desktop?: Breakpoint;
+        tablet?: Breakpoint;
+        mobile?: Breakpoint;
+    };
+}
 
 export interface TablebergBlockAttrs {
     version: string;
@@ -22,13 +42,14 @@ export interface TablebergBlockAttrs {
     oddRowBackgroundGradient: string | null;
     footerBackgroundColor: string | null;
     footerBackgroundGradient: string | null;
-    tableBorder: BorderTypes;
-    innerBorder: BorderTypes;
+    tableBorder: SingleBorderTypes;
+    innerBorder: SingleBorderTypes;
     enableInnerBorder: boolean;
     isExample: boolean;
     fontColor: string;
     fontSize: string;
     linkColor: string;
+    responsive: ResponsiveOptions;
 }
 
 export { PaddingTypes } from "./utils/common-types";

@@ -5,21 +5,9 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-table.wp-block-tableberg-table {
-    border-top: var(--tableberg-table-border-top);
-    border-right: var(--tableberg-table-border-right);
-    border-bottom: var(--tableberg-table-border-bottom);
-    border-left: var(--tableberg-table-border-left);
-    border-collapse: var(--tableberg-border-collapse, collapse);
-    border-spacing: var(--tableberg-cell-spacing-left, 0) var(--tableberg-cell-spacing-top, 0);
-    width: 100%;
+div.wp-block-tableberg-wrapper {
+    box-sizing: border-box;
 
-    color: var(--tableberg-global-text-color);
-    font-size: var(--tableberg-global-font-size);
-
-    a {
-        color: var(--tableberg-global-link-color);
-    }
 
     &[id*="block-"] {
         &.justify-table-left {
@@ -47,39 +35,78 @@ table.wp-block-tableberg-table {
         margin-left: auto !important;
         margin-right: 0 !important;
     }
-    &.has-inner-border {
-        .wp-block-tableberg-cell {
-            border-top: var(--tableberg-inner-border-top, 1px solid #000000);
-            border-right: var(
-                --tableberg-inner-border-right,
-                1px solid #000000
-            );
-            border-bottom: var(
-                --tableberg-inner-border-bottom,
-                1px solid #000000
-            );
-            border-left: var(--tableberg-inner-border-left, 1px solid #000000);
+
+    &.tableberg-scroll-x {
+        overflow-x: auto;
+        white-space: nowrap;
+        table {
+            width: 100%;
+            width: auto;
+            min-width: 100%;
+
+            tr,
+            td,
+            th {
+                min-width: max-content;
+            }
         }
     }
 
-    .tableberg-header,
-    .tableberg-footer {
-        font-weight: bold;
+    table {
+        border-top: var(--tableberg-table-border-top, 1px solid black);
+        border-right: var(--tableberg-table-border-right, 1px solid black);
+        border-bottom: var(--tableberg-table-border-bottom, 1px solid black);
+        border-left: var(--tableberg-table-border-left, 1px solid black);
+        border-collapse: var(--tableberg-border-collapse, collapse);
+        border-spacing: var(--tableberg-cell-spacing-left, 0)
+            var(--tableberg-cell-spacing-top, 0);
+        width: 100%;
+
+        color: var(--tableberg-global-text-color);
+        font-size: var(--tableberg-global-font-size);
+
+        a {
+            color: var(--tableberg-global-link-color);
+        }
+
+        &.has-inner-border {
+            .wp-block-tableberg-cell {
+                border-top: var(
+                    --tableberg-inner-border-top,
+                    1px solid #000000
+                );
+                border-right: var(
+                    --tableberg-inner-border-right,
+                    1px solid #000000
+                );
+                border-bottom: var(
+                    --tableberg-inner-border-bottom,
+                    1px solid #000000
+                );
+                border-left: var(
+                    --tableberg-inner-border-left,
+                    1px solid #000000
+                );
+            }
+        }
+
+        .tableberg-header,
+        .tableberg-footer,
+        .tableberg-header-cell {
+            font-weight: bold;
+        }
     }
 
-    .tableberg-header {
-        background: --tableberg-header-bg-color;
-    }
-
-    .tableberg-footer {
-        background: --tableberg-footer-bg-color;
-    }
-
-    .rich-text [data-rich-text-placeholder]::after {
+    .wp-block-paragraph [data-rich-text-placeholder]::after {
         content: "Type here"
     }
 
-    .rich-text:focus [data-rich-text-placeholder]::after {
+    .wp-block-paragraph:focus [data-rich-text-placeholder]::after {
         content: "Type / to choose a block"
     }
 }
+
+.add-margin-bottom {
+    margin-bottom: 20px;
+}
+

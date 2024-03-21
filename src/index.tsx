@@ -17,25 +17,31 @@ import {
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
     BlockInstance,
+    createBlock,
 } from "@wordpress/blocks";
 /**
  * Internal Imports
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState, createContext } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
-import { getStyles } from "./get-styles";
-import classNames from "classnames";
-import { getStyleClass } from "./get-classes";
 import exampleImage from "./example.png";
 import blockIcon from "./components/icon";
-import { createArray } from "./utils";
 import { TablebergCellInstance } from "./cell";
-import { store as tbStore } from "./store";
+import { PrimaryTable } from "./table";
+import StackRowTable from "./table/StackRowTable";
+import StackColTable from "./table/StackColTable";
+import classNames from "classnames";
 
-const ALLOWED_BLOCKS = ["tableberg/cell"];
+export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
+interface TablebergCtx {
+    rootEl?: HTMLElement;
+    render?: TablebergRenderMode;
+}
+
+export const TablebergCtx = createContext<TablebergCtx>({});
 
 const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
     const newCells: TablebergCellInstance[] = [];
@@ -301,53 +307,43 @@ const useTableHeaderFooter = (
 };
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
+    // @ts-ignore
+    registerTablebergPreviewDeviceChangeObserver();
     const { attributes, setAttributes, clientId } = props;
-    const tableRef = useRef<HTMLTableElement>();
+    const rootRef = useRef<HTMLTableElement>();
+
+    const [isScrollMode, setIsScrollMode] = useState<boolean>(false);
 
     const blockProps = useBlockProps({
-        ref: tableRef,
-        style: {
-            ...getStyles(props.attributes),
-            maxWidth: props.attributes.tableWidth,
-        },
-        className: classNames(getStyleClass(props.attributes)),
-    } as Record<string, any>);
-
-    const innerBlocksProps = useInnerBlocksProps({
-        // @ts-ignore false can obviously be assigned to renderAppender as does
-        // wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
-        renderAppender: false,
-        allowedBlocks: ALLOWED_BLOCKS,
+        ref: rootRef,
+        className: classNames("wp-block-tableberg-wrapper", {
+            "tableberg-scroll-x": isScrollMode,
+            [`justify-table-${attributes.tableAlignment}`]:
+                !!attributes.tableAlignment,
+        }),
     });
 
     const storeActions = useDispatch(
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const tbStoreActions = useDispatch(tbStore);
-
-    const { tableBlock, selectedCells } = useSelect((select) => {
+    const { tableBlock } = useSelect((select) => {
         const storeSelect = select(
             blockEditorStore
         ) as BlockEditorStoreSelectors;
         const tableBlock = storeSelect.getBlock(
             clientId
         )! as BlockInstance<TablebergBlockAttrs>;
-        const selectedCells = storeSelect.getMultiSelectedBlocks();
 
         return {
             tableBlock,
-            selectedCells,
         };
     }, []);
 
-    useEffect(() => {
-        if (selectedCells.length > 0) {
-            tbStoreActions.startMultiSelectNative(
-                selectedCells as TablebergCellInstance[]
-            );
-        }
-    }, [selectedCells]);
+    const [previewDevice, updatePreview] = useState<
+        keyof TablebergBlockAttrs["responsive"]["breakpoints"]
+        // @ts-ignore
+    >(tablebergGetLastDevice() || "desktop");
 
     useEffect(() => {
         if (!tableBlock.attributes.version) {
@@ -362,24 +358,54 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 colWidths: Array(cols).fill(""),
             });
         }
+        const localUpdater = (evt: any) => {
+            updatePreview(evt.detail.currentPreview);
+        };
+        document.addEventListener("TablebergPreviewDeviceChange", localUpdater);
+        return () =>
+            document.removeEventListener(
+                "TablebergPreviewDeviceChange",
+                localUpdater
+            );
     }, []);
 
     useTableHeaderFooter(tableBlock, storeActions);
 
-    const [colUpt, setColUpt] = useState(0);
-    const lastRowCount = useRef(attributes.rows);
+    const [renderMode, setRenderMode] =
+        useState<TablebergRenderMode>("primary");
+    const prevRenderMode = useRef<TablebergRenderMode>("primary");
 
     useEffect(() => {
-        if (lastRowCount.current === attributes.rows) {
-            setColUpt((old) => old + 1);
+        let newRMode: TablebergRenderMode = "primary";
+        if (previewDevice === "desktop") {
+            newRMode = "primary";
         } else {
-            lastRowCount.current = attributes.rows;
+            let breakpoint =
+                attributes.responsive?.breakpoints?.[previewDevice];
+            if (!breakpoint && previewDevice === "mobile") {
+                breakpoint = attributes.responsive?.breakpoints?.tablet;
+            }
+            if (!breakpoint) {
+                newRMode = "primary";
+                setIsScrollMode(false);
+            } else if (breakpoint.enabled) {
+                if (breakpoint.mode === "stack") {
+                    newRMode = `stack-${breakpoint.direction}`;
+                } else {
+                    setIsScrollMode(true);
+                }
+            }
         }
-    }, [attributes.rows, attributes.cells]);
+
+        if (newRMode !== prevRenderMode.current) {
+            setRenderMode(newRMode);
+            prevRenderMode.current = newRMode;
+        }
+    }, [previewDevice, attributes.responsive.breakpoints]);
 
     useSelect(
         (select) => {
-            tableRef.current?.addEventListener(
+            rootRef.current?.addEventListener(
                 "keydown",
                 (evt: KeyboardEvent) => {
                     if (evt.key !== "Backspace" && evt.key !== "Delete") {
@@ -400,7 +426,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 }
             );
         },
-        [tableRef.current]
+        [rootRef.current]
     );
 
     function onCreateTable(event: FormEvent) {
@@ -451,7 +477,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             });
         }
         return (
-            <div {...innerBlocksProps}>
+            <div>
                 <Placeholder
                     label={"Create Tableberg Table"}
                     icon={<BlockIcon icon={blockTable} showColors />}
@@ -498,63 +524,35 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         );
     }
 
-    const rowTemplate = createArray(attributes.rows).map((i) => {
-        let background;
-        let className = "";
-        if (i % 2 === 0) {
-            background =
-                attributes.oddRowBackgroundColor ??
-                attributes.oddRowBackgroundGradient ??
-                undefined;
-        } else {
-            background =
-                attributes.evenRowBackgroundColor ??
-                attributes.evenRowBackgroundGradient ??
-                undefined;
-        }
-
-        if (i === 0 && attributes.enableTableHeader) {
-            background =
-                attributes.headerBackgroundColor ??
-                attributes.headerBackgroundGradient ??
-                undefined;
-            className += "tableberg-header";
-        }
-
-        if (i + 1 === attributes.rows && attributes.enableTableFooter) {
-            background =
-                attributes.footerBackgroundColor ??
-                attributes.footerBackgroundGradient ??
-                undefined;
-            className += "tableberg-footer";
-        }
-
-        return (
-            <tr
-                id={`tableberg-${clientId}-row-${i}`}
-                style={{
-                    height: attributes.rowHeights[i],
-                    background,
-                }}
-                className={className}
-            ></tr>
-        );
-    });
-
     return (
         <>
-            <table {...blockProps}>
-                <colgroup>
-                    {attributes.colWidths.map((w) => (
-                        <col width={w} />
-                    ))}
-                </colgroup>
-                {rowTemplate}
-            </table>
-            <div style={{ display: "none" }} key={colUpt}>
-                <div {...innerBlocksProps} />
+            <div {...blockProps}>
+                <TablebergCtx.Provider
+                    value={{
+                        rootEl: rootRef.current!,
+                        render: renderMode as any,
+                    }}
+                >
+                    {(renderMode === "primary" && (
+                        <PrimaryTable {...props} tableBlock={tableBlock} />
+                    )) ||
+                        (renderMode === "stack-row" && (
+                            <StackRowTable
+                                {...props}
+                                tableBlock={tableBlock}
+                                preview={previewDevice}
+                            />
+                        )) ||
+                        (renderMode === "stack-col" && (
+                            <StackColTable
+                                {...props}
+                                tableBlock={tableBlock}
+                                preview={previewDevice}
+                            />
+                        ))}
+                </TablebergCtx.Provider>
             </div>
-            <TablebergControls {...props} />
+            <TablebergControls {...props} preview={previewDevice} />
         </>
     );
 }
@@ -575,4 +573,173 @@ registerBlockType(metadata.name, {
     attributes: metadata.attributes,
     edit,
     save,
+    transforms: {
+        from: [
+            {
+                type: "block",
+                blocks: ["core/table"],
+                transform: (data: any) => {
+                    const innerBlocks: TablebergCellInstance[] = [];
+                    const attrs: Partial<TablebergBlockAttrs> & {
+                        cells: number;
+                        rows: number;
+                        cols: number;
+                    } = {
+                        version: metadata.version,
+                        hasTableCreated: true,
+                        cells: 0,
+                        responsive: {
+                            target: "window",
+                            last: "",
+                            breakpoints: {},
+                        },
+                        rows: 0,
+                        cols: 0,
+                    };
+
+                    if (data.textColor) {
+                        const textColor = window
+                            .getComputedStyle(document.body)
+                            .getPropertyValue(
+                                "--wp--preset--color--" + data.textColor
+                            );
+                        attrs.fontColor = textColor;
+                    }
+
+                    if (data.backgroundColor) {
+                        const backgroundColor = window
+                            .getComputedStyle(document.body)
+                            .getPropertyValue(
+                                "--wp--preset--color--" + data.backgroundColor
+                            );
+                        attrs.headerBackgroundColor = backgroundColor;
+                        attrs.oddRowBackgroundColor = backgroundColor;
+                        attrs.evenRowBackgroundColor = backgroundColor;
+                        attrs.footerBackgroundColor = backgroundColor;
+                    }
+
+                    if (data.borderColor) {
+                        const borderColor = window
+                            .getComputedStyle(document.body)
+                            .getPropertyValue(
+                                "--wp--preset--color--" + data.borderColor
+                            );
+                        attrs.innerBorder = {
+                            color: borderColor,
+                        };
+                        attrs.tableBorder = {
+                            color: borderColor,
+                        };
+                    }
+
+                    if (data.fontSize) {
+                        attrs.fontSize = (
+                            {
+                                small: "0.9rem",
+                                medium: "1.05rem",
+                                large: "1.85rem",
+                                "x-large": "2.5rem",
+                                "xx-large": "3.27rem",
+                            } as any
+                        )[data.fontSize];
+                    }
+
+                    if (data.style?.border?.width) {
+                        const innerBorder = attrs.innerBorder || {};
+                        innerBorder.width = data.style.border.width;
+
+                        const tableBorder = attrs.tableBorder || {};
+                        tableBorder.width = data.style.border.width;
+                    }
+
+                    if (/is\-style\-stripes/.test(data.className)) {
+                        attrs.evenRowBackgroundColor = "#f0f0f0";
+                    }
+
+                    const head = data.head[0]?.cells;
+                    if (head) {
+                        attrs.cols = head.length;
+                        attrs.enableTableHeader = "converted";
+                        head.forEach((cell: any, colIdx: number) => {
+                            attrs.cells++;
+                            innerBlocks.push(
+                                createBlock(
+                                    "tableberg/cell",
+                                    {
+                                        row: 0,
+                                        col: colIdx,
+                                        tagName: "th",
+                                    },
+                                    [
+                                        createBlock("core/paragraph", {
+                                            content: cell.content,
+                                        }),
+                                    ]
+                                ) as any
+                            );
+                        });
+                        attrs.rows++;
+                    }
+
+                    data.body.forEach((row: any, rowIdx: number) => {
+                        attrs.cols = row.cells.length;
+                        row.cells.forEach((cell: any, colIdx: number) => {
+                            // @ts-ignore
+                            attrs.cells++;
+                            innerBlocks.push(
+                                createBlock(
+                                    "tableberg/cell",
+                                    {
+                                        row: attrs.rows,
+                                        col: colIdx,
+                                        tagName: "td",
+                                    },
+                                    [
+                                        createBlock("core/paragraph", {
+                                            content: cell.content,
+                                        }),
+                                    ]
+                                ) as any
+                            );
+                        });
+                        attrs.rows++;
+                    });
+
+                    const foot = data.foot[0]?.cells;
+                    if (foot) {
+                        attrs.cols = foot.length;
+                        attrs.enableTableFooter = "converted";
+                        foot.forEach((cell: any, colIdx: number) => {
+                            attrs.cells++;
+                            innerBlocks.push(
+                                createBlock(
+                                    "tableberg/cell",
+                                    {
+                                        row: attrs.rows,
+                                        col: colIdx,
+                                        tagName: "td",
+                                    },
+                                    [
+                                        createBlock("core/paragraph", {
+                                            content: cell.content,
+                                        }),
+                                    ]
+                                ) as any
+                            );
+                        });
+                        attrs.rows++;
+                    }
+
+                    if (attrs.cells === 0) {
+                        return createBlock("tableberg/table");
+                    }
+                    attrs.colWidths = Array(attrs.cols).fill("");
+                    attrs.rowHeights = Array(attrs.rows).fill("");
+
+                    return createBlock("tableberg/table", attrs, innerBlocks);
+                },
+            },
+        ],
+        to: [],
+    },
 });

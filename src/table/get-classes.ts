@@ -1,8 +1,8 @@
 import { isUndefined, trim, isEmpty } from "lodash";
-import { TablebergBlockAttrs } from "./types";
+import { TablebergBlockAttrs } from "../types";
 
 export function getStyleClass(attributes: TablebergBlockAttrs) {
-    const { tableWidth, tableAlignment, enableInnerBorder } = attributes;
+    const { tableWidth, enableInnerBorder } = attributes;
     const isValueEmpty = (value: any) => {
         return (
             isUndefined(value) ||
@@ -16,6 +16,5 @@ export function getStyleClass(attributes: TablebergBlockAttrs) {
     return {
         "has-table-width": !isValueEmpty(tableWidth),
         "has-inner-border": enableInnerBorder,
-        [`justify-table-${tableAlignment}`]: !isValueEmpty(tableAlignment),
     };
 }

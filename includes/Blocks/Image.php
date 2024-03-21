@@ -157,7 +157,7 @@ class Image {
 		$url          = isset( $media['sizes'][ $size_slug ]['url'] ) ? $media['sizes'][ $size_slug ]['url'] : $media['url'] ?? '';
 		$alt          = $attributes['alt'];
 		$caption      = $attributes['caption'];
-		$align        = $attributes['align'] ?? '';
+		$align        = $attributes['align'] ?? 'left';
 		$href         = $attributes['href'];
 		$rel          = $attributes['rel'];
 		$link_class   = $attributes['linkClass'];
@@ -174,20 +174,20 @@ class Image {
 
 		$classes = join(
 			' ',
-			array(
-				'wp - block - tableberg - image',
-				'align' . $align,
-				'size - ' . $size_slug,
-				( $width || $height ) ? 'is - resized' : '',
-			)
+			[
+				'wp-block-tableberg-image',
+				'tableberg-image-' . $align,
+				'size-' . $size_slug,
+				( $width || $height ) ? 'is-resized' : '',
+			]
 		);
 
 		$image_classes = join(
 			' ',
 			array_filter(
-				array(
-					$id ? 'wp - image - ' . esc_attr( $id ) : '',
-				)
+				[
+					$id ? 'wp-image-' . esc_attr( $id ) : '',
+				]
 			)
 		);
 

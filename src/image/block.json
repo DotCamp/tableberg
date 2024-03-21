@@ -20,6 +20,10 @@
             "type": "string",
             "default": ""
         },
+        "align": {
+            "type": "string",
+            "default": "left"
+        },
         "alt": {
             "type": "string",
             "default": ""
@@ -70,7 +74,6 @@
         }
     },
     "supports": {
-        "align": true,
         "anchor": true,
         "color": {
             "text": false,
