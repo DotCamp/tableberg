@@ -9,7 +9,7 @@ import {
     BlockControls,
     BlockAlignmentToolbar,
     FontSizePicker,
-    store as blockEditorStore
+    store as blockEditorStore,
 } from "@wordpress/block-editor";
 import {
     ToggleControl,
@@ -25,12 +25,12 @@ import {
 import { ResponsiveOptions, TablebergBlockAttrs } from "./types";
 import {
     ColorPickerDropdown,
-    SpacingControl,
 } from "./components";
 import { ColorSettingsWithGradient } from "./components";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ResponsiveControls } from "./responsiveControls";
 import BorderControl from "./components/BorderControl";
+import SpacingControl from "./components/SpacingControl";
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -85,7 +85,9 @@ function TablebergControls(
         }
     }, [])
 
-    const { enableInnerBorder, tableAlignment } = tableAttributes;
+    const {
+        enableInnerBorder, tableAlignment, cellPadding, cellSpacing
+    } = tableAttributes;
 
     const { updateBlockAttributes } = useDispatch(
         blockEditorStore
@@ -294,15 +296,16 @@ function TablebergControls(
 
             <InspectorControls group="dimensions">
                 <SpacingControl
-                    attrKey="cellPadding"
-                    label={__("Cell Padding", "tableberg")}
-                    showByDefault
+                    label="Cell Padding"
+                    value={cellPadding}
+                    onChange={(val) => setTableAttributes({ cellPadding: val })}
+                    onDeselect={() => setTableAttributes({ cellPadding: {} })}
                 />
                 <SpacingControl
-                    attrKey="cellSpacing"
-                    label={__("Cell Spacing", "tableberg")}
-                    sides={["horizontal", "vertical"]}
-                    showByDefault
+                    label="Cell Spacing"
+                    value={cellSpacing}
+                    onChange={(val) => setTableAttributes({ cellSpacing: val })}
+                    onDeselect={() => setTableAttributes({ cellSpacing: {} })}
                 />
             </InspectorControls>
 
