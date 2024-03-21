@@ -17,8 +17,6 @@ import {
     __experimentalToolsPanelItem as ToolsPanelItem,
     __experimentalToggleGroupControl as ToggleGroupControl,
     __experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon,
-    __experimentalBorderBoxControl as BorderBoxControl,
-    BaseControl,
     PanelBody,
 } from "@wordpress/components";
 /**
@@ -26,13 +24,13 @@ import {
  */
 import { ResponsiveOptions, TablebergBlockAttrs } from "./types";
 import {
-    BorderControl,
     ColorPickerDropdown,
     SpacingControl,
 } from "./components";
 import { ColorSettingsWithGradient } from "./components";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ResponsiveControls } from "./responsiveControls";
+import BorderControl from "./components/BorderControl";
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -310,20 +308,67 @@ function TablebergControls(
 
             <InspectorControls group="border">
                 <BorderControl
-                    showDefaultBorder
-                    showBorderRadius={false}
-                    attrBorderKey="tableBorder"
-                    borderLabel={__("Table Border Size", "tableberg")}
+                    label={__("Table Border Size", "tableberg")}
+                    value={tableAttributes.tableBorder}
+                    onChange={(newBorder) => {
+                        setTableAttributes(
+                            { tableBorder: newBorder }
+                        )
+                    }}
+                    onDeselect={() => {
+                        setTableAttributes(
+                            { tableBorder: undefined }
+                        )
+                    }}
                 />
-                <BorderControl
-                    showDefaultBorder
-                    showBorderRadius={false}
-                    showBorder={tableAttributes.enableInnerBorder}
-                    attrBorderKey="innerBorder"
-                    borderLabel={__("Inner Border Size", "tableberg")}
-                />
+                <ToolsPanelItem
+                    panelId={clientId}
+                    isShownByDefault={true}
+                    resetAllFilter={() =>
+                        setTableAttributes({
+                            enableInnerBorder: true,
+                        })
+                    }
+                    hasValue={() => !enableInnerBorder}
+                    label={__("Enable Inner Border", "tableberg")}
+                    onDeselect={() => {
+                        setTableAttributes({ enableInnerBorder: true });
+                    }}
+                >
+                    <ToggleControl
+                        label={__("Enable Inner Border", "tableberg")}
+                        checked={enableInnerBorder}
+                        onChange={() =>
+                            setTableAttributes({
+                                enableInnerBorder:
+                                    !tableAttributes.enableInnerBorder,
+                            })
+                        }
+                    />
+                </ToolsPanelItem>
+                {tableAttributes.enableInnerBorder &&
+                    <BorderControl
+                        label={__("Inner Border Size", "tableberg")}
+                        value={tableAttributes.innerBorder}
+                        onChange={(newBorder) => {
+                            setTableAttributes(
+                                { innerBorder: newBorder }
+                            )
+                        }}
+                        onDeselect={() => {
+                            setTableAttributes(
+                                { innerBorder: undefined }
+                            )
+                        }}
+                    />}
             </InspectorControls>
-            {!!preview && <ResponsiveControls preview={preview} attributes={tableAttributes} setTableAttributes={setTableAttributes} />}
+            {!!preview &&
+                <ResponsiveControls
+                    preview={preview}
+                    attributes={tableAttributes}
+                    setTableAttributes={setTableAttributes}
+                />
+            }
             <BlockControls>
                 <BlockAlignmentToolbar
                     value={tableAlignment}
