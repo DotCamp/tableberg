@@ -21,7 +21,6 @@ interface BorderControlPropTypes {
     onChange: (newBorder: Border | Borders | undefined) => any;
     resetAllFilter?: () => any;
     onDeselect?: () => any;
-    showBorder?: boolean;
     isShownByDefault?: boolean;
 }
 
