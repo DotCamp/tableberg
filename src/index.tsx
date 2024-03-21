@@ -552,7 +552,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                         ))}
                 </TablebergCtx.Provider>
             </div>
-            <TablebergControls {...props} preview={previewDevice} />
+            <TablebergControls clientId={clientId} preview={previewDevice} />
         </>
     );
 }

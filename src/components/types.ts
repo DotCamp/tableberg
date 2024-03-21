@@ -1,6 +1,3 @@
-import { IconType } from "@wordpress/components";
-import { ReactElement } from "react";
-
 export type SpacingControlSides = "top" | "right" | "bottom" | "left" | "vertical" | "horizontal"
 
 export interface BorderControlPropTypes {
@@ -12,20 +9,6 @@ export interface BorderControlPropTypes {
     showBorderRadius?: boolean;
     showDefaultBorder?: boolean;
     showDefaultBorderRadius?: boolean;
-}
-export interface ToggleGroupControlPropTypes {
-    label: string;
-    options: Array<OptionObject>; // Use the defined OptionObject interface
-    attributeKey: string;
-    isBlock?: boolean;
-    isAdaptiveWidth?: boolean;
-    isDeselectable?: boolean;
-}
-
-export interface OptionObject {
-    value: string;
-    icon: ReactElement; // You can specify the type for the icon property as needed
-    label: string;
 }
 export interface SpacingPropTypes {
     label: string;

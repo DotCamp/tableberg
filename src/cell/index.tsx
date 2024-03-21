@@ -45,6 +45,7 @@ import { Fragment, useEffect, useRef } from "react";
 import CellControls from "./controls";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
+import TablebergControls from "../controls";
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
@@ -882,12 +883,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                     controls={tableControls}
                 />
             </BlockControls>
-            <CellControls
-                height={tableBlock?.attributes.rowHeights[attributes.row]}
-                setHeight={setRowHeight}
-                width={tableBlock?.attributes.colWidths[attributes.col]}
-                setWidth={setColWidth}
-            />
+            <TablebergControls clientId={clientId} />
         </>
     );
 }
