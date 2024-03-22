@@ -23,14 +23,12 @@ import {
  * Internal Imports
  */
 import { ResponsiveOptions, TablebergBlockAttrs } from "./types";
-import {
-    ColorPickerDropdown,
-} from "./components";
-import { ColorSettingsWithGradient } from "./components";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ResponsiveControls } from "./responsiveControls";
 import BorderControl from "./components/BorderControl";
 import SpacingControl from "./components/SpacingControl";
+import ColorControl from "./components/ColorControl";
+import ColorPickerDropdown from "./components/ColorPickerDropdown";
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -56,7 +54,7 @@ function TablebergControls(
         preview?: keyof ResponsiveOptions["breakpoints"];
     }
 ) {
-    const { isTableControls, tableAttributes, tableBlockClientId, cellBlock } = useSelect((select) => {
+    const { isTableControls, tableAttributes, tableBlockClientId, cellBlock, themeColors } = useSelect((select) => {
         const storeSelect = select(blockEditorStore) as BlockEditorStoreSelectors;
         const currentBlock = storeSelect.getBlock(clientId)!;
         const isTableControls = currentBlock?.name === "tableberg/table";
@@ -81,12 +79,14 @@ function TablebergControls(
             isTableControls,
             tableAttributes,
             tableBlockClientId: tableBlock.clientId,
-            cellBlock
+            cellBlock,
+            themeColors: storeSelect.getSettings()?.__experimentalFeatures?.color.palette.theme,
         }
     }, [])
 
     const {
-        enableInnerBorder, tableAlignment, cellPadding, cellSpacing
+        enableInnerBorder, tableAlignment, cellPadding, cellSpacing,
+        fontColor, linkColor, fontSize
     } = tableAttributes;
 
     const { updateBlockAttributes } = useDispatch(
@@ -96,16 +96,6 @@ function TablebergControls(
     const setTableAttributes = (attributes: Record<string, any>) => {
         updateBlockAttributes(tableBlockClientId, attributes);
     }
-
-    const onFontColorChange = (value: any) => {
-        setTableAttributes({ fontColor: value });
-    };
-    const onFontSizeChange = (value: any) => {
-        setTableAttributes({ fontSize: value });
-    };
-    const onLinkColorChange = (value: any) => {
-        setTableAttributes({ linkColor: value });
-    };
 
     const setHeight = (val: string) => {
         if (!cellBlock) {
@@ -241,56 +231,99 @@ function TablebergControls(
                 >
                     <ToolsPanelItem
                         label={__("Font Color", "tableberg")}
-                        hasValue={() => true}
+                        hasValue={() => !!fontColor}
+                        onDeselect={() => setTableAttributes(
+                            { fontColor: "" }
+                        )}
+                        isShownByDefault
                     >
                         <ColorPickerDropdown
                             label={__("Font Color", "tableberg")}
                             value={tableAttributes.fontColor}
-                            onChange={onFontColorChange}
+                            onChange={(val) => setTableAttributes(
+                                { fontColor: val }
+                            )}
+                            colors={themeColors}
                         />
                     </ToolsPanelItem>
                     <ToolsPanelItem
                         label={__("Link Color", "tableberg")}
-                        hasValue={() => true}
+                        hasValue={() => !!linkColor}
+                        onDeselect={() => setTableAttributes(
+                            { linkColor: "" }
+                        )}
+                        isShownByDefault
                     >
                         <ColorPickerDropdown
                             label={__("Link Color", "tableberg")}
                             value={tableAttributes.linkColor}
-                            onChange={onLinkColorChange}
+                            onChange={(val) => setTableAttributes(
+                                { linkColor: val }
+                            )}
+                            colors={themeColors}
                         />
                     </ToolsPanelItem>
                     <ToolsPanelItem
                         label={__("Font Size", "tableberg")}
-                        hasValue={() => true}
+                        hasValue={() => !!fontSize}
+                        onDeselect={() => setTableAttributes(
+                            { fontSize: "" }
+                        )}
+                        isShownByDefault
                     >
                         <FontSizePicker
                             value={tableAttributes.fontSize as any}
-                            onChange={onFontSizeChange}
+                            onChange={(val) => setTableAttributes(
+                                { fontSize: val }
+                            )}
                         />
                     </ToolsPanelItem>
                 </ToolsPanel>
             </InspectorControls>
-
             <InspectorControls group="color">
-                <ColorSettingsWithGradient
+                <ColorControl
                     label={__("Header Background Color", "tableberg")}
-                    attrBackgroundKey="headerBackgroundColor"
-                    attrGradientKey="headerBackgroundGradient"
+                    colorValue={tableAttributes.headerBackgroundColor}
+                    gradientValue={tableAttributes.headerBackgroundGradient}
+                    onColorChange={(newValue) => setTableAttributes({
+                        headerBackgroundColor: newValue
+                    })}
+                    onGradientChange={(newValue) => setTableAttributes({
+                        headerBackgroundGradient: newValue
+                    })}
                 />
-                <ColorSettingsWithGradient
+                <ColorControl
                     label={__("Even Row Background Color", "tableberg")}
-                    attrBackgroundKey="evenRowBackgroundColor"
-                    attrGradientKey="evenRowBackgroundGradient"
+                    colorValue={tableAttributes.evenRowBackgroundColor}
+                    gradientValue={tableAttributes.evenRowBackgroundGradient}
+                    onColorChange={(newValue) => setTableAttributes({
+                        evenRowBackgroundColor: newValue
+                    })}
+                    onGradientChange={(newValue) => setTableAttributes({
+                        evenRowBackgroundGradient: newValue
+                    })}
                 />
-                <ColorSettingsWithGradient
+                <ColorControl
                     label={__("Odd Row Background Color", "tableberg")}
-                    attrBackgroundKey="oddRowBackgroundColor"
-                    attrGradientKey="oddRowBackgroundGradient"
+                    colorValue={tableAttributes.oddRowBackgroundColor}
+                    gradientValue={tableAttributes.oddRowBackgroundGradient}
+                    onColorChange={(newValue) => setTableAttributes({
+                        oddRowBackgroundColor: newValue
+                    })}
+                    onGradientChange={(newValue) => setTableAttributes({
+                        oddRowBackgroundGradient: newValue
+                    })}
                 />
-                <ColorSettingsWithGradient
+                <ColorControl
                     label={__("Footer Background Color", "tableberg")}
-                    attrBackgroundKey="footerBackgroundColor"
-                    attrGradientKey="footerBackgroundGradient"
+                    colorValue={tableAttributes.footerBackgroundColor}
+                    gradientValue={tableAttributes.footerBackgroundGradient}
+                    onColorChange={(newValue) => setTableAttributes({
+                        footerBackgroundColor: newValue
+                    })}
+                    onGradientChange={(newValue) => setTableAttributes({
+                        footerBackgroundGradient: newValue
+                    })}
                 />
             </InspectorControls>
 

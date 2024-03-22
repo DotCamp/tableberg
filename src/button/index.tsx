@@ -41,7 +41,8 @@ import {
 
 import "./style.scss";
 import { link, linkOff } from "@wordpress/icons";
-import { ColorSettings, ColorSettingsWithGradient } from "../components";
+// import { ColorSettings, ColorSettingsWithGradient } from "../components";
+import ColorControl from "../components/ColorControl"
 import { __ } from "@wordpress/i18n";
 import { getStyleClass } from "./get-classes";
 import { ButtonBlockTypes } from "./type";
@@ -264,23 +265,41 @@ function edit({
             </BlockControls>
 
             <InspectorControls group="color">
-                <ColorSettings
-                    attrKey="textColor"
+                <ColorControl
                     label={__("Text", "tableberg")}
+                    colorValue={attributes.textColor}
+                    onColorChange={(newValue) => setAttributes(
+                        { textColor: newValue }
+                    )}
                 />
-                <ColorSettings
-                    attrKey="textHoverColor"
+                <ColorControl
                     label={__("Hover Text", "tableberg")}
+                    colorValue={attributes.textHoverColor}
+                    onColorChange={(newValue) => setAttributes(
+                        { textHoverColor: newValue }
+                    )}
                 />
-                <ColorSettingsWithGradient
+                <ColorControl
                     label={__("Background Color", "tableberg")}
-                    attrBackgroundKey="backgroundColor"
-                    attrGradientKey="backgroundGradient"
+                    colorValue={attributes.backgroundColor}
+                    gradientValue={attributes.backgroundGradient}
+                    onColorChange={(newValue) => setAttributes(
+                        { backgroundColor: newValue }
+                    )}
+                    onGradientChange={(newValue) => setAttributes(
+                        { backgroundGradient: newValue }
+                    )}
                 />
-                <ColorSettingsWithGradient
+                <ColorControl
                     label={__("Hover Background Color", "tableberg")}
-                    attrBackgroundKey="backgroundHoverColor"
-                    attrGradientKey="backgroundHoverGradient"
+                    colorValue={attributes.backgroundHoverColor}
+                    gradientValue={attributes.backgroundHoverGradient}
+                    onColorChange={(newValue) => setAttributes(
+                        { backgroundHoverColor: newValue }
+                    )}
+                    onGradientChange={(newValue) => setAttributes(
+                        { backgroundHoverGradient: newValue }
+                    )}
                 />
             </InspectorControls>
             <InspectorControls>
