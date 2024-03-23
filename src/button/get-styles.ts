@@ -1,6 +1,8 @@
 import { omitBy, isUndefined, trim, isEmpty } from "lodash";
 import { ButtonBlockTypes } from "./type";
 
+import { getSpacingCss } from "../utils/styling-helpers";
+
 export function getStyles(attributes: ButtonBlockTypes) {
     const {
         backgroundColor,
@@ -27,6 +29,26 @@ export function getStyles(attributes: ButtonBlockTypes) {
         "--tableberg-button-hover-background-color": computedBackgroundHoverColor,
     };
 
+    return omitBy(
+        styles,
+        (value: any) =>
+            value === false ||
+            isEmpty(value) ||
+            isUndefined(value) ||
+            trim(value) === "" ||
+            trim(value) === "undefined undefined undefined"
+    );
+}
+
+
+export function getInnerStyles(attributes: ButtonBlockTypes): Record<string, any> {
+    const paddingCSS = getSpacingCss(attributes.padding);
+    const styles = {
+        "padding-top": paddingCSS?.top,
+        "padding-left": paddingCSS?.left,
+        "padding-bottom": paddingCSS?.bottom,
+        "padding-right": paddingCSS?.right,
+    };
     return omitBy(
         styles,
         (value: any) =>
