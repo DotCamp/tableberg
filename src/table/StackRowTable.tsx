@@ -112,7 +112,7 @@ export default function StackRowTable(
 
                 let style = {};
                 if (rowCount % attributes.cols === 0) {
-                    style = { borderTop: "5px dashed gray" };
+                    style = { borderTop: "3px solid gray" };
                 }
 
                 tmplates.push(
