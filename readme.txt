@@ -37,24 +37,24 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 
 = 0.4.0 =
 * NEW: Add support for responsive table
+* NEW: Alignment control for cell child blocks
+* NEW: Add support for converting core table to tableberg
+* IMPROVE: (Image block) Preserve aspect ratio while resizing
+* IMPROVE: Display block appender when cell children are selected
+* IMPROVE: Shift+click multi selection update (behaves like MS Excel)
 * FIX: Wrong css placeholder in cell child blocks (e.g. list)
 * FIX: (Button block) Incorrect hover colors in editor
 * FIX: (Image block) Aspect ratio not preserved when resizing via handles
 * FIX: (Image block) Center alignment not working
 * FIX: (Image block) Images float when multiple consequent images
 * FIX: (Image block) URL not set in editmode
-* IMPROVE: (Image block) Preserve aspect ratio while resizing
-* NEW: Alignment control for cell child blocks
-* IMPROVE: Display block appender when cell children are selected
 * FIX: (Paragraph block) First and last margin issue
-* IMPROVE: Shift+click multi selection update (behaves like MS Excel)
-* NEW: Add support for converting core table to tableberg
 
 = 0.3.3 =
-* FIX: Use th tags in header and footer
-* IMPROVE: Change table header and footer controls
 * NEW: Split merged cells
+* IMPROVE: Change table header and footer controls
 * IMPROVE: Paragraph block placeholder text shortened
+* FIX: Use th tags in header and footer
 
 = 0.3.2 =
 
@@ -67,10 +67,10 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 
 = 0.3.0 =
 
-* FIX: Adding non-cell blocks to table block breaks the layout.
+* NEW: Add cell spacing functionality.
 * IMPROVE: Row block removed. Cell blocks are added directly to tableberg table block.
 * IMPOVE: Multiple cells can be merged now.
-* NEW: Add cell spacing functionality.
+* FIX: Adding non-cell blocks to table block breaks the layout.
 
 = 0.2.1 =
 
