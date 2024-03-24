@@ -16,7 +16,7 @@ import { getStyleClass } from "./get-classes";
 export default function StackRowTable(
     props: BlockEditProps<TablebergBlockAttrs> & {
         tableBlock: BlockInstance<TablebergBlockAttrs>;
-        preview: keyof TablebergBlockAttrs['responsive']['breakpoints']
+        preview: keyof TablebergBlockAttrs["responsive"]["breakpoints"];
     }
 ) {
     const { attributes, tableBlock, clientId, setAttributes, preview } = props;
@@ -33,7 +33,10 @@ export default function StackRowTable(
             maxWidth: attributes.tableWidth,
             width: attributes.tableWidth,
         },
-        className: classNames(getStyleClass(attributes), "tableberg-rowstack-table"),
+        className: classNames(
+            getStyleClass(attributes),
+            "tableberg-rowstack-table"
+        ),
     } as Record<string, any>;
 
     const [rowTemplates, setRowTemplates] = useState([]);
@@ -47,10 +50,12 @@ export default function StackRowTable(
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-
     const breakpoints = tableBlock.attributes.responsive.breakpoints;
-    const breakpoint = preview == "mobile" && !breakpoints[preview]? breakpoints.tablet : breakpoints[preview];
-    
+    const breakpoint =
+        preview == "mobile" && !breakpoints[preview]
+            ? breakpoints.tablet
+            : breakpoints[preview];
+
     useEffect(() => {
         const newCells: TablebergCellInstance[] = [];
         const masterRowMap = new Map<
@@ -59,10 +64,7 @@ export default function StackRowTable(
         >();
 
         let headerArr: TablebergCellInstance[] = [];
-        let colCount = Math.max(
-            breakpoint?.stackCount || 1,
-            1
-        );
+        let colCount = Math.max(breakpoint?.stackCount || 1, 1);
 
         if (attributes.enableTableHeader && breakpoint?.headerAsCol) {
             colCount++;
@@ -132,12 +134,15 @@ export default function StackRowTable(
 
         storeActions.replaceInnerBlocks(clientId, newCells);
         setRowTemplates(tmplates);
-        setColUpt((old) => old + 1);
+        const tOut = setTimeout(() => {
+            setColUpt((old) => old + 1);
+        }, 500);
+        return () => clearTimeout(tOut);
     }, [
         attributes.cells,
         attributes.enableTableHeader,
         breakpoint?.stackCount,
-        breakpoint?.headerAsCol
+        breakpoint?.headerAsCol,
     ]);
 
     useEffect(() => {

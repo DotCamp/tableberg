@@ -369,11 +369,19 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             );
     }, []);
 
+    
     useTableHeaderFooter(tableBlock, storeActions);
-
+    
     const [renderMode, setRenderMode] =
-        useState<TablebergRenderMode>("primary");
+    useState<TablebergRenderMode>("primary");
     const prevRenderMode = useRef<TablebergRenderMode>("primary");
+    useSelect((select) => {
+        // @ts-ignore
+        const getDevice: () => string = select('core/editor').getDeviceType;
+        if (getDevice) {
+            updatePreview(getDevice().toLowerCase() as any)
+        }
+    }, []);
 
     useEffect(() => {
         let newRMode: TablebergRenderMode = "primary";
