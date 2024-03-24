@@ -97,11 +97,23 @@ export default function StackColTable(
             }
         }
 
-        for (
-            let idx = rowIdxStart;
-            idx < tableBlock.innerBlocks.length;
-            idx++
-        ) {
+        const footerArr: TablebergCellInstance[] = [];
+        let blockLen = tableBlock.innerBlocks.length - 1;
+
+        if (attributes.enableTableFooter) {
+            const lastRow = attributes.rows - 1;
+            for (; blockLen > -1; blockLen--) {
+                const cell: TablebergCellInstance = tableBlock.innerBlocks[
+                    blockLen
+                ] as any;
+                if (cell.attributes.row < lastRow) {
+                    break;
+                }
+                footerArr.unshift(cell);
+            }
+        }
+
+        for (let idx = rowIdxStart; idx <= blockLen; idx++) {
             const cell: TablebergCellInstance = tableBlock.innerBlocks[
                 idx
             ] as any;
@@ -141,7 +153,9 @@ export default function StackColTable(
                     <tr
                         id={`tableberg-${clientId}-${rowCount}`}
                         className={
-                            (rowCount - headerCount) % 2 ? "tableberg-even-row" : "tableberg-odd-row"
+                            (rowCount - headerCount) % 2
+                                ? "tableberg-even-row"
+                                : "tableberg-odd-row"
                         }
                     />
                 );
@@ -152,9 +166,24 @@ export default function StackColTable(
             newCells.push(cell);
         }
 
+        if (footerArr.length > 0) {
+            rowCount++;
+            templates.push(
+                <tr
+                    id={`tableberg-${clientId}-${rowCount}`}
+                    className="tableberg-footer"
+                />
+            );
+            footerArr.forEach((cell) => {
+                cell.attributes.responsiveTarget = `#tableberg-${clientId}-${rowCount}`;
+                newCells.push(cell);
+            });
+        }
+
         storeActions.replaceInnerBlocks(clientId, newCells);
         setRowTemplates(templates);
-        setColUpt((old) => old + 1);
+        const tOut = setTimeout(() => setColUpt((old) => old + 1), 500);
+        return () => clearTimeout(tOut);
     }, [
         attributes.cells,
         attributes.enableTableHeader,
