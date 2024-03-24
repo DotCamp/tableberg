@@ -1,9 +1,9 @@
 (() => {
-    'use strict';
-    document.addEventListener('DOMContentLoaded', () => {
-        const tables = document.querySelectorAll('[data-tableberg-responsive]');
+    "use strict";
+    document.addEventListener("DOMContentLoaded", () => {
+        const tables = document.querySelectorAll("[data-tableberg-responsive]");
         if (tables.length) {
-            window.addEventListener('resize', () => {
+            window.addEventListener("resize", () => {
                 tables.forEach(resizeTable);
             });
             tables.forEach(resizeTable);
@@ -21,13 +21,13 @@
             opts.tablebergMobileWidth &&
             window.innerWidth <= opts.tablebergMobileWidth
         ) {
-            if (opts.tablebergMobileMode === 'stack') {
+            if (opts.tablebergMobileMode === "stack") {
                 const renderMode =
-                    'stack-' +
+                    "stack-" +
                     opts.tablebergMobileDirection +
-                    '-' +
+                    "-" +
                     opts.tablebergMobileCount;
-                if (opts.tablebergMobileDirection === 'row') {
+                if (opts.tablebergMobileDirection === "row") {
                     toRowStack(
                         table,
                         opts.tablebergMobileHeader,
@@ -42,7 +42,7 @@
                         renderMode
                     );
                 }
-            } else if (opts.tablebergMobileMode === 'scroll') {
+            } else if (opts.tablebergMobileMode === "scroll") {
                 toScrollTable(table);
             } else {
                 reviveTable(table);
@@ -51,13 +51,13 @@
             opts.tablebergTabletWidth &&
             window.innerWidth <= opts.tablebergTabletWidth
         ) {
-            if (opts.tablebergTabletMode === 'stack') {
+            if (opts.tablebergTabletMode === "stack") {
                 const renderMode =
-                    'stack-' +
+                    "stack-" +
                     opts.tablebergTabletDirection +
-                    '-' +
+                    "-" +
                     opts.tablebergTabletCount;
-                if (opts.tablebergTabletDirection === 'row') {
+                if (opts.tablebergTabletDirection === "row") {
                     toRowStack(
                         table,
                         opts.tablebergTabletHeader,
@@ -72,7 +72,7 @@
                         renderMode
                     );
                 }
-            } else if (opts.tablebergTabletMode === 'scroll') {
+            } else if (opts.tablebergTabletMode === "scroll") {
                 toScrollTable(table);
             } else {
                 reviveTable(table);
@@ -95,16 +95,17 @@
             return;
         }
         reviveTable(table);
-        table.setAttribute('data-tableberg-last', tag);
-        const colGroup = table.querySelector('colgroup');
+        setTableClassName(table, "tableberg-rowstack-table");
+        table.setAttribute("data-tableberg-last", tag);
+        const colGroup = table.querySelector("colgroup");
         if (colGroup) {
-            colGroup.style.display = 'none';
+            colGroup.style.display = "none";
         }
 
-        const cells = table.querySelectorAll('th,td');
+        const cells = table.querySelectorAll("th,td");
 
-        const tbody = table.querySelector('tbody') || table;
-        tbody.innerHTML = '';
+        const tbody = table.querySelector("tbody") || table;
+        tbody.innerHTML = "";
 
         const masterRowMap = new Map();
 
@@ -112,6 +113,16 @@
         let colCount = Math.max(count || 1, 1);
 
         const cols = parseInt(table.dataset.tablebergCols);
+
+        if (table.dataset.tablebergHeader) {
+            for (const cell of cells) {
+                if (cell.dataset.tablebergRow > 0) {
+                    break;
+                }
+                markRowCell(cell, "header");
+            }
+        }
+
         if (header) {
             colCount++;
             for (const cell of cells) {
@@ -127,8 +138,29 @@
             const subRow = parseInt(cell.dataset.tablebergCol);
             const masterRow = masterRowMap.get(subRow);
 
+            let row = parseInt(cell.dataset.tablebergRow);
+            if (table.dataset.tablebergHeader && row > 0) {
+                row++;
+            }
+
+            if (
+                table.dataset.tablebergFooter &&
+                ((table.dataset.tablebergHeader &&
+                    row == table.dataset.tablebergRows) ||
+                    (!table.dataset.tablebergHeader &&
+                        row + 1 == table.dataset.tablebergRows))
+            ) {
+                markRowCell(cell, "footer");
+            } else if (row > 0) {
+                if (row % 2) {
+                    markRowCell(cell, "even-row");
+                } else {
+                    markRowCell(cell, "odd-row");
+                }
+            }
+
             if (!masterRow) {
-                const rowEl = document.createElement('tr');
+                const rowEl = document.createElement("tr");
                 masterRowMap.set(subRow, {
                     lastRow: rowCount,
                     count: 1,
@@ -138,13 +170,13 @@
                 tbody.appendChild(rowEl);
                 rowCount++;
             } else if (masterRow.count == colCount) {
-                const rowEl = document.createElement('tr');
+                const rowEl = document.createElement("tr");
                 tbody.appendChild(rowEl);
 
                 let thisRowColCount = 1;
                 if (header) {
                     const headerCell = headerArr[subRow].cloneNode(true);
-                    headerCell.setAttribute('data-tableberg-tmp', '1');
+                    headerCell.setAttribute("data-tableberg-tmp", "1");
                     rowEl.appendChild(headerCell);
                     thisRowColCount++;
                 }
@@ -157,7 +189,7 @@
                 rowEl.appendChild(cell);
 
                 if (rowCount % cols === 0) {
-                    rowEl.style.borderTop = '3px solid gray';
+                    rowEl.style.borderTop = "3px solid gray";
                 }
                 rowCount++;
             } else {
@@ -180,17 +212,19 @@
         if (oldMode === tag) {
             return;
         }
-        table.setAttribute('data-tableberg-last', tag);
         if (!header) {
             return;
         }
         count = parseInt(count);
-
         reviveTable(table);
 
-        const cells = Array.from(table.querySelectorAll('th,td'));
+        table.setAttribute("data-tableberg-last", tag);
 
-        if (oldMode && oldMode.match('stack-row')) {
+        setTableClassName(table, "tableberg-colstack-table");
+
+        const cells = Array.from(table.querySelectorAll("th,td"));
+
+        if (oldMode && oldMode.match("stack-row")) {
             cells.sort((a, b) => {
                 const aRow = parseInt(a.dataset.tablebergRow);
                 const bRow = parseInt(b.dataset.tablebergRow);
@@ -204,8 +238,8 @@
             });
         }
 
-        const tbody = table.querySelector('tbody') || table;
-        tbody.innerHTML = '';
+        const tbody = table.querySelector("tbody") || table;
+        tbody.innerHTML = "";
 
         const headerArr = [];
         let stackRowCount = Math.max(count || 1, 1);
@@ -219,7 +253,8 @@
         if (header) {
             stackRowCount++;
             rowCount++;
-            lastRowEl = document.createElement('tr');
+            lastRowEl = document.createElement("tr");
+            markRow(lastRowEl, "header");
             tbody.appendChild(lastRowEl);
             stackTrack++;
 
@@ -233,33 +268,67 @@
             }
         }
 
+        const footer = table.dataset.tablebergFooter;
+        const footerArr = [];
+
+        if (footer) {
+            const fRow = parseInt(table.dataset.tablebergRows) - 1;
+            let i = cells.length - 1;
+            for (; i > -1; i--) {
+                if (cells[i].dataset.tablebergRow < fRow) {
+                    break;
+                }
+                footerArr.unshift(cells[i]);
+            }
+            cells.splice(i + 1);
+        }
+
         for (let idx = rowIdxStart; idx < cells.length; idx++) {
             const cell = cells[idx];
 
             if (lastRow != cell.dataset.tablebergRow) {
                 lastRow = cell.dataset.tablebergRow;
 
-                if (header && stackTrack == stackRowCount) {
-                    rowCount++;
+                let row = parseInt(lastRow);
 
-                    lastRowEl = document.createElement('tr');
-                    lastRowEl.setAttribute('data-tableberg-tmp', '1');
-                    tbody.appendChild(lastRowEl);
+                if (header) {
+                    row++;
+                    if (stackTrack == stackRowCount) {
+                        rowCount++;
 
-                    stackTrack = 1;
+                        lastRowEl = document.createElement("tr");
+                        markRow(lastRowEl, "header");
+                        lastRowEl.setAttribute("data-tableberg-tmp", "1");
+                        tbody.appendChild(lastRowEl);
 
-                    for (const cell of headerArr) {
-                        lastRowEl.appendChild(cell.cloneNode(true));
+                        stackTrack = 1;
+
+                        for (const cell of headerArr) {
+                            lastRowEl.appendChild(cell.cloneNode(true));
+                        }
                     }
                 }
-
                 rowCount++;
-                lastRowEl = document.createElement('tr');
+                lastRowEl = document.createElement("tr");
+
+                if (row % 2) {
+                    markRow(lastRowEl, "even-row");
+                } else {
+                    markRow(lastRowEl, "odd-row");
+                }
                 tbody.appendChild(lastRowEl);
                 stackTrack++;
             }
 
             lastRowEl.appendChild(cell);
+        }
+
+        if (footerArr.length > 0) {
+            lastRowEl = document.createElement("tr");
+            markRow(lastRowEl, "footer");
+            tbody.appendChild(lastRowEl);
+
+            footerArr.forEach((cell) => lastRowEl.appendChild(cell));
         }
     }
 
@@ -274,23 +343,25 @@
         if (!oldMode) {
             return;
         }
-        table.removeAttribute('data-tableberg-last');
-        table.parentElement.classList.remove('tableberg-scroll-x');
+        table.removeAttribute("data-tableberg-last");
+        table.parentElement.classList.remove("tableberg-scroll-x");
 
         table
-            .querySelectorAll('[data-tableberg-tmp]')
+            .querySelectorAll("[data-tableberg-tmp]")
             .forEach((el) => el.remove());
 
-        if (!oldMode || !oldMode.match('stack')) {
+        if (!oldMode || !oldMode.match("stack")) {
             return;
         }
 
-        const colGroup = table.querySelector('colgroup');
+        setTableClassName(table);
+
+        const colGroup = table.querySelector("colgroup");
         if (colGroup) {
-            colGroup.removeAttribute('style');
+            colGroup.removeAttribute("style");
         }
 
-        const cells = Array.from(table.querySelectorAll('th,td'));
+        const cells = Array.from(table.querySelectorAll("th,td"));
         cells.sort((a, b) => {
             const aRow = parseInt(a.dataset.tablebergRow);
             const bRow = parseInt(b.dataset.tablebergRow);
@@ -303,8 +374,8 @@
             return aCol - bCol;
         });
 
-        const tbody = table.querySelector('tbody') || table;
-        tbody.innerHTML = '';
+        const tbody = table.querySelector("tbody") || table;
+        tbody.innerHTML = "";
 
         let lastRow = -1,
             lastRowEl;
@@ -312,8 +383,30 @@
         for (const cell of cells) {
             if (lastRow != cell.dataset.tablebergRow) {
                 lastRow = cell.dataset.tablebergRow;
+                lastRowEl = document.createElement("tr");
 
-                lastRowEl = document.createElement('tr');
+                let row = parseInt(lastRow);
+                if (table.dataset.tablebergHeader) {
+                    if (row === 0) {
+                        markRow(lastRowEl, "header");
+                    } else {
+                        row++;
+                    }
+                }
+
+                if (
+                    table.dataset.tablebergFooter &&
+                    row == table.dataset.tablebergRows
+                ) {
+                    markRow(lastRowEl, "footer");
+                } else if (row > 0) {
+                    if (row % 2) {
+                        markRow(lastRowEl, "even-row");
+                    } else {
+                        markRow(lastRowEl, "odd-row");
+                    }
+                }
+
                 tbody.appendChild(lastRowEl);
             }
 
@@ -323,13 +416,57 @@
 
     function toScrollTable(table) {
         const opts = table.dataset;
-        if (opts.tablebergLast === 'scroll') {
+        if (opts.tablebergLast === "scroll") {
             return;
         }
         if (opts.tablebergLast) {
             reviveTable(table);
         }
-        table.setAttribute('data-tableberg-last', 'scroll');
-        table.parentElement.classList.add('tableberg-scroll-x');
+        table.setAttribute("data-tableberg-last", "scroll");
+        table.parentElement.classList.add("tableberg-scroll-x");
+    }
+
+    /**
+     *
+     * @param {HTMLTableCellElement} cell
+     * @param {"even-row" | "odd-row" | "header" | "footer"} oddEven
+     */
+
+    function markRowCell(cell, oddEven) {
+        [
+            "tableberg-even-row-cell",
+            "tableberg-header-cell",
+            "tableberg-footer-cell",
+            "tableberg-odd-row-cell",
+        ].forEach((className) => cell.classList.remove(className));
+        cell.classList.add(`tableberg-${oddEven}-cell`);
+    }
+
+    /**
+     *
+     * @param {HTMLTableRowElement} row
+     * @param {"even-row" | "odd-row" | "header" | "footer"} oddEven
+     */
+
+    function markRow(row, oddEven) {
+        [
+            "tableberg-even-row",
+            "tableberg-header",
+            "tableberg-footer",
+            "tableberg-odd-row",
+        ].forEach((className) => row.classList.remove(className));
+        row.classList.add(`tableberg-${oddEven}`);
+    }
+
+    /**
+     *
+     * @param {HTMLTableElement} table
+     * @param {string} className
+     */
+    function setTableClassName(table, className) {
+        ["tableberg-rowstack-table", "tableberg-rowstack-table"].forEach(
+            (className) => table.classList.remove(className)
+        );
+        className && table.classList.add(className);
     }
 })();
