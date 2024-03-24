@@ -13,7 +13,7 @@ Table Block For the Block Editor. Craft Beautiful Tables With Ease.
 
 == Description ==
 
-[Live Demo](https://app.instawp.io/launch?t=tableberg-demo&d=v2)
+https://youtu.be/TKsL_bUVCTU
 
 Meet TableBerg, a simple WordPress plugin that makes adding tables to your website easy as pie. With TableBerg, creating a table in the block editor is straightforward and hassle-free.
 
