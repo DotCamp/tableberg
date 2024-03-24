@@ -268,6 +268,7 @@ function TablebergControls(
                 <SpacingControl
                     attrKey="cellPadding"
                     label={__("Cell Padding", "tableberg")}
+                    sides={["horizontal", "vertical"]}
                     showByDefault
                 />
                 <SpacingControl
