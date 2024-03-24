@@ -20,7 +20,7 @@ interface BorderControlPropTypes {
     value: Border | Borders;
     onChange: (newBorder: Border | Borders | undefined) => any;
     resetAllFilter?: () => any;
-    onDeselect?: () => any;
+    onDeselect: () => any;
     isShownByDefault?: boolean;
 }
 

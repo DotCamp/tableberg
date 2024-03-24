@@ -18,7 +18,7 @@ interface ColorSettingsProps {
     palette?: "theme" | "default"
     onColorChange: (newValue: string) => any
     onGradientChange?: (newValue: string) => any
-    onDeselect?: () => any
+    onDeselect: () => any
     resetAllFilter?: () => any
 }
 

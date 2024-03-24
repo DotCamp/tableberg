@@ -11,7 +11,7 @@ interface Props {
     };
     onChange: (newBorder: Record<string, string>) => any;
     resetAllFilter?: () => any;
-    onDeselect?: () => any;
+    onDeselect: () => any;
     isShownByDefault?: boolean;
 }
 
