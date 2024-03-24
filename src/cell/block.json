@@ -9,10 +9,6 @@
     "icon": "table-row-after",
     "description": "Tableberg Cell: Individual cell of a tableberg table",
     "attributes": {
-        "vAlign": {
-            "type": "string",
-            "default": "center"
-        },
         "tagName": {
             "type": "string",
             "default": "td"
@@ -32,6 +28,13 @@
         "col": {
             "type": "number",
             "default": 0
+        },
+        "vAlign": {
+            "type": "string",
+            "default": "center"
+        },
+        "background": {
+            "type": "string"
         },
         "responsiveTarget": {
             "type": "string",

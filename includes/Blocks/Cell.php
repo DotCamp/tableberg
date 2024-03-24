@@ -36,7 +36,7 @@ class Cell
 	 */
 	public function render_tableberg_cell_block($attributes, $content, $block)
 	{
-		if (isset($attributes['isTmp']) && $attributes['isTmp']) {
+		if (isset ($attributes['isTmp']) && $attributes['isTmp']) {
 			return '';
 		}
 		$pre = '';
@@ -48,11 +48,11 @@ class Cell
 			$pre = '</tr><tr>';
 			Table::$lastRow = $attributes['row'];
 		}
-		$colspan = isset($attributes['colspan']) ? $attributes['colspan'] : 1;
-		$rowspan = isset($attributes['rowspan']) ? $attributes['rowspan'] : 1;
+		$colspan = isset ($attributes['colspan']) ? $attributes['colspan'] : 1;
+		$rowspan = isset ($attributes['rowspan']) ? $attributes['rowspan'] : 1;
 
-		$attrs_str = 'data-tableberg-row="'.$attributes['row'].'" data-tableberg-col="'.$attributes['col'].'"';
-		$classes = 'tableberg-v-align-'.$attributes['vAlign'];
+		$attrs_str = 'data-tableberg-row="' . $attributes['row'] . '" data-tableberg-col="' . $attributes['col'] . '"';
+		$classes = 'tableberg-v-align-' . $attributes['vAlign'];
 
 		// Add colspan attribute if it's greater than 1
 		if ($colspan > 1) {
@@ -64,9 +64,13 @@ class Cell
 			$attrs_str .= ' rowspan="' . esc_attr($rowspan) . '"';
 		}
 
-		$tagName = isset($attributes['tagName']) ? $attributes['tagName'] : 'td';
+		$tagName = isset ($attributes['tagName']) ? $attributes['tagName'] : 'td';
 
-		$content = HtmlUtils::append_attr_value($content, $tagName, ' '.$classes, 'class');
+		$content = HtmlUtils::append_attr_value($content, $tagName, ' ' . $classes, 'class');
+
+		if (isset ($attributes['background']) && ($bg = $attributes['background'])) {
+			$content = HtmlUtils::append_attr_value($content, $tagName, "background: $bg;", 'style');
+		}
 
 		$content = HtmlUtils::add_attrs_to_tag($content, $tagName, $attrs_str);
 

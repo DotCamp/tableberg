@@ -4,6 +4,9 @@ import {
     __experimentalToolsPanel as ToolsPanel,
     __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
+import {
+    ColorSettingsWithGradientSingle,
+} from "../components";
 
 interface CellSizeControlProps {
     width: string;
@@ -19,35 +22,43 @@ export default function CellControls({
     setWidth,
 }: CellSizeControlProps) {
     return (
-        <InspectorControls group="styles">
-            <ToolsPanel
-                label={__("Cell Settings", "tableberg")}
-                resetAll={() => {
-                    setHeight("");
-                    setWidth("");
-                }}
-            >
-                <ToolsPanelItem
-                    label={__("Column Width", "tableberg")}
-                    hasValue={() => true}
+        <>
+            <InspectorControls group="styles">
+                <ToolsPanel
+                    label={__("Cell Settings", "tableberg")}
+                    resetAll={() => {
+                        setHeight("");
+                        setWidth("");
+                    }}
                 >
-                    <HeightControl
-                        value={width as any}
+                    <ToolsPanelItem
                         label={__("Column Width", "tableberg")}
-                        onChange={setWidth}
-                    />
-                </ToolsPanelItem>
-                <ToolsPanelItem
-                    label={__("Row Height", "tableberg")}
-                    hasValue={() => true}
-                >
-                    <HeightControl
-                        value={height as any}
+                        hasValue={() => true}
+                    >
+                        <HeightControl
+                            value={width as any}
+                            label={__("Column Width", "tableberg")}
+                            onChange={setWidth}
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem
                         label={__("Row Height", "tableberg")}
-                        onChange={setHeight}
-                    />
-                </ToolsPanelItem>
-            </ToolsPanel>
-        </InspectorControls>
+                        hasValue={() => true}
+                    >
+                        <HeightControl
+                            value={height as any}
+                            label={__("Row Height", "tableberg")}
+                            onChange={setHeight}
+                        />
+                    </ToolsPanelItem>
+                </ToolsPanel>
+            </InspectorControls>
+            <InspectorControls group="color">
+                <ColorSettingsWithGradientSingle
+                    label={__("Background Color", "tableberg")}
+                    attrKey="background"
+                />
+            </InspectorControls>
+        </>
     );
 }

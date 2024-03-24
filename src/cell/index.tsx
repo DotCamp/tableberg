@@ -48,6 +48,7 @@ import { TablebergBlockAttrs } from "../types";
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
+    background?: string;
     tagName: "td" | "th";
     rowspan: number;
     colspan: number;
@@ -701,6 +702,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             verticalAlign:
                 attributes.vAlign === "center" ? "middle" : attributes.vAlign,
             height: tableBlock.attributes.rowHeights[props.attributes.row],
+            background: attributes.background
         },
         ref: cellRef,
         className: classNames(
