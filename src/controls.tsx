@@ -268,6 +268,7 @@ function TablebergControls(
                 <SpacingControl
                     attrKey="cellPadding"
                     label={__("Cell Padding", "tableberg")}
+                    sides={["horizontal", "vertical"]}
                     showByDefault
                 />
                 <SpacingControl
@@ -371,6 +372,12 @@ function TablebergControls(
                                     enabled: !breakpoint?.enabled,
                                 })
                             }
+                            disabled={isDisabled}
+                        />
+                        <ToggleControl
+                            checked={attributes.enableTableHeader === "converted"}
+                            label="Make Top Row Header"
+                            onChange={(val) => { setAttributes({ enableTableHeader: val ? "converted" : "" }) }}
                             disabled={isDisabled}
                         />
                         <NumberControl

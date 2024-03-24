@@ -55,7 +55,7 @@ function SpacingControl({
                     allowReset={true}
                     label={label}
                     values={attributes[attrKey]}
-                    sides={["top", "right", "bottom", "left"]}
+                    sides={sides}
                     onChange={(newValue: any) => {
                         setAttributes({
                             [attrKey]: newValue,

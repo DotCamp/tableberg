@@ -157,7 +157,7 @@
                 rowEl.appendChild(cell);
 
                 if (rowCount % cols === 0) {
-                    rowEl.style.borderTop = '5px dashed gray';
+                    rowEl.style.borderTop = '3px solid gray';
                 }
                 rowCount++;
             } else {

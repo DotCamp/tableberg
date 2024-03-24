@@ -555,6 +555,14 @@ const useMerging = (
             const row = cell.attributes.row;
 
             if (row === lastInseredRow || row >= toRow) {
+                const lastToRow = toRow - 1;
+                if (lastInseredRow < lastToRow) {
+                    const toInserts = toInsertMap.get(lastToRow);
+                    for (let col = toInserts.from; col < toInserts.to; col++) {
+                        newCells.push(createSingleCell(lastToRow, col, false));
+                    }
+                    lastInseredRow = lastToRow;
+                }
                 newCells.push(cell);
                 continue;
             }

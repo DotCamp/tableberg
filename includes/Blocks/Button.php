@@ -64,12 +64,23 @@ class Button {
 		$background_color       = Utils::get_background_color( $attributes, 'backgroundColor', 'backgroundGradient' );
 		$background_hover_color = Utils::get_background_color( $attributes, 'backgroundHoverColor', 'backgroundHoverGradient' );
 
+
 		$styles = array(
 			'--tableberg-button-background-color'       => $background_color,
 			'--tableberg-button-hover-background-color' => $background_hover_color,
 			'--tableberg-button-text-hover-color'       => $attributes['textHoverColor'],
-			'--tableberg-button-text-color'             => $attributes['textColor'],
+			'--tableberg-button-text-color'             => $attributes['textColor']
 		);
+
+		if (isset($attributes['padding'])) {
+			$p = Utils::get_spacing_css($attributes['padding']);
+			$styles += [
+				'padding-top' => $p['top']??'',
+				'padding-right' => $p['right']??'',
+				'padding-bottom' => $p['bottom']??'',
+				'padding-left' => $p['left']??'',
+			];
+		}
 
 		return Utils::generate_css_string( $styles );
 	}
