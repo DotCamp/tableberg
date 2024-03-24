@@ -3,9 +3,9 @@ Contributors: dotcamp, imtiazrayhan, istiakrayhan, permafrost06, ultimateblocks,
 Tags: table, comparison-tables, comparison-table, amazon-affiliate
 Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 0.4.0
+Stable tag: 0.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,12 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 1. Core Table Block vs Tableberg Block
 
 == Changelog ==
+
+= 0.4.1 =
+* NEW: Add padding controls to button block
+* IMPROVE: Change table border in responsive mode
+* IMPROVE: Add a button to responsive controls to convert top row to header
+* FIX: A problem with unsplitting at the end of a row
 
 = 0.4.0 =
 * NEW: Add support for responsive table
