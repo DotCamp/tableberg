@@ -374,6 +374,12 @@ function TablebergControls(
                             }
                             disabled={isDisabled}
                         />
+                        <ToggleControl
+                            checked={attributes.enableTableHeader === "converted"}
+                            label="Make Top Row Header"
+                            onChange={(val) => { setAttributes({ enableTableHeader: val ? "converted" : "" }) }}
+                            disabled={isDisabled}
+                        />
                         <NumberControl
                             label={__("Max Width", "tableberg")}
                             onChange={(val) =>
