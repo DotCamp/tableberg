@@ -26,14 +26,17 @@ export default function StackColTable(
         renderAppender: false,
         allowedBlocks: ALLOWED_BLOCKS,
     });
-   
+
     const blockProps = {
         style: {
             ...getStyles(attributes),
             maxWidth: attributes.tableWidth,
             width: attributes.tableWidth,
         },
-        className: classNames(getStyleClass(attributes), "tableberg-rowstack-table"),
+        className: classNames(
+            getStyleClass(attributes),
+            "tableberg-colstack-table"
+        ),
     } as Record<string, any>;
 
     const [rowTemplates, setRowTemplates] = useState([]);
@@ -63,12 +66,19 @@ export default function StackColTable(
         let rowIdxStart = 0;
         let rowCount = -1,
             lastRow = -1,
-            stackTrack = 0;
+            stackTrack = 0,
+            headerCount = 0;
 
         if (attributes.enableTableHeader) {
             stackRowCount++;
             rowCount++;
-            templates.push(<tr id={`tableberg-${clientId}-${rowCount}`} />);
+            headerCount++;
+            templates.push(
+                <tr
+                    id={`tableberg-${clientId}-${rowCount}`}
+                    className="tableberg-header"
+                />
+            );
             stackTrack++;
 
             for (; rowIdxStart < tableBlock.innerBlocks.length; rowIdxStart++) {
@@ -108,8 +118,12 @@ export default function StackColTable(
                     stackTrack == stackRowCount
                 ) {
                     rowCount++;
+                    headerCount++;
                     templates.push(
-                        <tr id={`tableberg-${clientId}-${rowCount}`} />
+                        <tr
+                            id={`tableberg-${clientId}-${rowCount}`}
+                            className="tableberg-header"
+                        />
                     );
                     stackTrack = 1;
 
@@ -123,7 +137,14 @@ export default function StackColTable(
                 }
 
                 rowCount++;
-                templates.push(<tr id={`tableberg-${clientId}-${rowCount}`} />);
+                templates.push(
+                    <tr
+                        id={`tableberg-${clientId}-${rowCount}`}
+                        className={
+                            (rowCount - headerCount) % 2 ? "tableberg-even-row" : "tableberg-odd-row"
+                        }
+                    />
+                );
                 stackTrack++;
             }
 

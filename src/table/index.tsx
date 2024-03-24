@@ -68,41 +68,21 @@ export const PrimaryTable = (
     }, []);
 
     const rowTemplate = createArray(attributes.rows).map((i) => {
-        let background;
         let className = "";
-        if (i % 2 === 0) {
-            background =
-                attributes.oddRowBackgroundColor ??
-                attributes.oddRowBackgroundGradient ??
-                undefined;
-        } else {
-            background =
-                attributes.evenRowBackgroundColor ??
-                attributes.evenRowBackgroundGradient ??
-                undefined;
-        }
 
         if (i === 0 && attributes.enableTableHeader) {
-            background =
-                attributes.headerBackgroundColor ??
-                attributes.headerBackgroundGradient ??
-                undefined;
-            className += "tableberg-header";
-        }
-
-        if (i + 1 === attributes.rows && attributes.enableTableFooter) {
-            background =
-                attributes.footerBackgroundColor ??
-                attributes.footerBackgroundGradient ??
-                undefined;
-            className += "tableberg-footer";
+            className = "tableberg-header";
+        } else if (i + 1 === attributes.rows && attributes.enableTableFooter) {
+            className = "tableberg-footer";
+        } else {
+            const row = attributes.enableTableHeader ? i + 1 : i;
+            className = row % 2 ? "tableberg-even-row" : "tableberg-odd-row";
         }
 
         return (
             <tr
                 style={{
                     height: attributes.rowHeights[i],
-                    background,
                 }}
                 className={className}
             ></tr>
