@@ -26,14 +26,17 @@ export default function StackColTable(
         renderAppender: false,
         allowedBlocks: ALLOWED_BLOCKS,
     });
-   
+
     const blockProps = {
         style: {
             ...getStyles(attributes),
             maxWidth: attributes.tableWidth,
             width: attributes.tableWidth,
         },
-        className: classNames(getStyleClass(attributes), "tableberg-rowstack-table"),
+        className: classNames(
+            getStyleClass(attributes),
+            "tableberg-colstack-table"
+        ),
     } as Record<string, any>;
 
     const [rowTemplates, setRowTemplates] = useState([]);
@@ -63,12 +66,19 @@ export default function StackColTable(
         let rowIdxStart = 0;
         let rowCount = -1,
             lastRow = -1,
-            stackTrack = 0;
+            stackTrack = 0,
+            headerCount = 0;
 
         if (attributes.enableTableHeader) {
             stackRowCount++;
             rowCount++;
-            templates.push(<tr id={`tableberg-${clientId}-${rowCount}`} />);
+            headerCount++;
+            templates.push(
+                <tr
+                    id={`tableberg-${clientId}-${rowCount}`}
+                    className="tableberg-header"
+                />
+            );
             stackTrack++;
 
             for (; rowIdxStart < tableBlock.innerBlocks.length; rowIdxStart++) {
@@ -87,16 +97,22 @@ export default function StackColTable(
             }
         }
 
-        for (
-            let idx = rowIdxStart;
-            idx < tableBlock.innerBlocks.length;
-            idx++
-        ) {
+        const footerArr: TablebergCellInstance[] = [];
+        const maxRow = attributes.rows - 1;
+
+        
+
+        for (let idx = rowIdxStart; idx < tableBlock.innerBlocks.length; idx++) {
             const cell: TablebergCellInstance = tableBlock.innerBlocks[
                 idx
             ] as any;
 
             if (cell.attributes.isTmp) {
+                continue;
+            }
+
+            if (attributes.enableTableFooter && cell.attributes.row == maxRow) {
+                footerArr.push(cell);
                 continue;
             }
 
@@ -108,8 +124,12 @@ export default function StackColTable(
                     stackTrack == stackRowCount
                 ) {
                     rowCount++;
+                    headerCount++;
                     templates.push(
-                        <tr id={`tableberg-${clientId}-${rowCount}`} />
+                        <tr
+                            id={`tableberg-${clientId}-${rowCount}`}
+                            className="tableberg-header"
+                        />
                     );
                     stackTrack = 1;
 
@@ -123,7 +143,16 @@ export default function StackColTable(
                 }
 
                 rowCount++;
-                templates.push(<tr id={`tableberg-${clientId}-${rowCount}`} />);
+                templates.push(
+                    <tr
+                        id={`tableberg-${clientId}-${rowCount}`}
+                        className={
+                            (rowCount - headerCount) % 2
+                                ? "tableberg-even-row"
+                                : "tableberg-odd-row"
+                        }
+                    />
+                );
                 stackTrack++;
             }
 
@@ -131,9 +160,24 @@ export default function StackColTable(
             newCells.push(cell);
         }
 
+        if (footerArr.length > 0) {
+            rowCount++;
+            templates.push(
+                <tr
+                    id={`tableberg-${clientId}-${rowCount}`}
+                    className="tableberg-footer"
+                />
+            );
+            footerArr.forEach((cell) => {
+                cell.attributes.responsiveTarget = `#tableberg-${clientId}-${rowCount}`;
+                newCells.push(cell);
+            });
+        }
+
         storeActions.replaceInnerBlocks(clientId, newCells);
         setRowTemplates(templates);
-        setColUpt((old) => old + 1);
+        const tOut = setTimeout(() => setColUpt((old) => old + 1), 500);
+        return () => clearTimeout(tOut);
     }, [
         attributes.cells,
         attributes.enableTableHeader,

@@ -631,8 +631,8 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const { storeSelect, tableBlock, tableBlockId, childBlocks } = useSelect(
-        (select) => {
+    const { storeSelect, tableBlock, tableBlockId, childBlocks, isOddRow, isHeaderRow, isFooterRow } =
+        useSelect((select) => {
             const storeSelect = select(
                 blockEditorStore
             ) as BlockEditorStoreSelectors;
@@ -649,15 +649,22 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
             const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
 
+            const headerEnabled = tableBlock.attributes.enableTableHeader;
+
             return {
                 storeSelect,
                 tableBlock,
                 tableBlockId,
                 childBlocks,
+                isOddRow:
+                    (attributes.row +
+                        ( headerEnabled? 0 : 1)) %
+                        2 ==
+                    1,
+                isHeaderRow: headerEnabled && attributes.row === 0,
+                isFooterRow: tableBlock.attributes.enableTableFooter && attributes.row + 1 === tableBlock.attributes.rows
             };
-        },
-        []
-    );
+        }, []);
     const {
         isMergable,
         addMergingEvt,
@@ -701,9 +708,10 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         className: classNames(
             getClassName(tableBlock.clientId, attributes.row, attributes.col),
             {
-                "tableberg-header-cell":
-                    attributes.row == 0 &&
-                    tableBlock.attributes.enableTableHeader,
+                "tableberg-odd-row-cell": isOddRow,
+                "tableberg-even-row-cell": !isOddRow,
+                "tableberg-header-cell": isHeaderRow,
+                "tableberg-footer-cell": isFooterRow,
                 "tableberg-has-selected": hasSelected,
             }
         ),
