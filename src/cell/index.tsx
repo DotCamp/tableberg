@@ -439,6 +439,10 @@ const useMerging = (
 
         let { rowHeights, colWidths, rows, cols } = tableBlock.attributes;
 
+        storeActions.updateBlockAttributes(tableBlock.clientId, {
+            cells: tableBlock.attributes.cells - cells.length,
+        });
+
         const toRemoves: string[] = [];
         for (let i = 0; i < cells.length; i++) {
             storeActions.moveBlocksToPosition(
@@ -496,7 +500,6 @@ const useMerging = (
             rowspan: newSpans.row,
         });
         storeActions.updateBlockAttributes(tableBlock.clientId, {
-            cells: tableBlock.attributes.cells - toRemoves.length,
             colWidths,
             rowHeights,
             rows,
