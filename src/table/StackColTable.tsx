@@ -98,27 +98,21 @@ export default function StackColTable(
         }
 
         const footerArr: TablebergCellInstance[] = [];
-        let blockLen = tableBlock.innerBlocks.length - 1;
+        const maxRow = attributes.rows - 1;
 
-        if (attributes.enableTableFooter) {
-            const lastRow = attributes.rows - 1;
-            for (; blockLen > -1; blockLen--) {
-                const cell: TablebergCellInstance = tableBlock.innerBlocks[
-                    blockLen
-                ] as any;
-                if (cell.attributes.row < lastRow) {
-                    break;
-                }
-                footerArr.unshift(cell);
-            }
-        }
+        
 
-        for (let idx = rowIdxStart; idx <= blockLen; idx++) {
+        for (let idx = rowIdxStart; idx < tableBlock.innerBlocks.length; idx++) {
             const cell: TablebergCellInstance = tableBlock.innerBlocks[
                 idx
             ] as any;
 
             if (cell.attributes.isTmp) {
+                continue;
+            }
+
+            if (attributes.enableTableFooter && cell.attributes.row == maxRow) {
+                footerArr.push(cell);
                 continue;
             }
 
