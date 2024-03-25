@@ -546,7 +546,7 @@ const useMerging = (
 
         cell.attributes.colspan = 1;
         cell.attributes.rowspan = 1;
-        let lastInseredRow = -1;
+        let lastInseredRow = curRow - 1;
         startIdx++;
         for (; startIdx < tableBlock.innerBlocks.length; startIdx++) {
             const cell = tableBlock.innerBlocks[
@@ -573,10 +573,12 @@ const useMerging = (
                 continue;
             }
             const prevRow = cell.attributes.row - 1;
-            if (lastInseredRow !== prevRow && lastInseredRow > -1) {
+            if (lastInseredRow !== prevRow) {
                 const prevInsert = toInsertMap.get(prevRow);
-                for (let col = prevInsert.from; col < prevInsert.to; col++) {
-                    newCells.push(createSingleCell(prevRow, col, false));
+                if (prevInsert) {
+                    for (let col = prevInsert.from; col < prevInsert.to; col++) {
+                        newCells.push(createSingleCell(prevRow, col, false));
+                    }
                 }
                 lastInseredRow = prevRow;
             }
