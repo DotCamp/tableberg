@@ -446,7 +446,14 @@ const useMerging = (
         const toRemoves: string[] = [];
         for (let i = 0; i < cells.length; i++) {
             storeActions.moveBlocksToPosition(
-                cells[i].innerBlocks.map((b) => b.clientId),
+                cells[i].innerBlocks.reduce<string[]>((prev, b) => {
+                    if (b.name !== "core/paragraph" || b.attributes.content?.text) {
+                        prev.push(b.clientId);
+                    } else {
+                        toRemoves.push(b.clientId);
+                    }
+                    return prev;
+                }, []),
                 cells[i].clientId,
                 destination.clientId,
                 destination.innerBlocks.length
