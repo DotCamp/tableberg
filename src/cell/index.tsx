@@ -495,7 +495,6 @@ const useMerging = (
             colspan: newSpans.col,
             rowspan: newSpans.row,
         });
-        storeActions.removeBlocks(toRemoves);
         storeActions.updateBlockAttributes(tableBlock.clientId, {
             cells: tableBlock.attributes.cells - toRemoves.length,
             colWidths,
@@ -503,6 +502,7 @@ const useMerging = (
             rows,
             cols,
         });
+        storeActions.removeBlocks(toRemoves);
 
         endCellMultiSelect(tableBlock.clientId);
     };
@@ -602,10 +602,10 @@ const useMerging = (
             }
         }
 
-        storeActions.replaceInnerBlocks(tableBlock.clientId, newCells);
         storeActions.updateBlockAttributes(tableBlock.clientId, {
             cells: newCells.length,
         });
+        storeActions.replaceInnerBlocks(tableBlock.clientId, newCells);
     };
 
     return {
