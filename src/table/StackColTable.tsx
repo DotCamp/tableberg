@@ -41,7 +41,7 @@ export default function StackColTable(
 
     useEffect(() => {
         setColUpt((old) => old + 1);
-    }, [attributes.cols]);
+    }, [attributes.cols, attributes.cells]);
 
     const storeActions = useDispatch(
         blockEditorStore
@@ -132,6 +132,9 @@ export default function StackColTable(
         }
 
         storeActions.replaceInnerBlocks(clientId, newCells);
+        storeActions.updateBlockAttributes(clientId, {
+            cells: newCells.length
+        });
         setRowTemplates(templates);
         setColUpt((old) => old + 1);
     }, [
