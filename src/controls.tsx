@@ -32,6 +32,7 @@ import {
     SpacingControl,
 } from "./components";
 import { ColorSettingsWithGradient } from "./components";
+import { useDispatch } from "@wordpress/data";
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -130,6 +131,8 @@ function TablebergControls(
             },
         });
     };
+
+    const editorActions = useDispatch("core/editor");
 
     return (
         <>
@@ -321,7 +324,7 @@ function TablebergControls(
             </InspectorControls>
             <InspectorControls group="settings">
                 <PanelBody
-                    title={`Responsiveness Settings [${preview.toUpperCase()}]`}
+                    title="Responsiveness Settings"
                     initialOpen={true}
                 >
                     <BaseControl __nextHasNoMarginBottom>
@@ -329,7 +332,7 @@ function TablebergControls(
                             Use the block editor preview modes to configure and
                             preview the table at different breakpoints
                         </Notice>
-                        {/*
+                        
                         <SelectControl
                             label="Preview Mode"
                             value={preview}
@@ -339,6 +342,10 @@ function TablebergControls(
                                 { label: "Mobile", value: "mobile" },
                             ]}
                             onChange={(previewMode: any) => {
+                                if (editorActions.setDeviceType) {
+                                    editorActions.setDeviceType(previewMode.toUpperCase());
+                                    return
+                                }
                                 const previewBtn = document.querySelector<HTMLButtonElement>('button[aria-label="Preview"]');
                                 if (!previewBtn) {
                                     return
@@ -357,13 +364,13 @@ function TablebergControls(
                                     }
                                     // @ts-ignore
                                     const idx = DEVICE_TYPE_IDX[previewMode];
-                                    menu[idx].click();
-                                    previewBtn.click();
+                                    menu[idx]?.click();
+                                    previewBtn?.click();
                                 }
                                 changePreview();
                             }}
                         />
-                        */}
+                        
                         <ToggleControl
                             label={__("Enable Breakpoint", "tableberg")}
                             checked={breakpoint?.enabled}
