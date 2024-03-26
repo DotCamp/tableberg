@@ -133,6 +133,9 @@ export default function StackRowTable(
         }
 
         storeActions.replaceInnerBlocks(clientId, newCells);
+        storeActions.updateBlockAttributes(clientId, {
+            cells: newCells.length
+        });
         setRowTemplates(tmplates);
         const tOut = setTimeout(() => {
             setColUpt((old) => old + 1);

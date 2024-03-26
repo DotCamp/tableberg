@@ -62,6 +62,7 @@ export const PrimaryTable = (
                     ...(attributes.responsive || {}),
                     last: "",
                 },
+                cells: attributes.cells - toRemoves.length
             });
             storeActions.removeBlocks(toRemoves);
         }

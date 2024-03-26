@@ -439,10 +439,21 @@ const useMerging = (
 
         let { rowHeights, colWidths, rows, cols } = tableBlock.attributes;
 
+        storeActions.updateBlockAttributes(tableBlock.clientId, {
+            cells: tableBlock.attributes.cells - cells.length,
+        });
+
         const toRemoves: string[] = [];
         for (let i = 0; i < cells.length; i++) {
             storeActions.moveBlocksToPosition(
-                cells[i].innerBlocks.map((b) => b.clientId),
+                cells[i].innerBlocks.reduce<string[]>((prev, b) => {
+                    if (b.name !== "core/paragraph" || b.attributes.content?.text) {
+                        prev.push(b.clientId);
+                    } else {
+                        toRemoves.push(b.clientId);
+                    }
+                    return prev;
+                }, []),
                 cells[i].clientId,
                 destination.clientId,
                 destination.innerBlocks.length
@@ -495,14 +506,13 @@ const useMerging = (
             colspan: newSpans.col,
             rowspan: newSpans.row,
         });
-        storeActions.removeBlocks(toRemoves);
         storeActions.updateBlockAttributes(tableBlock.clientId, {
-            cells: tableBlock.attributes.cells - toRemoves.length,
             colWidths,
             rowHeights,
             rows,
             cols,
         });
+        storeActions.removeBlocks(toRemoves);
 
         endCellMultiSelect(tableBlock.clientId);
     };
@@ -604,10 +614,10 @@ const useMerging = (
             }
         }
 
-        storeActions.replaceInnerBlocks(tableBlock.clientId, newCells);
         storeActions.updateBlockAttributes(tableBlock.clientId, {
             cells: newCells.length,
         });
+        storeActions.replaceInnerBlocks(tableBlock.clientId, newCells);
     };
 
     return {
