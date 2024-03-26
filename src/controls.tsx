@@ -341,12 +341,12 @@ function TablebergControls(
                                 { label: "Tablet", value: "tablet" },
                                 { label: "Mobile", value: "mobile" },
                             ]}
-                            onChange={(previewMode: any) => {
+                            onChange={async (previewMode: any) => {
                                 if (editorActions.setDeviceType) {
-                                    editorActions.setDeviceType(previewMode.toUpperCase());
+                                    await editorActions.setDeviceType(previewMode.toUpperCase());
                                     return
                                 }
-                                const previewBtn = document.querySelector<HTMLButtonElement>('button[aria-label="Preview"]');
+                                const previewBtn = document.querySelector<HTMLButtonElement>('button[aria-label="Preview"],button.editor-preview-dropdown__toggle');
                                 if (!previewBtn) {
                                     return
                                 }
