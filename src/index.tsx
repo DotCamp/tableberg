@@ -485,7 +485,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             });
         }
         return (
-            <div>
+            <div {...blockProps}>
                 <Placeholder
                     label={"Create Tableberg Table"}
                     icon={<BlockIcon icon={blockTable} showColors />}
