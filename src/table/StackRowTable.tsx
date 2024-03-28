@@ -4,7 +4,7 @@ import {
     useInnerBlocksProps,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { ALLOWED_BLOCKS } from ".";
 import { TablebergCellInstance } from "../cell";
 import { useDispatch } from "@wordpress/data";
@@ -56,7 +56,7 @@ export default function StackRowTable(
             ? breakpoints.tablet
             : breakpoints[preview];
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const newCells: TablebergCellInstance[] = [];
         const masterRowMap = new Map<
             number,
@@ -137,10 +137,8 @@ export default function StackRowTable(
             cells: newCells.length
         });
         setRowTemplates(tmplates);
-        const tOut = setTimeout(() => {
-            setColUpt((old) => old + 1);
-        }, 500);
-        return () => clearTimeout(tOut);
+        setColUpt((old) => old + 1);
+        
     }, [
         attributes.cells,
         attributes.enableTableHeader,
