@@ -32,6 +32,7 @@ import {
     SpacingControl,
 } from "./components";
 import { ColorSettingsWithGradient } from "./components";
+import { useDispatch } from "@wordpress/data";
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -50,7 +51,6 @@ const AVAILABLE_JUSTIFICATIONS = [
         label: __("Right", "tableberg"),
     },
 ];
-
 
 const DEFAULT_BREAKPOINT_OPTIONS = {
     desktop: {
@@ -131,54 +131,82 @@ function TablebergControls(
         });
     };
 
+    const editorActions = useDispatch("core/editor");
+    const siteEditorActions = useDispatch("core/edit-site");
+    const postEditorActions = useDispatch("core/edit-post");
+
     return (
         <>
             <InspectorControls>
                 <PanelBody>
-                    <BaseControl
-                        __nextHasNoMarginBottom
-                    >
+                    <BaseControl __nextHasNoMarginBottom>
                         <BaseControl.VisualLabel>
                             Header Settings
                         </BaseControl.VisualLabel>
                         <ToggleControl
                             checked={attributes.enableTableHeader === ""}
                             label="Disable Header"
-                            onChange={(val) => { setAttributes({ enableTableHeader: val ? "" : "added" }) }}
+                            onChange={(val) => {
+                                setAttributes({
+                                    enableTableHeader: val ? "" : "added",
+                                });
+                            }}
                         />
                         <ToggleControl
-                            checked={attributes.enableTableHeader === "converted"}
+                            checked={
+                                attributes.enableTableHeader === "converted"
+                            }
                             label="Make Top Row Header"
-                            onChange={(val) => { setAttributes({ enableTableHeader: val ? "converted" : "" }) }}
+                            onChange={(val) => {
+                                setAttributes({
+                                    enableTableHeader: val ? "converted" : "",
+                                });
+                            }}
                         />
                         <ToggleControl
                             checked={attributes.enableTableHeader === "added"}
                             label="Insert Header"
-                            onChange={(val) => { setAttributes({ enableTableHeader: val ? "added" : "" }) }}
+                            onChange={(val) => {
+                                setAttributes({
+                                    enableTableHeader: val ? "added" : "",
+                                });
+                            }}
                         />
                     </BaseControl>
                 </PanelBody>
                 <PanelBody>
-                    <BaseControl
-                        __nextHasNoMarginBottom
-                    >
+                    <BaseControl __nextHasNoMarginBottom>
                         <BaseControl.VisualLabel>
                             Footer Settings
                         </BaseControl.VisualLabel>
                         <ToggleControl
                             checked={attributes.enableTableFooter === ""}
                             label="Disable Footer"
-                            onChange={(val) => { setAttributes({ enableTableFooter: val ? "" : "added" }) }}
+                            onChange={(val) => {
+                                setAttributes({
+                                    enableTableFooter: val ? "" : "added",
+                                });
+                            }}
                         />
                         <ToggleControl
-                            checked={attributes.enableTableFooter === "converted"}
+                            checked={
+                                attributes.enableTableFooter === "converted"
+                            }
                             label="Make Bottom Row Footer"
-                            onChange={(val) => { setAttributes({ enableTableFooter: val ? "converted" : "" }) }}
+                            onChange={(val) => {
+                                setAttributes({
+                                    enableTableFooter: val ? "converted" : "",
+                                });
+                            }}
                         />
                         <ToggleControl
                             checked={attributes.enableTableFooter === "added"}
                             label="Insert Footer"
-                            onChange={(val) => { setAttributes({ enableTableFooter: val ? "added" : "" }) }}
+                            onChange={(val) => {
+                                setAttributes({
+                                    enableTableFooter: val ? "added" : "",
+                                });
+                            }}
                         />
                     </BaseControl>
                 </PanelBody>
@@ -320,16 +348,16 @@ function TablebergControls(
                 />
             </InspectorControls>
             <InspectorControls group="settings">
-                <PanelBody
-                    title={`Responsiveness Settings [${preview.toUpperCase()}]`}
-                    initialOpen={true}
-                >
+                <PanelBody title="Responsiveness Settings" initialOpen={true}>
                     <BaseControl __nextHasNoMarginBottom>
-                        <Notice className="add-margin-bottom" isDismissible={false}>
+                        <Notice
+                            className="add-margin-bottom"
+                            isDismissible={false}
+                        >
                             Use the block editor preview modes to configure and
                             preview the table at different breakpoints
                         </Notice>
-                        {/*
+
                         <SelectControl
                             label="Preview Mode"
                             value={preview}
@@ -338,32 +366,19 @@ function TablebergControls(
                                 { label: "Tablet", value: "tablet" },
                                 { label: "Mobile", value: "mobile" },
                             ]}
-                            onChange={(previewMode: any) => {
-                                const previewBtn = document.querySelector<HTMLButtonElement>('button[aria-label="Preview"]');
-                                if (!previewBtn) {
-                                    return
+                            onChange={async (previewMode: any) => {
+                                previewMode = (previewMode as string).charAt(0).toUpperCase() + previewMode.slice(1)
+                                // prettier-ignore
+                                if (editorActions?.setDeviceType){
+                                    editorActions.setDeviceType(previewMode);
+                                } else if (siteEditorActions?.__experimentalSetPreviewDeviceType) {
+                                    siteEditorActions.__experimentalSetPreviewDeviceType(previewMode);
+                                } else if (postEditorActions?.__experimentalSetPreviewDeviceType) {
+                                    postEditorActions.__experimentalSetPreviewDeviceType(previewMode);
                                 }
-                                previewBtn.click();
-                                let tries = 0;
-
-                                const changePreview = () => {
-                                    const menu = document.querySelector('div[role="menu"][aria-label="View options"]')?.querySelectorAll('button');
-                                    if (!menu || menu.length === 0) {
-                                        if (tries < 10) {
-                                            tries++;
-                                            setTimeout(changePreview, 500);
-                                        }
-                                        return;
-                                    }
-                                    // @ts-ignore
-                                    const idx = DEVICE_TYPE_IDX[previewMode];
-                                    menu[idx].click();
-                                    previewBtn.click();
-                                }
-                                changePreview();
                             }}
                         />
-                        */}
+
                         <ToggleControl
                             label={__("Enable Breakpoint", "tableberg")}
                             checked={breakpoint?.enabled}
@@ -375,9 +390,15 @@ function TablebergControls(
                             disabled={isDisabled}
                         />
                         <ToggleControl
-                            checked={attributes.enableTableHeader === "converted"}
+                            checked={
+                                attributes.enableTableHeader === "converted"
+                            }
                             label="Make Top Row Header"
-                            onChange={(val) => { setAttributes({ enableTableHeader: val ? "converted" : "" }) }}
+                            onChange={(val) => {
+                                setAttributes({
+                                    enableTableHeader: val ? "converted" : "",
+                                });
+                            }}
                             disabled={isDisabled}
                         />
                         <NumberControl
