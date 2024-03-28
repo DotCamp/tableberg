@@ -41,8 +41,7 @@ import "./style.scss";
 import "./editor.scss";
 
 import metadata from "./block.json";
-import { Fragment, useEffect, useRef } from "react";
-import CellControls from "./controls";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
 import TablebergControls from "../controls";
