@@ -288,8 +288,13 @@ function TablebergControls(
                     onColorChange={(newValue) => setTableAttributes({
                         headerBackgroundColor: newValue
                     })}
+                    allowGradient
                     onGradientChange={(newValue) => setTableAttributes({
                         headerBackgroundGradient: newValue
+                    })}
+                    onDeselect={() => setTableAttributes({
+                        headerBackgroundColor: undefined,
+                        headerBackgroundGradient: undefined
                     })}
                 />
                 <ColorControl
@@ -299,8 +304,13 @@ function TablebergControls(
                     onColorChange={(newValue) => setTableAttributes({
                         evenRowBackgroundColor: newValue
                     })}
+                    allowGradient
                     onGradientChange={(newValue) => setTableAttributes({
                         evenRowBackgroundGradient: newValue
+                    })}
+                    onDeselect={() => setTableAttributes({
+                        evenRowBackgroundColor: undefined,
+                        evenRowBackgroundGradient: undefined
                     })}
                 />
                 <ColorControl
@@ -310,8 +320,13 @@ function TablebergControls(
                     onColorChange={(newValue) => setTableAttributes({
                         oddRowBackgroundColor: newValue
                     })}
+                    allowGradient
                     onGradientChange={(newValue) => setTableAttributes({
                         oddRowBackgroundGradient: newValue
+                    })}
+                    onDeselect={() => setTableAttributes({
+                        oddRowBackgroundColor: undefined,
+                        oddRowBackgroundGradient: undefined
                     })}
                 />
                 <ColorControl
@@ -321,8 +336,13 @@ function TablebergControls(
                     onColorChange={(newValue) => setTableAttributes({
                         footerBackgroundColor: newValue
                     })}
+                    allowGradient
                     onGradientChange={(newValue) => setTableAttributes({
                         footerBackgroundGradient: newValue
+                    })}
+                    onDeselect={() => setTableAttributes({
+                        footerBackgroundColor: undefined,
+                        footerBackgroundGradient: undefined
                     })}
                 />
             </InspectorControls>

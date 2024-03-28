@@ -15,11 +15,12 @@ interface ColorSettingsProps {
     label: string;
     colorValue: string | undefined | null;
     gradientValue?: string | null;
-    palette?: "theme" | "default"
-    onColorChange: (newValue: string) => any
-    onGradientChange?: (newValue: string) => any
-    onDeselect: () => any
-    resetAllFilter?: () => any
+    palette?: "theme" | "default";
+    onColorChange: (newValue: string) => any;
+    onGradientChange?: (newValue: string) => any;
+    onDeselect: () => any;
+    resetAllFilter?: () => any;
+    allowGradient?: boolean;
 }
 
 function ColorSetting({
@@ -30,7 +31,8 @@ function ColorSetting({
     onColorChange,
     onGradientChange,
     onDeselect,
-    resetAllFilter
+    resetAllFilter,
+    allowGradient = false
 }: ColorSettingsProps) {
     const { clientId } = useBlockEditContext();
     const colorGradientSettings = useMultipleOriginColorsAndGradients();
@@ -58,8 +60,8 @@ function ColorSetting({
 
     interface Settings {
         clearable?: boolean,
-        colorValue: string | undefined,
-        gradientValue?: string,
+        colorValue?: string | null,
+        gradientValue?: string | null,
         colors?: Color[],
         gradients?: Gradient[],
         label: string,
@@ -79,7 +81,7 @@ function ColorSetting({
         onDeselect: onDeselect,
     };
 
-    if (gradientValue) {
+    if (allowGradient) {
         settings = {
             ...settings,
             gradientValue: gradientValue,

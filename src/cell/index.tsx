@@ -621,7 +621,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const { storeSelect, tableBlock, tableBlockId, childBlocks } = useSelect(
+    const { storeSelect, tableBlock, childBlocks } = useSelect(
         (select) => {
             const storeSelect = select(
                 blockEditorStore
@@ -793,21 +793,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
     const setVAlign = (newValue: "bottom" | "center" | "top") => {
         setAttributes({ vAlign: newValue });
-    };
-
-    const setRowHeight = (val: string) => {
-        const rowHeights = [...tableBlock.attributes.rowHeights];
-        rowHeights[attributes.row] = val;
-        storeActions.updateBlockAttributes(tableBlockId, {
-            rowHeights,
-        });
-    };
-    const setColWidth = (val: string) => {
-        const colWidths = [...tableBlock.attributes.colWidths];
-        colWidths[attributes.col] = val;
-        storeActions.updateBlockAttributes(tableBlockId, {
-            colWidths,
-        });
     };
 
     const changeChildrenAlign = (align: BlockAlignmentToolbar.Control) => {

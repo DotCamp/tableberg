@@ -2,7 +2,6 @@ import classnames from "classnames";
 
 import {
     BlockEditProps,
-    BlockSaveProps,
     registerBlockType,
 } from "@wordpress/blocks";
 import { prependHTTP } from "@wordpress/url";
@@ -15,7 +14,6 @@ import {
     Popover,
     TextControl,
     ToolbarButton,
-    __experimentalToolsPanel as ToolsPanel,
     CheckboxControl,
 } from "@wordpress/components";
 
@@ -271,6 +269,9 @@ function edit({
                     onColorChange={(newValue) => setAttributes(
                         { textColor: newValue }
                     )}
+                    onDeselect={() => setAttributes({
+                         textColor: undefined
+                    })}
                 />
                 <ColorControl
                     label={__("Hover Text", "tableberg")}
@@ -278,6 +279,9 @@ function edit({
                     onColorChange={(newValue) => setAttributes(
                         { textHoverColor: newValue }
                     )}
+                    onDeselect={() => setAttributes({
+                        textHoverColor: undefined
+                    })}
                 />
                 <ColorControl
                     label={__("Background Color", "tableberg")}
@@ -286,9 +290,14 @@ function edit({
                     onColorChange={(newValue) => setAttributes(
                         { backgroundColor: newValue }
                     )}
+                    allowGradient
                     onGradientChange={(newValue) => setAttributes(
                         { backgroundGradient: newValue }
                     )}
+                    onDeselect={() => setAttributes({
+                        backgroundColor: undefined,
+                        backgroundGradient: undefined
+                    })}
                 />
                 <ColorControl
                     label={__("Hover Background Color", "tableberg")}
@@ -297,9 +306,14 @@ function edit({
                     onColorChange={(newValue) => setAttributes(
                         { backgroundHoverColor: newValue }
                     )}
+                    allowGradient
                     onGradientChange={(newValue) => setAttributes(
                         { backgroundHoverGradient: newValue }
                     )}
+                    onDeselect={() => setAttributes({
+                        backgroundHoverColor: undefined,
+                        backgroundHoverGradient: undefined
+                    })}
                 />
             </InspectorControls>
             <InspectorControls>
