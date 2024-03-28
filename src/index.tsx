@@ -306,6 +306,35 @@ const useTableHeaderFooter = (
     }, [attrs.enableTableFooter]);
 };
 
+const useUndoRedo = (attrs: TablebergBlockAttrs, blockCount: number, setAttrs: (attrs: Partial<TablebergBlockAttrs>) => void) => {
+    const editorActions = useDispatch("core/editor");
+    const { shouldSomethingBeDone, hasUndo } = useSelect(
+        (select) => {
+            const sel = select("core/editor");
+            return {
+                shouldSomethingBeDone:
+                    // @ts-ignore
+                    sel.hasEditorRedo() && attrs.cells !== blockCount,
+                // @ts-ignore
+                hasUndo: sel.hasEditorUndo()
+            };
+        },
+        [attrs.cells, blockCount]
+    );
+
+    if(shouldSomethingBeDone) {
+        if (hasUndo) {
+            editorActions.undo();
+        } else {
+            setAttrs({
+                cells: blockCount
+            });
+        }
+        
+    }
+    
+};
+
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     // @ts-ignore
     registerTablebergPreviewDeviceChangeObserver();
@@ -339,6 +368,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             tableBlock,
         };
     }, []);
+    useUndoRedo(attributes, tableBlock.innerBlocks.length, setAttributes);
 
     const [previewDevice, updatePreview] = useState<
         keyof TablebergBlockAttrs["responsive"]["breakpoints"]
@@ -374,6 +404,13 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const [renderMode, setRenderMode] =
         useState<TablebergRenderMode>("primary");
     const prevRenderMode = useRef<TablebergRenderMode>("primary");
+    useSelect((select) => {
+        // @ts-ignore
+        const getDevice: () => string = select("core/editor").getDeviceType;
+        if (getDevice) {
+            updatePreview(getDevice().toLowerCase() as any);
+        }
+    }, []);
 
     useEffect(() => {
         let newRMode: TablebergRenderMode = "primary";
@@ -477,7 +514,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             });
         }
         return (
-            <div>
+            <div {...blockProps}>
                 <Placeholder
                     label={"Create Tableberg Table"}
                     icon={<BlockIcon icon={blockTable} showColors />}

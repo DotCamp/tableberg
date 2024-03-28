@@ -1,9 +1,6 @@
 import classnames from "classnames";
 
-import {
-    BlockEditProps,
-    registerBlockType,
-} from "@wordpress/blocks";
+import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 import { prependHTTP } from "@wordpress/url";
 import { useMergeRefs } from "@wordpress/compose";
 
@@ -39,12 +36,12 @@ import {
 
 import "./style.scss";
 import { link, linkOff } from "@wordpress/icons";
-// import { ColorSettings, ColorSettingsWithGradient } from "../components";
 import ColorControl from "../components/ColorControl"
+import SpacingControl from "../components/SpacingControl";
 import { __ } from "@wordpress/i18n";
 import { getStyleClass } from "./get-classes";
 import { ButtonBlockTypes } from "./type";
-import { getStyles } from "./get-styles";
+import { getStyles, getInnerStyles } from "./get-styles";
 
 const ALL_REL = ["sponsored", "nofollow", "noreferrer", "noopener"];
 const NEW_TAB_REL = "noreferrer noopener";
@@ -109,6 +106,8 @@ function edit({
         className: getStyleClass(attributes),
         style: getStyles(attributes),
     });
+
+    const innerStyle = getInnerStyles(attributes);
 
     const blockAlignChange = (newValue: "left" | "right" | "center") => {
         setAttributes({ align: newValue });
@@ -206,7 +205,7 @@ function edit({
                     }
                     withoutInteractiveFormatting
                     identifier="text"
-                    style={{ ...borderProps.style }}
+                    style={{ ...borderProps.style, ...innerStyle }}
                 />
             </div>
 
@@ -270,7 +269,7 @@ function edit({
                         { textColor: newValue }
                     )}
                     onDeselect={() => setAttributes({
-                         textColor: undefined
+                        textColor: undefined
                     })}
                 />
                 <ColorControl
@@ -323,6 +322,17 @@ function edit({
                 />
             </InspectorControls>
 
+            <InspectorControls group="dimensions">
+                <SpacingControl
+                    value={attributes.padding}
+                    label={__("Padding", "tableberg")}
+                    onChange={(val) => setAttributes({ padding: val })}
+                    sides={["horizontal", "vertical"]}
+                    onDeselect={() => setAttributes({ padding: {} })}
+                    isShownByDefault
+                />
+            </InspectorControls>
+
             <InspectorControls group="advanced">
                 <TextControl
                     label="HTML ID"
@@ -353,53 +363,11 @@ function edit({
     );
 }
 
+// @ts-ignore
 registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
-    attributes: {
-        text: {
-            type: "string",
-        },
-        align: {
-            type: "string",
-        },
-        width: {
-            type: "number",
-        },
-        backgroundGradient: {
-            type: "string",
-        },
-        backgroundHoverGradient: {
-            type: "string",
-        },
-        backgroundColor: {
-            type: "string",
-        },
-        textColor: {
-            type: "string",
-        },
-        backgroundHoverColor: {
-            type: "string",
-        },
-        textHoverColor: {
-            type: "string",
-        },
-        textAlign: {
-            type: "string",
-        },
-        id: {
-            type: "string",
-        },
-        url: {
-            type: "string",
-        },
-        linkTarget: {
-            type: "string",
-        },
-        rel: {
-            type: "string",
-        },
-    },
+    attributes: metadata.attributes,
     example: {},
     edit,
 });

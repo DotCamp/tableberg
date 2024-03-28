@@ -13,4 +13,10 @@ export interface ButtonBlockTypes {
     rel: string | undefined;
     backgroundGradient: string | null;
     backgroundHoverGradient: string | null;
+    padding: {
+        top?: string;
+        bottom?: string;
+        left?: string;
+        right?: string;
+    };
 }

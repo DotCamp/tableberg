@@ -13,6 +13,7 @@ interface Props {
     resetAllFilter?: () => any;
     onDeselect: () => any;
     isShownByDefault?: boolean;
+    sides?: ["top", "right", "bottom", "left"] | ["horizontal", "vertical"]
 }
 
 const SpacingControl = ({
@@ -21,6 +22,7 @@ const SpacingControl = ({
     onChange = () => { },
     resetAllFilter,
     onDeselect = () => { },
+    sides = ["top", "right", "bottom", "left"]
 }: Props) => {
     const { clientId } = useBlockEditContext()
 
@@ -50,7 +52,7 @@ const SpacingControl = ({
             allowReset={true}
             label={label}
             values={value}
-            sides={["top", "right", "bottom", "left"]}
+            sides={sides}
             onChange={onChange}
         />
     </ToolsPanelItem>

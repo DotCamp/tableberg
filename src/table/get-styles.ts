@@ -9,8 +9,11 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         enableInnerBorder,
         innerBorder,
         tableBorder,
+        headerBackgroundColor,
         headerBackgroundGradient,
+        evenRowBackgroundColor,
         evenRowBackgroundGradient,
+        oddRowBackgroundColor,
         oddRowBackgroundGradient,
         tableWidth,
         footerBackgroundColor,
@@ -44,6 +47,7 @@ export function getStyles(attributes: TablebergBlockAttrs) {
     }
 
 
+
     let styles: Record<string, any> = {
         "--tableberg-cell-padding-top": cellPaddingCSS?.top,
         "--tableberg-cell-padding-right": cellPaddingCSS?.right,
@@ -52,9 +56,15 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         "--tableberg-global-text-color": fontColor,
         "--tableberg-global-link-color": linkColor,
         "--tableberg-global-font-size": fontSize,
+        "--tableberg-header-bg": headerBackgroundGradient || headerBackgroundColor,
+        "--tableberg-footer-bg": footerBackgroundGradient || footerBackgroundColor,
+        "--tableberg-odd-bg": oddRowBackgroundGradient || oddRowBackgroundColor,
+        "--tableberg-even-bg": evenRowBackgroundGradient || evenRowBackgroundColor,
         ...spacingDependantStyles,
         ...tableInnerBorder,
     };
+
+    
 
     return omitBy(
         styles,

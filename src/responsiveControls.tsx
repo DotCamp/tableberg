@@ -1,40 +1,41 @@
 import { InspectorControls } from "@wordpress/block-editor";
 import { Breakpoint, TablebergBlockAttrs, ResponsiveOptions } from "./types";
-import { BaseControl, Notice, PanelBody, ToggleControl, __experimentalNumberControl as NumberControl, SelectControl } from "@wordpress/components";
+import { BaseControl, PanelBody, ToggleControl, __experimentalNumberControl as NumberControl, SelectControl } from "@wordpress/components";
+import { useDispatch } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
-
-const DEFAULT_BREAKPOINT_OPTIONS = {
-    desktop: {
-        enabled: false,
-        headerAsCol: true,
-        maxWidth: 1024,
-        mode: "",
-        direction: "row",
-        stackCount: 3,
-    },
-    mobile: {
-        enabled: false,
-        headerAsCol: true,
-        maxWidth: 700,
-        mode: "",
-        direction: "row",
-        stackCount: 1,
-    },
-    tablet: {
-        enabled: false,
-        headerAsCol: true,
-        maxWidth: 1024,
-        mode: "",
-        direction: "row",
-        stackCount: 3,
-    },
-} as const;
 
 export const ResponsiveControls = ({ preview, attributes, setTableAttributes }: {
     preview: keyof ResponsiveOptions["breakpoints"];
     attributes: TablebergBlockAttrs,
     setTableAttributes: (attributes: Record<string, any>) => void
 }) => {
+    const DEFAULT_BREAKPOINT_OPTIONS = {
+        desktop: {
+            enabled: false,
+            headerAsCol: true,
+            maxWidth: 1024,
+            mode: "",
+            direction: "row",
+            stackCount: 3,
+        },
+        mobile: {
+            enabled: false,
+            headerAsCol: true,
+            maxWidth: 700,
+            mode: "",
+            direction: "row",
+            stackCount: 1,
+        },
+        tablet: {
+            enabled: false,
+            headerAsCol: true,
+            maxWidth: 1024,
+            mode: "",
+            direction: "row",
+            stackCount: 3,
+        },
+    } as const;
+
     const isDisabled = preview === "desktop";
     const breakpoint =
         attributes.responsive?.breakpoints?.[preview] ||
@@ -58,16 +59,34 @@ export const ResponsiveControls = ({ preview, attributes, setTableAttributes }: 
         });
     };
 
+    const editorActions = useDispatch("core/editor");
+    const siteEditorActions = useDispatch("core/edit-site");
+    const postEditorActions = useDispatch("core/edit-post");
+
     return <InspectorControls group="settings">
-        <PanelBody
-            title={`Responsiveness Settings [${preview.toUpperCase()}]`}
-            initialOpen={true}
-        >
+        <PanelBody title="Responsiveness Settings" initialOpen={true}>
             <BaseControl __nextHasNoMarginBottom>
-                <Notice className="add-margin-bottom" isDismissible={false}>
-                    Use the block editor preview modes to configure and
-                    preview the table at different breakpoints
-                </Notice>
+                <SelectControl
+                    label="Preview Mode"
+                    value={preview}
+                    options={[
+                        { label: "Desktop", value: "desktop" },
+                        { label: "Tablet", value: "tablet" },
+                        { label: "Mobile", value: "mobile" },
+                    ]}
+                    onChange={async (previewMode: any) => {
+                        previewMode = (previewMode as string).charAt(0).toUpperCase() + previewMode.slice(1)
+                        // prettier-ignore
+                        if (editorActions?.setDeviceType) {
+                            editorActions.setDeviceType(previewMode);
+                        } else if (siteEditorActions?.__experimentalSetPreviewDeviceType) {
+                            siteEditorActions.__experimentalSetPreviewDeviceType(previewMode);
+                        } else if (postEditorActions?.__experimentalSetPreviewDeviceType) {
+                            postEditorActions.__experimentalSetPreviewDeviceType(previewMode);
+                        }
+                    }}
+                />
+
                 <ToggleControl
                     label={__("Enable Breakpoint", "tableberg")}
                     checked={breakpoint?.enabled}
@@ -79,9 +98,16 @@ export const ResponsiveControls = ({ preview, attributes, setTableAttributes }: 
                     disabled={isDisabled}
                 />
                 <ToggleControl
-                    checked={attributes.enableTableHeader === "converted"}
+                    checked={
+                        attributes.enableTableHeader === "converted"
+                    }
                     label="Make Top Row Header"
-                    onChange={(val) => { setTableAttributes({ enableTableHeader: val ? "converted" : "" }) }}
+                    onChange={(val) => {
+                        setTableAttributes({
+                            enableTableHeader: val ? "converted" : "",
+                        });
+                    }}
+                    disabled={isDisabled}
                 />
                 <NumberControl
                     label={__("Max Width", "tableberg")}

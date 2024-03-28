@@ -350,7 +350,7 @@ const useMerging = (
         return select(blockEditorStore) as BlockEditorStoreSelectors;
     }, []);
 
-    const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
+    const elClickEvt = function(this: HTMLElement, evt: MouseEvent) {
         if (!evt.shiftKey) {
             if (getIndexes(tableBlock.clientId)) {
                 endCellMultiSelect(tableBlock.clientId);
@@ -439,10 +439,21 @@ const useMerging = (
 
         let { rowHeights, colWidths, rows, cols } = tableBlock.attributes;
 
+        storeActions.updateBlockAttributes(tableBlock.clientId, {
+            cells: tableBlock.attributes.cells - cells.length,
+        });
+
         const toRemoves: string[] = [];
         for (let i = 0; i < cells.length; i++) {
             storeActions.moveBlocksToPosition(
-                cells[i].innerBlocks.map((b) => b.clientId),
+                cells[i].innerBlocks.reduce<string[]>((prev, b) => {
+                    if (b.name !== "core/paragraph" || b.attributes.content?.text) {
+                        prev.push(b.clientId);
+                    } else {
+                        toRemoves.push(b.clientId);
+                    }
+                    return prev;
+                }, []),
                 cells[i].clientId,
                 destination.clientId,
                 destination.innerBlocks.length
@@ -495,14 +506,13 @@ const useMerging = (
             colspan: newSpans.col,
             rowspan: newSpans.row,
         });
-        storeActions.removeBlocks(toRemoves);
         storeActions.updateBlockAttributes(tableBlock.clientId, {
-            cells: tableBlock.attributes.cells - toRemoves.length,
             colWidths,
             rowHeights,
             rows,
             cols,
         });
+        storeActions.removeBlocks(toRemoves);
 
         endCellMultiSelect(tableBlock.clientId);
     };
@@ -546,7 +556,7 @@ const useMerging = (
 
         cell.attributes.colspan = 1;
         cell.attributes.rowspan = 1;
-        let lastInseredRow = -1;
+        let lastInseredRow = curRow - 1;
         startIdx++;
         for (; startIdx < tableBlock.innerBlocks.length; startIdx++) {
             const cell = tableBlock.innerBlocks[
@@ -555,6 +565,14 @@ const useMerging = (
             const row = cell.attributes.row;
 
             if (row === lastInseredRow || row >= toRow) {
+                const lastToRow = toRow - 1;
+                if (lastInseredRow < lastToRow) {
+                    const toInserts = toInsertMap.get(lastToRow);
+                    for (let col = toInserts.from; col < toInserts.to; col++) {
+                        newCells.push(createSingleCell(lastToRow, col, false));
+                    }
+                    lastInseredRow = lastToRow;
+                }
                 newCells.push(cell);
                 continue;
             }
@@ -565,10 +583,12 @@ const useMerging = (
                 continue;
             }
             const prevRow = cell.attributes.row - 1;
-            if (lastInseredRow !== prevRow && lastInseredRow > -1) {
+            if (lastInseredRow !== prevRow) {
                 const prevInsert = toInsertMap.get(prevRow);
-                for (let col = prevInsert.from; col < prevInsert.to; col++) {
-                    newCells.push(createSingleCell(prevRow, col, false));
+                if (prevInsert) {
+                    for (let col = prevInsert.from; col < prevInsert.to; col++) {
+                        newCells.push(createSingleCell(prevRow, col, false));
+                    }
                 }
                 lastInseredRow = prevRow;
             }
@@ -594,10 +614,10 @@ const useMerging = (
             }
         }
 
-        storeActions.replaceInnerBlocks(tableBlock.clientId, newCells);
         storeActions.updateBlockAttributes(tableBlock.clientId, {
             cells: newCells.length,
         });
+        storeActions.replaceInnerBlocks(tableBlock.clientId, newCells);
     };
 
     return {
@@ -621,33 +641,46 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const { storeSelect, tableBlock, childBlocks } = useSelect(
-        (select) => {
-            const storeSelect = select(
-                blockEditorStore
-            ) as BlockEditorStoreSelectors;
+    const {
+        storeSelect,
+        tableBlock,
+        childBlocks,
+        isOddRow,
+        isHeaderRow,
+        isFooterRow
+    } = useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore
+        ) as BlockEditorStoreSelectors;
 
-            const parentBlocks = storeSelect.getBlockParents(clientId);
+        const parentBlocks = storeSelect.getBlockParents(clientId);
 
-            const tableBlockId = parentBlocks.find(
-                (parentId: string) =>
-                    storeSelect.getBlockName(parentId) === "tableberg/table"
-            )!;
+        const tableBlockId = parentBlocks.find(
+            (parentId: string) =>
+                storeSelect.getBlockName(parentId) === "tableberg/table"
+        )!;
 
-            const tableBlock: BlockInstance<TablebergBlockAttrs> =
-                storeSelect.getBlock(tableBlockId)! as any;
+        const tableBlock: BlockInstance<TablebergBlockAttrs> =
+            storeSelect.getBlock(tableBlockId)! as any;
 
-            const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
+        const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
 
-            return {
-                storeSelect,
-                tableBlock,
-                tableBlockId,
-                childBlocks,
-            };
-        },
-        []
-    );
+        const headerEnabled = tableBlock.attributes.enableTableHeader;
+
+        return {
+            storeSelect,
+            tableBlock,
+            tableBlockId,
+            childBlocks,
+            isOddRow:
+                (attributes.row +
+                    (headerEnabled ? 0 : 1)) %
+                2 ==
+                1,
+            isHeaderRow: headerEnabled && attributes.row === 0,
+            isFooterRow: tableBlock.attributes.enableTableFooter && attributes.row + 1 === tableBlock.attributes.rows
+        };
+    }, []);
     const {
         isMergable,
         addMergingEvt,
@@ -691,9 +724,10 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         className: classNames(
             getClassName(tableBlock.clientId, attributes.row, attributes.col),
             {
-                "tableberg-header-cell":
-                    attributes.row == 0 &&
-                    tableBlock.attributes.enableTableHeader,
+                "tableberg-odd-row-cell": isOddRow,
+                "tableberg-even-row-cell": !isOddRow,
+                "tableberg-header-cell": isHeaderRow,
+                "tableberg-footer-cell": isFooterRow,
                 "tableberg-has-selected": hasSelected,
             }
         ),
@@ -810,7 +844,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                         if (!attributes.isTmp)
                             targetEl =
                                 rootEl?.firstElementChild?.children?.[
-                                    attributes.row + 1
+                                attributes.row + 1
                                 ];
                     } else if (attributes.responsiveTarget) {
                         targetEl = rootEl?.querySelector(

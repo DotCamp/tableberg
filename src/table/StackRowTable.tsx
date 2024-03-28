@@ -4,7 +4,7 @@ import {
     useInnerBlocksProps,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { ALLOWED_BLOCKS } from ".";
 import { TablebergCellInstance } from "../cell";
 import { useDispatch } from "@wordpress/data";
@@ -16,7 +16,7 @@ import { getStyleClass } from "./get-classes";
 export default function StackRowTable(
     props: BlockEditProps<TablebergBlockAttrs> & {
         tableBlock: BlockInstance<TablebergBlockAttrs>;
-        preview: keyof TablebergBlockAttrs['responsive']['breakpoints']
+        preview: keyof TablebergBlockAttrs["responsive"]["breakpoints"];
     }
 ) {
     const { attributes, tableBlock, clientId, setAttributes, preview } = props;
@@ -33,7 +33,10 @@ export default function StackRowTable(
             maxWidth: attributes.tableWidth,
             width: attributes.tableWidth,
         },
-        className: classNames(getStyleClass(attributes), "tableberg-rowstack-table"),
+        className: classNames(
+            getStyleClass(attributes),
+            "tableberg-rowstack-table"
+        ),
     } as Record<string, any>;
 
     const [rowTemplates, setRowTemplates] = useState([]);
@@ -47,11 +50,13 @@ export default function StackRowTable(
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-
     const breakpoints = tableBlock.attributes.responsive.breakpoints;
-    const breakpoint = preview == "mobile" && !breakpoints[preview]? breakpoints.tablet : breakpoints[preview];
-    
-    useEffect(() => {
+    const breakpoint =
+        preview == "mobile" && !breakpoints[preview]
+            ? breakpoints.tablet
+            : breakpoints[preview];
+
+    useLayoutEffect(() => {
         const newCells: TablebergCellInstance[] = [];
         const masterRowMap = new Map<
             number,
@@ -59,10 +64,7 @@ export default function StackRowTable(
         >();
 
         let headerArr: TablebergCellInstance[] = [];
-        let colCount = Math.max(
-            breakpoint?.stackCount || 1,
-            1
-        );
+        let colCount = Math.max(breakpoint?.stackCount || 1, 1);
 
         if (attributes.enableTableHeader && breakpoint?.headerAsCol) {
             colCount++;
@@ -112,7 +114,7 @@ export default function StackRowTable(
 
                 let style = {};
                 if (rowCount % attributes.cols === 0) {
-                    style = { borderTop: "5px dashed gray" };
+                    style = { borderTop: "3px solid gray" };
                 }
 
                 tmplates.push(
@@ -131,13 +133,17 @@ export default function StackRowTable(
         }
 
         storeActions.replaceInnerBlocks(clientId, newCells);
+        storeActions.updateBlockAttributes(clientId, {
+            cells: newCells.length
+        });
         setRowTemplates(tmplates);
         setColUpt((old) => old + 1);
+        
     }, [
         attributes.cells,
         attributes.enableTableHeader,
         breakpoint?.stackCount,
-        breakpoint?.headerAsCol
+        breakpoint?.headerAsCol,
     ]);
 
     useEffect(() => {
