@@ -350,14 +350,6 @@ function TablebergControls(
             <InspectorControls group="settings">
                 <PanelBody title="Responsiveness Settings" initialOpen={true}>
                     <BaseControl __nextHasNoMarginBottom>
-                        <Notice
-                            className="add-margin-bottom"
-                            isDismissible={false}
-                        >
-                            Use the block editor preview modes to configure and
-                            preview the table at different breakpoints
-                        </Notice>
-
                         <SelectControl
                             label="Preview Mode"
                             value={preview}
