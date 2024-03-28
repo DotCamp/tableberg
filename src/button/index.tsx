@@ -36,11 +36,8 @@ import {
 
 import "./style.scss";
 import { link, linkOff } from "@wordpress/icons";
-import {
-    ColorSettings,
-    ColorSettingsWithGradient,
-    SpacingControl,
-} from "../components";
+import ColorControl from "../components/ColorControl"
+import SpacingControl from "../components/SpacingControl";
 import { __ } from "@wordpress/i18n";
 import { getStyleClass } from "./get-classes";
 import { ButtonBlockTypes } from "./type";
@@ -265,23 +262,57 @@ function edit({
             </BlockControls>
 
             <InspectorControls group="color">
-                <ColorSettings
-                    attrKey="textColor"
+                <ColorControl
                     label={__("Text", "tableberg")}
+                    colorValue={attributes.textColor}
+                    onColorChange={(newValue) => setAttributes(
+                        { textColor: newValue }
+                    )}
+                    onDeselect={() => setAttributes({
+                        textColor: undefined
+                    })}
                 />
-                <ColorSettings
-                    attrKey="textHoverColor"
+                <ColorControl
                     label={__("Hover Text", "tableberg")}
+                    colorValue={attributes.textHoverColor}
+                    onColorChange={(newValue) => setAttributes(
+                        { textHoverColor: newValue }
+                    )}
+                    onDeselect={() => setAttributes({
+                        textHoverColor: undefined
+                    })}
                 />
-                <ColorSettingsWithGradient
+                <ColorControl
                     label={__("Background Color", "tableberg")}
-                    attrBackgroundKey="backgroundColor"
-                    attrGradientKey="backgroundGradient"
+                    colorValue={attributes.backgroundColor}
+                    gradientValue={attributes.backgroundGradient}
+                    onColorChange={(newValue) => setAttributes(
+                        { backgroundColor: newValue }
+                    )}
+                    allowGradient
+                    onGradientChange={(newValue) => setAttributes(
+                        { backgroundGradient: newValue }
+                    )}
+                    onDeselect={() => setAttributes({
+                        backgroundColor: undefined,
+                        backgroundGradient: undefined
+                    })}
                 />
-                <ColorSettingsWithGradient
+                <ColorControl
                     label={__("Hover Background Color", "tableberg")}
-                    attrBackgroundKey="backgroundHoverColor"
-                    attrGradientKey="backgroundHoverGradient"
+                    colorValue={attributes.backgroundHoverColor}
+                    gradientValue={attributes.backgroundHoverGradient}
+                    onColorChange={(newValue) => setAttributes(
+                        { backgroundHoverColor: newValue }
+                    )}
+                    allowGradient
+                    onGradientChange={(newValue) => setAttributes(
+                        { backgroundHoverGradient: newValue }
+                    )}
+                    onDeselect={() => setAttributes({
+                        backgroundHoverColor: undefined,
+                        backgroundHoverGradient: undefined
+                    })}
                 />
             </InspectorControls>
             <InspectorControls>
@@ -293,10 +324,12 @@ function edit({
 
             <InspectorControls group="dimensions">
                 <SpacingControl
-                    attrKey="padding"
+                    value={attributes.padding}
                     label={__("Padding", "tableberg")}
+                    onChange={(val) => setAttributes({ padding: val })}
                     sides={["horizontal", "vertical"]}
-                    showByDefault
+                    onDeselect={() => setAttributes({ padding: {} })}
+                    isShownByDefault
                 />
             </InspectorControls>
 

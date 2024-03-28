@@ -1,3 +1,5 @@
+import { Borders } from "@wordpress/components/build-types/border-box-control/types";
+import { Border } from "@wordpress/components/build-types/border-control/types";
 import { RefObject } from "react";
 
 interface MediaSize {
@@ -71,6 +73,13 @@ export interface AttributesTypes {
     linkDestination: string;
     rel: string;
     linkTarget: string;
+    border: Border | Borders;
+    borderRadius: {
+        topLeft: string;
+        topRight: string;
+        bottomLeft: string;
+        bottomRight: string;
+    }
 }
 export interface MainPropTypes {
     attributes: AttributesTypes;

@@ -1,10 +1,12 @@
 /**
  * Wordpress Dependencies
  */
-import { InspectorControls } from "@wordpress/block-editor";
+import {
+    InspectorControls, useBlockEditContext,
+    __experimentalBorderRadiusControl as BorderRadiusControl,
+} from "@wordpress/block-editor";
 import { useMemo } from "react";
 import {
-    PanelBody,
     SelectControl,
     TextareaControl,
     __experimentalToolsPanel as ToolsPanel,
@@ -12,6 +14,7 @@ import {
     __experimentalToolsPanelItem as ToolsPanelItem,
     __experimentalToggleGroupControl as ToggleGroupControl,
     __experimentalToggleGroupControlOption as ToggleGroupControlOption,
+    BaseControl,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 /***
@@ -23,9 +26,11 @@ import {
     DEFAULT_SCALE_OPTIONS,
     DEFAULT_SIZE_SLUG_OPTIONS,
 } from "./constants";
-import { BorderControl } from "../components";
+import BorderControl from "../components/BorderControl";
+import { isEmpty } from "lodash";
 
 function Inspector(props: MainPropTypes) {
+    const { clientId } = useBlockEditContext();
     const { attributes, setAttributes } = props;
     const { alt, aspectRatio, height, scale, width, sizeSlug } = attributes;
     const resetAll = () => {
@@ -48,6 +53,17 @@ function Inspector(props: MainPropTypes) {
         }, {});
     }, [scaleOptions]);
     const aspectRatioOptions = DEFAULT_ASPECT_RATIO_OPTIONS;
+
+    function splitBorderRadius(value: string | object) {
+        const isValueMixed = typeof value === "string";
+        const splittedBorderRadius = {
+            topLeft: value,
+            topRight: value,
+            bottomLeft: value,
+            bottomRight: value,
+        };
+        return isValueMixed ? splittedBorderRadius : value;
+    }
 
     return (
         <>
@@ -196,12 +212,40 @@ function Inspector(props: MainPropTypes) {
 
             <InspectorControls group="border">
                 <BorderControl
-                    attrBorderKey="border"
-                    attrBorderRadiusKey="borderRadius"
-                    borderLabel={__("Border", "tableberg")}
-                    borderRadiusLabel={__("Border Radius")}
+                    value={attributes.border}
+                    label={__("Border", "tableberg")}
+                    onChange={
+                        (newBorder) => setAttributes({ border: newBorder })
+                    }
+                    onDeselect={() => setAttributes({ border: undefined })}
                 />
-            </InspectorControls>
+                <ToolsPanelItem
+                    panelId={clientId}
+                    isShownByDefault={true}
+                    resetAllFilter={() =>
+                        setAttributes({ borderRadius: undefined })
+                    }
+                    label="Border Radius"
+                    hasValue={() => !isEmpty(attributes.borderRadius)}
+                    onDeselect={() => {
+                        setAttributes({ borderRadius: undefined });
+                    }}
+                >
+                    <BaseControl.VisualLabel as="legend">
+                        Border Radius
+                    </BaseControl.VisualLabel>
+                    <div className="tableberg-custom-border-radius-control">
+                        <BorderRadiusControl
+                            values={attributes.borderRadius}
+                            onChange={(newBorderRadii: any) => {
+                                setAttributes({
+                                    borderRadius: splitBorderRadius(newBorderRadii),
+                                });
+                            }}
+                        />
+                    </div>
+                </ToolsPanelItem>
+            </InspectorControls >
         </>
     );
 }

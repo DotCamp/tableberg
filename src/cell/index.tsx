@@ -41,10 +41,10 @@ import "./style.scss";
 import "./editor.scss";
 
 import metadata from "./block.json";
-import { Fragment, useEffect, useRef } from "react";
-import CellControls from "./controls";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
+import TablebergControls from "../controls";
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
@@ -350,7 +350,7 @@ const useMerging = (
         return select(blockEditorStore) as BlockEditorStoreSelectors;
     }, []);
 
-    const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
+    const elClickEvt = function(this: HTMLElement, evt: MouseEvent) {
         if (!evt.shiftKey) {
             if (getIndexes(tableBlock.clientId)) {
                 endCellMultiSelect(tableBlock.clientId);
@@ -641,40 +641,46 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         blockEditorStore
     ) as BlockEditorStoreActions;
 
-    const { storeSelect, tableBlock, tableBlockId, childBlocks, isOddRow, isHeaderRow, isFooterRow } =
-        useSelect((select) => {
-            const storeSelect = select(
-                blockEditorStore
-            ) as BlockEditorStoreSelectors;
+    const {
+        storeSelect,
+        tableBlock,
+        childBlocks,
+        isOddRow,
+        isHeaderRow,
+        isFooterRow
+    } = useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore
+        ) as BlockEditorStoreSelectors;
 
-            const parentBlocks = storeSelect.getBlockParents(clientId);
+        const parentBlocks = storeSelect.getBlockParents(clientId);
 
-            const tableBlockId = parentBlocks.find(
-                (parentId: string) =>
-                    storeSelect.getBlockName(parentId) === "tableberg/table"
-            )!;
+        const tableBlockId = parentBlocks.find(
+            (parentId: string) =>
+                storeSelect.getBlockName(parentId) === "tableberg/table"
+        )!;
 
-            const tableBlock: BlockInstance<TablebergBlockAttrs> =
-                storeSelect.getBlock(tableBlockId)! as any;
+        const tableBlock: BlockInstance<TablebergBlockAttrs> =
+            storeSelect.getBlock(tableBlockId)! as any;
 
-            const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
+        const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
 
-            const headerEnabled = tableBlock.attributes.enableTableHeader;
+        const headerEnabled = tableBlock.attributes.enableTableHeader;
 
-            return {
-                storeSelect,
-                tableBlock,
-                tableBlockId,
-                childBlocks,
-                isOddRow:
-                    (attributes.row +
-                        ( headerEnabled? 0 : 1)) %
-                        2 ==
-                    1,
-                isHeaderRow: headerEnabled && attributes.row === 0,
-                isFooterRow: tableBlock.attributes.enableTableFooter && attributes.row + 1 === tableBlock.attributes.rows
-            };
-        }, []);
+        return {
+            storeSelect,
+            tableBlock,
+            tableBlockId,
+            childBlocks,
+            isOddRow:
+                (attributes.row +
+                    (headerEnabled ? 0 : 1)) %
+                2 ==
+                1,
+            isHeaderRow: headerEnabled && attributes.row === 0,
+            isFooterRow: tableBlock.attributes.enableTableFooter && attributes.row + 1 === tableBlock.attributes.rows
+        };
+    }, []);
     const {
         isMergable,
         addMergingEvt,
@@ -823,21 +829,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         setAttributes({ vAlign: newValue });
     };
 
-    const setRowHeight = (val: string) => {
-        const rowHeights = [...tableBlock.attributes.rowHeights];
-        rowHeights[attributes.row] = val;
-        storeActions.updateBlockAttributes(tableBlockId, {
-            rowHeights,
-        });
-    };
-    const setColWidth = (val: string) => {
-        const colWidths = [...tableBlock.attributes.colWidths];
-        colWidths[attributes.col] = val;
-        storeActions.updateBlockAttributes(tableBlockId, {
-            colWidths,
-        });
-    };
-
     const changeChildrenAlign = (align: BlockAlignmentToolbar.Control) => {
         childBlocks?.forEach((block) => {
             storeActions.updateBlockAttributes(block.clientId, { align });
@@ -853,7 +844,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                         if (!attributes.isTmp)
                             targetEl =
                                 rootEl?.firstElementChild?.children?.[
-                                    attributes.row + 1
+                                attributes.row + 1
                                 ];
                     } else if (attributes.responsiveTarget) {
                         targetEl = rootEl?.querySelector(
@@ -910,12 +901,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                     controls={tableControls}
                 />
             </BlockControls>
-            <CellControls
-                height={tableBlock?.attributes.rowHeights[attributes.row]}
-                setHeight={setRowHeight}
-                width={tableBlock?.attributes.colWidths[attributes.col]}
-                setWidth={setColWidth}
-            />
+            <TablebergControls clientId={clientId} />
         </>
     );
 }
