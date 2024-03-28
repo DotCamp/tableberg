@@ -32,7 +32,7 @@ import {
     SpacingControl,
 } from "./components";
 import { ColorSettingsWithGradient } from "./components";
-import { dispatch } from "@wordpress/data";
+import { useDispatch } from "@wordpress/data";
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -130,6 +130,10 @@ function TablebergControls(
             },
         });
     };
+
+    const editorActions = useDispatch("core/editor");
+    const siteEditorActions = useDispatch("core/edit-site");
+    const postEditorActions = useDispatch("core/edit-post");
 
     return (
         <>
@@ -365,12 +369,12 @@ function TablebergControls(
                             onChange={async (previewMode: any) => {
                                 previewMode = (previewMode as string).charAt(0).toUpperCase() + previewMode.slice(1)
                                 // prettier-ignore
-                                if (dispatch("core/editor")?.setDeviceType){
-                                    dispatch("core/editor").setDeviceType(previewMode);
-                                } else if (dispatch("core/edit-site")?.__experimentalSetPreviewDeviceType) {
-                                    dispatch("core/edit-site").__experimentalSetPreviewDeviceType(previewMode);
-                                } else if (dispatch("core/edit-post")?.__experimentalSetPreviewDeviceType) {
-                                    dispatch("core/edit-post").__experimentalSetPreviewDeviceType(previewMode);
+                                if (editorActions?.setDeviceType){
+                                    editorActions.setDeviceType(previewMode);
+                                } else if (siteEditorActions?.__experimentalSetPreviewDeviceType) {
+                                    siteEditorActions.__experimentalSetPreviewDeviceType(previewMode);
+                                } else if (postEditorActions?.__experimentalSetPreviewDeviceType) {
+                                    postEditorActions.__experimentalSetPreviewDeviceType(previewMode);
                                 }
                             }}
                         />
