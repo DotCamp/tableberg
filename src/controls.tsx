@@ -119,7 +119,7 @@ function TablebergControls(
     return (
         <>
             {(!isTableControls && cellBlock) &&
-                <InspectorControls group="styles">
+                <InspectorControls>
                     <ToolsPanel
                         label={__("Cell Settings", "tableberg")}
                         resetAll={() => {
