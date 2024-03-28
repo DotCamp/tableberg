@@ -13,4 +13,4 @@ if ! wp plugin is-active tableberg; then
     echo "Activating plugin...";
     wp plugin activate tableberg --allow-root 
 fi
-exec "$@"\
+exec "$@"
