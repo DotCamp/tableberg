@@ -28,7 +28,7 @@ import { FormEvent, useEffect, useRef, useState, createContext } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs } from "./types";
 import exampleImage from "./example.png";
-import blockIcon from "./components/icon";
+import blockIcon from "@tableberg/components/icon";
 import { TablebergCellInstance } from "./cell";
 import { PrimaryTable } from "./table";
 import StackRowTable from "./table/StackRowTable";

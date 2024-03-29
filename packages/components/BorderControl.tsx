@@ -4,6 +4,7 @@
 import { isEmpty } from "lodash";
 import { __ } from "@wordpress/i18n";
 import {
+    // @ts-expect-error false negative
     useBlockEditContext,
     store as BlockEditorStore,
 } from "@wordpress/block-editor";
@@ -37,6 +38,7 @@ function BorderControl({
     const { defaultColors } = useSelect((select) => {
         return {
             defaultColors: (
+                // @ts-expect-error xxxx
                 select(BlockEditorStore) as BlockEditorStoreSelectors
             ).getSettings()?.__experimentalFeatures?.color?.palette?.default,
         };

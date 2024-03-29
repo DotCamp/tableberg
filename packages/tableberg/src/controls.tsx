@@ -25,10 +25,12 @@ import {
 import { ResponsiveOptions, TablebergBlockAttrs } from "./types";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ResponsiveControls } from "./responsiveControls";
-import BorderControl from "./components/BorderControl";
-import SpacingControl from "./components/SpacingControl";
-import ColorControl from "./components/ColorControl";
-import ColorPickerDropdown from "./components/ColorPickerDropdown";
+import {
+    BorderControl,
+    SpacingControl,
+    ColorControl,
+    ColorPickerDropdown,
+} from "@tableberg/components";
 
 const AVAILABLE_JUSTIFICATIONS = [
     {

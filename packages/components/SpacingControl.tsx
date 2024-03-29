@@ -1,3 +1,4 @@
+// @ts-expect-error
 import { useBlockEditContext, __experimentalSpacingSizesControl as SpacingSizesControl } from "@wordpress/block-editor";
 import { __experimentalToolsPanelItem as ToolsPanelItem } from "@wordpress/components";
 

@@ -4,8 +4,11 @@
 import { useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 import {
+    // @ts-expect-error
     useBlockEditContext,
+    // @ts-expect-error
     __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
+    // @ts-expect-error
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
@@ -41,6 +44,7 @@ function ColorSetting({
         defaultColors, themeColors, defaultGradients, themeGradients
     } = useSelect((select) => {
         const colorSettings = (
+            // @ts-expect-error
             select(blockEditorStore) as BlockEditorStoreSelectors
         ).getSettings()?.__experimentalFeatures?.color;
         return {

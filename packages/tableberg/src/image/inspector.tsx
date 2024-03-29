@@ -26,7 +26,7 @@ import {
     DEFAULT_SCALE_OPTIONS,
     DEFAULT_SIZE_SLUG_OPTIONS,
 } from "./constants";
-import BorderControl from "../components/BorderControl";
+import { BorderControl } from "@tableberg/components";
 import { isEmpty } from "lodash";
 
 function Inspector(props: MainPropTypes) {

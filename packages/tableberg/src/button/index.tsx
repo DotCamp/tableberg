@@ -36,8 +36,7 @@ import {
 
 import "./style.scss";
 import { link, linkOff } from "@wordpress/icons";
-import ColorControl from "../components/ColorControl"
-import SpacingControl from "../components/SpacingControl";
+import { ColorControl, SpacingControl } from "@tableberg/components";
 import { __ } from "@wordpress/i18n";
 import { getStyleClass } from "./get-classes";
 import { ButtonBlockTypes } from "./type";
