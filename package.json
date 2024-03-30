@@ -1,14 +1,15 @@
 {
     "name": "tableberg",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
+    "version": "0.0.0",
+    "description": "Tableberg: table builder Gutenberg block",
     "scripts": {
-        "start": "pnpm --recursive --parallel run start"
+        "start": "pnpm --recursive --parallel run start",
+        "build": "pnpm --recursive --parallel run build",
+        "export": "pnpm --recursive --parallel run export"
     },
     "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "author": "Dotcamp",
+    "license": "GPL-2.0-or-later",
     "devDependencies": {
         "@types/lodash": "^4.14.202",
         "@types/node": "^20.11.13",
