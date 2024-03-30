@@ -1,0 +1,67 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "tableberg/star-rating",
+  "title": "Star Rating",
+  "category": "design",
+  "description": "Add Star ratings in your posts/pages. You can customize size, color, numbers of stars.",
+  "keywords": [
+    "star rating",
+    "review",
+    "tableberg"
+  ],
+  "parent": [
+    "tableberg/cell"
+  ],
+  "textdomain": "tableberg-pro",
+  "attributes": {
+    "blockID": {
+      "type": "string",
+      "default": ""
+    },
+    "starCount": {
+      "type": "number",
+      "default": 5
+    },
+    "starSize": {
+      "type": "number",
+      "default": 20
+    },
+    "starColor": {
+      "type": "string",
+      "default": "#FFB901"
+    },
+    "selectedStars": {
+      "type": "number",
+      "default": 0
+    },
+    "reviewText": {
+      "type": "string",
+      "default": ""
+    },
+    "reviewTextAlign": {
+      "type": "string",
+      "default": "text"
+    },
+    "reviewTextColor": {
+      "type": "string",
+      "default": ""
+    },
+    "starAlign": {
+      "type": "string",
+      "default": "left"
+    },
+    "padding": {
+      "type": "object",
+      "default": {}
+    },
+    "margin": {
+      "type": "object",
+      "default": {}
+    }
+  },
+  "supports": {},
+  "editorScript": "tableberg-pro-block-script",
+  "editorStyle": "tableberg-pro-editor-style",
+  "style": "tableberg-pro-frontend-style"
+}
