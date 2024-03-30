@@ -8,5 +8,34 @@
     },
     "keywords": [],
     "author": "",
-    "license": "ISC"
+    "license": "ISC",
+    "devDependencies": {
+        "@types/lodash": "^4.14.202",
+        "@types/node": "^20.11.13",
+        "@types/react": "^18.2.14",
+        "@types/react-dom": "^18.2.6",
+        "@types/wordpress__block-editor": "^11.5.1",
+        "@types/wordpress__blocks": "^12.5.4",
+        "@types/wordpress__editor": "^13.6.7",
+        "@wordpress/base-styles": "^4.39.0",
+        "@wordpress/scripts": "^26.6.0"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.5.1",
+        "@fortawesome/free-brands-svg-icons": "^6.5.1",
+        "@fortawesome/free-solid-svg-icons": "^6.5.1",
+        "@fortawesome/react-fontawesome": "^0.2.0",
+        "@wordpress/api-fetch": "^6.45.0",
+        "@wordpress/components": "^25.3.0",
+        "@wordpress/blob": "^3.37.0",
+        "@wordpress/compose": "^6.18.0",
+        "@wordpress/data": "^9.7.0",
+        "@wordpress/editor": "^13.25.0",
+        "@wordpress/i18n": "^4.37.0",
+        "@wordpress/icons": "^9.28.0",
+        "@wordpress/url": "^3.42.0",
+        "classnames": "^2.3.2",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    }
 }
