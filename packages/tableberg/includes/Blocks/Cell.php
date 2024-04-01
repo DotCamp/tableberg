@@ -80,7 +80,7 @@ class Cell
 	{
 		$defaults = new \Tableberg\Defaults();
 		register_block_type(
-			TABLEBERG_DIR_PATH . 'build/cell/block.json',
+			TABLEBERG_DIR_PATH . 'src/cell/block.json',
 			array(
 				'attributes' => $defaults->get_default_attributes('tableberg/cell'),
 				'render_callback' => array($this, 'render_tableberg_cell_block'),

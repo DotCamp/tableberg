@@ -233,7 +233,7 @@ class Image {
 	 */
 	public function block_registration() {
 		register_block_type(
-			TABLEBERG_DIR_PATH . 'build/image/block.json',
+			TABLEBERG_DIR_PATH . 'src/image/block.json',
 			array(
 				'render_callback' => array( $this, 'render_tableberg_image_block' ),
 			)

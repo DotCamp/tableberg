@@ -14,6 +14,7 @@
         "tableberg.php"
     ],
     "scripts": {
+        "dev": "vite build --watch",
         "build": "wp-scripts build",
         "export": "wp-scripts build && wp-scripts plugin-zip",
         "start": "wp-scripts start",

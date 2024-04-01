@@ -262,7 +262,7 @@ class Table
 			$tableberg_assets->register_frontend_assets();
 		}
 		register_block_type(
-			TABLEBERG_DIR_PATH . 'build/block.json',
+			TABLEBERG_DIR_PATH . 'src/block.json',
 			array(
 				'attributes' => $defaults->get_default_attributes('tableberg/table'),
 				'render_callback' => array($this, 'render_tableberg_table_block'),

@@ -18,8 +18,12 @@
         "@types/wordpress__block-editor": "^11.5.1",
         "@types/wordpress__blocks": "^12.5.4",
         "@types/wordpress__editor": "^13.6.7",
+        "@vitejs/plugin-react": "^4.2.1",
         "@wordpress/base-styles": "^4.39.0",
-        "@wordpress/scripts": "^26.6.0"
+        "@wordpress/scripts": "^26.6.0",
+        "sass": "^1.72.0",
+        "vite": "^5.2.0",
+        "vite-plugin-externals": "^0.6.2"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.5.1",
@@ -27,8 +31,8 @@
         "@fortawesome/free-solid-svg-icons": "^6.5.1",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@wordpress/api-fetch": "^6.45.0",
-        "@wordpress/components": "^25.3.0",
         "@wordpress/blob": "^3.37.0",
+        "@wordpress/components": "^25.3.0",
         "@wordpress/compose": "^6.18.0",
         "@wordpress/data": "^9.7.0",
         "@wordpress/editor": "^13.25.0",

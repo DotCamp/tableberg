@@ -63,6 +63,17 @@ class Assets
 			Constants::plugin_version(),
 			false
 		);
+
+		
+		add_filter( 'script_loader_tag', function( $tag, $handle, $source ){
+		    if ( 'tableberg-script' === $handle ) {
+		        $tag = '<script type="module" src="' . $source . '" id="tableberg-script"></script>';
+		    } else if ( 'tableberg-admin-script' === $handle ) {
+		        $tag = '<script type="module" src="' . $source . '" id="tableberg-admin-script"></script>';
+		    }
+		
+		    return $tag;
+		}, 10, 3 );
 	}
 	/**
 	 * Enqueue Admin assets

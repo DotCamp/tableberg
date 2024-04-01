@@ -193,7 +193,7 @@ class Button {
 	 */
 	public function block_registration() {
 		register_block_type(
-			TABLEBERG_DIR_PATH . 'build/button/block.json',
+			TABLEBERG_DIR_PATH . 'src/button/block.json',
 			array(
 				'render_callback' => array( $this, 'render_tableberg_button_block' ),
 			)
