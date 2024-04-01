@@ -1,0 +1,30 @@
+{
+     "$schema": "https://schemas.wp.org/trunk/block.json",
+     "apiVersion": 3,
+     "name": "tableberg/html",
+     "title": "Custom HTML",
+     "category": "widgets",
+     "description": "Add custom HTML code and preview it as you edit.",
+     "keywords": [
+          "embed",
+          "html",
+          "tableberg"
+     ],
+     "textdomain": "tableberg-pro",
+     "parent": [
+          "tableberg/cell"
+     ],
+     "attributes": {
+          "content": {
+               "type": "string"
+          }
+     },
+     "supports": {
+          "customClassName": false,
+          "className": false,
+          "html": false
+     },
+     "editorScript": "tableberg-pro-block-script",
+     "editorStyle": "tableberg-pro-editor-style",
+     "style": "tableberg-pro-frontend-style"
+}
