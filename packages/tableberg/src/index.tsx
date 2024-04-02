@@ -39,12 +39,6 @@ import StackRowTable from "./table/StackRowTable";
 import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
 
-/**
- * Style Imports
- */
-
-import "./style.scss";
-import "./tableberg-editor-style.scss";
 import {
     registerTablebergPreviewDeviceChangeObserver,
     tablebergGetLastDevice,

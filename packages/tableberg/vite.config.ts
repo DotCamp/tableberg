@@ -34,7 +34,8 @@ export default defineConfig({
                 "src/index.tsx",
                 "src/cell/index.tsx",
                 "src/image/index.tsx",
-                "src/button/index.tsx"
+                "src/button/index.tsx",
+                "src/frontend/index.ts"
             ],
         },
     },

@@ -1,4 +1,5 @@
 <?php
+use Tableberg\Assets;
 
 /**
  * Plugin Name:       Tableberg
@@ -90,6 +91,8 @@ if (!class_exists('Tableberg')) {
 			new Tableberg\Blocks\Cell();
 			register_activation_hook(__FILE__, array($this, 'activate_plugin'));
 			register_deactivation_hook(__FILE__, array($this, 'deactivate_plugin'));
+
+			Assets::enqueue();
 		}
 
 		/**

@@ -8,7 +8,6 @@
 namespace Tableberg\Blocks;
 
 use Tableberg;
-use Tableberg\Assets;
 use Tableberg\Utils\Utils;
 use Tableberg\Utils\HtmlUtils;
 use WP_Block;
@@ -264,9 +263,5 @@ class Table
 				'render_callback' => array($this, 'render_tableberg_table_block'),
 			)
 		);
-
-		add_action('enqueue_block_editor_assets', function(){
-			Assets::enqueue_blocks_assets();
-		});
 	}
 }
