@@ -135,8 +135,5 @@
             "isExample": true
         }
     },
-    "textdomain": "tableberg",
-    "editorScript": "tableberg-script",
-    "editorStyle": "tableberg-editor-style",
-    "style": "tableberg-style"
+    "textdomain": "tableberg"
 }

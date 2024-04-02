@@ -35,7 +35,6 @@ import {
 import classNames from "classnames";
 
 import { store as tbStore } from "../store";
-import { TablebergCtx } from "../";
 
 import "./style.scss";
 import "./editor.scss";
@@ -45,6 +44,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
 import TablebergControls from "../controls";
+import { TablebergCtx } from "../store/contexts";
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
@@ -637,9 +637,9 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     const cellRef = useRef<HTMLTableCellElement>();
     useBlockEditingMode(attributes.isTmp ? "disabled" : "default");
 
-    const storeActions = useDispatch(
+    const storeActions: BlockEditorStoreActions = useDispatch(
         blockEditorStore
-    ) as BlockEditorStoreActions;
+    ) as any;
 
     const {
         storeSelect,

@@ -175,8 +175,8 @@ class Tableberg_Admin
      */
     public function enqueue_admin_script()
     {
-        $tableberg_assets = new Tableberg\Assets();
-        $tableberg_assets->register_admin_assets();
+        // $tableberg_assets = new Tableberg\Assets();
+        // $tableberg_assets->register_admin_assets();
     }
 
     /**

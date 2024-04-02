@@ -27,20 +27,15 @@ export default defineConfig({
         react()
     ],
     build: {
+        manifest: true,
         outDir: "build",
         rollupOptions: {
-            input: {
-                "tableberg-admin": "src/admin/index.jsx",
-                "tableberg-admin-style": "src/admin/tableberg-admin-style.scss",
-                tableberg: "src/tableberg.tsx",
-                style: "src/style.scss",
-                "tableberg-editor-style": "src/tableberg-editor-style.scss",
-                "tableberg-frontend-style": "src/tableberg-frontend-style.scss",
-            },
-            output: {
-                entryFileNames: "[name].build.js",
-                assetFileNames: "[name].[ext]",
-            },
+            input: [
+                "src/index.tsx",
+                "src/cell/index.tsx",
+                "src/image/index.tsx",
+                "src/button/index.tsx"
+            ],
         },
     },
 });

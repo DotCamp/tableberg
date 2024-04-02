@@ -8,6 +8,7 @@
 namespace Tableberg\Blocks;
 
 use Tableberg;
+use Tableberg\Assets;
 use Tableberg\Utils\Utils;
 use Tableberg\Utils\HtmlUtils;
 use WP_Block;
@@ -256,11 +257,6 @@ class Table
 	public function block_registration()
 	{
 		$defaults         = new \Tableberg\Defaults();
-		$tableberg_assets = new \Tableberg\Assets();
-		$tableberg_assets->register_blocks_assets();
-		if (!is_admin()) {
-			$tableberg_assets->register_frontend_assets();
-		}
 		register_block_type(
 			TABLEBERG_DIR_PATH . 'src/block.json',
 			array(
@@ -268,5 +264,9 @@ class Table
 				'render_callback' => array($this, 'render_tableberg_table_block'),
 			)
 		);
+
+		add_action('enqueue_block_editor_assets', function(){
+			Assets::enqueue_blocks_assets();
+		});
 	}
 }
