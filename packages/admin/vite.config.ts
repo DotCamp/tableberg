@@ -16,15 +16,15 @@ export default defineConfig({
         rollupOptions: {
             external: ["lodash"],
             output: {
+                globals: {
+                    lodash: "lodash"
+                },
                 assetFileNames: (assetInfo) => {
                     if (assetInfo.name === "style.css") {
                         return "tableberg-admin-style.css";
                     }
                     return assetInfo.name as string;
                 },
-                globals: {
-                    lodash: "lodash"
-                }
             },
         },
     },
