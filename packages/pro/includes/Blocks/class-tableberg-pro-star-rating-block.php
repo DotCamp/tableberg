@@ -1,4 +1,5 @@
 <?php
+use Tableberg\Utils\Utils;
 /**
  * Register Star rating block
  *
@@ -25,7 +26,6 @@ class Star_Rating {
 	 * @return string Generated CSS styles.
 	 */
 	public static function get_styles( $attributes ) {
-		require_once TABLEBERG_PRO_DIR_PATH . 'includes/class-tableberg-pro-utilities.php';
 
 		$utils   = new Utils();
 		$padding = $utils->get_spacing_css( $attributes['padding'] );

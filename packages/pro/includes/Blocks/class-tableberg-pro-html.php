@@ -1,4 +1,5 @@
 <?php
+use Tableberg\Utils\Utils;
 /**
  * Register HTML
  *

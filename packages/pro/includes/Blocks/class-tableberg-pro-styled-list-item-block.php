@@ -1,4 +1,5 @@
 <?php
+use Tableberg\Utils\Utils;
 /**
  * Register Styled list item
  *
@@ -25,7 +26,6 @@ class Styled_List_Item {
 	 * @return string Generated CSS styles.
 	 */
 	public static function get_styles( $attributes ) {
-		require_once TABLEBERG_PRO_DIR_PATH . 'includes/class-tableberg-pro-utilities.php';
 
 		$utils   = new Utils();
 		$padding = $utils->get_spacing_css( isset( $attributes['padding'] ) ? $attributes['padding'] : array() );
