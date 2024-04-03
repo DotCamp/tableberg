@@ -56,4 +56,14 @@ if ( ! class_exists( 'Tableberg_Pro_Main' ) ) {
 	}
 
 	new Tableberg_Pro_Main();
+
+	add_filter( 'block_type_metadata', function($metadata){
+		if ($metadata['name'] === 'tableberg/cell') {
+			$metadata['attributes']['isPro'] = [
+				'type' => 'boolean',
+				'default' => true
+			];
+		}
+		return $metadata;
+	});
 }

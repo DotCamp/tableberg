@@ -31,6 +31,7 @@ import {
     ColorControl,
     ColorPickerDropdown,
 } from "@tableberg/components";
+import { TablebergCellBlockAttrs } from "./cell";
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -50,14 +51,24 @@ const AVAILABLE_JUSTIFICATIONS = [
     },
 ];
 
-function TablebergControls(
-    { clientId, preview }: {
-        clientId: string;
-        preview?: keyof ResponsiveOptions["breakpoints"];
-    }
-) {
-    const { isTableControls, tableAttributes, tableBlockClientId, cellBlock, themeColors } = useSelect((select) => {
-        const storeSelect = select(blockEditorStore) as BlockEditorStoreSelectors;
+function TablebergControls({
+    clientId,
+    preview,
+}: {
+    clientId: string;
+    preview?: keyof ResponsiveOptions["breakpoints"];
+}) {
+    const {
+        isTableControls,
+        tableAttributes,
+        tableBlockClientId,
+        cellBlock,
+        themeColors,
+        cellAttrs,
+    } = useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore,
+        ) as BlockEditorStoreSelectors;
         const currentBlock = storeSelect.getBlock(clientId)!;
         const isTableControls = currentBlock?.name === "tableberg/table";
 
@@ -65,10 +76,11 @@ function TablebergControls(
         let cellBlock = null;
 
         if (!isTableControls) {
-            const parentBlocks = storeSelect.getBlockParents(clientId)
+            const parentBlocks = storeSelect.getBlockParents(clientId);
             const tableBlockClientId = parentBlocks.find(
                 (blockClientId) =>
-                    storeSelect.getBlock(blockClientId)?.name === "tableberg/table"
+                    storeSelect.getBlock(blockClientId)?.name ===
+                    "tableberg/table",
             )!;
 
             tableBlock = storeSelect.getBlock(tableBlockClientId)!;
@@ -82,22 +94,37 @@ function TablebergControls(
             tableAttributes,
             tableBlockClientId: tableBlock.clientId,
             cellBlock,
-            themeColors: storeSelect.getSettings()?.__experimentalFeatures?.color.palette.theme,
-        }
-    }, [])
+            themeColors:
+                storeSelect.getSettings()?.__experimentalFeatures?.color.palette
+                    .theme,
+            cellAttrs: cellBlock?.attributes as
+                | TablebergCellBlockAttrs
+                | undefined,
+        };
+    }, []);
 
     const {
-        enableInnerBorder, tableAlignment, cellPadding, cellSpacing,
-        fontColor, linkColor, fontSize
+        enableInnerBorder,
+        tableAlignment,
+        cellPadding,
+        cellSpacing,
+        fontColor,
+        linkColor,
+        fontSize,
     } = tableAttributes;
 
     const { updateBlockAttributes } = useDispatch(
-        blockEditorStore
+        blockEditorStore,
     ) as BlockEditorStoreActions;
 
-    const setTableAttributes = (attributes: Record<string, any>) => {
+    const setTableAttributes = (attributes: Partial<TablebergBlockAttrs>) => {
         updateBlockAttributes(tableBlockClientId, attributes);
-    }
+    };
+    const setCellAttributes = (attributes: Partial<TablebergCellBlockAttrs>) => {
+        console.log(attributes);
+        
+        updateBlockAttributes(cellBlock!.clientId, attributes);
+    };
 
     const setHeight = (val: string) => {
         if (!cellBlock) {
@@ -120,75 +147,135 @@ function TablebergControls(
 
     return (
         <>
-            {(!isTableControls && cellBlock) &&
-                <InspectorControls>
-                    <ToolsPanel
-                        label={__("Cell Settings", "tableberg")}
-                        resetAll={() => {
-                            setHeight("");
-                            setWidth("");
-                        }}
-                    >
-                        <ToolsPanelItem
-                            label={__("Column Width", "tableberg")}
-                            hasValue={() => true}
+            {!isTableControls && cellBlock && (
+                <>
+                    <InspectorControls>
+                        <ToolsPanel
+                            label={__("Cell Settings", "tableberg")}
+                            resetAll={() => {
+                                setHeight("");
+                                setWidth("");
+                            }}
                         >
-                            <HeightControl
-                                value={tableAttributes.colWidths[cellBlock.attributes.col] as any}
+                            <ToolsPanelItem
                                 label={__("Column Width", "tableberg")}
-                                onChange={setWidth}
-                            />
-                        </ToolsPanelItem>
-                        <ToolsPanelItem
-                            label={__("Row Height", "tableberg")}
-                            hasValue={() => true}
-                        >
-                            <HeightControl
-                                value={tableAttributes.rowHeights[cellBlock.attributes.row] as any}
+                                hasValue={() => true}
+                            >
+                                <HeightControl
+                                    value={
+                                        tableAttributes.colWidths[
+                                            cellBlock.attributes.col
+                                        ] as any
+                                    }
+                                    label={__("Column Width", "tableberg")}
+                                    onChange={setWidth}
+                                />
+                            </ToolsPanelItem>
+                            <ToolsPanelItem
                                 label={__("Row Height", "tableberg")}
-                                onChange={setHeight}
+                                hasValue={() => true}
+                            >
+                                <HeightControl
+                                    value={
+                                        tableAttributes.rowHeights[
+                                            cellBlock.attributes.row
+                                        ] as any
+                                    }
+                                    label={__("Row Height", "tableberg")}
+                                    onChange={setHeight}
+                                />
+                            </ToolsPanelItem>
+                        </ToolsPanel>
+                    </InspectorControls>
+                    {cellAttrs?.isPro && (
+                        <InspectorControls group="color">
+                            <ColorControl
+                                label={__("Cell Background", "tableberg")}
+                                colorValue={cellAttrs.backgroundColor}
+                                gradientValue={cellAttrs.backgroundGradient}
+                                onColorChange={(newValue) =>
+                                    setCellAttributes({
+                                        backgroundColor: newValue
+                                    })
+                                }
+                                allowGradient
+                                onGradientChange={(newValue) =>
+                                    setCellAttributes({
+                                        backgroundGradient: newValue
+                                    })
+                                }
+                                onDeselect={() =>
+                                    setCellAttributes({
+                                        backgroundColor: undefined,
+                                        backgroundGradient: undefined
+                                    })
+                                }
                             />
-                        </ToolsPanelItem>
-                    </ToolsPanel>
-                </InspectorControls>
-            }
+                        </InspectorControls>
+                    )}
+                </>
+            )}
             <InspectorControls>
-                <PanelBody
-                    title="Header Settings"
-                >
+                <PanelBody title="Header Settings">
                     <ToggleControl
                         checked={tableAttributes.enableTableHeader === ""}
                         label="Disable Header"
-                        onChange={(val) => { setTableAttributes({ enableTableHeader: val ? "" : "added" }) }}
+                        onChange={(val) => {
+                            setTableAttributes({
+                                enableTableHeader: val ? "" : "added",
+                            });
+                        }}
                     />
                     <ToggleControl
-                        checked={tableAttributes.enableTableHeader === "converted"}
+                        checked={
+                            tableAttributes.enableTableHeader === "converted"
+                        }
                         label="Make Top Row Header"
-                        onChange={(val) => { setTableAttributes({ enableTableHeader: val ? "converted" : "" }) }}
+                        onChange={(val) => {
+                            setTableAttributes({
+                                enableTableHeader: val ? "converted" : "",
+                            });
+                        }}
                     />
                     <ToggleControl
                         checked={tableAttributes.enableTableHeader === "added"}
                         label="Insert Header"
-                        onChange={(val) => { setTableAttributes({ enableTableHeader: val ? "added" : "" }) }}
+                        onChange={(val) => {
+                            setTableAttributes({
+                                enableTableHeader: val ? "added" : "",
+                            });
+                        }}
                     />
                 </PanelBody>
-                <PanelBody
-                    title="Footer Settings"
-                >
+                <PanelBody title="Footer Settings">
                     <ToggleControl
                         checked={tableAttributes.enableTableFooter === ""}
                         label="Disable Footer"
-                        onChange={(val) => { setTableAttributes({ enableTableFooter: val ? "" : "added" }) }}
+                        onChange={(val) => {
+                            setTableAttributes({
+                                enableTableFooter: val ? "" : "added",
+                            });
+                        }}
                     />
                     <ToggleControl
-                        checked={tableAttributes.enableTableFooter === "converted"}
+                        checked={
+                            tableAttributes.enableTableFooter === "converted"
+                        }
                         label="Make Bottom Row Footer"
-                        onChange={(val) => { setTableAttributes({ enableTableFooter: val ? "converted" : "" }) }}
+                        onChange={(val) => {
+                            setTableAttributes({
+                                enableTableFooter: val ? "converted" : "",
+                            });
+                        }}
                     />
                     <ToggleControl
                         checked={tableAttributes.enableTableFooter === "added"}
                         label="Insert Footer"
-                        onChange={(val) => { setTableAttributes({ enableTableFooter: val ? "added" : "" }) }}
+                        onChange={(val) => {
+                            setTableAttributes({
+                                enableTableFooter: val ? "added" : "",
+                            });
+                        }}
                     />
                 </PanelBody>
                 <PanelBody>
@@ -203,18 +290,19 @@ function TablebergControls(
                         label={__("Table Alignment", "tableberg")}
                         __nextHasNoMarginBottom
                         value={tableAlignment}
-                        onChange={(newValue) => {
-                            setTableAttributes({ tableAlignment: newValue })
+                        onChange={(newValue: any) => {
+                            setTableAttributes({ tableAlignment: newValue });
                         }}
                     >
-                        {AVAILABLE_JUSTIFICATIONS.map(({ value, icon, label }) => (
-                            <ToggleGroupControlOptionIcon
-                                key={value}
-                                value={value}
-                                icon={icon}
-                                label={label}
-                            />
-                        )
+                        {AVAILABLE_JUSTIFICATIONS.map(
+                            ({ value, icon, label }) => (
+                                <ToggleGroupControlOptionIcon
+                                    key={value}
+                                    value={value}
+                                    icon={icon}
+                                    label={label}
+                                />
+                            ),
                         )}
                     </ToggleGroupControl>
                 </PanelBody>
@@ -234,50 +322,44 @@ function TablebergControls(
                     <ToolsPanelItem
                         label={__("Font Color", "tableberg")}
                         hasValue={() => !!fontColor}
-                        onDeselect={() => setTableAttributes(
-                            { fontColor: "" }
-                        )}
+                        onDeselect={() => setTableAttributes({ fontColor: "" })}
                         isShownByDefault
                     >
                         <ColorPickerDropdown
                             label={__("Font Color", "tableberg")}
                             value={tableAttributes.fontColor}
-                            onChange={(val) => setTableAttributes(
-                                { fontColor: val }
-                            )}
+                            onChange={(val) =>
+                                setTableAttributes({ fontColor: val })
+                            }
                             colors={themeColors}
                         />
                     </ToolsPanelItem>
                     <ToolsPanelItem
                         label={__("Link Color", "tableberg")}
                         hasValue={() => !!linkColor}
-                        onDeselect={() => setTableAttributes(
-                            { linkColor: "" }
-                        )}
+                        onDeselect={() => setTableAttributes({ linkColor: "" })}
                         isShownByDefault
                     >
                         <ColorPickerDropdown
                             label={__("Link Color", "tableberg")}
                             value={tableAttributes.linkColor}
-                            onChange={(val) => setTableAttributes(
-                                { linkColor: val }
-                            )}
+                            onChange={(val) =>
+                                setTableAttributes({ linkColor: val })
+                            }
                             colors={themeColors}
                         />
                     </ToolsPanelItem>
                     <ToolsPanelItem
                         label={__("Font Size", "tableberg")}
                         hasValue={() => !!fontSize}
-                        onDeselect={() => setTableAttributes(
-                            { fontSize: "" }
-                        )}
+                        onDeselect={() => setTableAttributes({ fontSize: "" })}
                         isShownByDefault
                     >
                         <FontSizePicker
                             value={tableAttributes.fontSize as any}
-                            onChange={(val) => setTableAttributes(
-                                { fontSize: val }
-                            )}
+                            onChange={(val: any) =>
+                                setTableAttributes({ fontSize: val })
+                            }
                         />
                     </ToolsPanelItem>
                 </ToolsPanel>
@@ -287,65 +369,89 @@ function TablebergControls(
                     label={__("Header Background Color", "tableberg")}
                     colorValue={tableAttributes.headerBackgroundColor}
                     gradientValue={tableAttributes.headerBackgroundGradient}
-                    onColorChange={(newValue) => setTableAttributes({
-                        headerBackgroundColor: newValue
-                    })}
+                    onColorChange={(newValue) =>
+                        setTableAttributes({
+                            headerBackgroundColor: newValue,
+                        })
+                    }
                     allowGradient
-                    onGradientChange={(newValue) => setTableAttributes({
-                        headerBackgroundGradient: newValue
-                    })}
-                    onDeselect={() => setTableAttributes({
-                        headerBackgroundColor: undefined,
-                        headerBackgroundGradient: undefined
-                    })}
+                    onGradientChange={(newValue) =>
+                        setTableAttributes({
+                            headerBackgroundGradient: newValue,
+                        })
+                    }
+                    onDeselect={() =>
+                        setTableAttributes({
+                            headerBackgroundColor: undefined,
+                            headerBackgroundGradient: undefined,
+                        })
+                    }
                 />
                 <ColorControl
                     label={__("Even Row Background Color", "tableberg")}
                     colorValue={tableAttributes.evenRowBackgroundColor}
                     gradientValue={tableAttributes.evenRowBackgroundGradient}
-                    onColorChange={(newValue) => setTableAttributes({
-                        evenRowBackgroundColor: newValue
-                    })}
+                    onColorChange={(newValue) =>
+                        setTableAttributes({
+                            evenRowBackgroundColor: newValue,
+                        })
+                    }
                     allowGradient
-                    onGradientChange={(newValue) => setTableAttributes({
-                        evenRowBackgroundGradient: newValue
-                    })}
-                    onDeselect={() => setTableAttributes({
-                        evenRowBackgroundColor: undefined,
-                        evenRowBackgroundGradient: undefined
-                    })}
+                    onGradientChange={(newValue) =>
+                        setTableAttributes({
+                            evenRowBackgroundGradient: newValue,
+                        })
+                    }
+                    onDeselect={() =>
+                        setTableAttributes({
+                            evenRowBackgroundColor: undefined,
+                            evenRowBackgroundGradient: undefined,
+                        })
+                    }
                 />
                 <ColorControl
                     label={__("Odd Row Background Color", "tableberg")}
                     colorValue={tableAttributes.oddRowBackgroundColor}
                     gradientValue={tableAttributes.oddRowBackgroundGradient}
-                    onColorChange={(newValue) => setTableAttributes({
-                        oddRowBackgroundColor: newValue
-                    })}
+                    onColorChange={(newValue) =>
+                        setTableAttributes({
+                            oddRowBackgroundColor: newValue,
+                        })
+                    }
                     allowGradient
-                    onGradientChange={(newValue) => setTableAttributes({
-                        oddRowBackgroundGradient: newValue
-                    })}
-                    onDeselect={() => setTableAttributes({
-                        oddRowBackgroundColor: undefined,
-                        oddRowBackgroundGradient: undefined
-                    })}
+                    onGradientChange={(newValue) =>
+                        setTableAttributes({
+                            oddRowBackgroundGradient: newValue,
+                        })
+                    }
+                    onDeselect={() =>
+                        setTableAttributes({
+                            oddRowBackgroundColor: undefined,
+                            oddRowBackgroundGradient: undefined,
+                        })
+                    }
                 />
                 <ColorControl
                     label={__("Footer Background Color", "tableberg")}
                     colorValue={tableAttributes.footerBackgroundColor}
                     gradientValue={tableAttributes.footerBackgroundGradient}
-                    onColorChange={(newValue) => setTableAttributes({
-                        footerBackgroundColor: newValue
-                    })}
+                    onColorChange={(newValue) =>
+                        setTableAttributes({
+                            footerBackgroundColor: newValue,
+                        })
+                    }
                     allowGradient
-                    onGradientChange={(newValue) => setTableAttributes({
-                        footerBackgroundGradient: newValue
-                    })}
-                    onDeselect={() => setTableAttributes({
-                        footerBackgroundColor: undefined,
-                        footerBackgroundGradient: undefined
-                    })}
+                    onGradientChange={(newValue) =>
+                        setTableAttributes({
+                            footerBackgroundGradient: newValue,
+                        })
+                    }
+                    onDeselect={() =>
+                        setTableAttributes({
+                            footerBackgroundColor: undefined,
+                            footerBackgroundGradient: undefined,
+                        })
+                    }
                 />
             </InspectorControls>
 
@@ -368,15 +474,11 @@ function TablebergControls(
                 <BorderControl
                     label={__("Table Border Size", "tableberg")}
                     value={tableAttributes.tableBorder}
-                    onChange={(newBorder) => {
-                        setTableAttributes(
-                            { tableBorder: newBorder }
-                        )
+                    onChange={(newBorder: any) => {
+                        setTableAttributes({ tableBorder: newBorder });
                     }}
                     onDeselect={() => {
-                        setTableAttributes(
-                            { tableBorder: undefined }
-                        )
+                        setTableAttributes({ tableBorder: undefined });
                     }}
                 />
                 <ToolsPanelItem
@@ -404,29 +506,26 @@ function TablebergControls(
                         }
                     />
                 </ToolsPanelItem>
-                {tableAttributes.enableInnerBorder &&
+                {tableAttributes.enableInnerBorder && (
                     <BorderControl
                         label={__("Inner Border Size", "tableberg")}
                         value={tableAttributes.innerBorder}
-                        onChange={(newBorder) => {
-                            setTableAttributes(
-                                { innerBorder: newBorder }
-                            )
+                        onChange={(newBorder: any) => {
+                            setTableAttributes({ innerBorder: newBorder });
                         }}
                         onDeselect={() => {
-                            setTableAttributes(
-                                { innerBorder: undefined }
-                            )
+                            setTableAttributes({ innerBorder: undefined });
                         }}
-                    />}
+                    />
+                )}
             </InspectorControls>
-            {!!preview &&
+            {!!preview && (
                 <ResponsiveControls
                     preview={preview}
                     attributes={tableAttributes}
                     setTableAttributes={setTableAttributes}
                 />
-            }
+            )}
             <BlockControls>
                 <BlockAlignmentToolbar
                     value={tableAlignment}

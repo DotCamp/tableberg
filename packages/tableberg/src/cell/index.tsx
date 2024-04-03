@@ -45,6 +45,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
 import TablebergControls from "../controls";
+import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
@@ -53,6 +54,9 @@ export interface TablebergCellBlockAttrs {
     colspan: number;
     row: number;
     col: number;
+    isPro?: boolean;
+    backgroundColor?: string;
+    backgroundGradient?: string;
     responsiveTarget: string;
     isTmp: boolean;
 }
@@ -719,6 +723,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             verticalAlign:
                 attributes.vAlign === "center" ? "middle" : attributes.vAlign,
             height: tableBlock.attributes.rowHeights[props.attributes.row],
+            background: attributes.backgroundGradient || attributes.backgroundColor
         },
         ref: cellRef,
         className: classNames(
@@ -764,7 +769,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         addMergingEvt(cellRef.current);
     }, [cellRef.current]);
 
-    const tableControls: Record<string, any>[] = [
+    const tableControls: DropdownOption[] = [
         {
             icon: tableRowBefore,
             title: "Insert row before",

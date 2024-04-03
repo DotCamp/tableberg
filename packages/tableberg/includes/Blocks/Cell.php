@@ -9,6 +9,7 @@ namespace Tableberg\Blocks;
 
 use Tableberg;
 use Tableberg\Utils\HtmlUtils;
+use Tableberg\Utils\Utils;
 
 /**
  * Handle the block registration on server side and rendering.
@@ -67,6 +68,10 @@ class Cell
 		$tagName = isset($attributes['tagName']) ? $attributes['tagName'] : 'td';
 
 		$content = HtmlUtils::append_attr_value($content, $tagName, ' '.$classes, 'class');
+		
+		if (($bg = Utils::get_background_color($attributes, 'backgroundColor', 'backgroundGradient'))) {
+			$content = HtmlUtils::append_attr_value($content, $tagName, "background: $bg;", 'style');
+		}
 
 		$content = HtmlUtils::add_attrs_to_tag($content, $tagName, $attrs_str);
 
