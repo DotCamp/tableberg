@@ -1,4 +1,5 @@
 <?php
+use Tableberg\Utils\Utils;
 /**
  * Register Styled list
  *
@@ -27,7 +28,6 @@ class Styled_List {
 	 * @return string Generated CSS styles.
 	 */
 	public static function get_styles( $attributes ) {
-		require_once TABLEBERG_PRO_DIR_PATH . 'includes/class-tableberg-pro-utilities.php';
 		if ( ! $attributes['isRootList'] ) {
 			return '';
 		}
