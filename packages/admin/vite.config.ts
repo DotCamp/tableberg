@@ -15,10 +15,12 @@ export default defineConfig({
             fileName: () => "tableberg-admin.build.js"
         },
         rollupOptions: {
-            external: ["lodash"],
+            external: ["lodash", "react", "react-dom"],
             output: {
                 globals: {
-                    lodash: "lodash"
+                    lodash: "lodash",
+                    react: "React",
+                    "react-dom": "ReactDOM"
                 },
                 assetFileNames: (assetInfo) => {
                     if (assetInfo.name === "style.css") {
