@@ -10,7 +10,7 @@ export default defineConfig({
         assetsDir: ".",
         lib: {
             entry: path.resolve(__dirname, "src/index.jsx"),
-            name: "Tableberg admin app",
+            name: "tableberg-admin-app",
             fileName: () => "tableberg-admin.build.js"
         },
         rollupOptions: {
@@ -27,8 +27,9 @@ export default defineConfig({
                 },
             },
         },
+        cssCodeSplit: false,
     },
     define: {
-        "process.env": JSON.stringify("")
+        'process.env.NODE_ENV': '"production"'
     }
 })
