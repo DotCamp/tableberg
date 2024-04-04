@@ -9,15 +9,14 @@ class ComposerStaticInita048bd17e495a8314fc80bfd0f78e45a
     public static $prefixLengthsPsr4 = array (
         'T' => 
         array (
-            'Tableberg_Pro\\' => 14,
+            'Tableberg\\Pro\\' => 14,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Tableberg_Pro\\' => 
+        'Tableberg\\Pro\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/',
-            1 => __DIR__ . '/../..' . '/includes',
+            0 => __DIR__ . '/../..' . '/includes',
         ),
     );
 

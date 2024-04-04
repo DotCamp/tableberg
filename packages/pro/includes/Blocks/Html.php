@@ -1,4 +1,8 @@
 <?php
+
+namespace Tableberg\Pro\Blocks;
+
+use Tableberg\Pro\Defaults;
 use Tableberg\Utils\Utils;
 /**
  * Register HTML
@@ -9,7 +13,7 @@ use Tableberg\Utils\Utils;
 /**
  * Manage HTML registration.
  */
-class TB_HTML {
+class Html {
 
 	/**
 	 * Constructor
@@ -26,7 +30,6 @@ class TB_HTML {
 	 * @return string Generated CSS styles.
 	 */
 	public static function get_styles( $attributes ) {
-		require_once TABLEBERG_PRO_DIR_PATH . 'includes/class-tableberg-pro-utilities.php';
 
 		$utils   = new Utils();
 		$padding = $utils->get_spacing_css( $attributes['padding'] );
@@ -62,7 +65,6 @@ class TB_HTML {
 	 * Register the block.
 	 */
 	public function block_registration() {
-		require_once TABLEBERG_PRO_DIR_PATH . 'includes/class-tableberg-pro-defaults-attributes.php';
 		$defaults = new Defaults();
 
 		register_block_type_from_metadata(
@@ -74,4 +76,3 @@ class TB_HTML {
 		);
 	}
 }
-new TB_HTML();

@@ -1,4 +1,9 @@
 <?php
+
+namespace Tableberg\Pro\Blocks;
+
+use Tableberg\Pro\Common;
+use Tableberg\Pro\Defaults;
 use Tableberg\Utils\Utils;
 /**
  * Register Star rating block
@@ -9,7 +14,7 @@ use Tableberg\Utils\Utils;
 /**
  * Manage star rating block registration.
  */
-class Star_Rating {
+class StarRating {
 
 	/**
 	 * Constructor
@@ -53,7 +58,6 @@ class Star_Rating {
 	 * @return string Returns the HTML content for the custom cell block.
 	 */
 	public function render_star_rating_block( $attributes, $content, $block ) {
-		require_once TABLEBERG_PRO_DIR_PATH . 'includes/class-tableberg-pro-common.php';
 		$common            = new Common();
 		$selected_stars    = $attributes['selectedStars'];
 		$star_count        = $attributes['starCount'];
@@ -109,7 +113,6 @@ class Star_Rating {
 	 * Register the block.
 	 */
 	public function star_rating_block_registration() {
-		require_once TABLEBERG_PRO_DIR_PATH . 'includes/class-tableberg-pro-defaults-attributes.php';
 		$defaults = new Defaults();
 
 		register_block_type_from_metadata(
@@ -121,4 +124,3 @@ class Star_Rating {
 		);
 	}
 }
-new Star_Rating();

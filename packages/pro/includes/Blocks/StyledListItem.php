@@ -1,4 +1,8 @@
 <?php
+
+namespace Tableberg\Pro\Blocks;
+
+use Tableberg\Pro\Defaults;
 use Tableberg\Utils\Utils;
 /**
  * Register Styled list item
@@ -9,7 +13,7 @@ use Tableberg\Utils\Utils;
 /**
  * Manage Styled list item registration.
  */
-class Styled_List_Item {
+class StyledListItem {
 
 	/**
 	 * Constructor
@@ -64,7 +68,6 @@ class Styled_List_Item {
 	 * Register the block.
 	 */
 	public function styled_list_item_block_registration() {
-		require_once TABLEBERG_PRO_DIR_PATH . 'includes/class-tableberg-pro-defaults-attributes.php';
 		$defaults = new Defaults();
 
 		register_block_type_from_metadata(
@@ -76,4 +79,3 @@ class Styled_List_Item {
 		);
 	}
 }
-new Styled_List_Item();

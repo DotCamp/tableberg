@@ -6,8 +6,7 @@
     "require-dev": {},
     "autoload": {
         "psr-4": {
-            "Tableberg_Pro\\": [
-                "./",
+            "Tableberg\\Pro\\": [
                 "includes/"
             ]
         }

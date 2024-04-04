@@ -1,4 +1,8 @@
 <?php
+
+namespace Tableberg\Pro\Blocks;
+
+use Tableberg\Pro\Defaults;
 use Tableberg\Utils\Utils;
 /**
  * Register Styled list
@@ -9,7 +13,7 @@ use Tableberg\Utils\Utils;
 /**
  * Manage Styled list registration.
  */
-class Styled_List {
+class StyledList {
 
 	/**
 	 * Constructor
@@ -116,6 +120,7 @@ class Styled_List {
 			}
 			return $block_stylesheets;
 		}
+		return '';
 	}
 	/**
 	 * Renders the block on the server.
@@ -233,7 +238,6 @@ class Styled_List {
 	 * Register the block.
 	 */
 	public function styled_list_block_registration() {
-		require_once TABLEBERG_PRO_DIR_PATH . 'includes/class-tableberg-pro-defaults-attributes.php';
 		$defaults = new Defaults();
 
 		register_block_type_from_metadata(
@@ -245,4 +249,3 @@ class Styled_List {
 		);
 	}
 }
-new Styled_List();
