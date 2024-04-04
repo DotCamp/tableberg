@@ -211,6 +211,9 @@ importers:
 
   packages/pro:
     dependencies:
+      '@tableberg/components':
+        specifier: workspace:*
+        version: link:../components
       clean-webpack-plugin:
         specifier: ^4.0.0
         version: 4.0.0(webpack@5.91.0)

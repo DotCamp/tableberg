@@ -2,9 +2,11 @@
 
 namespace Tableberg\Pro\Blocks;
 
+
 use Tableberg\Pro\Common;
 use Tableberg\Pro\Defaults;
 use Tableberg\Utils\Utils;
+
 /**
  * Register Star rating block
  *
@@ -14,15 +16,17 @@ use Tableberg\Utils\Utils;
 /**
  * Manage star rating block registration.
  */
-class StarRating {
+class StarRating
+{
 
 	/**
 	 * Constructor
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		add_action( 'init', array( $this, 'star_rating_block_registration' ) );
+	public function __construct()
+	{
+		add_action('init', array($this, 'star_rating_block_registration'));
 	}
 	/**
 	 * Get block styles.
@@ -30,24 +34,24 @@ class StarRating {
 	 * @param array $attributes - block attributes.
 	 * @return string Generated CSS styles.
 	 */
-	public static function get_styles( $attributes ) {
+	public static function get_styles($attributes)
+	{
 
-		$utils   = new Utils();
-		$padding = $utils->get_spacing_css( $attributes['padding'] );
-		$margin  = $utils->get_spacing_css( $attributes['margin'] );
+		$padding = Utils::get_spacing_css($attributes['padding']);
+		$margin = Utils::get_spacing_css($attributes['margin']);
 
 		$styles = array(
-			'padding-top'    => $padding['top'] ?? '',
-			'padding-right'  => $padding['right'] ?? '',
+			'padding-top' => $padding['top'] ?? '',
+			'padding-right' => $padding['right'] ?? '',
 			'padding-bottom' => $padding['bottom'] ?? '',
-			'padding-left'   => $padding['left'] ?? '',
-			'margin-top'     => $margin['top'] ?? '',
-			'margin-right'   => $margin['right'] ?? '',
-			'margin-bottom'  => $margin['bottom'] ?? '',
-			'margin-left'    => $margin['left'] ?? '',
+			'padding-left' => $padding['left'] ?? '',
+			'margin-top' => $margin['top'] ?? '',
+			'margin-right' => $margin['right'] ?? '',
+			'margin-bottom' => $margin['bottom'] ?? '',
+			'margin-left' => $margin['left'] ?? '',
 		);
 
-		return $utils->generate_css_string( $styles );
+		return Utils::generate_css_string($styles);
 	}
 	/**
 	 * Renders the custom cell block on the server.
@@ -57,69 +61,68 @@ class StarRating {
 	 * @param WP_Block $block      The block object.
 	 * @return string Returns the HTML content for the custom cell block.
 	 */
-	public function render_star_rating_block( $attributes, $content, $block ) {
-		$common            = new Common();
-		$selected_stars    = $attributes['selectedStars'];
-		$star_count        = $attributes['starCount'];
-		$star_color        = $attributes['starColor'];
-		$block_id          = $attributes['blockID'];
-		$star_size         = $attributes['starSize'];
-		$star_align        = $attributes['starAlign'];
-		$review_text       = $attributes['reviewText'];
-		$class_name        = isset( $attributes['className'] ) ? $attributes['className'] : '';
-		$review_text_align = $attributes['reviewTextAlign'];
-		$review_text_color = $attributes['reviewTextColor'];
+	public function render_star_rating_block($attributes, $content, $block)
+	{
 
-		$stars = $common->generate_star_display(
-			$selected_stars,
-			$star_count,
-			$block_id,
-			'none',
-			$star_color,
-			$star_color,
-			'',
-			'tb_star_rating_filter-',
-			$star_size
-		);
+		$style = self::get_styles($attributes);
+		$starsClassName = 'tableberg-stars';
 
-		if ( '' === $block_id ) {
-			$stars = preg_replace_callback(
-				'/<svg ([^>]+)>/',
-				function( $svg_attributes ) {
-					if ( preg_match( '/fill=\"([^"]+)\"/', $svg_attributes[1], $matches ) ) {
-						return '<svg ' . $svg_attributes[1] . ' style="fill:' . $matches[1] . ';">';
-					}
-					return $svg_attributes[0];
-				},
-				$stars
-			);
+		if (isset($attributes['starAlign'])) {
+			$align = $attributes['starAlign'];
+			if ($align !== 'left') {
+				$starsClassName .= ' tableberg-stars-' . $align;
+			}
 		}
 
-		$styles = $this->get_styles( $attributes );
-		return '<div class="tb-star-rating' . ( isset( $class_name ) ? ' ' . esc_attr( $class_name ) : '' ) .
-			'" style="' . $styles . '" ' . ( '' === $block_id ? '' : ' id="tb-star-rating-' . $block_id . '"' ) . '>
-                <div class="tb-star-outer-container"' .
-					'  style="justify-content:' . ( 'center' === $star_align ? 'center' :
-					( 'left' === 'flex-' . $star_align ? 'start' : 'end' ) ) . ';">
-                    <div class="tb-star-inner-container">' . $stars . '</div>
-                </div>' .
-				( '' === $review_text ? '' : '<div class="tb-review-text" style="text-align:' . $review_text_align . ';color:' . $review_text_color . ';">' .
-					$review_text
-				. '</div>' ) .
-			'</div>';
+
+
+		$reviewText = '';
+		$textStyle = '';
+		if (isset($attributes['reviewText'])) {
+			$reviewText = $attributes['reviewText'];
+		}
+
+		if (isset($attributes['reviewTextAlign'])) {
+			$textStyle .= 'text-align:' . $attributes['reviewTextAlign'] . ';';
+		}
+		if (isset($attributes['reviewTextColor'])) {
+			$textStyle .= 'color:' . $attributes['reviewTextColor'] . ';';
+		}
+
+
+		$stars = Common::generate_star_display(
+			$attributes['selectedStars'],
+			$attributes['starCount'],
+			'none',
+			$attributes['starColor'],
+			$attributes['starColor'],
+			$attributes['starSize']
+		);
+		
+		
+		$content = '
+		<div class="tableberg-star-rating" style="' . $style . '">
+            <div class="' . $starsClassName . '">
+                ' . $stars . '
+            </div>
+            <div style="' . $textStyle . '">' . $reviewText . '</div>
+        </div>
+		';
+		return $content;
 	}
 
 	/**
 	 * Register the block.
 	 */
-	public function star_rating_block_registration() {
+	public function star_rating_block_registration()
+	{
 		$defaults = new Defaults();
 
 		register_block_type_from_metadata(
 			TABLEBERG_PRO_DIR_PATH . 'dist/blocks/star-rating/block.json',
 			array(
-				'attributes'      => $defaults->get_default_attributes( 'tableberg/star-rating' ),
-				'render_callback' => array( $this, 'render_star_rating_block' ),
+				'attributes' => $defaults->get_default_attributes('tableberg/star-rating'),
+				'render_callback' => array($this, 'render_star_rating_block'),
 			)
 		);
 	}

@@ -20,10 +20,6 @@ class Defaults {
 	public $default_values = array(
 		'tableberg/star-rating'      => array(
 			'attributes' => array(
-				'blockID'         => array(
-					'type'    => 'string',
-					'default' => '',
-				),
 				'starCount'       => array(
 					'type'    => 'number',
 					'default' => 5,
@@ -46,7 +42,7 @@ class Defaults {
 				),
 				'reviewTextAlign' => array(
 					'type'    => 'string',
-					'default' => 'text',
+					'default' => 'left',
 				),
 				'reviewTextColor' => array(
 					'type'    => 'string',
@@ -58,11 +54,11 @@ class Defaults {
 				),
 				'padding'         => array(
 					'type'    => 'array',
-					'default' => array(),
+					'default' => [],
 				),
 				'margin'          => array(
 					'type'    => 'array',
-					'default' => array(),
+					'default' => [],
 				),
 			),
 		),
@@ -95,11 +91,11 @@ class Defaults {
 					),
 					'padding'      => array(
 						'type'    => 'array',
-						'default' => array(),
+						'default' => [],
 					),
 					'margin'       => array(
 						'type'    => 'array',
-						'default' => array(),
+						'default' => [],
 					),
 				),
 			),
@@ -170,7 +166,7 @@ class Defaults {
 				),
 				'listItem'         => array(
 					'type'    => 'array',
-					'default' => array(),
+					'default' => [],
 				),
 				'icon'             => array(
 					'type'    => 'array',

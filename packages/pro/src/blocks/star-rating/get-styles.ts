@@ -1,9 +1,9 @@
 //@ts-ignore
-import { omitBy, isUndefined, trim, isEmpty, isNumber } from "lodash";
+import { omitBy, isUndefined, trim, isEmpty } from "lodash";
 import { getSpacingCss } from "../../utils/styling-helpers";
-import { BlockConfig } from "./types";
+import { StarRatingProps } from ".";
 
-export function getStyles(attributes: BlockConfig) {
+export function getStyles(attributes: StarRatingProps) {
     const { padding, margin } = attributes;
     const paddingObj: any = getSpacingCss(padding);
     const marginObj: any = getSpacingCss(margin);
