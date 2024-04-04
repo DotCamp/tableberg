@@ -1,17 +1,14 @@
-.tb-star-outer-container {
-    display: flex;
-}
+.tableberg-star-rating {
+    .tableberg-stars {
+        display: flex;
 
-.tb-star-inner-container,
-.tb-star-container {
-    display: flex;
-    flex-direction: row;
-}
-.tb-star-rating {
-    .tb-review-text {
-        margin-top: 20px;
+        &.tableberg-stars {
+            &-center {
+                justify-content: center;
+            }
+            &-right {
+                justify-content: right;
+            }
+        }
     }
-}
-.tb-star-inner-container svg {
-    margin-top: initial;
 }

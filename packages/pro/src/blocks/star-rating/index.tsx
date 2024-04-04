@@ -1,13 +1,10 @@
 /**
  * Wordpress Dependencies
  */
-import { BlockEditProps } from "@wordpress/blocks";
+import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 // @ts-ignore
 import { useState } from "@wordpress/element";
-import {
-    useBlockProps,
-    RichText,
-} from "@wordpress/block-editor";
+import { useBlockProps, RichText } from "@wordpress/block-editor";
 /**
  * Internal Imports
  */
@@ -18,6 +15,7 @@ import { getStyles } from "./get-styles";
 import { BlockIcon, Star } from "./icons";
 import { __ } from "@wordpress/i18n";
 import StarBlockControls from "./controls";
+import classNames from "classnames";
 
 function Edit(props: BlockEditProps<BlockConfig>) {
     const [highlightedStars, setHighlightedStars] = useState(0);
@@ -32,10 +30,10 @@ function Edit(props: BlockEditProps<BlockConfig>) {
         reviewTextAlign,
         reviewTextColor,
     } = attributes;
-    
+
     const styles = getStyles(attributes);
     const blockProps = useBlockProps({
-        className: "tb-star-rating",
+        className: "tableberg-star-rating",
         style: styles,
     });
 
@@ -43,21 +41,15 @@ function Edit(props: BlockEditProps<BlockConfig>) {
         <>
             <div {...blockProps}>
                 <div
-                    className="tb-star-outer-container"
-                    style={{
-                        justifyContent:
-                            starAlign === "center"
-                                ? "center"
-                                : `flex-${
-                                      starAlign === "left" ? "start" : "end"
-                                  }`,
-                    }}
+                    className={classNames(
+                        "tableberg-stars",
+                        `tableberg-stars-${starAlign}`,
+                    )}
+                    onMouseLeave={() => setHighlightedStars(0)}
                 >
-                    <div
-                        className="tb-star-inner-container"
-                        onMouseLeave={() => setHighlightedStars(0)}
-                    >
-                        {Array(starCount).fill(0).map((_, i) => (
+                    {Array(starCount)
+                        .fill(0)
+                        .map((_, i) => (
                             <div
                                 key={i}
                                 onMouseEnter={() => setHighlightedStars(i + 1)}
@@ -95,11 +87,9 @@ function Edit(props: BlockEditProps<BlockConfig>) {
                                 />
                             </div>
                         ))}
-                    </div>
                 </div>
                 <RichText
                     tagName="div"
-                    className="tb-review-text"
                     placeholder={__("The text of the review goes here")}
                     value={reviewText}
                     style={{
@@ -116,11 +106,58 @@ function Edit(props: BlockEditProps<BlockConfig>) {
                     ]}
                 />
             </div>
-            <StarBlockControls {...props}/>
-            </>
+            <StarBlockControls {...props} />
+        </>
     );
 }
 
+const save = (props: BlockEditProps<BlockConfig>) => {
+    const styles = getStyles(props.attributes);
+    const blockProps = useBlockProps.save({
+        className: "tableberg-star-rating",
+        style: styles,
+    });
+    const {
+        starCount,
+        starAlign,
+        starSize,
+        selectedStars,
+        starColor,
+        reviewText,
+        reviewTextAlign,
+        reviewTextColor,
+    } = props.attributes;
+    return (
+        <div {...blockProps}>
+            <div
+                className={classNames(
+                    "tableberg-stars",
+                    `tableberg-stars-${starAlign}`,
+                )}
+            >
+                {Array(starCount)
+                    .fill(0)
+                    .map((_, i) => (
+                        <div>
+                            <Star
+                                index={i}
+                                size={starSize}
+                                value={selectedStars}
+                                displayColor={starColor}
+                            />
+                        </div>
+                    ))}
+            </div>
+            <div
+                style={{
+                    textAlign: reviewTextAlign as any,
+                    color: reviewTextColor as any,
+                }}
+                dangerouslySetInnerHTML={{ __html: reviewText }}
+            ></div>
+        </div>
+    );
+};
 
 // @ts-ignore
 registerBlockType(metadata, {
@@ -132,6 +169,5 @@ registerBlockType(metadata, {
         },
     },
     edit: Edit,
+    save,
 });
-
-
