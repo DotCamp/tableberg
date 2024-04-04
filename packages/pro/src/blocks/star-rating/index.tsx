@@ -10,14 +10,27 @@ import { useBlockProps, RichText } from "@wordpress/block-editor";
  */
 
 import metadata from "./block.json";
-import { BlockConfig } from "./types";
 import { getStyles } from "./get-styles";
 import { BlockIcon, Star } from "./icons";
 import { __ } from "@wordpress/i18n";
 import StarBlockControls from "./controls";
 import classNames from "classnames";
+import { SpacingTypes } from "../../utils/types";
 
-function Edit(props: BlockEditProps<BlockConfig>) {
+export interface StarRatingProps {
+    starCount: number;
+    starSize: string;
+    starColor: string | null;
+    selectedStars: number;
+    reviewText: string;
+    reviewTextAlign: string;
+    reviewTextColor: string | null;
+    starAlign: string;
+    padding: SpacingTypes;
+    margin: SpacingTypes;
+}
+
+function Edit(props: BlockEditProps<StarRatingProps>) {
     const [highlightedStars, setHighlightedStars] = useState(0);
     const { attributes, setAttributes, clientId } = props;
     const {

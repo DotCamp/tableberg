@@ -167,6 +167,21 @@ importers:
         specifier: ^5.2.0
         version: 5.2.7(@types/node@20.11.30)
 
+  packages/pro:
+    dependencies:
+      '@tableberg/components':
+        specifier: workspace:*
+        version: link:../components
+      clean-webpack-plugin:
+        specifier: ^4.0.0
+        version: 4.0.0(webpack@5.91.0)
+      ignore-emit-webpack-plugin:
+        specifier: ^2.0.6
+        version: 2.0.6
+      mini-css-extract-plugin:
+        specifier: ^2.7.6
+        version: 2.8.1(webpack@5.91.0)
+
   packages/tableberg:
     dependencies:
       '@tableberg/components':
@@ -182,18 +197,6 @@ importers:
       playwright:
         specifier: ^1.41.1
         version: 1.42.1
-
-  packages/tableberg-pro:
-    dependencies:
-      clean-webpack-plugin:
-        specifier: ^4.0.0
-        version: 4.0.0(webpack@5.91.0)
-      ignore-emit-webpack-plugin:
-        specifier: ^2.0.6
-        version: 2.0.6
-      mini-css-extract-plugin:
-        specifier: ^2.7.6
-        version: 2.8.1(webpack@5.91.0)
 
 packages:
 

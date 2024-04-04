@@ -10,17 +10,28 @@ import {
     RangeControl,
 } from "@wordpress/components";
 import { BlockEditProps } from "@wordpress/blocks";
-import { BlockConfig } from "./types";
 import {
-    ColorSettings,
+    ColorControl,
     SpacingControl,
-} from "../../components/styling-controls";
+} from "@tableberg/components";
+import { StarRatingProps } from ".";
 
-function StarBlockControls(props: BlockEditProps<BlockConfig>) {
+
+
+
+function StarBlockControls(props: BlockEditProps<StarRatingProps>) {
     const { attributes, setAttributes } = props;
 
-    const { starCount, starSize, selectedStars, reviewTextAlign, starAlign } =
-        attributes;
+    const {
+        starCount,
+        starSize,
+        selectedStars,
+        reviewTextAlign,
+        starAlign,
+        starColor,
+        reviewTextColor,
+    } = attributes;
+
     return (
         <>
             <WPBlockControls>
@@ -100,26 +111,47 @@ function StarBlockControls(props: BlockEditProps<BlockConfig>) {
                 </PanelBody>
             </InspectorControls>
             <InspectorControls group="color">
-                <ColorSettings
-                    attrKey="starColor"
+                <ColorControl
                     label={__("Star Color", "tableberg-pro")}
+                    colorValue={starColor}
+                    onColorChange={(newValue) =>
+                        setAttributes({
+                            starColor: newValue,
+                        })
+                    }
+                    onDeselect={() =>
+                        setAttributes({
+                            starColor: undefined,
+                        })
+                    }
                 />
-                <ColorSettings
-                    attrKey="reviewTextColor"
+                <ColorControl
                     label={__("Text Color", "tableberg-pro")}
+                    colorValue={reviewTextColor}
+                    onColorChange={(newValue) =>
+                        setAttributes({
+                            reviewTextColor: newValue,
+                        })
+                    }
+                    onDeselect={() =>
+                        setAttributes({
+                            reviewTextColor: undefined,
+                        })
+                    }
                 />
             </InspectorControls>
             <InspectorControls group="dimensions">
                 <SpacingControl
-                    showByDefault
-                    attrKey="padding"
                     label={__("Padding", "tableberg-pro")}
+                    value={attributes.padding}
+                    onChange={(val) => setAttributes({ padding: val })}
+                    onDeselect={() => setAttributes({ padding: {} })}
                 />
                 <SpacingControl
-                    minimumCustomValue={-Infinity}
-                    showByDefault
-                    attrKey="margin"
                     label={__("Margin", "tableberg-pro")}
+                    value={attributes.margin}
+                    onChange={(val) => setAttributes({ margin: val })}
+                    onDeselect={() => setAttributes({ margin: {} })}
                 />
             </InspectorControls>
         </>
