@@ -1,7 +1,7 @@
 /**
  * Wordpress Dependencies
  */
-import { BlockEditProps } from "@wordpress/blocks";
+import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 // @ts-ignore
 import { useState } from "@wordpress/element";
 import {
