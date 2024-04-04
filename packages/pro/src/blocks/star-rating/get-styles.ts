@@ -1,12 +1,12 @@
 //@ts-ignore
 import { omitBy, isUndefined, trim, isEmpty, isNumber } from "lodash";
-import { getSpacingCss } from "@Utils/styling-helpers";
+import { getSpacingCss } from "../../utils/styling-helpers";
 import { BlockConfig } from "./types";
 
 export function getStyles(attributes: BlockConfig) {
     const { padding, margin } = attributes;
-    const paddingObj = getSpacingCss(padding);
-    const marginObj = getSpacingCss(margin);
+    const paddingObj: any = getSpacingCss(padding);
+    const marginObj: any = getSpacingCss(margin);
 
     let styles = {
         paddingTop: paddingObj?.top,

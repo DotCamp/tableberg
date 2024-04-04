@@ -1,10 +1,10 @@
 import { omitBy, isUndefined, trim, isEmpty } from "lodash";
-import { getSpacingCss } from "@Utils/styling-helpers";
+import { getSpacingCss } from "../../utils/styling-helpers";
 
-export function getStyles(attributes) {
+export function getStyles(attributes: any) {
     const { padding, margin, backgroundColor } = attributes;
-    const paddingObj = getSpacingCss(padding);
-    const marginObj = getSpacingCss(margin);
+    const paddingObj: any = getSpacingCss(padding);
+    const marginObj: any = getSpacingCss(margin);
 
     let styles = {
         backgroundColor: backgroundColor,

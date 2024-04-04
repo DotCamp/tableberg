@@ -32,6 +32,9 @@ if ( ! defined( 'TABLEBERG_PRO_PLUGIN_FILE' ) ) {
 	define( 'TABLEBERG_PRO_PLUGIN_FILE', __FILE__ );
 }
 
+use Tableberg\Pro\Assets;
+use Tableberg\Pro\Blocks;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 
@@ -48,9 +51,10 @@ if ( ! class_exists( 'Tableberg_Pro_Main' ) ) {
 		 * @return void
 		 */
 		public function __construct() {
-			require_once TABLEBERG_PRO_DIR_PATH . 'includes/class-tableberg-pro-assets.php';
-			require_once TABLEBERG_PRO_DIR_PATH . 'includes/Blocks/class-tableberg-pro-blocks.php';
-			new Blocks();
+			new Blocks\StarRating();
+			new Blocks\StyledList();
+			new Blocks\StyledListItem();
+			new Blocks\Html();
 			new Assets();
 		}
 	}

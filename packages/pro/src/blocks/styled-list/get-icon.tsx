@@ -1,4 +1,4 @@
-import { IconsLibraryIconProps } from "@Components/icon-library/type";
+import { IconsLibraryIconProps } from "../../components/icon-library/type";
 
 export default function SVGComponent({ icon }: IconsLibraryIconProps) {
     const { viewBox, xmlns, children } = icon.icon.props;

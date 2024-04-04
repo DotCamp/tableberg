@@ -1,4 +1,6 @@
 <?php
+
+namespace Tableberg\Pro;
 /**
  * Common functions and variables.
  *

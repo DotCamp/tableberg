@@ -1,4 +1,6 @@
 <?php
+
+namespace Tableberg\Pro;
 /**
  * Default Attributes
  *
@@ -104,10 +106,6 @@ class Defaults {
 		),
 		'tableberg/styled-list'      => array(
 			'attributes' => array(
-				'blockID'          => array(
-					'type'    => 'string',
-					'default' => '',
-				),
 				'list'             => array(
 					'type'    => 'string',
 					'default' => '',

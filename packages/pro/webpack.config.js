@@ -17,14 +17,6 @@ module.exports = {
     optimization: {
         ...defaultConfig.optimization,
     },
-    resolve: {
-        ...defaultConfig.resolve,
-        alias: {
-            ...defaultConfig.resolve.alias,
-            "@Components": path.resolve(__dirname, "src/components"),
-            "@Utils": path.resolve(__dirname, "src/utils"),
-        },
-    },
     plugins: [
         ...defaultConfig.plugins.filter(
             (p) => !(p instanceof CleanWebpackPlugin),

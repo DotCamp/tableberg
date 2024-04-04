@@ -1,4 +1,6 @@
 <?php
+
+namespace Tableberg\Pro;
 /**
  * Register block assets.
  *
