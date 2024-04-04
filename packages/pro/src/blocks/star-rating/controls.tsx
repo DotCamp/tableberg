@@ -121,7 +121,7 @@ function StarBlockControls(props: BlockEditProps<StarRatingProps>) {
                     }
                     onDeselect={() =>
                         setAttributes({
-                            starColor: undefined,
+                            starColor: "#FFB901",
                         })
                     }
                 />
