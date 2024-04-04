@@ -1,4 +1,4 @@
-import { SpacingTypes } from "@Utils/types";
+import { SpacingTypes } from "../../utils/types";
 
 export interface BlockConfig {
     blockID: string;

@@ -24,16 +24,13 @@ import {
 } from "@wordpress/components";
 
 //@ts-ignore
-import { dashesToCamelcase } from "@Utils/common";
+import { SpacingControl, ColorSettings } from "../../components/styling-controls";
 //@ts-ignore
-import { SpacingControl, ColorSettings } from "@Components/styling-controls";
-//@ts-ignore
-import IconsLibrary from "@Components/icon-library/library";
+import IconsLibrary from "../../components/icon-library/library";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { useState, useEffect } from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import colorList from "./colorlist";
 import { BlockTypes } from "./types";
 import SVGComponent from "./get-icon";
 import { edit } from "@wordpress/icons";

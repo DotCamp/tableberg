@@ -12,7 +12,7 @@ import {
 import { Button, PanelBody } from "@wordpress/components";
 
 import { useState, useEffect, useRef } from "react";
-import { SpacingControl } from "@Components/styling-controls";
+import { SpacingControl } from "../../../components/styling-controls";
 import { BlockTypes } from "./types";
 
 function Edit(props: BlockEditProps<BlockTypes>) {

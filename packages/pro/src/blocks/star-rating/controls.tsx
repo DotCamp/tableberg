@@ -1,18 +1,46 @@
-import { SpacingControl, ColorSettings } from "@Components/styling-controls";
 import { __ } from "@wordpress/i18n";
-import { InspectorControls, ColorPalette } from "@wordpress/block-editor";
-import { PanelBody, RangeControl } from "@wordpress/components";
+import { InspectorControls, BlockControls as WPBlockControls } from "@wordpress/block-editor";
+import { ToolbarGroup, ToolbarButton, PanelBody, RangeControl } from "@wordpress/components";
 import { BlockEditProps } from "@wordpress/blocks";
-import { BlockConfig } from "../types";
+import { BlockConfig } from "./types";
+import { ColorSettings, SpacingControl } from "../../components/styling-controls";
 
-function Inspector(props: BlockEditProps<BlockConfig>) {
+function StarBlockControls(props: BlockEditProps<BlockConfig>) {
     const { attributes, setAttributes } = props;
 
-    const { starCount, starSize, starColor, selectedStars, reviewTextColor } =
+    const { starCount, starSize, selectedStars, reviewTextAlign, starAlign } =
         attributes;
     return (
         <>
-            <InspectorControls group="settings">
+        <WPBlockControls>
+            <ToolbarGroup>
+                {["left", "center", "right"].map((a) => (
+                    // @ts-ignore
+                    <ToolbarButton
+                        icon={`align-${a}` as any}
+                        label={__(`Align stars ${a}`)}
+                        onClick={() => setAttributes({ starAlign: a })}
+                        isActive={starAlign === a}
+                    />
+                ))}
+            </ToolbarGroup>
+            <ToolbarGroup>
+                {["left", "center", "right", "justify"].map((a) => (
+                    // @ts-ignore
+                    <ToolbarButton
+                        icon={`editor-${a === "justify" ? a : "align" + a}` as any}
+                        label={__(
+                            (a !== "justify" ? "Align " : "") +
+                                a[0].toUpperCase() +
+                                a.slice(1),
+                        )}
+                        isActive={reviewTextAlign === a}
+                        onClick={() => setAttributes({ reviewTextAlign: a })}
+                    />
+                ))}
+            </ToolbarGroup>
+        </WPBlockControls>
+        <InspectorControls group="settings">
                 <PanelBody title={__("General")} initialOpen={true}>
                     <RangeControl
                         label={__("Number of stars")}
@@ -21,7 +49,7 @@ function Inspector(props: BlockEditProps<BlockConfig>) {
                             setAttributes({
                                 starCount: value,
                                 selectedStars:
-                                    value < selectedStars
+                                    value! < selectedStars
                                         ? value
                                         : selectedStars,
                             })
@@ -43,8 +71,8 @@ function Inspector(props: BlockEditProps<BlockConfig>) {
                     />
                     <RangeControl
                         label={__("Star size")}
-                        value={starSize}
-                        onChange={(value) => setAttributes({ starSize: value })}
+                        value={starSize as any}
+                        onChange={(value) => setAttributes({ starSize: value as any })}
                         min={10}
                         max={30}
                         beforeIcon="editor-contract"
@@ -78,4 +106,4 @@ function Inspector(props: BlockEditProps<BlockConfig>) {
         </>
     );
 }
-export default Inspector;
+export default StarBlockControls;

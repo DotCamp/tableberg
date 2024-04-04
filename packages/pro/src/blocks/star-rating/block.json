@@ -15,10 +15,6 @@
      ],
      "textdomain": "tableberg-pro",
      "attributes": {
-          "blockID": {
-               "type": "string",
-               "default": ""
-          },
           "starCount": {
                "type": "number",
                "default": 5
@@ -41,7 +37,7 @@
           },
           "reviewTextAlign": {
                "type": "string",
-               "default": "text"
+               "default": "left"
           },
           "reviewTextColor": {
                "type": "string",
