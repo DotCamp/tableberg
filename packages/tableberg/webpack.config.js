@@ -4,8 +4,6 @@ const path = require("path");
 const config = {
     ...defaultConfig,
     entry: {
-        "tableberg-admin": "./src/admin/index.js",
-        "tableberg-admin-style": "./src/admin/tableberg-admin-style.scss",
         tableberg: "./src/tableberg.tsx",
         "tableberg-editor-style": "./src/tableberg-editor-style.scss",
         "tableberg-frontend-style": "./src/tableberg-frontend-style.scss",
