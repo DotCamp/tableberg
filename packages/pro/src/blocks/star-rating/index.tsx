@@ -111,54 +111,6 @@ function Edit(props: BlockEditProps<BlockConfig>) {
     );
 }
 
-const save = (props: BlockEditProps<BlockConfig>) => {
-    const styles = getStyles(props.attributes);
-    const blockProps = useBlockProps.save({
-        className: "tableberg-star-rating",
-        style: styles,
-    });
-    const {
-        starCount,
-        starAlign,
-        starSize,
-        selectedStars,
-        starColor,
-        reviewText,
-        reviewTextAlign,
-        reviewTextColor,
-    } = props.attributes;
-    return (
-        <div {...blockProps}>
-            <div
-                className={classNames(
-                    "tableberg-stars",
-                    `tableberg-stars-${starAlign}`,
-                )}
-            >
-                {Array(starCount)
-                    .fill(0)
-                    .map((_, i) => (
-                        <div>
-                            <Star
-                                index={i}
-                                size={starSize}
-                                value={selectedStars}
-                                displayColor={starColor}
-                            />
-                        </div>
-                    ))}
-            </div>
-            <div
-                style={{
-                    textAlign: reviewTextAlign as any,
-                    color: reviewTextColor as any,
-                }}
-                dangerouslySetInnerHTML={{ __html: reviewText }}
-            ></div>
-        </div>
-    );
-};
-
 // @ts-ignore
 registerBlockType(metadata, {
     icon: BlockIcon,
@@ -169,5 +121,4 @@ registerBlockType(metadata, {
         },
     },
     edit: Edit,
-    save,
 });
