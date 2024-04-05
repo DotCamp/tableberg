@@ -33,7 +33,7 @@ class Html {
 	 */
 	public function render_block( $attributes, $content, $block ) {
 		$html = isset( $attributes['content'] ) ? $attributes['content'] : '';
-		return $html;
+		return preg_replace('#<script(.*?)>(.*?)</script>#is', '', $html);
 	}
 
 	/**

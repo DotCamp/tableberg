@@ -1,5 +1,5 @@
 import { __ } from "@wordpress/i18n";
-import { useContext, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     BlockControls,
     PlainText,
@@ -9,10 +9,8 @@ import {
 } from "@wordpress/block-editor";
 import {
     ToolbarButton,
-    Disabled,
     ToolbarGroup,
     VisuallyHidden,
-    SandBox,
 } from "@wordpress/components";
 import { useInstanceId } from "@wordpress/compose";
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
@@ -39,8 +37,13 @@ const DEFAULT_STYLES = `
 	}
 `;
 
-function edit({ attributes, setAttributes }: BlockEditProps<HtmlBlockProps>) {
+function edit({
+    attributes,
+    setAttributes,
+    clientId,
+}: BlockEditProps<HtmlBlockProps>) {
     const [isPreview, setIsPreview] = useState<boolean>(false);
+    const iframeRef = useRef<HTMLIFrameElement>();
 
     const instanceId = useInstanceId(edit, "html-edit-desc");
 
@@ -69,9 +72,24 @@ function edit({ attributes, setAttributes }: BlockEditProps<HtmlBlockProps>) {
         () => [
             DEFAULT_STYLES,
             ...transformStyles(settingStyles.filter((style) => style.css)),
-        ],
+        ].join(''),
         [settingStyles],
     );
+
+    useEffect(() => {
+        const iframe = iframeRef.current;
+        if (!iframe) {
+            return;
+        }
+        const iframeDocument = iframe.contentWindow!.document!;
+        iframeDocument.head.innerHTML = `<style>${styles}</style>`;
+        iframeDocument.body.innerHTML = `<div style="width: max-content; overflow: hidden;" data-tableberg-${clientId} class="editor-styles-wrapper">${attributes.content}</div>`;
+        const contentRect = iframeDocument
+            .querySelector(`[data-tableberg-${clientId}]`)!
+            .getBoundingClientRect();
+        iframe.height = `${Math.ceil(contentRect.height) + 1}px`;
+        iframe.width = `${Math.ceil(contentRect.width) + 1}px`;
+    }, [styles, isPreview, attributes.content]);
 
     return (
         <div {...blockProps}>
@@ -103,11 +121,11 @@ function edit({ attributes, setAttributes }: BlockEditProps<HtmlBlockProps>) {
                             "tableberg-pro",
                         )}
                     </VisuallyHidden>
-                    <SandBox
-                        html={attributes.content}
-                        styles={styles}
+                    <iframe
+                        ref={iframeRef as any}
                         title={__("Custom HTML Preview", "tableberg-pro")}
                         tabIndex={-1}
+                        sandbox="allow-same-origin"
                     />
                 </>
             ) : (
