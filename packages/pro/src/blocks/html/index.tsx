@@ -76,7 +76,7 @@ function edit({
         [settingStyles],
     );
 
-    useEffect(() => {
+    const renderIframeContent = () => {
         const iframe = iframeRef.current;
         if (!iframe) {
             return;
@@ -89,7 +89,9 @@ function edit({
             .getBoundingClientRect();
         iframe.height = `${Math.ceil(contentRect.height) + 1}px`;
         iframe.width = `${Math.ceil(contentRect.width) + 1}px`;
-    }, [styles, isPreview, attributes.content]);
+    }
+
+    useEffect(renderIframeContent, [styles, isPreview, attributes.content]);
 
     return (
         <div {...blockProps}>
@@ -126,6 +128,7 @@ function edit({
                         title={__("Custom HTML Preview", "tableberg-pro")}
                         tabIndex={-1}
                         sandbox="allow-same-origin"
+                        onLoad={renderIframeContent}
                     />
                 </>
             ) : (
