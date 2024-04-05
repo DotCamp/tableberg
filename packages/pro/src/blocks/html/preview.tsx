@@ -28,6 +28,7 @@ interface PreviewType {
 export default function HTMLEditPreview({ content, isSelected }: PreviewType) {
     const settingStyles = useSelect(
         (select) => select(blockEditorStore).getSettings().styles,
+        [],
     );
 
     const styles = useMemo(

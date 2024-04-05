@@ -1,17 +1,129 @@
 import { __ } from "@wordpress/i18n";
-import metadata from "./block.json";
-import { registerBlockType } from "@wordpress/blocks";
-import Edit from "./edit";
+import { useContext, useMemo, useState } from "react";
+import {
+    BlockControls,
+    PlainText,
+    useBlockProps,
+    store as blockEditorStore,
+    transformStyles,
+} from "@wordpress/block-editor";
+import {
+    ToolbarButton,
+    Disabled,
+    ToolbarGroup,
+    VisuallyHidden,
+    SandBox,
+} from "@wordpress/components";
+import { useInstanceId } from "@wordpress/compose";
+import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 import { html } from "@wordpress/icons";
 
+/**
+ * Internal dependencies
+ */
+import metadata from "./block.json";
+import { useSelect } from "@wordpress/data";
+
+interface HtmlBlockProps {
+    content: string;
+}
+
+// Default styles used to unset some of the styles
+// that might be inherited from the editor style.
+const DEFAULT_STYLES = `
+	html,body,:root {
+		margin: 0 !important;
+		padding: 0 !important;
+		overflow: visible !important;
+		min-height: auto !important;
+	}
+`;
+
+function edit({ attributes, setAttributes }: BlockEditProps<HtmlBlockProps>) {
+    const [isPreview, setIsPreview] = useState<boolean>(false);
+
+    const instanceId = useInstanceId(edit, "html-edit-desc");
+
+    function switchToPreview() {
+        setIsPreview(true);
+    }
+
+    function switchToHTML() {
+        setIsPreview(false);
+    }
+
+    const blockProps = useBlockProps({
+        className: "tableberg-custom-html",
+        "aria-describedby": isPreview ? instanceId : undefined,
+    });
+
+    const settingStyles = useSelect(
+        (select) =>
+            (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getSettings().styles,
+        [],
+    );
+
+    const styles = useMemo(
+        () => [
+            DEFAULT_STYLES,
+            ...transformStyles(settingStyles.filter((style) => style.css)),
+        ],
+        [settingStyles],
+    );
+
+    return (
+        <div {...blockProps}>
+            <BlockControls>
+                <ToolbarGroup>
+                    {/* @ts-ignore */}
+                    <ToolbarButton
+                        className="components-tab-button"
+                        isPressed={!isPreview}
+                        onClick={switchToHTML}
+                    >
+                        {__("HTML", "tableberg-pro")}
+                    </ToolbarButton>
+                    {/* @ts-ignore */}
+                    <ToolbarButton
+                        className="components-tab-button"
+                        isPressed={isPreview}
+                        onClick={switchToPreview}
+                    >
+                        {__("Preview", "tableberg-pro")}
+                    </ToolbarButton>
+                </ToolbarGroup>
+            </BlockControls>
+            {isPreview ? (
+                <>
+                    <VisuallyHidden id={instanceId}>
+                        {__(
+                            "HTML preview is not yet fully accessible. Please switch screen reader to virtualized mode to navigate the below iFrame.",
+                            "tableberg-pro",
+                        )}
+                    </VisuallyHidden>
+                    <SandBox
+                        html={attributes.content}
+                        styles={styles}
+                        title={__("Custom HTML Preview", "tableberg-pro")}
+                        tabIndex={-1}
+                    />
+                </>
+            ) : (
+                <PlainText
+                    value={attributes.content}
+                    onChange={(content) => setAttributes({ content })}
+                    placeholder={__("Write HTML…", "tableberg-pro")}
+                    aria-label={__("HTML", "tableberg-pro")}
+                />
+            )}
+        </div>
+    );
+}
+
+// @ts-ignore
 registerBlockType(metadata, {
     icon: html,
-    attributes: metadata.attributes,
-    example: {
-        attributes: {
-            selectedStars: 4,
-        },
-    },
-    edit: Edit,
-    save: () => null,
+    edit,
 });

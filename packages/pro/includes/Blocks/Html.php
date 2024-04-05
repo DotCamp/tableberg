@@ -3,7 +3,6 @@
 namespace Tableberg\Pro\Blocks;
 
 use Tableberg\Pro\Defaults;
-use Tableberg\Utils\Utils;
 /**
  * Register HTML
  *
@@ -23,31 +22,7 @@ class Html {
 	public function __construct() {
 		add_action( 'init', array( $this, 'block_registration' ) );
 	}
-	/**
-	 * Get block styles.
-	 *
-	 * @param array $attributes - block attributes.
-	 * @return string Generated CSS styles.
-	 */
-	public static function get_styles( $attributes ) {
-
-		$utils   = new Utils();
-		$padding = $utils->get_spacing_css( $attributes['padding'] );
-		$margin  = $utils->get_spacing_css( $attributes['margin'] );
-
-		$styles = array(
-			'padding-top'    => $padding['top'] ?? '',
-			'padding-right'  => $padding['right'] ?? '',
-			'padding-bottom' => $padding['bottom'] ?? '',
-			'padding-left'   => $padding['left'] ?? '',
-			'margin-top'     => $margin['top'] ?? '',
-			'margin-right'   => $margin['right'] ?? '',
-			'margin-bottom'  => $margin['bottom'] ?? '',
-			'margin-left'    => $margin['left'] ?? '',
-		);
-
-		return $utils->generate_css_string( $styles );
-	}
+	
 	/**
 	 * Renders the custom cell block on the server.
 	 *
@@ -58,7 +33,7 @@ class Html {
 	 */
 	public function render_block( $attributes, $content, $block ) {
 		$html = isset( $attributes['content'] ) ? $attributes['content'] : '';
-		return html_entity_decode( $html );
+		return $html;
 	}
 
 	/**
