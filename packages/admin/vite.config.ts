@@ -7,8 +7,7 @@ export default defineConfig({
     plugins: [react()],
     build: {
         minify: "esbuild",
-        outDir: "../tableberg/build",
-        assetsDir: ".",
+        outDir: "../tableberg/includes/Admin/assets",
         lib: {
             entry: path.resolve(__dirname, "src/index.jsx"),
             name: "tableberg-admin-app",
