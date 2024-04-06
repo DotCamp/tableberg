@@ -71,7 +71,7 @@ class Assets
 	{
 		wp_enqueue_script(
 			'tableberg-admin-script',
-			TABLEBERG_URL . 'build/tableberg-admin.build.js',
+			TABLEBERG_URL . 'includes/Admin/assets/tableberg-admin.build.js',
 			array(
 				'lodash',
 				'react',
@@ -97,7 +97,7 @@ class Assets
 		wp_localize_script('tableberg-admin-script', 'tablebergAdminMenuData', $frontend_script_data);
 		wp_enqueue_style(
 			'tableberg-admin-style',
-			TABLEBERG_URL . 'build/tableberg-admin-style.css',
+			TABLEBERG_URL . 'includes/Admin/assets/tableberg-admin-style.css',
 			array(),
 			Constants::plugin_version(),
 			'all'
