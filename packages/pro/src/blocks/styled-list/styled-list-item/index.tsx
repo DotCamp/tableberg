@@ -9,6 +9,8 @@ import {
     RichText,
     useBlockProps,
     store as blockEditorStore,
+    useInnerBlocksProps,
+    InnerBlocks,
 } from "@wordpress/block-editor";
 import { listItemIcon } from "../icon";
 import metadata from "./block.json";
@@ -90,10 +92,12 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 keepPlaceholderOnFocus={true}
                 onChange={(text) => setAttributes({ text })}
                 onSplit={(itemFragment) => {
+                    const newAttrs = Object.create(attributes);
+                    newAttrs.text = itemFragment;
                     const newBlock = createBlock<StyledListItemProps>(
                         "tableberg/styled-list-item",
+                        newAttrs
                     );
-                    newBlock.attributes.text = itemFragment;
                     return newBlock;
                 }}
                 onMerge={handleItemDeletion}
@@ -105,7 +109,9 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
     );
 }
 
+
 registerBlockType(metadata as any, {
     icon: listItemIcon,
+    attributes: metadata.attributes as any,
     edit,
 });

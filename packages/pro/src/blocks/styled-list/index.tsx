@@ -50,6 +50,7 @@ function save () {
 
 registerBlockType(metadata as any, {
     icon: blockIcon,
+    attributes: metadata.attributes as any,
     edit,
     save
 });
