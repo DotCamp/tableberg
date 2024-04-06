@@ -6,11 +6,15 @@ import {
     useBlockProps,
     store as blockEditorStore,
     transformStyles,
+    InspectorControls,
 } from "@wordpress/block-editor";
 import {
     ToolbarButton,
     ToolbarGroup,
     VisuallyHidden,
+    __experimentalToolsPanel as ToolsPanel,
+    __experimentalToolsPanelItem as ToolsPanelItem,
+    TextareaControl,
 } from "@wordpress/components";
 import { useInstanceId } from "@wordpress/compose";
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
@@ -134,6 +138,29 @@ function edit({
                     </ToolbarButton>
                 </ToolbarGroup>
             </BlockControls>
+            <InspectorControls>
+                <ToolsPanel
+                    label={__('Settings')}
+                    resetAll={() => { }}
+                >
+                    <ToolsPanelItem
+                        label={__("HTML Code")}
+                        isShownByDefault
+                        hasValue={() => !!attributes.content.length}
+                        onDeselect={() =>
+                            setAttributes({ content: undefined })
+                        }
+                    >
+                        <TextareaControl
+                            label={__("HTML Code")}
+                            value={attributes.content}
+                            onChange={content => setAttributes({ content })}
+                            help="Write the HTML code here"
+                            __nextHasNoMarginBottom
+                        />
+                    </ToolsPanelItem>
+                </ToolsPanel>
+            </InspectorControls>
             {isPreview ? (
                 <>
                     <VisuallyHidden id={instanceId}>
