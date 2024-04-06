@@ -41,6 +41,7 @@ function edit({
     attributes,
     setAttributes,
     clientId,
+    isSelected
 }: BlockEditProps<HtmlBlockProps>) {
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const iframeRef = useRef<HTMLIFrameElement>();
@@ -92,6 +93,24 @@ function edit({
     }
 
     useEffect(renderIframeContent, [styles, isPreview, attributes.content]);
+
+    if (!isSelected) {
+        return <div {...blockProps}>
+            <VisuallyHidden id={instanceId}>
+                {__(
+                    "HTML preview is not yet fully accessible. Please switch screen reader to virtualized mode to navigate the below iFrame.",
+                    "tableberg-pro",
+                )}
+            </VisuallyHidden>
+            <iframe
+                ref={iframeRef as any}
+                title={__("Custom HTML Preview", "tableberg-pro")}
+                tabIndex={-1}
+                sandbox="allow-same-origin"
+                onLoad={renderIframeContent}
+            />
+        </div>
+    }
 
     return (
         <div {...blockProps}>
