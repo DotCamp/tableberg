@@ -9,14 +9,15 @@ import {
     RichText,
     useBlockProps,
     store as blockEditorStore,
-    useInnerBlocksProps,
-    InnerBlocks,
+    InspectorControls,
 } from "@wordpress/block-editor";
 import { listItemIcon } from "../icon";
 import metadata from "./block.json";
 import { getStyles } from "../get-styles";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { useCallback } from "react";
+import { PanelBody } from "@wordpress/components";
+import { SpacingControl } from "@tableberg/components";
 
 export interface StyledListItemProps {
     icon?: any;
@@ -63,7 +64,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 // Delete is press
                 if (listBlock.innerBlocks.length <= 1) {
                     setAttributes({
-                        text: ""
+                        text: "",
                     });
                 } else {
                     storeActions.removeBlock(clientId, true);
@@ -76,7 +77,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             }
             const prevItem = listBlock.innerBlocks[currentIndex - 1];
             storeActions.updateBlockAttributes(prevItem.clientId, {
-                text: prevItem.attributes.text + ' ' + text,
+                text: prevItem.attributes.text + " " + text,
             });
             storeActions.removeBlock(clientId, true);
         },
@@ -84,31 +85,46 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
     );
 
     return (
-        <div {...blockProps}>
-            <RichText
-                tagName="li"
-                value={text}
-                placeholder="List item"
-                keepPlaceholderOnFocus={true}
-                onChange={(text) => setAttributes({ text })}
-                onSplit={(itemFragment) => {
-                    const newAttrs = Object.create(attributes);
-                    newAttrs.text = itemFragment;
-                    const newBlock = createBlock<StyledListItemProps>(
-                        "tableberg/styled-list-item",
-                        newAttrs
-                    );
-                    return newBlock;
-                }}
-                onMerge={handleItemDeletion}
-                onReplace={(blocks) => {
-                    storeActions.replaceBlocks(clientId, blocks);
-                }}
-            />
-        </div>
+        <>
+            <div {...blockProps}>
+                <RichText
+                    tagName="li"
+                    value={text}
+                    placeholder="List item"
+                    keepPlaceholderOnFocus={true}
+                    onChange={(text) => setAttributes({ text })}
+                    onSplit={(itemFragment) => {
+                        const newAttrs = Object.create(attributes);
+                        newAttrs.text = itemFragment;
+                        const newBlock = createBlock<StyledListItemProps>(
+                            "tableberg/styled-list-item",
+                            newAttrs,
+                        );
+                        return newBlock;
+                    }}
+                    onMerge={handleItemDeletion}
+                    onReplace={(blocks) => {
+                        storeActions.replaceBlocks(clientId, blocks);
+                    }}
+                />
+            </div>
+            <InspectorControls group="dimensions">
+                <SpacingControl
+                    label={__("Padding", "tableberg-pro")}
+                    value={attributes.padding}
+                    onChange={(padding) => setAttributes({padding})}
+                    onDeselect={() => setAttributes({padding: undefined})}
+                />
+                <SpacingControl
+                    label={__("Margin", "tableberg-pro")}
+                    value={attributes.margin}
+                    onChange={(margin) => setAttributes({margin})}
+                    onDeselect={() => setAttributes({margin: undefined})}
+                />
+            </InspectorControls>
+        </>
     );
 }
-
 
 registerBlockType(metadata as any, {
     icon: listItemIcon,

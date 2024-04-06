@@ -15,13 +15,17 @@
      ],
      "textdomain": "tableberg-pro",
      "attributes": {
-          "list": {
-               "type": "string",
-               "default": ""
+          "isOrdered": {
+               "type": "boolean",
+               "default": false
           },
           "alignment": {
                "type": "string",
                "default": "left"
+          },
+          "itemSpacing": {
+               "type": "number",
+               "default": 0
           },
           "iconColor": {
                "type": "string",
@@ -34,22 +38,6 @@
           "fontSize": {
                "type": "number",
                "default": 0
-          },
-          "itemSpacing": {
-               "type": "number",
-               "default": 0
-          },
-          "columns": {
-               "type": "number",
-               "default": 1
-          },
-          "maxMobileColumns": {
-               "type": "number",
-               "default": 2
-          },
-          "isRootList": {
-               "type": "boolean",
-               "default": false
           },
           "textColor": {
                "type": "string",
