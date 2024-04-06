@@ -1,26 +1,8 @@
-.tableberg_styled_list {
-    > li {
-        position: relative;
-        list-style: none;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
-    }
-
-    li::before {
-        content: "";
-        position: relative;
-        left: -0.5em;
-        display: inline-block;
-        background-repeat: no-repeat;
-    }
-}
-ul.tableberg_styled_list[id^="tableberg-styled-list-"],
-ul.tableberg_styled_list[id^="tableberg_styled_list-"] {
+ul.tableberg_styled_list,
+ul.tableberg_styled_list {
     list-style-type: none;
     margin-left: 0;
     padding-left: 0;
-    //display: grid;
-    //column-gap: 2em;
     li {
         position: relative;
         list-style: none;

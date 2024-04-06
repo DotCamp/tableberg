@@ -15,10 +15,6 @@
      ],
      "textdomain": "tableberg-pro",
      "attributes": {
-          "blockID": {
-               "type": "string",
-               "default": ""
-          },
           "list": {
                "type": "string",
                "default": ""

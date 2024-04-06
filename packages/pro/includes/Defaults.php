@@ -65,11 +65,7 @@ class Defaults {
 		'tableberg/styled-list-item' => array(
 			'attributes' => array(
 				'attributes' => array(
-					'blockID'      => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'itemText'     => array(
+					'text'     => array(
 						'type'    => 'string',
 						'default' => '',
 					),

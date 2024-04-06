@@ -1,57 +1,56 @@
-import { __ } from "@wordpress/i18n";
+import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 
-import { registerBlockType, createBlock } from "@wordpress/blocks";
-import { InnerBlocks } from "@wordpress/block-editor";
-import icon from "./icon";
-import Edit from "./edit";
-import listMetadata from "./block.json";
+import metadata from "./block.json";
+import blockIcon from "./icon";
+import { useBlockProps, useInnerBlocksProps } from "@wordpress/block-editor";
+import { getStyles } from "./get-styles";
 
-registerBlockType(listMetadata, {
-    icon: icon,
-    attributes: listMetadata.attributes,
-    transforms: {
-        from: [
-            {
-                type: "block",
-                blocks: ["core/list"],
-                transform: (attributes, innerBlocks) => {
-                    if (attributes.ordered) {
-                        console.log("cannot be used for ordered lists");
-                        return null;
-                    } else {
-                        const convertSubitems = (subitems) =>
-                            subitems.map((subitem) =>
-                                createBlock(
-                                    "tableberg/styled-list-item",
-                                    {
-                                        itemText: subitem.attributes.content,
-                                    },
-                                    subitem.innerBlocks.length > 0
-                                        ? [
-                                              createBlock(
-                                                  "tableberg/styled-list",
-                                                  attributes,
-                                                  convertSubitems(
-                                                      subitem.innerBlocks[0]
-                                                          .innerBlocks,
-                                                  ),
-                                              ),
-                                          ]
-                                        : [],
-                                ),
-                            );
+interface StyledListProps {
+    list: string;
+    icon: any;
+    selectedIcon: string;
+    alignment: string;
+    iconColor: string;
+    iconSize: number;
+    fontSize: number;
+    itemSpacing: number;
+    columns: number;
+    maxMobileColumns: number;
+    isRootList: boolean;
+    textColor: string;
+    backgroundColor: string;
+    padding: object;
+    margin: object;
+}
 
-                        return createBlock(
-                            "tableberg/styled-list",
-                            attributes,
-                            convertSubitems(innerBlocks),
-                        );
-                    }
-                },
-            },
+const ALLOWED_BLOCKS = ["tableberg/styled-list-item"];
+
+function edit(props: BlockEditProps<StyledListProps>) {
+    const blockProps = useBlockProps({
+        style: getStyles(props.attributes),
+    });
+
+    const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
+        allowedBlocks: ALLOWED_BLOCKS,
+        template: [
+            [
+                "tableberg/styled-list-item",
+            ],
         ],
-    },
-    example: {},
-    edit: Edit,
-    save: () => <InnerBlocks.Content />,
+    });
+
+    return <ul {...innerBlocksProps}></ul>;
+}
+
+function save () {
+    const blockProps = useBlockProps.save();
+    const innerBlocksProps = useInnerBlocksProps.save(blockProps);
+    return <ul {...innerBlocksProps} />;
+}
+
+registerBlockType(metadata as any, {
+    icon: blockIcon,
+    edit,
+    save
 });
+

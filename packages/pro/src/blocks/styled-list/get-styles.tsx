@@ -3,8 +3,8 @@ import { getSpacingCss } from "../../utils/styling-helpers";
 
 export function getStyles(attributes: any) {
     const { padding, margin, backgroundColor } = attributes;
-    const paddingObj: any = getSpacingCss(padding);
-    const marginObj: any = getSpacingCss(margin);
+    const paddingObj: any = getSpacingCss(padding || {});
+    const marginObj: any = getSpacingCss(margin || {});
 
     let styles = {
         backgroundColor: backgroundColor,

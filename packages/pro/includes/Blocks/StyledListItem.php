@@ -57,7 +57,7 @@ class StyledListItem {
 	 * @return string Returns the HTML content for the custom cell block.
 	 */
 	public function tableberg_render_styled_list_item_block( $attributes, $contents, $block ) {
-		$item_text = isset( $attributes['itemText'] ) ? $attributes['itemText'] : '';
+		$item_text = isset( $attributes['text'] ) ? $attributes['text'] : '';
 
 		$styles = $this->get_styles( $attributes );
 

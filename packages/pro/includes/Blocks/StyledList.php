@@ -32,7 +32,7 @@ class StyledList {
 	 * @return string Generated CSS styles.
 	 */
 	public static function get_styles( $attributes ) {
-		if ( ! $attributes['isRootList'] ) {
+		if ( ! isset($attributes['isRootList']) || !$attributes['isRootList'] ) {
 			return '';
 		}
 
@@ -139,7 +139,7 @@ class StyledList {
 		$icon_size        = $attributes['iconSize'];
 		$is_root_list     = $attributes['isRootList'];
 		$class_name       = isset( $attributes['className'] ) ? $attributes['className'] : '';
-		$block_id         = $attributes['blockID'];
+		$block_id         = '';
 		$styles           = $this->get_styles( $block_attributes );
 
 		add_action(
