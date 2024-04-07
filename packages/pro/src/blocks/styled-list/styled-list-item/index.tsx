@@ -2,6 +2,7 @@ import { __ } from "@wordpress/i18n";
 
 import {
     BlockEditProps,
+    BlockInstance,
     createBlock,
     registerBlockType,
 } from "@wordpress/blocks";
@@ -13,11 +14,14 @@ import {
 } from "@wordpress/block-editor";
 import { listItemIcon } from "../icon";
 import metadata from "./block.json";
-import { getStyles } from "../get-styles";
+import { getItemStyles } from "../get-styles";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { useCallback } from "react";
 import { PanelBody } from "@wordpress/components";
 import { SpacingControl } from "@tableberg/components";
+import { StyledListProps } from "..";
+import SVGComponent from "../get-icon";
+import classNames from "classnames";
 
 export interface StyledListItemProps {
     icon?: any;
@@ -32,15 +36,12 @@ export interface StyledListItemProps {
 function edit(props: BlockEditProps<StyledListItemProps>) {
     const { attributes, setAttributes, clientId } = props;
     const { text } = attributes;
-    const blockProps = useBlockProps({
-        style: getStyles(attributes),
-    });
 
     const storeActions: BlockEditorStoreActions = useDispatch(
         blockEditorStore,
     ) as any;
 
-    const { listItemBlock, listBlock, currentIndex } = useSelect(
+    const { listItemBlock, listBlock, getBlockIndex } = useSelect(
         (select) => {
             const storeSelect = select(
                 blockEditorStore,
@@ -48,15 +49,22 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             const listItemBlock = storeSelect.getBlock(clientId)!;
             const parentIds = storeSelect.getBlockParents(clientId)!;
             const listBlockId = parentIds[parentIds.length - 1];
-            const listBlock = storeSelect.getBlock(listBlockId)!;
+            const listBlock: BlockInstance<StyledListProps> = storeSelect.getBlock(listBlockId)! as any;
             return {
                 listItemBlock,
                 listBlock,
-                currentIndex: storeSelect.getBlockIndex(clientId),
+                getBlockIndex: storeSelect.getBlockIndex,
             };
         },
         [clientId],
     );
+
+    const blockProps = useBlockProps({
+        style: getItemStyles(attributes),
+        className: classNames({
+            "tableberg-list-item-has-icon": !listBlock.attributes.isOrdered
+        })
+    });
 
     const handleItemDeletion = useCallback(
         (forward: boolean) => {
@@ -71,6 +79,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 }
                 return;
             }
+            const currentIndex = getBlockIndex(clientId);
             // Backspace
             if (listBlock.innerBlocks.length <= 1 || currentIndex == 0) {
                 return;
@@ -86,9 +95,10 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
 
     return (
         <>
-            <div {...blockProps}>
+            <li {...blockProps}>
+                {!listBlock.attributes.isOrdered && <SVGComponent icon={listBlock.attributes.icon}/>}
                 <RichText
-                    tagName="li"
+                    tagName="div"
                     value={text}
                     placeholder="List item"
                     keepPlaceholderOnFocus={true}
@@ -107,7 +117,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                         storeActions.replaceBlocks(clientId, blocks);
                     }}
                 />
-            </div>
+            </li>
             <InspectorControls group="dimensions">
                 <SpacingControl
                     label={__("Padding", "tableberg-pro")}

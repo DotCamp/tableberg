@@ -5,12 +5,12 @@ import classnames from "classnames";
 import { __ } from "@wordpress/i18n";
 import { Button } from "@wordpress/components";
 import { map, isEmpty, debounce } from "lodash";
-import { useState, useEffect } from "@wordpress/element";
+import { useState, useEffect } from "react";
 /**
  * Custom Imports
  */
-import { tablebergIcons } from "../icons";
-import { IconsLibraryContentProps } from "../type";
+import { tablebergIcons } from "./icons";
+import { IconsLibraryContentProps } from "./type";
 
 const debouncedSetValue = debounce((val, setVal) => {
     setVal(val);

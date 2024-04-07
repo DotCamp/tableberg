@@ -1,12 +1,29 @@
-ul.tableberg_styled_list,
-ul.tableberg_styled_list {
-    list-style-type: none;
-    margin-left: 0;
-    padding-left: 0;
-    li {
-        position: relative;
-        list-style: none;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
+.tableberg-styled-list {
+    margin: 0;
+    padding: 0;
+    padding-left: calc(
+        1em + var(--tableberg-styled-list-padding-left, 0px)
+    ) !important;
+
+    .tableberg-list-item-has-icon {
+        display: flex;
+        align-items: center;
+        gap: var(--tableberg-styled-list-icon-spacing);
+        > svg {
+            height: var(--tableberg-styled-list-icon-size, 30px);
+            width: var(--tableberg-styled-list-icon-size, 30px);
+            fill: var(--tableberg-styled-list-icon-color);
+        }
+        > div {
+            flex-grow: 1;
+        }
     }
+
+    li {
+        margin-bottom: var(--tableberg-styled-list-spacing);
+    }
+}
+ul.tableberg-styled-list {
+    padding-left: 0 !important;
+    list-style-type: none;
 }

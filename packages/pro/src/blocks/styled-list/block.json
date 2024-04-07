@@ -35,9 +35,13 @@
                "type": "number",
                "default": 5
           },
-          "fontSize": {
+          "iconSpacing": {
                "type": "number",
-               "default": 0
+               "default": 2
+          },
+          "fontSize": {
+               "type": "string",
+               "default": ""
           },
           "textColor": {
                "type": "string",

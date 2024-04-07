@@ -3,15 +3,15 @@
  */
 import { isEmpty } from "lodash";
 import { __ } from "@wordpress/i18n";
-import { useEffect } from "@wordpress/element";
-import { tablebergIcons } from "../icons";
+import { useEffect } from "react";
+import { tablebergIcons } from "./icons";
 import {
     SearchControl,
     MenuGroup,
     MenuItem,
     PanelBody,
 } from "@wordpress/components";
-import { IconsLibrarySidebarProps } from "../type";
+import { IconsLibrarySidebarProps } from "./type";
 
 function Sidebar(props: IconsLibrarySidebarProps) {
     const {

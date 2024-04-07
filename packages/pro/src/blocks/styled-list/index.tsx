@@ -5,27 +5,38 @@ import blockIcon from "./icon";
 import {
     AlignmentToolbar,
     BlockControls,
+    FontSizePicker,
     InspectorControls,
     useBlockProps,
     useInnerBlocksProps,
 } from "@wordpress/block-editor";
 import { getStyles } from "./get-styles";
 import { ColorControl, SpacingControl } from "@tableberg/components";
+import IconsLibrary from "@tableberg/components/icon-library";
 import { __ } from "@wordpress/i18n";
 import {
     BaseControl,
+    Button,
+    Modal,
     PanelBody,
+    PanelRow,
+    RangeControl,
     SelectControl,
-    ToggleControl,
+    __experimentalToolsPanel as ToolsPanel,
+    __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
+import { useState } from "react";
+import { edit as editIcon } from "@wordpress/icons";
+import SVGComponent from "./get-icon";
 
-interface StyledListProps {
+export interface StyledListProps {
     isOrdered: boolean;
     icon: any;
     alignment: string;
     iconColor: string;
     iconSize: number;
-    fontSize: number;
+    iconSpacing: number;
+    fontSize: string;
     itemSpacing: number;
     textColor: string;
     backgroundColor: string;
@@ -40,12 +51,15 @@ function edit(props: BlockEditProps<StyledListProps>) {
 
     const blockProps = useBlockProps({
         style: getStyles(attributes),
+        className: "tableberg-styled-list",
     });
 
     const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
         allowedBlocks: ALLOWED_BLOCKS,
         template: [["tableberg/styled-list-item"]],
     });
+
+    const [isLibraryOpen, setLibraryOpen] = useState(false);
 
     const TagName = attributes.isOrdered ? "ol" : "ul";
 
@@ -106,6 +120,17 @@ function edit(props: BlockEditProps<StyledListProps>) {
             <InspectorControls group="settings">
                 <PanelBody title="List Settings" initialOpen={true}>
                     <BaseControl __nextHasNoMarginBottom>
+                        <RangeControl
+                            label={__("Item Spacing", "tableberg-pro")}
+                            value={attributes.itemSpacing}
+                            onChange={(itemSpacing) => {
+                                setAttributes({ itemSpacing });
+                            }}
+                            min={0}
+                            max={50}
+                        />
+                    </BaseControl>
+                    <BaseControl __nextHasNoMarginBottom>
                         <SelectControl
                             label="List Type"
                             value={attributes.isOrdered ? "1" : "0"}
@@ -119,15 +144,78 @@ function edit(props: BlockEditProps<StyledListProps>) {
                                 });
                             }}
                         />
-
-                        {!attributes.isOrdered && (
-                            <>
-                                
-                            </>
-                        )}
+                    </BaseControl>
+                </PanelBody>
+                {!attributes.isOrdered && (
+                    <PanelBody title="Icon Settings" initialOpen={true}>
+                        <PanelRow className="tableberg-styled-list-icon-selector">
+                            <label>Select Icon</label>
+                            <Button
+                                style={{ border: "1px solid #eeeeee" }}
+                                icon={
+                                    (attributes.icon ? (
+                                        <SVGComponent
+                                            icon={attributes.icon}
+                                            iconName="wordpress"
+                                            type="wordpress"
+                                        />
+                                    ) : (
+                                        editIcon
+                                    )) as any
+                                }
+                                onClick={() => setLibraryOpen(true)}
+                            />
+                        </PanelRow>
+                        <RangeControl
+                            label={__("Icon size", "tableberg-pro")}
+                            value={attributes.iconSize}
+                            onChange={(iconSize) => {
+                                setAttributes({ iconSize });
+                            }}
+                            min={10}
+                            max={100}
+                        />
+                        <RangeControl
+                            label={__("Icon Spacing", "tableberg-pro")}
+                            value={attributes.iconSpacing}
+                            onChange={(iconSpacing) => {
+                                setAttributes({ iconSpacing });
+                            }}
+                            min={0}
+                            max={20}
+                        />
+                    </PanelBody>
+                )}
+                <PanelBody title="Font Size" initialOpen={true}>
+                    <BaseControl __nextHasNoMarginBottom>
+                        <FontSizePicker
+                            value={attributes.fontSize as any}
+                            onChange={(val: any) =>
+                                setAttributes({ fontSize: val })
+                            }
+                        />
                     </BaseControl>
                 </PanelBody>
             </InspectorControls>
+            {isLibraryOpen && (
+                <Modal
+                    isFullScreen
+                    className="tableberg_icons_library_modal"
+                    title={__("Icons", "ultimate-blocks-pro")}
+                    onRequestClose={() => setLibraryOpen(false)}
+                >
+                    <IconsLibrary
+                        value={attributes.icon.iconName as any}
+                        onSelect={(newIcon) => {
+                            setAttributes({
+                                icon: newIcon,
+                            });
+                            setLibraryOpen(false);
+                            return null;
+                        }}
+                    />
+                </Modal>
+            )}
         </>
     );
 }
