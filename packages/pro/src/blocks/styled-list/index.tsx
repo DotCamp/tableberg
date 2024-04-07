@@ -201,7 +201,7 @@ function edit(props: BlockEditProps<StyledListProps>) {
                 <Modal
                     isFullScreen
                     className="tableberg_icons_library_modal"
-                    title={__("Icons", "ultimate-blocks-pro")}
+                    title={__("Icons", "tableberg-pro")}
                     onRequestClose={() => setLibraryOpen(false)}
                 >
                     <IconsLibrary

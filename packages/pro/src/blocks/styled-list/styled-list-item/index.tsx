@@ -16,12 +16,13 @@ import { listItemIcon } from "../icon";
 import metadata from "./block.json";
 import { getItemStyles } from "../get-styles";
 import { useDispatch, useSelect } from "@wordpress/data";
-import { useCallback } from "react";
-import { PanelBody } from "@wordpress/components";
+import { useCallback, useState } from "react";
+import { Button, Modal, PanelBody, PanelRow } from "@wordpress/components";
 import { SpacingControl } from "@tableberg/components";
 import { StyledListProps } from "..";
 import SVGComponent from "../get-icon";
 import classNames from "classnames";
+import IconsLibrary from "@tableberg/components/icon-library";
 
 export interface StyledListItemProps {
     icon?: any;
@@ -41,7 +42,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         blockEditorStore,
     ) as any;
 
-    const { listItemBlock, listBlock, getBlockIndex } = useSelect(
+    const { listItemBlock, listBlock, getBlockIndex, hasIcon } = useSelect(
         (select) => {
             const storeSelect = select(
                 blockEditorStore,
@@ -49,11 +50,13 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             const listItemBlock = storeSelect.getBlock(clientId)!;
             const parentIds = storeSelect.getBlockParents(clientId)!;
             const listBlockId = parentIds[parentIds.length - 1];
-            const listBlock: BlockInstance<StyledListProps> = storeSelect.getBlock(listBlockId)! as any;
+            const listBlock: BlockInstance<StyledListProps> =
+                storeSelect.getBlock(listBlockId)! as any;
             return {
                 listItemBlock,
                 listBlock,
                 getBlockIndex: storeSelect.getBlockIndex,
+                hasIcon: !listBlock.attributes.isOrdered,
             };
         },
         [clientId],
@@ -62,9 +65,11 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
     const blockProps = useBlockProps({
         style: getItemStyles(attributes),
         className: classNames({
-            "tableberg-list-item-has-icon": !listBlock.attributes.isOrdered
-        })
+            "tableberg-list-item-has-icon": !listBlock.attributes.isOrdered,
+        }),
     });
+
+    const [isLibraryOpen, setLibraryOpen] = useState(false);
 
     const handleItemDeletion = useCallback(
         (forward: boolean) => {
@@ -93,10 +98,12 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         [listItemBlock],
     );
 
+    const itemIcon = attributes.icon || listBlock.attributes.icon;
+
     return (
         <>
             <li {...blockProps}>
-                {!listBlock.attributes.isOrdered && <SVGComponent icon={listBlock.attributes.icon}/>}
+                {hasIcon && <SVGComponent icon={itemIcon} />}
                 <RichText
                     tagName="div"
                     value={text}
@@ -122,16 +129,55 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 <SpacingControl
                     label={__("Padding", "tableberg-pro")}
                     value={attributes.padding}
-                    onChange={(padding) => setAttributes({padding})}
-                    onDeselect={() => setAttributes({padding: undefined})}
+                    onChange={(padding) => setAttributes({ padding })}
+                    onDeselect={() => setAttributes({ padding: undefined })}
                 />
                 <SpacingControl
                     label={__("Margin", "tableberg-pro")}
                     value={attributes.margin}
-                    onChange={(margin) => setAttributes({margin})}
-                    onDeselect={() => setAttributes({margin: undefined})}
+                    onChange={(margin) => setAttributes({ margin })}
+                    onDeselect={() => setAttributes({ margin: undefined })}
                 />
             </InspectorControls>
+            {hasIcon && (
+                <InspectorControls group="settings">
+                    <PanelBody title="Icon Settings" initialOpen={true}>
+                        <PanelRow className="tableberg-styled-list-icon-selector">
+                            <label>Select Icon</label>
+                            <Button
+                                style={{ border: "1px solid #eeeeee" }}
+                                icon={
+                                    <SVGComponent
+                                        icon={itemIcon}
+                                        iconName="wordpress"
+                                        type="wordpress"
+                                    />
+                                }
+                                onClick={() => setLibraryOpen(true)}
+                            />
+                        </PanelRow>
+                    </PanelBody>
+                </InspectorControls>
+            )}
+            {isLibraryOpen && (
+                <Modal
+                    isFullScreen
+                    className="tableberg_icons_library_modal"
+                    title={__("Icons", "tableberg-pro")}
+                    onRequestClose={() => setLibraryOpen(false)}
+                >
+                    <IconsLibrary
+                        value={itemIcon.iconName as any}
+                        onSelect={(newIcon) => {
+                            setAttributes({
+                                icon: newIcon,
+                            });
+                            setLibraryOpen(false);
+                            return null;
+                        }}
+                    />
+                </Modal>
+            )}
         </>
     );
 }
