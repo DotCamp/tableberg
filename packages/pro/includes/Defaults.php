@@ -69,21 +69,9 @@ class Defaults {
 						'type'    => 'string',
 						'default' => '',
 					),
-					'selectedIcon' => array(
-						'type'    => 'string',
-						'default' => 'check',
-					),
-					'iconColor'    => array(
-						'type'    => 'string',
-						'default' => '#000000',
-					),
-					'iconSize'     => array(
-						'type'    => 'number',
-						'default' => 5,
-					),
-					'fontSize'     => array(
-						'type'    => 'number',
-						'default' => 0,
+					'icon' => array(
+						'type'    => 'object',
+						'default' => null,
 					),
 					'padding'      => array(
 						'type'    => 'array',
@@ -93,18 +81,42 @@ class Defaults {
 						'type'    => 'array',
 						'default' => [],
 					),
+					'iconColor'        => array(
+						'type'    => 'string',
+						'default' => null,
+					),
+					'iconSize'         => array(
+						'type'    => 'number',
+						'default' => null,
+					),
+					'iconSpacing'         => array(
+						'type'    => 'number',
+						'default' => null,
+					),
+					'fontSize'         => array(
+						'type'    => 'number',
+						'default' => null,
+					),
+					'textColor'        => array(
+						'type'    => 'string',
+						'default' => null,
+					),
 				),
 			),
 		),
 		'tableberg/styled-list'      => array(
 			'attributes' => array(
-				'list'             => array(
-					'type'    => 'string',
-					'default' => '',
+				'isOrdered'        => array(
+					'type'    => 'boolean',
+					'default' => false,
 				),
 				'alignment'        => array(
 					'type'    => 'string',
 					'default' => 'left',
+				),
+				'itemSpacing'      => array(
+					'type'    => 'number',
+					'default' => 0,
 				),
 				'iconColor'        => array(
 					'type'    => 'string',
@@ -112,27 +124,15 @@ class Defaults {
 				),
 				'iconSize'         => array(
 					'type'    => 'number',
+					'default' => 10,
+				),
+				'iconSpacing'         => array(
+					'type'    => 'number',
 					'default' => 5,
 				),
 				'fontSize'         => array(
 					'type'    => 'number',
 					'default' => 0,
-				),
-				'itemSpacing'      => array(
-					'type'    => 'number',
-					'default' => 0,
-				),
-				'columns'          => array(
-					'type'    => 'number',
-					'default' => 1,
-				),
-				'maxMobileColumns' => array(
-					'type'    => 'number',
-					'default' => 2,
-				),
-				'isRootList'       => array(
-					'type'    => 'boolean',
-					'default' => false,
 				),
 				'textColor'        => array(
 					'type'    => 'string',
@@ -159,10 +159,6 @@ class Defaults {
 						'bottom' => '',
 						'left'   => '',
 					),
-				),
-				'listItem'         => array(
-					'type'    => 'array',
-					'default' => [],
 				),
 				'icon'             => array(
 					'type'    => 'array',

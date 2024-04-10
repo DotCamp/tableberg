@@ -22,12 +22,11 @@ import {
     PanelRow,
     RangeControl,
     SelectControl,
-    __experimentalToolsPanel as ToolsPanel,
-    __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
 import { useState } from "react";
 import { edit as editIcon } from "@wordpress/icons";
 import SVGComponent from "./get-icon";
+import classNames from "classnames";
 
 export interface StyledListProps {
     isOrdered: boolean;
@@ -51,7 +50,10 @@ function edit(props: BlockEditProps<StyledListProps>) {
 
     const blockProps = useBlockProps({
         style: getStyles(attributes),
-        className: "tableberg-styled-list",
+        className: classNames({
+            "tableberg-styled-list": true,
+            "tableberg-list-has-icon": !attributes.isOrdered,
+        }),
     });
 
     const innerBlocksProps = useInnerBlocksProps(blockProps as any, {

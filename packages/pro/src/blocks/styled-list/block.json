@@ -33,7 +33,7 @@
           },
           "iconSize": {
                "type": "number",
-               "default": 5
+               "default": 10
           },
           "iconSpacing": {
                "type": "number",

@@ -2,6 +2,7 @@
 
 namespace Tableberg\Pro\Blocks;
 
+use Tableberg\Pro\Common;
 use Tableberg\Pro\Defaults;
 use Tableberg\Utils\Utils;
 /**
@@ -30,12 +31,11 @@ class StyledListItem {
 	 * @return string Generated CSS styles.
 	 */
 	public static function get_styles( $attributes ) {
-
-		$utils   = new Utils();
-		$padding = $utils->get_spacing_css( isset( $attributes['padding'] ) ? $attributes['padding'] : array() );
-		$margin  = $utils->get_spacing_css( isset( $attributes['margin'] ) ? $attributes['margin'] : array() );
+		$padding = Utils::get_spacing_css( $attributes['padding']  ??[]);
+		$margin  = Utils::get_spacing_css( $attributes['margin'] ?? []);
 
 		$styles = array(
+			'color'          => $attributes['textColor']??'',
 			'padding-top'    => $padding['top'] ?? '',
 			'padding-right'  => $padding['right'] ?? '',
 			'padding-bottom' => $padding['bottom'] ?? '',
@@ -44,9 +44,12 @@ class StyledListItem {
 			'margin-right'   => $margin['right'] ?? '',
 			'margin-bottom'  => $margin['bottom'] ?? '',
 			'margin-left'    => $margin['left'] ?? '',
+			'--tableberg-styled-list-icon-color' => $attributes['iconColor']??'',
+			'--tableberg-styled-list-icon-size' => $attributes['iconSize']??false?$attributes['iconSize'].'px':'',
+			'--tableberg-styled-list-icon-spacing' => $attributes['iconSpacing']??false?$attributes['iconSpacing'].'px':'',
 		);
 
-		return $utils->generate_css_string( $styles );
+		return Utils::generate_css_string( $styles );
 	}
 	/**
 	 * Renders the block on the server.
@@ -58,10 +61,17 @@ class StyledListItem {
 	 */
 	public function tableberg_render_styled_list_item_block( $attributes, $contents, $block ) {
 		$item_text = isset( $attributes['text'] ) ? $attributes['text'] : '';
-
 		$styles = $this->get_styles( $attributes );
-
-		return '<li class="tableberg_styled_list_item" style="' . $styles . '">' . $item_text . $contents . '</li>';
+		$classNames = "";
+		$icon = Common::get_icon_svg($attributes);
+		if ($icon) {
+			$classNames = "tableberg-list-item-has-icon";
+		}
+		if (!$icon) {		
+			return '<li class="'.$classNames.'" style="' . $styles . '">::__TABLEBERG_STYLED_LIST_ICON__::<div>' . $item_text . '</div></li>';
+		}
+		 
+		return '<li class="'.$classNames.'" style="' . $styles . '">' .$icon.'<div>'. $item_text . '</div></li>';
 	}
 
 	/**

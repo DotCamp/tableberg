@@ -23,18 +23,6 @@
                "type": "object",
                "default": null
           },
-          "iconColor": {
-               "type": "string",
-               "default": "#000000"
-          },
-          "iconSize": {
-               "type": "number",
-               "default": 5
-          },
-          "fontSize": {
-               "type": "number",
-               "default": 0
-          },
           "padding": {
                "type": "object",
                "default": {}
@@ -42,6 +30,26 @@
           "margin": {
                "type": "object",
                "default": {}
+          },
+          "iconColor": {
+               "type": "string",
+               "default": null
+          },
+          "iconSize": {
+               "type": "number",
+               "default": null
+          },
+          "iconSpacing": {
+               "type": "number",
+               "default": null
+          },
+          "fontSize": {
+               "type": "string",
+               "default": null
+          },
+          "textColor": {
+               "type": "string",
+               "default": null
           }
      },
      "supports": {},

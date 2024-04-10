@@ -5,11 +5,16 @@
         1em + var(--tableberg-styled-list-padding-left, 0px)
     ) !important;
 
-    .tableberg-list-item-has-icon {
+    li svg {
+        display: none;
+    }
+
+    &.tableberg-list-has-icon li {
         display: flex;
         align-items: center;
         gap: var(--tableberg-styled-list-icon-spacing);
         > svg {
+            display: initial;
             height: var(--tableberg-styled-list-icon-size, 30px);
             width: var(--tableberg-styled-list-icon-size, 30px);
             fill: var(--tableberg-styled-list-icon-color);

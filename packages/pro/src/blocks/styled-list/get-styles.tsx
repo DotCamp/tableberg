@@ -51,6 +51,7 @@ export function getItemStyles(attributes: StyledListItemProps) {
     
 
     let styles = {
+        color: attributes.textColor,
         fontSize: attributes.fontSize,
         paddingTop: paddingObj?.top,
         paddingRight: paddingObj?.right,
@@ -60,6 +61,9 @@ export function getItemStyles(attributes: StyledListItemProps) {
         marginRight: marginObj?.right,
         marginBottom: marginObj?.bottom,
         marginLeft: marginObj?.left,
+        '--tableberg-styled-list-icon-size': attributes.iconSize && `${attributes.iconSize}px`,
+        '--tableberg-styled-list-icon-color': attributes.iconColor,
+        '--tableberg-styled-list-icon-spacing': attributes.iconSpacing && `${attributes.iconSpacing}px`,
     };
 
     return omitBy(

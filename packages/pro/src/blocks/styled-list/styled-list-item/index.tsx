@@ -17,21 +17,28 @@ import metadata from "./block.json";
 import { getItemStyles } from "../get-styles";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { useCallback, useState } from "react";
-import { Button, Modal, PanelBody, PanelRow } from "@wordpress/components";
-import { SpacingControl } from "@tableberg/components";
+import {
+    Button,
+    Modal,
+    PanelBody,
+    PanelRow,
+    RangeControl,
+} from "@wordpress/components";
+import { ColorControl, SpacingControl } from "@tableberg/components";
 import { StyledListProps } from "..";
 import SVGComponent from "../get-icon";
-import classNames from "classnames";
 import IconsLibrary from "@tableberg/components/icon-library";
 
 export interface StyledListItemProps {
     icon?: any;
     text: string;
-    iconColor: string;
-    iconSize: number;
-    fontSize: number;
     padding: object;
     margin: object;
+    iconColor?: string;
+    iconSize?: number;
+    iconSpacing?: number;
+    fontSize?: string;
+    textColor?: string;
 }
 
 function edit(props: BlockEditProps<StyledListItemProps>) {
@@ -42,31 +49,30 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         blockEditorStore,
     ) as any;
 
-    const { listItemBlock, listBlock, getBlockIndex, hasIcon } = useSelect(
-        (select) => {
-            const storeSelect = select(
-                blockEditorStore,
-            ) as BlockEditorStoreSelectors;
-            const listItemBlock = storeSelect.getBlock(clientId)!;
-            const parentIds = storeSelect.getBlockParents(clientId)!;
-            const listBlockId = parentIds[parentIds.length - 1];
-            const listBlock: BlockInstance<StyledListProps> =
-                storeSelect.getBlock(listBlockId)! as any;
-            return {
-                listItemBlock,
-                listBlock,
-                getBlockIndex: storeSelect.getBlockIndex,
-                hasIcon: !listBlock.attributes.isOrdered,
-            };
-        },
-        [clientId],
-    );
+    const { listItemBlock, listBlock, listAttrs, getBlockIndex, hasIcon } =
+        useSelect(
+            (select) => {
+                const storeSelect = select(
+                    blockEditorStore,
+                ) as BlockEditorStoreSelectors;
+                const listItemBlock = storeSelect.getBlock(clientId)!;
+                const parentIds = storeSelect.getBlockParents(clientId)!;
+                const listBlockId = parentIds[parentIds.length - 1];
+                const listBlock: BlockInstance<StyledListProps> =
+                    storeSelect.getBlock(listBlockId)! as any;
+                return {
+                    listItemBlock,
+                    listBlock,
+                    listAttrs: listBlock.attributes,
+                    getBlockIndex: storeSelect.getBlockIndex,
+                    hasIcon: !listBlock.attributes.isOrdered,
+                };
+            },
+            [clientId],
+        );
 
     const blockProps = useBlockProps({
         style: getItemStyles(attributes),
-        className: classNames({
-            "tableberg-list-item-has-icon": !listBlock.attributes.isOrdered,
-        }),
     });
 
     const [isLibraryOpen, setLibraryOpen] = useState(false);
@@ -98,7 +104,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         [listItemBlock],
     );
 
-    const itemIcon = attributes.icon || listBlock.attributes.icon;
+    const itemIcon = attributes.icon || listAttrs.icon;
 
     return (
         <>
@@ -125,15 +131,33 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                     }}
                 />
             </li>
+            <InspectorControls group="color">
+                <ColorControl
+                    label={__("Item Icon Color", "tableberg-pro")}
+                    colorValue={attributes.iconColor}
+                    onColorChange={(iconColor: any) =>
+                        setAttributes({ iconColor })
+                    }
+                    onDeselect={() => setAttributes({ iconColor: undefined })}
+                />
+                <ColorControl
+                    label={__("Item Text Color", "tableberg-pro")}
+                    colorValue={attributes.textColor}
+                    onColorChange={(textColor: any) =>
+                        setAttributes({ textColor })
+                    }
+                    onDeselect={() => setAttributes({ textColor: undefined })}
+                />
+            </InspectorControls>
             <InspectorControls group="dimensions">
                 <SpacingControl
-                    label={__("Padding", "tableberg-pro")}
+                    label={__("Item Padding", "tableberg-pro")}
                     value={attributes.padding}
                     onChange={(padding) => setAttributes({ padding })}
                     onDeselect={() => setAttributes({ padding: undefined })}
                 />
                 <SpacingControl
-                    label={__("Margin", "tableberg-pro")}
+                    label={__("Item Margin", "tableberg-pro")}
                     value={attributes.margin}
                     onChange={(margin) => setAttributes({ margin })}
                     onDeselect={() => setAttributes({ margin: undefined })}
@@ -156,27 +180,45 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                                 onClick={() => setLibraryOpen(true)}
                             />
                         </PanelRow>
+                        <RangeControl
+                            label={__("Item Icon size", "tableberg-pro")}
+                            value={attributes.iconSize}
+                            onChange={(iconSize) => {
+                                setAttributes({ iconSize });
+                            }}
+                            min={10}
+                            max={100}
+                        />
+                        <RangeControl
+                            label={__("Item Icon Spacing", "tableberg-pro")}
+                            value={attributes.iconSpacing}
+                            onChange={(iconSpacing) => {
+                                setAttributes({ iconSpacing });
+                            }}
+                            min={0}
+                            max={20}
+                        />
                     </PanelBody>
+                    {isLibraryOpen && (
+                        <Modal
+                            isFullScreen
+                            className="tableberg_icons_library_modal"
+                            title={__("Icons", "tableberg-pro")}
+                            onRequestClose={() => setLibraryOpen(false)}
+                        >
+                            <IconsLibrary
+                                value={itemIcon.iconName as any}
+                                onSelect={(newIcon) => {
+                                    setAttributes({
+                                        icon: newIcon,
+                                    });
+                                    setLibraryOpen(false);
+                                    return null;
+                                }}
+                            />
+                        </Modal>
+                    )}
                 </InspectorControls>
-            )}
-            {isLibraryOpen && (
-                <Modal
-                    isFullScreen
-                    className="tableberg_icons_library_modal"
-                    title={__("Icons", "tableberg-pro")}
-                    onRequestClose={() => setLibraryOpen(false)}
-                >
-                    <IconsLibrary
-                        value={itemIcon.iconName as any}
-                        onSelect={(newIcon) => {
-                            setAttributes({
-                                icon: newIcon,
-                            });
-                            setLibraryOpen(false);
-                            return null;
-                        }}
-                    />
-                </Modal>
             )}
         </>
     );
