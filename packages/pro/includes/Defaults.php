@@ -94,7 +94,7 @@ class Defaults {
 						'default' => null,
 					),
 					'fontSize'         => array(
-						'type'    => 'number',
+						'type'    => 'string',
 						'default' => null,
 					),
 					'textColor'        => array(
@@ -116,8 +116,12 @@ class Defaults {
 				),
 				'itemSpacing'      => array(
 					'type'    => 'number',
-					'default' => 0,
+					'default' => 1,
 				),
+				'listSpacing' => [
+					'type' => 'number',
+					'default' => 5
+			    ],
 				'iconColor'        => array(
 					'type'    => 'string',
 					'default' => '#000000',
@@ -131,8 +135,8 @@ class Defaults {
 					'default' => 5,
 				),
 				'fontSize'         => array(
-					'type'    => 'number',
-					'default' => 0,
+					'type'    => 'string',
+					'default' => '',
 				),
 				'textColor'        => array(
 					'type'    => 'string',

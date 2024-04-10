@@ -3,6 +3,7 @@ import { __ } from "@wordpress/i18n";
 import {
     BlockEditProps,
     BlockInstance,
+    cloneBlock,
     createBlock,
     registerBlockType,
 } from "@wordpress/blocks";
@@ -11,10 +12,9 @@ import {
     useBlockProps,
     store as blockEditorStore,
     InspectorControls,
+    useInnerBlocksProps,
+    BlockControls,
 } from "@wordpress/block-editor";
-import { listItemIcon } from "../icon";
-import metadata from "./block.json";
-import { getItemStyles } from "../get-styles";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { useCallback, useState } from "react";
 import {
@@ -24,10 +24,16 @@ import {
     PanelRow,
     RangeControl,
 } from "@wordpress/components";
+
+import { addTemplate, removeSubmenu } from "@wordpress/icons";
 import { ColorControl, SpacingControl } from "@tableberg/components";
+import IconsLibrary from "@tableberg/components/icon-library";
+
+import { listItemIcon } from "../icon";
+import metadata from "./block.json";
+import { getItemStyles } from "../get-styles";
 import { StyledListProps } from "..";
 import SVGComponent from "../get-icon";
-import IconsLibrary from "@tableberg/components/icon-library";
 
 export interface StyledListItemProps {
     icon?: any;
@@ -74,6 +80,10 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
     const blockProps = useBlockProps({
         style: getItemStyles(attributes),
     });
+    const innerBlocksProps = useInnerBlocksProps({
+        allowedBlocks: ["tableberg/styled-list"],
+        className: "tableberg-inner-list-holder",
+    });
 
     const [isLibraryOpen, setLibraryOpen] = useState(false);
 
@@ -104,33 +114,68 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         [listItemBlock],
     );
 
+    const toggleInnerList = () => {
+        if (listItemBlock.innerBlocks.length > 0) {
+            listItemBlock.innerBlocks.forEach((innerList) =>
+                storeActions.removeBlock(innerList.clientId),
+            );
+            return;
+        }
+        const newList = createBlock("tableberg/styled-list", {}, [
+            createBlock("tableberg/styled-list-item"),
+        ]);
+        storeActions.replaceInnerBlocks(clientId, [newList]);
+    };
+
+    const hasInnerList = listItemBlock.innerBlocks.length > 0;
     const itemIcon = attributes.icon || listAttrs.icon;
 
     return (
         <>
             <li {...blockProps}>
-                {hasIcon && <SVGComponent icon={itemIcon} />}
-                <RichText
-                    tagName="div"
-                    value={text}
-                    placeholder="List item"
-                    keepPlaceholderOnFocus={true}
-                    onChange={(text) => setAttributes({ text })}
-                    onSplit={(itemFragment) => {
-                        const newAttrs = Object.create(attributes);
-                        newAttrs.text = itemFragment;
-                        const newBlock = createBlock<StyledListItemProps>(
-                            "tableberg/styled-list-item",
-                            newAttrs,
-                        );
-                        return newBlock;
-                    }}
-                    onMerge={handleItemDeletion}
-                    onReplace={(blocks) => {
-                        storeActions.replaceBlocks(clientId, blocks);
-                    }}
-                />
+                <div className="tableberg-list-item-inner">
+                    {hasIcon && <SVGComponent icon={itemIcon} />}
+                    <RichText
+                        tagName="div"
+                        value={text}
+                        placeholder="List item"
+                        keepPlaceholderOnFocus={true}
+                        onChange={(text) => setAttributes({ text })}
+                        onSplit={(itemFragment) => {
+                            const newAttrs = Object.create(attributes);
+                            newAttrs.text = itemFragment;
+                            const newBlock = createBlock<StyledListItemProps>(
+                                "tableberg/styled-list-item",
+                                newAttrs,
+                            );
+                            return newBlock;
+                        }}
+                        onMerge={handleItemDeletion}
+                        onReplace={(blocks) => {
+                            if (hasInnerList) {
+                                console.log(blocks[0]);
+
+                                console.log(listItemBlock.innerBlocks);
+                                storeActions.replaceInnerBlocks(
+                                    blocks[0].clientId,
+                                    [cloneBlock(listItemBlock.innerBlocks[0])],
+                                );
+                            }
+                            storeActions.replaceBlocks(clientId, blocks);
+                        }}
+                    />
+                </div>
+                {hasInnerList && <div {...innerBlocksProps}></div>}
             </li>
+            <BlockControls group="block">
+                <Button
+                    icon={hasInnerList ? removeSubmenu : addTemplate}
+                    onClick={toggleInnerList}
+                    label={
+                        hasInnerList ? "Remove Inner List" : "Add Inner List"
+                    }
+                />
+            </BlockControls>
             <InspectorControls group="color">
                 <ColorControl
                     label={__("Item Icon Color", "tableberg-pro")}
@@ -224,8 +269,15 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
     );
 }
 
+function save() {
+    useBlockProps.save();
+    const innerBlocksProps = useInnerBlocksProps.save();
+    return <div {...innerBlocksProps} />;
+}
+
 registerBlockType(metadata as any, {
     icon: listItemIcon,
     attributes: metadata.attributes as any,
     edit,
+    save,
 });

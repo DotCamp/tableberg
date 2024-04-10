@@ -37,6 +37,7 @@ export interface StyledListProps {
     iconSpacing: number;
     fontSize: string;
     itemSpacing: number;
+    listSpacing: number;
     textColor: string;
     backgroundColor: string;
     padding: object;
@@ -122,17 +123,6 @@ function edit(props: BlockEditProps<StyledListProps>) {
             <InspectorControls group="settings">
                 <PanelBody title="List Settings" initialOpen={true}>
                     <BaseControl __nextHasNoMarginBottom>
-                        <RangeControl
-                            label={__("Item Spacing", "tableberg-pro")}
-                            value={attributes.itemSpacing}
-                            onChange={(itemSpacing) => {
-                                setAttributes({ itemSpacing });
-                            }}
-                            min={0}
-                            max={50}
-                        />
-                    </BaseControl>
-                    <BaseControl __nextHasNoMarginBottom>
                         <SelectControl
                             label="List Type"
                             value={attributes.isOrdered ? "1" : "0"}
@@ -145,6 +135,28 @@ function edit(props: BlockEditProps<StyledListProps>) {
                                     isOrdered: isOrdered == "1",
                                 });
                             }}
+                        />
+                    </BaseControl>
+                    <BaseControl __nextHasNoMarginBottom>
+                        <RangeControl
+                            label={__("Item Spacing", "tableberg-pro")}
+                            value={attributes.itemSpacing}
+                            onChange={(itemSpacing) => {
+                                setAttributes({ itemSpacing });
+                            }}
+                            min={0}
+                            max={50}
+                        />
+                    </BaseControl>
+                    <BaseControl __nextHasNoMarginBottom>
+                        <RangeControl
+                            label={__("Inner List Spacing", "tableberg-pro")}
+                            value={attributes.listSpacing}
+                            onChange={(listSpacing) => {
+                                setAttributes({ listSpacing });
+                            }}
+                            min={0}
+                            max={50}
                         />
                     </BaseControl>
                 </PanelBody>
@@ -198,26 +210,26 @@ function edit(props: BlockEditProps<StyledListProps>) {
                         />
                     </BaseControl>
                 </PanelBody>
+                {isLibraryOpen && (
+                    <Modal
+                        isFullScreen
+                        className="tableberg_icons_library_modal"
+                        title={__("Icons", "tableberg-pro")}
+                        onRequestClose={() => setLibraryOpen(false)}
+                    >
+                        <IconsLibrary
+                            value={attributes.icon.iconName as any}
+                            onSelect={(newIcon) => {
+                                setAttributes({
+                                    icon: newIcon,
+                                });
+                                setLibraryOpen(false);
+                                return null;
+                            }}
+                        />
+                    </Modal>
+                )}
             </InspectorControls>
-            {isLibraryOpen && (
-                <Modal
-                    isFullScreen
-                    className="tableberg_icons_library_modal"
-                    title={__("Icons", "tableberg-pro")}
-                    onRequestClose={() => setLibraryOpen(false)}
-                >
-                    <IconsLibrary
-                        value={attributes.icon.iconName as any}
-                        onSelect={(newIcon) => {
-                            setAttributes({
-                                icon: newIcon,
-                            });
-                            setLibraryOpen(false);
-                            return null;
-                        }}
-                    />
-                </Modal>
-            )}
         </>
     );
 }

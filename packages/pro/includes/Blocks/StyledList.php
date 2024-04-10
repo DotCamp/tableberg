@@ -52,6 +52,7 @@ class StyledList {
 			'--tableberg-styled-list-icon-size' => $attributes['iconSize'].'px',
 			'--tableberg-styled-list-icon-spacing' => $attributes['iconSpacing'].'px',
 			'--tableberg-styled-list-spacing' => $attributes['itemSpacing'].'px',
+			'--tableberg-styled-list-inner-spacing' => $attributes['listSpacing'].'px',
 		);
 
 		return Utils::generate_css_string( $styles );

@@ -26,9 +26,10 @@ export function getStyles(attributes: StyledListProps) {
         marginLeft: marginObj?.left,
         '--tableberg-styled-list-padding-left': paddingLeft,
         '--tableberg-styled-list-spacing': `${attributes.itemSpacing || 0}px`,
-        '--tableberg-styled-list-icon-size': `${attributes.iconSize || 30}px`,
+        '--tableberg-styled-list-icon-size': `${attributes.iconSize || 15}px`,
         '--tableberg-styled-list-icon-color': attributes.iconColor,
         '--tableberg-styled-list-icon-spacing': `${attributes.iconSpacing || 0}px`,
+        '--tableberg-styled-list-inner-spacing': `${attributes.listSpacing || 5}px`
     };
 
     return omitBy(

@@ -11,7 +11,8 @@
           "tableberg"
      ],
      "parent": [
-          "tableberg/cell"
+          "tableberg/cell",
+          "tableberg/styled-list-item"
      ],
      "textdomain": "tableberg-pro",
      "attributes": {
@@ -25,7 +26,11 @@
           },
           "itemSpacing": {
                "type": "number",
-               "default": 0
+               "default": 1
+          },
+          "listSpacing": {
+               "type": "number",
+               "default": 5
           },
           "iconColor": {
                "type": "string",

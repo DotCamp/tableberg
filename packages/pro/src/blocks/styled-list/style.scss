@@ -9,14 +9,14 @@
         display: none;
     }
 
-    &.tableberg-list-has-icon li {
+    &.tableberg-list-has-icon .tableberg-list-item-inner {
         display: flex;
         align-items: center;
         gap: var(--tableberg-styled-list-icon-spacing);
         > svg {
             display: initial;
-            height: var(--tableberg-styled-list-icon-size, 30px);
-            width: var(--tableberg-styled-list-icon-size, 30px);
+            height: var(--tableberg-styled-list-icon-size, 15px);
+            width: var(--tableberg-styled-list-icon-size, 15px);
             fill: var(--tableberg-styled-list-icon-color);
         }
         > div {
@@ -26,6 +26,14 @@
 
     li {
         margin-bottom: var(--tableberg-styled-list-spacing);
+        .tableberg-inner-list-holder {
+            flex-grow: 1;
+            flex-shrink: 0;
+        }
+    }
+
+    .tableberg-inner-list-holder {
+        padding-left: var(--tableberg-styled-list-inner-spacing, 5px);
     }
 }
 ul.tableberg-styled-list {
