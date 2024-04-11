@@ -23,6 +23,8 @@ import {
     PanelBody,
     PanelRow,
     RangeControl,
+    Toolbar,
+    ToolbarButton,
 } from "@wordpress/components";
 
 import { addTemplate, removeSubmenu } from "@wordpress/icons";
@@ -153,13 +155,11 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                         onMerge={handleItemDeletion}
                         onReplace={(blocks) => {
                             if (hasInnerList) {
-                                console.log(blocks[0]);
-
-                                console.log(listItemBlock.innerBlocks);
-                                storeActions.replaceInnerBlocks(
-                                    blocks[0].clientId,
-                                    [cloneBlock(listItemBlock.innerBlocks[0])],
-                                );
+                                // TODO: Replace the following line with `storeActions.replaceInnerBlocks` call
+                                // I have no idea why assigning works but not replaceInnerBlocks
+                                // @ts-ignore
+                                blocks[0].innerBlocks =
+                                    listItemBlock.innerBlocks;
                             }
                             storeActions.replaceBlocks(clientId, blocks);
                         }}
@@ -168,12 +168,15 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 {hasInnerList && <div {...innerBlocksProps}></div>}
             </li>
             <BlockControls group="block">
-                <Button
+                <ToolbarButton
                     icon={hasInnerList ? removeSubmenu : addTemplate}
                     onClick={toggleInnerList}
                     label={
                         hasInnerList ? "Remove Inner List" : "Add Inner List"
                     }
+                    placeholder={undefined}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
                 />
             </BlockControls>
             <InspectorControls group="color">
