@@ -1,5 +1,3 @@
-import { IconsLibraryIconProps } from "../../components/icon-library/type";
-
 export default function SVGComponent({ icon }: any) {
     const { viewBox, xmlns, children } = icon.icon.props;
     const pathData = children.props.d;

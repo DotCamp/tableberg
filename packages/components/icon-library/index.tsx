@@ -1,8 +1,7 @@
 /**
  * WordPress Dependencies
  */
-//@ts-ignore
-import { useState } from "@wordpress/element";
+import { useState } from "react";
 
 /**
  * Custom Dependencies
