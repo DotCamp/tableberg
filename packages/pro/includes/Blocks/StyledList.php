@@ -57,7 +57,7 @@ class StyledList
 			'--tableberg-styled-list-spacing' => $attributes['itemSpacing'] . 'px',
 			'--tableberg-styled-list-inner-spacing' => $attributes['listSpacing'] . 'px',
 		);
-		if ($attributes['isOrdered'] || !$attributes['icon']) {
+		if ($attributes['isOrdered'] || !isset($attributes['icon']) || !$attributes['icon']) {
 			$styles['list-style'] = $attributes['listStyle'] ?? "auto";
 			$styles['--tableberg-styled-list-padding-left'] = $padding['left'] ? $padding['left'] . 'px' : '0px';
 		}
@@ -76,7 +76,7 @@ class StyledList
 	{
 		$tag = $attributes['isOrdered'] ? 'ol' : 'ul';
 		$contents = HtmlUtils::replace_starting_tag($contents, 'ul', '<' . $tag);
-		if (!$attributes['isOrdered'] && $attributes['icon']) {
+		if (!$attributes['isOrdered'] && isset($attributes['icon']) && $attributes['icon']) {
 			$icon = Common::get_icon_svg($attributes);
 			$contents = str_replace('::__TABLEBERG_STYLED_LIST_ICON__::', $icon, $contents);
 			$contents = HtmlUtils::append_attr_value($contents, $tag, ' tableberg-styled-list tableberg-list-has-icon', 'class');
