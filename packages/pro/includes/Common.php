@@ -119,7 +119,7 @@ class Common
 
 	public static function get_icon_svg(array $attrs): string | bool {
 		if (!isset($attrs['icon']) || !isset($attrs['icon']['icon'])) {
-			return false;
+			return '';
 		}
 		$icon = $attrs['icon'];
 		if ($icon['type'] === 'wordpress') {

@@ -1,6 +1,7 @@
 <?php
 
 namespace Tableberg\Pro;
+
 /**
  * Default Attributes
  *
@@ -10,7 +11,8 @@ namespace Tableberg\Pro;
 /**
  * Handles default attributes of blocks.
  */
-class Defaults {
+class Defaults
+{
 
 	/**
 	 * Default Block Attributes
@@ -18,46 +20,46 @@ class Defaults {
 	 * @var array Block Attributes
 	 */
 	public $default_values = array(
-		'tableberg/star-rating'      => array(
+		'tableberg/star-rating' => array(
 			'attributes' => array(
-				'starCount'       => array(
-					'type'    => 'number',
+				'starCount' => array(
+					'type' => 'number',
 					'default' => 5,
 				),
-				'starSize'        => array(
-					'type'    => 'number',
+				'starSize' => array(
+					'type' => 'number',
 					'default' => 20,
 				),
-				'starColor'       => array(
-					'type'    => 'string',
+				'starColor' => array(
+					'type' => 'string',
 					'default' => '#FFB901',
 				),
-				'selectedStars'   => array(
-					'type'    => 'number',
+				'selectedStars' => array(
+					'type' => 'number',
 					'default' => 0,
 				),
-				'reviewText'      => array(
-					'type'    => 'string',
+				'reviewText' => array(
+					'type' => 'string',
 					'default' => '',
 				),
 				'reviewTextAlign' => array(
-					'type'    => 'string',
+					'type' => 'string',
 					'default' => 'left',
 				),
 				'reviewTextColor' => array(
-					'type'    => 'string',
+					'type' => 'string',
 					'default' => '',
 				),
-				'starAlign'       => array(
-					'type'    => 'string',
+				'starAlign' => array(
+					'type' => 'string',
 					'default' => 'left',
 				),
-				'padding'         => array(
-					'type'    => 'array',
+				'padding' => array(
+					'type' => 'array',
 					'default' => [],
 				),
-				'margin'          => array(
-					'type'    => 'array',
+				'margin' => array(
+					'type' => 'array',
 					'default' => [],
 				),
 			),
@@ -65,134 +67,116 @@ class Defaults {
 		'tableberg/styled-list-item' => array(
 			'attributes' => array(
 				'attributes' => array(
-					'text'     => array(
-						'type'    => 'string',
+					'text' => array(
+						'type' => 'string',
 						'default' => '',
 					),
 					'icon' => array(
-						'type'    => 'object',
+						'type' => 'object',
 						'default' => null,
 					),
-					'padding'      => array(
-						'type'    => 'array',
+					'padding' => array(
+						'type' => 'array',
 						'default' => [],
 					),
-					'margin'       => array(
-						'type'    => 'array',
+					'margin' => array(
+						'type' => 'array',
 						'default' => [],
 					),
-					'iconColor'        => array(
-						'type'    => 'string',
+					'iconColor' => array(
+						'type' => 'string',
 						'default' => null,
 					),
-					'iconSize'         => array(
-						'type'    => 'number',
+					'iconSize' => array(
+						'type' => 'number',
 						'default' => null,
 					),
-					'iconSpacing'         => array(
-						'type'    => 'number',
+					'iconSpacing' => array(
+						'type' => 'number',
 						'default' => null,
 					),
-					'fontSize'         => array(
-						'type'    => 'string',
+					'fontSize' => array(
+						'type' => 'string',
 						'default' => null,
 					),
-					'textColor'        => array(
-						'type'    => 'string',
+					'textColor' => array(
+						'type' => 'string',
 						'default' => null,
 					),
 				),
 			),
 		),
-		'tableberg/styled-list'      => array(
+		'tableberg/styled-list' => array(
 			'attributes' => array(
-				'isOrdered'        => array(
-					'type'    => 'boolean',
+				'isOrdered' => array(
+					'type' => 'boolean',
 					'default' => false,
 				),
-				'alignment'        => array(
-					'type'    => 'string',
+				'alignment' => array(
+					'type' => 'string',
 					'default' => 'left',
 				),
-				'itemSpacing'      => array(
-					'type'    => 'number',
+				'itemSpacing' => array(
+					'type' => 'number',
 					'default' => 1,
 				),
 				'listSpacing' => [
 					'type' => 'number',
 					'default' => 5
-			    ],
-				'iconColor'        => array(
-					'type'    => 'string',
+				],
+				'iconColor' => array(
+					'type' => 'string',
 					'default' => '#000000',
 				),
-				'iconSize'         => array(
-					'type'    => 'number',
+				'iconSize' => array(
+					'type' => 'number',
 					'default' => 10,
 				),
-				'iconSpacing'         => array(
-					'type'    => 'number',
+				'iconSpacing' => array(
+					'type' => 'number',
 					'default' => 5,
 				),
-				'fontSize'         => array(
-					'type'    => 'string',
+				'fontSize' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'textColor'        => array(
-					'type'    => 'string',
+				'textColor' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'backgroundColor'  => array(
-					'type'    => 'string',
+				'backgroundColor' => array(
+					'type' => 'string',
 					'default' => '',
 				),
-				'padding'          => array(
-					'type'    => 'array',
+				'padding' => array(
+					'type' => 'array',
 					'default' => array(
-						'top'    => '',
-						'right'  => '',
+						'top' => '',
+						'right' => '',
 						'bottom' => '',
-						'left'   => '',
+						'left' => '',
 					),
 				),
-				'margin'           => array(
-					'type'    => 'array',
+				'margin' => array(
+					'type' => 'array',
 					'default' => array(
-						'top'    => '',
-						'right'  => '',
+						'top' => '',
+						'right' => '',
 						'bottom' => '',
-						'left'   => '',
+						'left' => '',
 					),
 				),
-				'icon'             => array(
-					'type'    => 'array',
-					'default' => array(
-						'iconName' => 'check',
-						'type'     => 'font-awesome',
-						'icon'     => array(
-							'type'   => 'svg',
-							'key'    => null,
-							'ref'    => null,
-							'props'  => array(
-								'xmlns'    => 'http://www.w3.org/2000/svg',
-								'viewBox'  => '0 0 512 512',
-								'children' => array(
-									'type'  => 'path',
-									'key'   => null,
-									'ref'   => null,
-									'props' => array(
-										'd' => 'M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z',
-									),
-								),
-								'_owner'   => null,
-							),
-							'_owner' => null,
-						),
-					),
-				),
+				'listStyle' => [
+					'type' => 'string',
+					'default' => 'disc'
+				],
+				'icon' => [
+					'type' => 'object',
+					'default' => null
+				]
 			),
 		),
-		'tableberg/html'             => array(
+		'tableberg/html' => array(
 			'attributes' => array(
 				'content' => array(
 					'type' => 'string',
@@ -207,7 +191,8 @@ class Defaults {
 	 * @param string $block_name block name.
 	 * @return array block attributes
 	 */
-	public function get_default_attributes( $block_name ) {
-		return $this->default_values[ $block_name ]['attributes'];
+	public function get_default_attributes($block_name)
+	{
+		return $this->default_values[$block_name]['attributes'];
 	}
 }

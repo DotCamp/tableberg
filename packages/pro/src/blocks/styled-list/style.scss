@@ -5,22 +5,27 @@
         1em + var(--tableberg-styled-list-padding-left, 0px)
     ) !important;
 
+    list-style-type: none;
+
     li svg {
         display: none;
     }
 
-    &.tableberg-list-has-icon .tableberg-list-item-inner {
-        display: flex;
-        align-items: center;
-        gap: var(--tableberg-styled-list-icon-spacing);
-        > svg {
-            display: initial;
-            height: var(--tableberg-styled-list-icon-size, 15px);
-            width: var(--tableberg-styled-list-icon-size, 15px);
-            fill: var(--tableberg-styled-list-icon-color);
-        }
-        > div {
-            flex-grow: 1;
+    &.tableberg-list-has-icon {
+        padding-left: var(--tableberg-styled-list-padding-left, 0px) !important;
+        .tableberg-list-item-inner {
+            display: flex;
+            align-items: center;
+            gap: var(--tableberg-styled-list-icon-spacing);
+            > svg {
+                display: initial;
+                height: var(--tableberg-styled-list-icon-size, 15px);
+                width: var(--tableberg-styled-list-icon-size, 15px);
+                fill: var(--tableberg-styled-list-icon-color);
+            }
+            > div {
+                flex-grow: 1;
+            }
         }
     }
 
@@ -35,8 +40,4 @@
     .tableberg-inner-list-holder {
         padding-left: var(--tableberg-styled-list-inner-spacing, 5px);
     }
-}
-ul.tableberg-styled-list {
-    padding-left: 0 !important;
-    list-style-type: none;
 }

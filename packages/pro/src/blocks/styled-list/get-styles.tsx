@@ -8,12 +8,7 @@ export function getStyles(attributes: StyledListProps) {
     const paddingObj: any = getSpacingCss(padding || {});
     const marginObj: any = getSpacingCss(margin || {});
 
-    let paddingLeft = paddingObj?.left;
-    if (paddingLeft == '0') {
-        paddingLeft += 'px';
-    }
-
-    let styles = {
+    let styles: Record<string, any> = {
         backgroundColor: backgroundColor,
         color: attributes.textColor,
         fontSize: attributes.fontSize,
@@ -24,13 +19,25 @@ export function getStyles(attributes: StyledListProps) {
         marginRight: marginObj?.right,
         marginBottom: marginObj?.bottom,
         marginLeft: marginObj?.left,
-        '--tableberg-styled-list-padding-left': paddingLeft,
-        '--tableberg-styled-list-spacing': `${attributes.itemSpacing || 0}px`,
-        '--tableberg-styled-list-icon-size': `${attributes.iconSize || 15}px`,
-        '--tableberg-styled-list-icon-color': attributes.iconColor,
-        '--tableberg-styled-list-icon-spacing': `${attributes.iconSpacing || 0}px`,
-        '--tableberg-styled-list-inner-spacing': `${attributes.listSpacing || 5}px`
+        "--tableberg-styled-list-spacing": `${attributes.itemSpacing || 0}px`,
+        "--tableberg-styled-list-icon-size": `${attributes.iconSize || 15}px`,
+        "--tableberg-styled-list-icon-color": attributes.iconColor,
+        "--tableberg-styled-list-icon-spacing": `${
+            attributes.iconSpacing || 0
+        }px`,
+        "--tableberg-styled-list-inner-spacing": `${
+            attributes.listSpacing || 5
+        }px`,
     };
+
+    if (attributes.isOrdered || !attributes.icon) {
+        styles["list-style"] = attributes.listStyle || "auto";
+        let paddingLeft = paddingObj?.left;
+        if (paddingLeft == "0") {
+            paddingLeft += "px";
+        }
+        styles["--tableberg-styled-list-padding-left"] = paddingLeft;
+    }
 
     return omitBy(
         styles,
@@ -43,15 +50,12 @@ export function getStyles(attributes: StyledListProps) {
     );
 }
 
-
 export function getItemStyles(attributes: StyledListItemProps) {
     const { padding, margin } = attributes;
     const paddingObj: any = getSpacingCss(padding || {});
     const marginObj: any = getSpacingCss(margin || {});
 
-    
-
-    let styles = {
+    let styles: Record<string, any> = {
         color: attributes.textColor,
         fontSize: attributes.fontSize,
         paddingTop: paddingObj?.top,
@@ -62,10 +66,18 @@ export function getItemStyles(attributes: StyledListItemProps) {
         marginRight: marginObj?.right,
         marginBottom: marginObj?.bottom,
         marginLeft: marginObj?.left,
-        '--tableberg-styled-list-icon-size': attributes.iconSize && `${attributes.iconSize}px`,
-        '--tableberg-styled-list-icon-color': attributes.iconColor,
-        '--tableberg-styled-list-icon-spacing': attributes.iconSpacing && `${attributes.iconSpacing}px`,
+        "--tableberg-styled-list-icon-color": attributes.iconColor,
     };
+    if (attributes.iconSize! > 0) {
+        styles[
+            "--tableberg-styled-list-icon-size"
+        ] = `${attributes.iconSize}px`;
+    }
+    if (attributes.iconSpacing! > 0) {
+        styles[
+            "--tableberg-styled-list-icon-spacing"
+        ] = `${attributes.iconSpacing}px`;
+    }
 
     return omitBy(
         styles,

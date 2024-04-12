@@ -23,11 +23,15 @@ import {
     PanelBody,
     PanelRow,
     RangeControl,
-    Toolbar,
     ToolbarButton,
 } from "@wordpress/components";
 
-import { addTemplate, removeSubmenu } from "@wordpress/icons";
+import {
+    addTemplate,
+    removeSubmenu,
+    edit as editIcon,
+    trash,
+} from "@wordpress/icons";
 import { ColorControl, SpacingControl } from "@tableberg/components";
 import IconsLibrary from "@tableberg/components/icon-library";
 
@@ -68,12 +72,13 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 const listBlockId = parentIds[parentIds.length - 1];
                 const listBlock: BlockInstance<StyledListProps> =
                     storeSelect.getBlock(listBlockId)! as any;
+                const listAttrs = listBlock.attributes;
                 return {
                     listItemBlock,
                     listBlock,
-                    listAttrs: listBlock.attributes,
+                    listAttrs,
                     getBlockIndex: storeSelect.getBlockIndex,
-                    hasIcon: !listBlock.attributes.isOrdered,
+                    hasIcon: !listAttrs.isOrdered && !!listAttrs.icon,
                 };
             },
             [clientId],
@@ -136,7 +141,9 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         <>
             <li {...blockProps}>
                 <div className="tableberg-list-item-inner">
-                    {hasIcon && <SVGComponent icon={itemIcon} />}
+                    {hasIcon && itemIcon.type !== "native" && (
+                        <SVGComponent icon={itemIcon} />
+                    )}
                     <RichText
                         tagName="div"
                         value={text}
@@ -216,17 +223,34 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                     <PanelBody title="Icon Settings" initialOpen={true}>
                         <PanelRow className="tableberg-styled-list-icon-selector">
                             <label>Select Icon</label>
-                            <Button
-                                style={{ border: "1px solid #eeeeee" }}
-                                icon={
-                                    <SVGComponent
-                                        icon={itemIcon}
-                                        iconName="wordpress"
-                                        type="wordpress"
+                            <div>
+                                <Button
+                                    style={{ border: "1px solid #eeeeee" }}
+                                    icon={
+                                        <SVGComponent
+                                            icon={itemIcon}
+                                            iconName="wordpress"
+                                            type="wordpress"
+                                        />
+                                    }
+                                    onClick={() => setLibraryOpen(true)}
+                                />
+                                {attributes.icon && (
+                                    <Button
+                                        style={{
+                                            border: "1px solid red",
+                                            marginLeft: "5px",
+                                            color: "red",
+                                        }}
+                                        icon={trash}
+                                        onClick={() =>
+                                            setAttributes({
+                                                icon: undefined,
+                                            })
+                                        }
                                     />
-                                }
-                                onClick={() => setLibraryOpen(true)}
-                            />
+                                )}
+                            </div>
                         </PanelRow>
                         <RangeControl
                             label={__("Item Icon size", "tableberg-pro")}
@@ -234,7 +258,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                             onChange={(iconSize) => {
                                 setAttributes({ iconSize });
                             }}
-                            min={10}
+                            min={0}
                             max={100}
                         />
                         <RangeControl
@@ -255,7 +279,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                             onRequestClose={() => setLibraryOpen(false)}
                         >
                             <IconsLibrary
-                                value={itemIcon.iconName as any}
+                                value={itemIcon?.iconName as any}
                                 onSelect={(newIcon) => {
                                     setAttributes({
                                         icon: newIcon,
