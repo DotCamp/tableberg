@@ -186,7 +186,9 @@ class Tableberg_Admin
      */
     public function main_menu_template_cb()
     {
-        require_once $this->plugin_path . 'includes/Admin/templates/menus/main-menu.php';
+?>
+<div id="tableberg-admin-menu"></div>
+<?php
     }
 
     /**
@@ -223,7 +225,7 @@ class Tableberg_Admin
         $datetime2    = new \DateTime($display_date);
         $diff_interval = round(($datetime2->format('U') - $datetime1->format('U')) / (60 * 60 * 24));
         if ($diff_interval >= 21 && get_option('tableberg_review_notify') == 'no') {
-?>
+        ?>
             <div class="tableberg-review-notice notice notice-info">
                 <p style="font-size: 14px;">
                     <?php
