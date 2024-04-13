@@ -15,6 +15,8 @@ import {
     __experimentalToolsPanel as ToolsPanel,
     __experimentalToolsPanelItem as ToolsPanelItem,
     TextareaControl,
+    ToggleControl,
+    PanelBody
 } from "@wordpress/components";
 import { useInstanceId } from "@wordpress/compose";
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
@@ -28,6 +30,7 @@ import { useSelect } from "@wordpress/data";
 
 interface HtmlBlockProps {
     content: string;
+    previewOnDeselect: boolean;
 }
 
 // Default styles used to unset some of the styles
@@ -112,8 +115,13 @@ function edit({
     }
 
     useEffect(renderIframeContent, [styles, isPreview, attributes.content]);
+    useEffect(() => {
+        if (attributes.previewOnDeselect === undefined) {
+            setAttributes({ previewOnDeselect: true });
+        }
+    }, []);
 
-    if (!isSelected) {
+    if (!isSelected && attributes.previewOnDeselect) {
         return <div {...blockProps}>
             <VisuallyHidden id={instanceId}>
                 {__(
@@ -173,6 +181,15 @@ function edit({
                         />
                     </ToolsPanelItem>
                 </ToolsPanel>
+                <PanelBody>
+                    <ToggleControl
+                        label="Show render preview when block is deselected (only in editor)"
+                        checked={attributes.previewOnDeselect}
+                        onChange={(val) => setAttributes({
+                            previewOnDeselect: val
+                        })}
+                    />
+                </PanelBody>
             </InspectorControls>
             {isPreview ? (
                 <>

@@ -17,6 +17,10 @@
      "attributes": {
           "content": {
                "type": "string"
+          },
+          "previewOnDeselect": {
+              "type": "boolean",
+              "default": true
           }
      },
      "supports": {
@@ -28,3 +32,4 @@
      "editorStyle": "tableberg-pro-editor-style",
      "style": "tableberg-pro-frontend-style"
 }
+
