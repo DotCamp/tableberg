@@ -88,7 +88,22 @@ function edit({
         }
         const iframeDocument = iframe.contentWindow!.document!;
         iframeDocument.head.innerHTML = `<style>${styles}</style>`;
-        iframeDocument.body.innerHTML = `<div style="width: max-content; overflow: hidden;" data-tableberg-${clientId} class="editor-styles-wrapper">${attributes.content}</div>`;
+        iframeDocument.body.innerHTML = attributes.content ?
+            `<div
+                style="width: max-content; overflow: hidden;"
+                data-tableberg-${clientId}
+                class="editor-styles-wrapper"
+            >
+                ${attributes.content}
+            </div>`
+            : `<div
+                style="width: max-content; overflow: hidden; color: grey;"
+                data-tableberg-${clientId}
+                class="editor-styles-wrapper"
+            >
+                Empty custom HTML block
+            </div>`
+
         const contentRect = iframeDocument
             .querySelector(`[data-tableberg-${clientId}]`)!
             .getBoundingClientRect();
