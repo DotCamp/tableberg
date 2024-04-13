@@ -114,5 +114,10 @@ div.wp-block-tableberg-wrapper {
     flex-direction: column;
     height: 3.5rem;
     flex-grow: 1;
+    box-shadow: inset 0 0 0 1px #949494;
+}
+
+.tableberg-responsiveness-device-switcher.is-pressed.components-button {
+    box-shadow: inset 0 0 0 1px #1e1e1e;
 }
 
