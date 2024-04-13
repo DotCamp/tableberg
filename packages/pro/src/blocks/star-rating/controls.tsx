@@ -16,9 +16,6 @@ import {
 } from "@tableberg/components";
 import { StarRatingProps } from ".";
 
-
-
-
 function StarBlockControls(props: BlockEditProps<StarRatingProps>) {
     const { attributes, setAttributes } = props;
 
@@ -120,6 +117,11 @@ function StarBlockControls(props: BlockEditProps<StarRatingProps>) {
                         })
                     }
                     onDeselect={() =>
+                        setAttributes({
+                            starColor: "#FFB901",
+                        })
+                    }
+                    resetAllFilter={() =>
                         setAttributes({
                             starColor: "#FFB901",
                         })
