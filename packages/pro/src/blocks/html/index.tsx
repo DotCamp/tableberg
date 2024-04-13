@@ -161,10 +161,8 @@ function edit({
                     <ToolsPanelItem
                         label={__("HTML Code")}
                         isShownByDefault
-                        hasValue={() => !!attributes.content.length}
-                        onDeselect={() =>
-                            setAttributes({ content: undefined })
-                        }
+                        hasValue={() => false}
+                        onDeselect={() => { }}
                     >
                         <TextareaControl
                             label={__("HTML Code")}
