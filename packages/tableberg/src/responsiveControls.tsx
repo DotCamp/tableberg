@@ -1,6 +1,6 @@
 import { InspectorControls } from "@wordpress/block-editor";
 import { Breakpoint, TablebergBlockAttrs, ResponsiveOptions } from "./types";
-import { BaseControl, PanelBody, ToggleControl, __experimentalNumberControl as NumberControl, Button, ButtonGroup } from "@wordpress/components";
+import { BaseControl, PanelBody, ToggleControl, __experimentalNumberControl as NumberControl, SelectControl, Button, ButtonGroup } from "@wordpress/components";
 import { useDispatch } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 import { desktop, mobile, tablet } from "@wordpress/icons";
