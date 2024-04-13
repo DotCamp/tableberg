@@ -105,3 +105,14 @@ div.wp-block-tableberg-wrapper {
     margin-bottom: 20px;
 }
 
+.tableberg-responsiveness-device-switcher-container {
+    display: flex;
+    margin-bottom: 1rem;
+}
+
+.tableberg-responsiveness-device-switcher.components-button {
+    flex-direction: column;
+    height: 3.5rem;
+    flex-grow: 1;
+}
+
