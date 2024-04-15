@@ -71,6 +71,10 @@
           "icon": {
                "type": "object",
                "default": null
+          },
+          "parentCount" : {
+               "type": "number",
+               "default": 0
           }
      },
      "supports": {},

@@ -16,7 +16,7 @@ import {
     BlockControls,
 } from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import {
     Button,
     Modal,
@@ -26,12 +26,7 @@ import {
     ToolbarButton,
 } from "@wordpress/components";
 
-import {
-    addTemplate,
-    removeSubmenu,
-    edit as editIcon,
-    trash,
-} from "@wordpress/icons";
+import { formatIndent, formatOutdent, trash } from "@wordpress/icons";
 import { ColorControl, SpacingControl } from "@tableberg/components";
 import IconsLibrary from "@tableberg/components/icon-library";
 
@@ -61,28 +56,36 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         blockEditorStore,
     ) as any;
 
-    const { listItemBlock, listBlock, listAttrs, getBlockIndex, hasIcon } =
-        useSelect(
-            (select) => {
-                const storeSelect = select(
-                    blockEditorStore,
-                ) as BlockEditorStoreSelectors;
-                const listItemBlock = storeSelect.getBlock(clientId)!;
-                const parentIds = storeSelect.getBlockParents(clientId)!;
-                const listBlockId = parentIds[parentIds.length - 1];
-                const listBlock: BlockInstance<StyledListProps> =
-                    storeSelect.getBlock(listBlockId)! as any;
-                const listAttrs = listBlock.attributes;
-                return {
-                    listItemBlock,
-                    listBlock,
-                    listAttrs,
-                    getBlockIndex: storeSelect.getBlockIndex,
-                    hasIcon: !listAttrs.isOrdered && !!listAttrs.icon,
-                };
-            },
-            [clientId],
-        );
+    const {
+        listItemBlock,
+        listBlock,
+        listAttrs,
+        hasIcon,
+        currentIndex,
+        storeSelect,
+        parentIds,
+    } = useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore,
+        ) as BlockEditorStoreSelectors;
+        const listItemBlock = storeSelect.getBlock(clientId)!;
+        const parentIds = storeSelect.getBlockParents(clientId)!;
+        const listBlockId = parentIds[parentIds.length - 1];
+        const listBlock: BlockInstance<StyledListProps> = storeSelect.getBlock(
+            listBlockId,
+        )! as any;
+        const listAttrs = listBlock.attributes;
+        const currentIndex = storeSelect.getBlockIndex(clientId);
+        return {
+            listItemBlock,
+            listBlock,
+            listAttrs,
+            currentIndex,
+            hasIcon: !listAttrs.isOrdered && !!listAttrs.icon,
+            parentIds,
+            storeSelect,
+        };
+    }, []);
 
     const blockProps = useBlockProps({
         style: getItemStyles(attributes),
@@ -94,44 +97,73 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
 
     const [isLibraryOpen, setLibraryOpen] = useState(false);
 
-    const handleItemDeletion = useCallback(
-        (forward: boolean) => {
-            if (forward) {
-                // Delete is press
-                if (listBlock.innerBlocks.length <= 1) {
-                    setAttributes({
-                        text: "",
-                    });
-                } else {
-                    storeActions.removeBlock(clientId, true);
-                }
-                return;
-            }
-            const currentIndex = getBlockIndex(clientId);
-            // Backspace
-            if (listBlock.innerBlocks.length <= 1 || currentIndex == 0) {
-                return;
-            }
-            const prevItem = listBlock.innerBlocks[currentIndex - 1];
-            storeActions.updateBlockAttributes(prevItem.clientId, {
-                text: prevItem.attributes.text + " " + text,
-            });
-            storeActions.removeBlock(clientId, true);
-        },
-        [listItemBlock],
-    );
-
-    const toggleInnerList = () => {
-        if (listItemBlock.innerBlocks.length > 0) {
-            listItemBlock.innerBlocks.forEach((innerList) =>
-                storeActions.removeBlock(innerList.clientId),
-            );
+    const indentList = () => {
+        const targetItemId = storeSelect.getPreviousBlockClientId(clientId);
+        if (!targetItemId) {
             return;
         }
-        const newList = createBlock("tableberg/styled-list", {}, [
-            createBlock("tableberg/styled-list-item"),
-        ]);
-        storeActions.replaceInnerBlocks(clientId, [newList]);
+        const thisClone = cloneBlock(listItemBlock);
+        const newList = createBlock("tableberg/styled-list", {
+            parentCount: listAttrs.parentCount + 1,
+        }, [thisClone]);
+        storeActions.replaceInnerBlocks(targetItemId, [newList]);
+        storeActions.selectBlock(thisClone.clientId);
+        storeActions.removeBlock(clientId);
+    };
+
+    const outdentList = () => {
+        const grandParentListId = parentIds[parentIds.length - 3];
+        const grandParentList = storeSelect.getBlock(grandParentListId)!;
+        if (grandParentList.name !== "tableberg/styled-list") {
+            return;
+        }
+        const parentItemId = parentIds[parentIds.length - 2];
+        const parentItemIndex = storeSelect.getBlockIndex(parentItemId);
+
+        storeActions.moveBlocksToPosition(
+            listBlock.innerBlocks.map((i) => i.clientId),
+            listBlock.clientId,
+            grandParentListId,
+            parentItemIndex + 1,
+        );
+
+        storeActions.removeBlock(listBlock.clientId, true);
+    };
+
+    const handleItemDeletion = (forward: boolean) => {
+        if (forward) {
+            // Delete is press
+            if (listBlock.innerBlocks.length <= 1) {
+                setAttributes({
+                    text: "",
+                });
+            } else {
+                storeActions.removeBlock(clientId, true);
+            }
+            return;
+        }
+        // Backspace
+        if (listBlock.innerBlocks.length > 1 && currentIndex > 0) {
+            const prevItem = listBlock.innerBlocks[currentIndex - 1];
+            // const cursorPos = prevItem.attributes.text.length;
+            storeActions.updateBlockAttributes(prevItem.clientId, {
+                text: prevItem.attributes.text + text,
+            });
+            
+            // storeActions.selectBlock(prevItem.clientId, cursorPos - 1);
+            storeActions.removeBlock(clientId, false);
+            return;
+        }
+        if (currentIndex == 0) {
+            if (listAttrs.parentCount > 0) {
+                outdentList();
+                storeActions.selectBlock(clientId, 0);
+            } else if (listBlock.innerBlocks.length > 1){
+                // storeActions.selectBlock(storeSelect.getNextBlockClientId(clientId)!, 0);
+                storeActions.removeBlock(clientId, true);
+            }
+            return;
+        }
     };
 
     const hasInnerList = listItemBlock.innerBlocks.length > 0;
@@ -176,14 +208,22 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             </li>
             <BlockControls group="block">
                 <ToolbarButton
-                    icon={hasInnerList ? removeSubmenu : addTemplate}
-                    onClick={toggleInnerList}
-                    label={
-                        hasInnerList ? "Remove Inner List" : "Add Inner List"
-                    }
+                    icon={formatOutdent}
+                    onClick={outdentList}
+                    label="Outdent"
                     placeholder={undefined}
                     onPointerEnterCapture={undefined}
                     onPointerLeaveCapture={undefined}
+                    disabled={listAttrs.parentCount === 0}
+                />
+                <ToolbarButton
+                    icon={formatIndent}
+                    onClick={indentList}
+                    label="Indent"
+                    placeholder={undefined}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                    disabled={currentIndex === 0}
                 />
             </BlockControls>
             <InspectorControls group="color">

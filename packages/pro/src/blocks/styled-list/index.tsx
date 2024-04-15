@@ -43,6 +43,7 @@ export interface StyledListProps {
     backgroundColor: string;
     padding: object;
     margin: object;
+    parentCount: number;
 }
 
 const ALLOWED_BLOCKS = ["tableberg/styled-list-item"];
