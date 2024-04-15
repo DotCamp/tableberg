@@ -9,6 +9,7 @@ import {
     InspectorControls,
     useBlockProps,
     useInnerBlocksProps,
+    store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { getStyles } from "./get-styles";
 import { ColorControl, SpacingControl } from "@tableberg/components";
@@ -22,11 +23,15 @@ import {
     PanelRow,
     RangeControl,
     SelectControl,
+    ToolbarButton,
 } from "@wordpress/components";
 import { useState } from "react";
-import { edit as editIcon, trash } from "@wordpress/icons";
+import { formatOutdent, trash } from "@wordpress/icons";
 import SVGComponent from "./get-icon";
 import classNames from "classnames";
+import { useSelect } from "@wordpress/data";
+import { BlockInstance } from "@wordpress/blocks";
+import { useDispatch } from "@wordpress/data";
 
 export interface StyledListProps {
     isOrdered: boolean;
@@ -145,7 +150,7 @@ const DEFAULT_ICON = {
 };
 
 function edit(props: BlockEditProps<StyledListProps>) {
-    const { attributes, setAttributes } = props;
+    const { attributes, setAttributes, clientId } = props;
 
     const blockProps = useBlockProps({
         style: getStyles(attributes),
@@ -162,16 +167,63 @@ function edit(props: BlockEditProps<StyledListProps>) {
 
     const [isLibraryOpen, setLibraryOpen] = useState(false);
 
+    const storeActions: BlockEditorStoreActions = useDispatch(
+        blockEditorStore,
+    ) as any;
+
+    const { listBlock, storeSelect, parentIds } = useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore,
+        ) as BlockEditorStoreSelectors;
+        const parentIds = storeSelect.getBlockParents(clientId)!;
+        const listBlock: BlockInstance<StyledListProps> = storeSelect.getBlock(
+            clientId,
+        )! as any;
+        return {
+            listBlock,
+            parentIds,
+            storeSelect,
+        };
+    }, []);
+
+    const outdentList = () => {
+        const grandParentListId = parentIds[parentIds.length - 2];
+        const grandParentList = storeSelect.getBlock(grandParentListId)!;
+        if (grandParentList.name !== "tableberg/styled-list") {
+            return;
+        }
+        const parentItemId = parentIds[parentIds.length - 1];
+        const parentItemIndex = storeSelect.getBlockIndex(parentItemId);
+
+        storeActions.moveBlocksToPosition(
+            listBlock.innerBlocks.map((i) => i.clientId),
+            listBlock.clientId,
+            grandParentListId,
+            parentItemIndex + 1,
+        );
+
+        storeActions.removeBlock(clientId, true);
+    };
+
     const TagName = attributes.isOrdered ? "ol" : "ul";
 
     return (
         <>
             <TagName {...innerBlocksProps} />
 
-            <BlockControls>
+            <BlockControls group="block">
                 <AlignmentToolbar
                     value={attributes.alignment}
                     onChange={(value) => setAttributes({ alignment: value })}
+                />
+                <ToolbarButton
+                    icon={formatOutdent}
+                    onClick={outdentList}
+                    label="Outdent"
+                    placeholder={undefined}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                    disabled={attributes.parentCount === 0}
                 />
             </BlockControls>
 
