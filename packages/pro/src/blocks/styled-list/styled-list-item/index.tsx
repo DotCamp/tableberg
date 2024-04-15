@@ -102,11 +102,22 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         if (!targetItemId) {
             return;
         }
+        const targetBlock = storeSelect.getBlock(targetItemId)!;
         const thisClone = cloneBlock(listItemBlock);
-        const newList = createBlock("tableberg/styled-list", {
-            parentCount: listAttrs.parentCount + 1,
-        }, [thisClone]);
-        storeActions.replaceInnerBlocks(targetItemId, [newList]);
+
+        if (targetBlock.innerBlocks.length) {
+            const targetList = targetBlock.innerBlocks[0];
+            storeActions.insertBlock(thisClone, undefined, targetList.clientId);
+        } else {
+            let newList = createBlock(
+                "tableberg/styled-list",
+                {
+                    parentCount: listAttrs.parentCount + 1,
+                },
+                [thisClone],
+            );
+            storeActions.replaceInnerBlocks(targetItemId, [newList]);
+        }
         storeActions.selectBlock(thisClone.clientId);
         storeActions.removeBlock(clientId);
     };
@@ -149,7 +160,19 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             storeActions.updateBlockAttributes(prevItem.clientId, {
                 text: prevItem.attributes.text + text,
             });
-            
+            if (hasInnerList) {
+                if (prevItem.innerBlocks.length > 0) {
+                    const prevItemListId = prevItem.innerBlocks[0].clientId;
+                    listItemBlock.innerBlocks[0].innerBlocks.forEach((item) => {
+                        const cloned = cloneBlock(item);
+                        storeActions.insertBlock(cloned, undefined, prevItemListId);
+                    });
+                } else {
+                    storeActions.replaceInnerBlocks(prevItem.clientId, [
+                        cloneBlock(listItemBlock.innerBlocks[0]),
+                    ]);
+                }
+            }
             // storeActions.selectBlock(prevItem.clientId, cursorPos - 1);
             storeActions.removeBlock(clientId, false);
             return;
@@ -158,7 +181,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             if (listAttrs.parentCount > 0) {
                 outdentList();
                 storeActions.selectBlock(clientId, 0);
-            } else if (listBlock.innerBlocks.length > 1){
+            } else if (listBlock.innerBlocks.length > 1) {
                 // storeActions.selectBlock(storeSelect.getNextBlockClientId(clientId)!, 0);
                 storeActions.removeBlock(clientId, true);
             }
@@ -197,7 +220,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                                 // TODO: Replace the following line with `storeActions.replaceInnerBlocks` call
                                 // I have no idea why assigning works but not replaceInnerBlocks
                                 // @ts-ignore
-                                blocks[0].innerBlocks =
+                                blocks[blocks.length > 1 ? 1 : 0].innerBlocks =
                                     listItemBlock.innerBlocks;
                             }
                             storeActions.replaceBlocks(clientId, blocks);
