@@ -75,14 +75,6 @@ class Defaults
 						'type' => 'object',
 						'default' => null,
 					),
-					'padding' => array(
-						'type' => 'array',
-						'default' => [],
-					),
-					'margin' => array(
-						'type' => 'array',
-						'default' => [],
-					),
 					'iconColor' => array(
 						'type' => 'string',
 						'default' => null,

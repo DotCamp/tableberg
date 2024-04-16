@@ -36,19 +36,8 @@ class StyledListItem
 	 */
 	public static function get_styles($attributes)
 	{
-		$padding = Utils::get_spacing_css($attributes['padding'] ?? []);
-		$margin = Utils::get_spacing_css($attributes['margin'] ?? []);
-
 		$styles = array(
 			'color' => $attributes['textColor'] ?? '',
-			'padding-top' => $padding['top'] ?? '',
-			'padding-right' => $padding['right'] ?? '',
-			'padding-bottom' => $padding['bottom'] ?? '',
-			'padding-left' => $padding['left'] ?? '',
-			'margin-top' => $margin['top'] ?? '',
-			'margin-right' => $margin['right'] ?? '',
-			'margin-bottom' => $margin['bottom'] ?? '',
-			'margin-left' => $margin['left'] ?? '',
 			'--tableberg-styled-list-icon-color' => $attributes['iconColor'] ?? '',
 			'--tableberg-styled-list-icon-size' => $attributes['iconSize'] ?? false ? $attributes['iconSize'] . 'px' : '',
 			'--tableberg-styled-list-icon-spacing' => $attributes['iconSpacing'] ?? false ? $attributes['iconSpacing'] . 'px' : '',

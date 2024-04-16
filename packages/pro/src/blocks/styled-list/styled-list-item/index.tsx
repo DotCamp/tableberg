@@ -39,8 +39,6 @@ import SVGComponent from "../get-icon";
 export interface StyledListItemProps {
     icon?: any;
     text: string;
-    padding: object;
-    margin: object;
     iconColor?: string;
     iconSize?: number;
     iconSpacing?: number;
@@ -265,20 +263,6 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                         setAttributes({ textColor })
                     }
                     onDeselect={() => setAttributes({ textColor: undefined })}
-                />
-            </InspectorControls>
-            <InspectorControls group="dimensions">
-                <SpacingControl
-                    label={__("Item Padding", "tableberg-pro")}
-                    value={attributes.padding}
-                    onChange={(padding) => setAttributes({ padding })}
-                    onDeselect={() => setAttributes({ padding: undefined })}
-                />
-                <SpacingControl
-                    label={__("Item Margin", "tableberg-pro")}
-                    value={attributes.margin}
-                    onChange={(margin) => setAttributes({ margin })}
-                    onDeselect={() => setAttributes({ margin: undefined })}
                 />
             </InspectorControls>
             {hasIcon && (

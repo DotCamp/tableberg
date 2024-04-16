@@ -23,14 +23,6 @@
                "type": "object",
                "default": null
           },
-          "padding": {
-               "type": "object",
-               "default": {}
-          },
-          "margin": {
-               "type": "object",
-               "default": {}
-          },
           "iconColor": {
                "type": "string",
                "default": null

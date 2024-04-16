@@ -51,21 +51,10 @@ export function getStyles(attributes: StyledListProps) {
 }
 
 export function getItemStyles(attributes: StyledListItemProps) {
-    const { padding, margin } = attributes;
-    const paddingObj: any = getSpacingCss(padding || {});
-    const marginObj: any = getSpacingCss(margin || {});
-
+    
     let styles: Record<string, any> = {
         color: attributes.textColor,
         fontSize: attributes.fontSize,
-        paddingTop: paddingObj?.top,
-        paddingRight: paddingObj?.right,
-        paddingBottom: paddingObj?.bottom,
-        paddingLeft: paddingObj?.left,
-        marginTop: marginObj?.top,
-        marginRight: marginObj?.right,
-        marginBottom: marginObj?.bottom,
-        marginLeft: marginObj?.left,
         "--tableberg-styled-list-icon-color": attributes.iconColor,
     };
     if (attributes.iconSize! > 0) {
