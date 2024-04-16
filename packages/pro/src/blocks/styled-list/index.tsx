@@ -264,7 +264,7 @@ function edit(props: BlockEditProps<StyledListProps>) {
                     onDeselect={() => setAttributes({ listSpacing: undefined })}
                 />
                 <SpacingControl
-                    label={__("Inner List Spacing", "tableberg-pro")}
+                    label={__("Inner List Indent", "tableberg-pro")}
                     value={attributes.listIndent}
                     onChange={(listIndent) => setAttributes({ listIndent })}
                     onDeselect={() => setAttributes({ listIndent: undefined })}
