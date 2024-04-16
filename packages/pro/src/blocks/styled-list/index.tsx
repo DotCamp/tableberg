@@ -256,7 +256,7 @@ function edit(props: BlockEditProps<StyledListProps>) {
             </InspectorControls>
             <InspectorControls group="dimensions">
                 <SpacingControl
-                    label={__("List Spacing", "tableberg-pro")}
+                    label={__("Spacing around list", "tableberg-pro")}
                     value={attributes.listSpacing}
                     onChange={(listSpacing: any) =>
                         setAttributes({ listSpacing })
@@ -264,7 +264,7 @@ function edit(props: BlockEditProps<StyledListProps>) {
                     onDeselect={() => setAttributes({ listSpacing: undefined })}
                 />
                 <SpacingControl
-                    label={__("Inner List Indent", "tableberg-pro")}
+                    label={__("List item Indentation", "tableberg-pro")}
                     value={attributes.listIndent}
                     onChange={(listIndent) => setAttributes({ listIndent })}
                     onDeselect={() => setAttributes({ listIndent: undefined })}
