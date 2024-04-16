@@ -38,8 +38,14 @@ class StyledList
 	 */
 	public static function get_styles($attributes)
 	{
-		$padding = Utils::get_spacing_css(isset($attributes['padding']) ? $attributes['padding'] : []);
-		$margin = Utils::get_spacing_css(isset($attributes['margin']) ? $attributes['margin'] : []);
+		$padding = Utils::get_spacing_css(isset($attributes['listSpacing']) ? $attributes['listSpacing'] : []);
+		$listIndent = Utils::get_spacing_css(isset($attributes['listIndent']) ? $attributes['listIndent'] : []);
+
+		if (!isset($listIndent['left']) || $listIndent['left'] === '0') {
+			$indent = '10px';
+		} else {
+			$indent = $listIndent['left'];
+		}
 
 		$styles = array(
 			'color' => $attributes['textColor'],
@@ -47,19 +53,24 @@ class StyledList
 			'padding-top' => $padding['top'] ?? '',
 			'padding-right' => $padding['right'] ?? '',
 			'padding-bottom' => $padding['bottom'] ?? '',
-			'margin-top' => $margin['top'] ?? '',
-			'margin-right' => $margin['right'] ?? '',
-			'margin-bottom' => $margin['bottom'] ?? '',
-			'margin-left' => $margin['left'] ?? '',
 			'--tableberg-styled-list-icon-color' => $attributes['iconColor'],
 			'--tableberg-styled-list-icon-size' => $attributes['iconSize'] . 'px',
 			'--tableberg-styled-list-icon-spacing' => $attributes['iconSpacing'] . 'px',
 			'--tableberg-styled-list-spacing' => $attributes['itemSpacing'] . 'px',
-			'--tableberg-styled-list-inner-spacing' => $attributes['listSpacing'] . 'px',
+			'--tableberg-styled-list-inner-spacing' => $indent,
 		);
+
+		$pleft = $padding['left'] ?? '0';
+
 		if ($attributes['isOrdered'] || !isset($attributes['icon']) || !$attributes['icon']) {
 			$styles['list-style'] = $attributes['listStyle'] ?? "auto";
-			$styles['--tableberg-styled-list-padding-left'] = $padding['left'] ? $padding['left'] . 'px' : '0px';
+			if ($pleft == '0') {
+				$styles['padding-left'] = '1em';
+			} else {
+				$styles['padding-left'] = "calc(1em + $pleft)";
+			}
+		} else {
+			$styles['padding-left'] = $pleft;
 		}
 
 		return Utils::generate_css_string($styles);

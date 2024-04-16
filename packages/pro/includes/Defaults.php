@@ -113,8 +113,12 @@ class Defaults
 					'default' => 1,
 				),
 				'listSpacing' => [
-					'type' => 'number',
-					'default' => 5
+					'type' => 'object',
+					'default' => []
+				],
+				'listIndent' => [
+					'type' => 'object',
+					'default' => []
 				],
 				'iconColor' => array(
 					'type' => 'string',
@@ -139,24 +143,6 @@ class Defaults
 				'backgroundColor' => array(
 					'type' => 'string',
 					'default' => '',
-				),
-				'padding' => array(
-					'type' => 'array',
-					'default' => array(
-						'top' => '',
-						'right' => '',
-						'bottom' => '',
-						'left' => '',
-					),
-				),
-				'margin' => array(
-					'type' => 'array',
-					'default' => array(
-						'top' => '',
-						'right' => '',
-						'bottom' => '',
-						'left' => '',
-					),
 				),
 				'listStyle' => [
 					'type' => 'string',

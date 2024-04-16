@@ -1,9 +1,6 @@
 .tableberg-styled-list {
     margin: 0;
     padding: 0;
-    padding-left: calc(
-        1em + var(--tableberg-styled-list-padding-left, 0px)
-    ) !important;
 
     list-style-type: none;
 
@@ -12,7 +9,6 @@
     }
 
     &.tableberg-list-has-icon {
-        padding-left: var(--tableberg-styled-list-padding-left, 0px) !important;
         .tableberg-list-item-inner {
             display: flex;
             align-items: center;

@@ -43,11 +43,10 @@ export interface StyledListProps {
     iconSpacing: number;
     fontSize: string;
     itemSpacing: number;
-    listSpacing: number;
     textColor: string;
     backgroundColor: string;
-    padding: object;
-    margin: object;
+    listSpacing: object;
+    listIndent: object;
     parentCount: number;
 }
 
@@ -257,20 +256,24 @@ function edit(props: BlockEditProps<StyledListProps>) {
             </InspectorControls>
             <InspectorControls group="dimensions">
                 <SpacingControl
-                    label={__("Padding", "tableberg-pro")}
-                    value={attributes.padding}
-                    onChange={(padding) => setAttributes({ padding })}
-                    onDeselect={() => setAttributes({ padding: undefined })}
+                    label={__("List Spacing", "tableberg-pro")}
+                    value={attributes.listSpacing}
+                    onChange={(listSpacing: any) =>
+                        setAttributes({ listSpacing })
+                    }
+                    onDeselect={() => setAttributes({ listSpacing: undefined })}
                 />
                 <SpacingControl
-                    label={__("Margin", "tableberg-pro")}
-                    value={attributes.margin}
-                    onChange={(margin) => setAttributes({ margin })}
-                    onDeselect={() => setAttributes({ margin: undefined })}
+                    label={__("Inner List Spacing", "tableberg-pro")}
+                    value={attributes.listIndent}
+                    onChange={(listIndent) => setAttributes({ listIndent })}
+                    onDeselect={() => setAttributes({ listIndent: undefined })}
+                    sides={["left"]}
                 />
             </InspectorControls>
 
             <InspectorControls group="settings">
+
                 <PanelBody title="List Settings" initialOpen={true}>
                     <BaseControl __nextHasNoMarginBottom>
                         <SelectControl
@@ -307,17 +310,6 @@ function edit(props: BlockEditProps<StyledListProps>) {
                             value={attributes.itemSpacing}
                             onChange={(itemSpacing) => {
                                 setAttributes({ itemSpacing });
-                            }}
-                            min={0}
-                            max={50}
-                        />
-                    </BaseControl>
-                    <BaseControl __nextHasNoMarginBottom>
-                        <RangeControl
-                            label={__("Inner List Spacing", "tableberg-pro")}
-                            value={attributes.listSpacing}
-                            onChange={(listSpacing) => {
-                                setAttributes({ listSpacing });
                             }}
                             min={0}
                             max={50}
