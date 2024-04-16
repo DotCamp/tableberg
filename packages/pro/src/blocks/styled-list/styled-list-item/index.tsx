@@ -107,10 +107,17 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             const targetList = targetBlock.innerBlocks[0];
             storeActions.insertBlock(thisClone, undefined, targetList.clientId);
         } else {
+            let listStyle: string;
+            if (listAttrs.listStyle === 'disc') {
+                listStyle = 'circle';
+            } else {
+                listStyle = 'disc';
+            }
             let newList = createBlock(
                 "tableberg/styled-list",
                 {
                     parentCount: listAttrs.parentCount + 1,
+                    listStyle
                 },
                 [thisClone],
             );
