@@ -1,5 +1,7 @@
-// @ts-expect-error
-import { useBlockEditContext, __experimentalSpacingSizesControl as SpacingSizesControl } from "@wordpress/block-editor";
+import {
+    useBlockEditContext,
+    __experimentalSpacingSizesControl as SpacingSizesControl,
+} from "@wordpress/block-editor";
 import { __experimentalToolsPanelItem as ToolsPanelItem } from "@wordpress/components";
 
 interface Props {
@@ -14,49 +16,53 @@ interface Props {
     resetAllFilter?: () => any;
     onDeselect: () => any;
     isShownByDefault?: boolean;
-    sides?: ["top", "right", "bottom", "left"] | ["horizontal", "vertical"]
+    sides?: Array<
+        "top" | "right" | "bottom" | "left" | "horizontal" | "vertical"
+    >;
 }
 
 const SpacingControl = ({
     label,
     value,
-    onChange = () => { },
+    onChange = () => {},
     resetAllFilter,
-    onDeselect = () => { },
-    sides = ["top", "right", "bottom", "left"]
+    onDeselect = () => {},
+    sides = ["top", "right", "bottom", "left"],
 }: Props) => {
-    const { clientId } = useBlockEditContext()
+    const { clientId } = useBlockEditContext();
 
     if (!resetAllFilter) {
         resetAllFilter = onDeselect;
     }
 
-    return <ToolsPanelItem
-        panelId={clientId}
-        isShownByDefault={true}
-        resetAllFilter={resetAllFilter}
-        className={"tools-panel-item-spacing"}
-        label={label}
-        onDeselect={onDeselect}
-        hasValue={() => {
-            if (!value) {
-                return false;
-            }
-            const { top, right, bottom, left } = value;
-            if (!top && !right && !bottom && !left) {
-                return false;
-            }
-            return true;
-        }}
-    >
-        <SpacingSizesControl
-            allowReset={true}
+    return (
+        <ToolsPanelItem
+            panelId={clientId}
+            isShownByDefault={true}
+            resetAllFilter={resetAllFilter}
+            className={"tools-panel-item-spacing"}
             label={label}
-            values={value}
-            sides={sides}
-            onChange={onChange}
-        />
-    </ToolsPanelItem>
+            onDeselect={onDeselect}
+            hasValue={() => {
+                if (!value) {
+                    return false;
+                }
+                const { top, right, bottom, left } = value;
+                if (!top && !right && !bottom && !left) {
+                    return false;
+                }
+                return true;
+            }}
+        >
+            <SpacingSizesControl
+                allowReset={true}
+                label={label}
+                values={value}
+                sides={sides}
+                onChange={onChange}
+            />
+        </ToolsPanelItem>
+    );
 };
 
 export default SpacingControl;
