@@ -95,7 +95,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
 
     const [isLibraryOpen, setLibraryOpen] = useState(false);
 
-    const indentList = () => {
+    const indentItem = () => {
         const targetItemId = storeSelect.getPreviousBlockClientId(clientId);
         if (!targetItemId) {
             return;
@@ -108,16 +108,16 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             storeActions.insertBlock(thisClone, undefined, targetList.clientId);
         } else {
             let listStyle: string;
-            if (listAttrs.listStyle === 'disc') {
-                listStyle = 'circle';
+            if (listAttrs.listStyle === "disc") {
+                listStyle = "circle";
             } else {
-                listStyle = 'disc';
+                listStyle = "disc";
             }
             let newList = createBlock(
                 "tableberg/styled-list",
                 {
                     parentCount: listAttrs.parentCount + 1,
-                    listStyle
+                    listStyle,
                 },
                 [thisClone],
             );
@@ -127,7 +127,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         storeActions.removeBlock(clientId);
     };
 
-    const outdentList = () => {
+    const outdentItem = () => {
         const grandParentListId = parentIds[parentIds.length - 3];
         const grandParentList = storeSelect.getBlock(grandParentListId)!;
         if (grandParentList.name !== "tableberg/styled-list") {
@@ -136,14 +136,56 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         const parentItemId = parentIds[parentIds.length - 2];
         const parentItemIndex = storeSelect.getBlockIndex(parentItemId);
 
-        storeActions.moveBlocksToPosition(
-            listBlock.innerBlocks.map((i) => i.clientId),
+        const toRemove: string[] = [];
+        const toInsert: BlockInstance[] = [];
+
+        for (let i = currentIndex + 1; i < listBlock.innerBlocks.length; i++) {
+            const block = listBlock.innerBlocks[i];
+            toRemove.push(block.clientId);
+            toInsert.push(cloneBlock(block));
+        }
+
+        storeActions.moveBlockToPosition(
+            clientId,
             listBlock.clientId,
             grandParentListId,
             parentItemIndex + 1,
         );
 
-        storeActions.removeBlock(listBlock.clientId, true);
+        if (toRemove.length) {
+            if (listItemBlock.innerBlocks.length) {
+                const targetList = listItemBlock.innerBlocks[0];
+                storeActions.insertBlocks(
+                    toInsert,
+                    targetList.innerBlocks.length,
+                    targetList.clientId,
+                    false,
+                );
+            } else {
+                const listAttrs = grandParentList.attributes;
+                let listStyle: string;
+                if (listAttrs.listStyle === "disc") {
+                    listStyle = "circle";
+                } else {
+                    listStyle = "disc";
+                }
+                let newList = createBlock(
+                    "tableberg/styled-list",
+                    {
+                        parentCount: listAttrs.parentCount + 1,
+                        listStyle,
+                    },
+                    toInsert,
+                );
+                storeActions.replaceInnerBlocks(clientId, [newList]);
+            }
+            storeActions.removeBlocks(toRemove);
+            storeActions.selectBlock(clientId);
+        }
+
+        if (currentIndex === 0) {
+            storeActions.removeBlock(listBlock.clientId, true);
+        }
     };
 
     const handleItemDeletion = (forward: boolean) => {
@@ -158,6 +200,12 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             }
             return;
         }
+
+        if (listAttrs.parentCount > 0) {
+            outdentItem();
+            return;
+        }
+
         // Backspace
         if (listBlock.innerBlocks.length > 1 && currentIndex > 0) {
             const prevItem = listBlock.innerBlocks[currentIndex - 1];
@@ -170,7 +218,11 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                     const prevItemListId = prevItem.innerBlocks[0].clientId;
                     listItemBlock.innerBlocks[0].innerBlocks.forEach((item) => {
                         const cloned = cloneBlock(item);
-                        storeActions.insertBlock(cloned, undefined, prevItemListId);
+                        storeActions.insertBlock(
+                            cloned,
+                            undefined,
+                            prevItemListId,
+                        );
                     });
                 } else {
                     storeActions.replaceInnerBlocks(prevItem.clientId, [
@@ -180,16 +232,6 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             }
             // storeActions.selectBlock(prevItem.clientId, cursorPos - 1);
             storeActions.removeBlock(clientId, false);
-            return;
-        }
-        if (currentIndex == 0) {
-            if (listAttrs.parentCount > 0) {
-                outdentList();
-                storeActions.selectBlock(clientId, 0);
-            } else if (listBlock.innerBlocks.length > 1) {
-                // storeActions.selectBlock(storeSelect.getNextBlockClientId(clientId)!, 0);
-                storeActions.removeBlock(clientId, true);
-            }
             return;
         }
     };
@@ -237,7 +279,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             <BlockControls group="block">
                 <ToolbarButton
                     icon={formatOutdent}
-                    onClick={outdentList}
+                    onClick={outdentItem}
                     label="Outdent"
                     placeholder={undefined}
                     onPointerEnterCapture={undefined}
@@ -246,7 +288,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 />
                 <ToolbarButton
                     icon={formatIndent}
-                    onClick={indentList}
+                    onClick={indentItem}
                     label="Indent"
                     placeholder={undefined}
                     onPointerEnterCapture={undefined}
