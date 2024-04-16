@@ -42,7 +42,7 @@ export interface StyledListProps {
     iconSize: number;
     iconSpacing: number;
     fontSize: string;
-    itemSpacing: number;
+    itemSpacing: object;
     textColor: string;
     backgroundColor: string;
     listSpacing: object;
@@ -270,6 +270,13 @@ function edit(props: BlockEditProps<StyledListProps>) {
                     onDeselect={() => setAttributes({ listIndent: undefined })}
                     sides={["left"]}
                 />
+                <SpacingControl
+                    label={__("Item Spacing", "tableberg-pro")}
+                    value={attributes.itemSpacing}
+                    onChange={(itemSpacing) => setAttributes({ itemSpacing })}
+                    onDeselect={() => setAttributes({ itemSpacing: undefined })}
+                    sides={["bottom"]}
+                />
             </InspectorControls>
 
             <InspectorControls group="settings">
@@ -304,17 +311,6 @@ function edit(props: BlockEditProps<StyledListProps>) {
                             />
                         </BaseControl>
                     )}
-                    <BaseControl __nextHasNoMarginBottom>
-                        <RangeControl
-                            label={__("Item Spacing", "tableberg-pro")}
-                            value={attributes.itemSpacing}
-                            onChange={(itemSpacing) => {
-                                setAttributes({ itemSpacing });
-                            }}
-                            min={0}
-                            max={50}
-                        />
-                    </BaseControl>
                 </PanelBody>
                 {!attributes.isOrdered && (
                     <PanelBody title="Icon Settings" initialOpen={true}>

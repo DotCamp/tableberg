@@ -86,7 +86,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
     }, []);
 
     const blockProps = useBlockProps({
-        style: getItemStyles(attributes),
+        style: getItemStyles(attributes, listAttrs),
     });
     const innerBlocksProps = useInnerBlocksProps({
         allowedBlocks: ["tableberg/styled-list"],

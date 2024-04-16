@@ -19,7 +19,6 @@ export function getStyles(attributes: StyledListProps) {
         paddingTop: listSpacingObj?.top,
         paddingRight: listSpacingObj?.right,
         paddingBottom: listSpacingObj?.bottom,
-        "--tableberg-styled-list-spacing": `${attributes.itemSpacing || 0}px`,
         "--tableberg-styled-list-icon-size": `${attributes.iconSize || 15}px`,
         "--tableberg-styled-list-icon-color": attributes.iconColor,
         "--tableberg-styled-list-icon-spacing": `${
@@ -52,12 +51,17 @@ export function getStyles(attributes: StyledListProps) {
     );
 }
 
-export function getItemStyles(attributes: StyledListItemProps) {
+export function getItemStyles(attributes: StyledListItemProps, listAttrs: StyledListProps) {
+    const itemSpacingObj: any = getSpacingCss(listAttrs.itemSpacing);
     let styles: Record<string, any> = {
         color: attributes.textColor,
         fontSize: attributes.fontSize,
+        marginBottom: itemSpacingObj?.bottom,
         "--tableberg-styled-list-icon-color": attributes.iconColor,
     };
+
+
+
     if (attributes.iconSize! > 0) {
         styles[
             "--tableberg-styled-list-icon-size"

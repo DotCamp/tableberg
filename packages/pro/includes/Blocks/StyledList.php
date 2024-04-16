@@ -2,6 +2,7 @@
 
 namespace Tableberg\Pro\Blocks;
 
+use Tableberg\Assets;
 use Tableberg\Pro\Common;
 use Tableberg\Pro\Defaults;
 use Tableberg\Utils\HtmlUtils;
@@ -19,6 +20,7 @@ use Tableberg\Utils\Utils;
 class StyledList
 {
 
+	public static int $count = 0;
 	/**
 	 * Constructor
 	 *
@@ -36,7 +38,7 @@ class StyledList
 	 * @param array $attributes - block attributes.
 	 * @return string Generated CSS styles.
 	 */
-	public static function get_styles($attributes)
+	public static function get_styles(array $attributes, string $id)
 	{
 		$padding = Utils::get_spacing_css(isset($attributes['listSpacing']) ? $attributes['listSpacing'] : []);
 		$listIndent = Utils::get_spacing_css(isset($attributes['listIndent']) ? $attributes['listIndent'] : []);
@@ -56,7 +58,6 @@ class StyledList
 			'--tableberg-styled-list-icon-color' => $attributes['iconColor'],
 			'--tableberg-styled-list-icon-size' => $attributes['iconSize'] . 'px',
 			'--tableberg-styled-list-icon-spacing' => $attributes['iconSpacing'] . 'px',
-			'--tableberg-styled-list-spacing' => $attributes['itemSpacing'] . 'px',
 			'--tableberg-styled-list-inner-spacing' => $indent,
 		);
 
@@ -71,6 +72,13 @@ class StyledList
 			}
 		} else {
 			$styles['padding-left'] = $pleft;
+		}
+
+		if (isset($attributes['itemSpacing'])) {
+			$iSpacing = Utils::get_spacing_css($attributes['itemSpacing']);
+			if (isset($iSpacing['bottom']) && $iSpacing['bottom'] != '0') {
+				Assets::$dynamicStyles .= '#'.$id.' > li {margin-bottom: '.$iSpacing['bottom'].';}';
+			}
 		}
 
 		return Utils::generate_css_string($styles);
@@ -96,7 +104,11 @@ class StyledList
 			$contents = HtmlUtils::append_attr_value($contents, $tag, ' tableberg-styled-list', 'class');
 
 		}
-		$contents = HtmlUtils::append_attr_value($contents, $tag, self::get_styles($attributes), 'style');
+
+		$id = '__tableberg_styled_list_'.self::$count++;
+
+		$contents = HtmlUtils::append_attr_value($contents, $tag, self::get_styles($attributes, $id), 'style');
+		$contents = HtmlUtils::append_attr_value($contents, $tag, $id, 'id');
 		return $contents;
 	}
 

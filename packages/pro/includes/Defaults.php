@@ -109,8 +109,8 @@ class Defaults
 					'default' => 'left',
 				),
 				'itemSpacing' => array(
-					'type' => 'number',
-					'default' => 1,
+					'type' => 'object',
+					'default' => [],
 				),
 				'listSpacing' => [
 					'type' => 'object',

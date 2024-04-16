@@ -4,8 +4,13 @@
 
     list-style-type: none;
 
-    li svg {
-        display: none;
+    li {
+        &:nth-last-of-type(1) {
+            margin-bottom: 0 !important;
+        }
+        svg {
+            display: none;
+        }
     }
 
     &.tableberg-list-has-icon {
@@ -22,14 +27,6 @@
             > div {
                 flex-grow: 1;
             }
-        }
-    }
-
-    li {
-        margin-bottom: var(--tableberg-styled-list-spacing);
-        .tableberg-inner-list-holder {
-            flex-grow: 1;
-            flex-shrink: 0;
         }
     }
 

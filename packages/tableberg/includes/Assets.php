@@ -14,6 +14,11 @@ namespace Tableberg;
 class Assets
 {
 	/**
+	 * We will store dynamically generated styles here & render them
+	 * in wp_footer call
+	 */
+	public static $dynamicStyles = '';
+	/**
 	 * Register block assets for frontend.
 	 * I.e. dynamic responsiveness
 	 */
@@ -26,6 +31,12 @@ class Assets
 			Constants::plugin_version(),
 			true
 		);
+		add_action('wp_footer', function(){
+			if (self::$dynamicStyles) {
+				echo '<style>'.self::$dynamicStyles.'</style>';
+				self::$dynamicStyles = '';
+			}
+		});
 	}
 	/**
 	 * Register blocks assets
