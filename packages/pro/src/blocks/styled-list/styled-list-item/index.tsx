@@ -15,8 +15,8 @@ import {
     useInnerBlocksProps,
     BlockControls,
 } from "@wordpress/block-editor";
-import { useDispatch, useSelect } from "@wordpress/data";
-import { useState } from "react";
+import { useDispatch, useRegistry, useSelect } from "@wordpress/data";
+import { useCallback, useState } from "react";
 import {
     Button,
     Modal,
@@ -95,98 +95,148 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
 
     const [isLibraryOpen, setLibraryOpen] = useState(false);
 
-    const indentItem = () => {
-        const targetItemId = storeSelect.getPreviousBlockClientId(clientId);
-        if (!targetItemId) {
+    const indentItem = useCallback(() => {
+        const isMultiple = storeSelect.hasMultiSelection();
+
+        const toClone = isMultiple
+            ? storeSelect.getMultiSelectedBlocks()
+            : [listItemBlock];
+
+        const previousSiblingId = storeSelect.getPreviousBlockClientId(
+            toClone[0].clientId,
+        );
+        if (!previousSiblingId) {
             return;
         }
-        const targetBlock = storeSelect.getBlock(targetItemId)!;
-        const thisClone = cloneBlock(listItemBlock);
 
-        if (targetBlock.innerBlocks.length) {
-            const targetList = targetBlock.innerBlocks[0];
-            storeActions.insertBlock(thisClone, undefined, targetList.clientId);
-        } else {
+        const replaceTargets: string[] = [previousSiblingId];
+        const clonedBlocks: BlockInstance[] = [];
+        toClone.forEach((b) => {
+            replaceTargets.push(b.clientId);
+            clonedBlocks.push(cloneBlock(b));
+        });
+
+        const targetItemBlock = cloneBlock(
+            storeSelect.getBlock(previousSiblingId)!,
+        );
+        if (!targetItemBlock.innerBlocks?.length) {
             let listStyle: string;
             if (listAttrs.listStyle === "disc") {
                 listStyle = "circle";
             } else {
                 listStyle = "disc";
             }
-            let newList = createBlock(
-                "tableberg/styled-list",
-                {
-                    parentCount: listAttrs.parentCount + 1,
-                    listStyle,
-                },
-                [thisClone],
-            );
-            storeActions.replaceInnerBlocks(targetItemId, [newList]);
-        }
-        storeActions.selectBlock(thisClone.clientId);
-        storeActions.removeBlock(clientId);
-    };
-
-    const outdentItem = () => {
-        const grandParentListId = parentIds[parentIds.length - 3];
-        const grandParentList = storeSelect.getBlock(grandParentListId)!;
-        if (grandParentList.name !== "tableberg/styled-list") {
-            return;
-        }
-        const parentItemId = parentIds[parentIds.length - 2];
-        const parentItemIndex = storeSelect.getBlockIndex(parentItemId);
-
-        const toRemove: string[] = [];
-        const toInsert: BlockInstance[] = [];
-
-        for (let i = currentIndex + 1; i < listBlock.innerBlocks.length; i++) {
-            const block = listBlock.innerBlocks[i];
-            toRemove.push(block.clientId);
-            toInsert.push(cloneBlock(block));
-        }
-
-        storeActions.moveBlockToPosition(
-            clientId,
-            listBlock.clientId,
-            grandParentListId,
-            parentItemIndex + 1,
-        );
-
-        if (toRemove.length) {
-            if (listItemBlock.innerBlocks.length) {
-                const targetList = listItemBlock.innerBlocks[0];
-                storeActions.insertBlocks(
-                    toInsert,
-                    targetList.innerBlocks.length,
-                    targetList.clientId,
-                    false,
-                );
-            } else {
-                const listAttrs = grandParentList.attributes;
-                let listStyle: string;
-                if (listAttrs.listStyle === "disc") {
-                    listStyle = "circle";
-                } else {
-                    listStyle = "disc";
-                }
-                let newList = createBlock(
+            // @ts-ignore
+            targetItemBlock.innerBlocks = [
+                createBlock(
                     "tableberg/styled-list",
                     {
                         parentCount: listAttrs.parentCount + 1,
                         listStyle,
                     },
-                    toInsert,
-                );
-                storeActions.replaceInnerBlocks(clientId, [newList]);
-            }
-            storeActions.removeBlocks(toRemove);
-            storeActions.selectBlock(clientId);
+                    clonedBlocks,
+                ),
+            ];
+        } else {
+            targetItemBlock.innerBlocks[
+                targetItemBlock.innerBlocks.length - 1
+            ].innerBlocks.push(...clonedBlocks);
         }
 
-        if (currentIndex === 0) {
-            storeActions.removeBlock(listBlock.clientId, true);
+        const selectionStart = storeSelect.getSelectionStart();
+        const selectionEnd = storeSelect.getSelectionEnd();
+
+        storeActions.replaceBlocks(replaceTargets, [targetItemBlock]);
+        if (!isMultiple) {
+            storeActions.selectionChange(
+                clonedBlocks[0].clientId,
+                selectionEnd.attributeKey!,
+                selectionEnd.clientId === selectionStart.clientId
+                    ? selectionStart.offset!
+                    : selectionEnd.offset!,
+                selectionEnd.offset!,
+            );
+        } else {
+            storeActions.multiSelect(
+                clonedBlocks[0].clientId,
+                clonedBlocks[clonedBlocks.length - 1].clientId,
+            );
         }
-    };
+    }, [clientId, listAttrs]);
+
+    const outdentItem = useCallback(() => {
+        const isMultiple = storeSelect.hasMultiSelection();
+        const toOutdents = isMultiple
+            ? storeSelect.getMultiSelectedBlocks()
+            : [listItemBlock];
+        const targetListId = parentIds[parentIds.length - 3];
+        const targetList = storeSelect.getBlock(targetListId)!;
+        const insertIndex = storeSelect.getBlockIndex(listBlock.clientId)! + 1;
+
+        const lastItem = toOutdents[toOutdents.length - 1];
+        const firstIndex = storeSelect.getBlockIndex(toOutdents[0].clientId);
+        const lastIndex = storeSelect.getBlockIndex(lastItem.clientId);
+
+        const selectionStart = storeSelect.getSelectionStart();
+        const selectionEnd = storeSelect.getSelectionEnd();
+
+        const outdents: BlockInstance[] = [];
+        const remainings: BlockInstance[] = [];
+        const toRemoves: string[] = [];
+        const totalItems = listBlock.innerBlocks.length;
+
+        for (let i = firstIndex; i < totalItems; i++) {
+            const b = listBlock.innerBlocks[i];
+            const cloned = cloneBlock(b);
+            toRemoves.push(b.clientId);
+            if (i > lastIndex) {
+                remainings.push(cloned);
+            } else {
+                outdents.push(cloned);
+            }
+        }
+
+        if (firstIndex === 0 && lastIndex === totalItems - 1) {
+            toRemoves.push(listBlock.clientId);
+        }
+
+        if (remainings.length) {
+            if (lastItem.innerBlocks?.length) {
+                const remTarget = lastItem.innerBlocks[0];
+                remTarget.innerBlocks.push(...remainings);
+            } else {
+                const remTarget = createBlock(
+                    "tableberg/styled-list",
+                    {
+                        listStyle:
+                            targetList.attributes.listStyle === "disc"
+                                ? "circle"
+                                : "disc",
+                        parentCount: targetList.attributes.parentCount + 1,
+                    },
+                    remainings,
+                );
+                storeActions.replaceInnerBlocks(lastItem.clientId, [remTarget]);
+            }
+        }
+        storeActions.insertBlocks(outdents, insertIndex, targetListId);
+        storeActions.removeBlocks(toRemoves);
+        if (!isMultiple) {
+            storeActions.selectionChange(
+                outdents[0].clientId,
+                selectionEnd.attributeKey!,
+                selectionEnd.clientId === selectionStart.clientId
+                    ? selectionStart.offset!
+                    : selectionEnd.offset!,
+                selectionEnd.offset!,
+            );
+        } else {
+            storeActions.multiSelect(
+                outdents[0].clientId,
+                outdents[outdents.length - 1].clientId,
+            );
+        }
+    }, [clientId]);
 
     const handleItemDeletion = (forward: boolean) => {
         if (forward) {
