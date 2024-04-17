@@ -176,7 +176,7 @@ function useIndentOutdent(clientId: string) {
         if (remainings.length) {
             if (lastItem.innerBlocks?.length) {
                 const remTarget = lastItem.innerBlocks[0];
-                storeActions.replaceInnerBlocks(lastItem.clientId, [
+                storeActions.replaceInnerBlocks(remTarget.clientId, [
                     ...remTarget.innerBlocks,
                     ...remainings,
                 ]);
