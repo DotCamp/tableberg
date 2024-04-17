@@ -52,7 +52,7 @@ export function getStyles(attributes: StyledListProps) {
 }
 
 export function getItemStyles(attributes: StyledListItemProps, listAttrs: StyledListProps) {
-    const itemSpacingObj: any = getSpacingCss(listAttrs.itemSpacing);
+    const itemSpacingObj: any = getSpacingCss(listAttrs.itemSpacing || {});
     let styles: Record<string, any> = {
         color: attributes.textColor,
         fontSize: attributes.fontSize,

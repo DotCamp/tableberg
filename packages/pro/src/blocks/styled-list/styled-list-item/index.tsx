@@ -46,58 +46,17 @@ export interface StyledListItemProps {
     textColor?: string;
 }
 
-function edit(props: BlockEditProps<StyledListItemProps>) {
-    const { attributes, setAttributes, clientId } = props;
-    const { text } = attributes;
-
+function useIndentOutdent(clientId: string) {
     const storeActions: BlockEditorStoreActions = useDispatch(
         blockEditorStore,
     ) as any;
-
-    const {
-        listItemBlock,
-        listBlock,
-        listAttrs,
-        hasIcon,
-        currentIndex,
-        storeSelect,
-        parentIds,
-    } = useSelect((select) => {
-        const storeSelect = select(
-            blockEditorStore,
-        ) as BlockEditorStoreSelectors;
-        const listItemBlock = storeSelect.getBlock(clientId)!;
-        const parentIds = storeSelect.getBlockParents(clientId)!;
-        const listBlockId = parentIds[parentIds.length - 1];
-        const listBlock: BlockInstance<StyledListProps> = storeSelect.getBlock(
-            listBlockId,
-        )! as any;
-        const listAttrs = listBlock.attributes;
-        const currentIndex = storeSelect.getBlockIndex(clientId);
-        return {
-            listItemBlock,
-            listBlock,
-            listAttrs,
-            currentIndex,
-            hasIcon: !listAttrs.isOrdered && !!listAttrs.icon,
-            parentIds,
-            storeSelect,
-        };
-    }, []);
-
-    const blockProps = useBlockProps({
-        style: getItemStyles(attributes, listAttrs),
-    });
-    const innerBlocksProps = useInnerBlocksProps({
-        allowedBlocks: ["tableberg/styled-list"],
-        className: "tableberg-inner-list-holder",
-    });
-
-    const [isLibraryOpen, setLibraryOpen] = useState(false);
+    const storeSelect = useSelect(blockEditorStore, [
+        clientId,
+    ]) as BlockEditorStoreSelectors;
 
     const indentItem = useCallback(() => {
         const isMultiple = storeSelect.hasMultiSelection();
-
+        const listItemBlock = storeSelect.getBlock(clientId)!;
         const toClone = isMultiple
             ? storeSelect.getMultiSelectedBlocks()
             : [listItemBlock];
@@ -108,6 +67,9 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         if (!previousSiblingId) {
             return;
         }
+        const listBlock = storeSelect.getBlock(
+            storeSelect.getBlockRootClientId(clientId)!,
+        )!;
 
         const replaceTargets: string[] = [previousSiblingId];
         const clonedBlocks: BlockInstance[] = [];
@@ -120,19 +82,16 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             storeSelect.getBlock(previousSiblingId)!,
         );
         if (!targetItemBlock.innerBlocks?.length) {
-            let listStyle: string;
-            if (listAttrs.listStyle === "disc") {
-                listStyle = "circle";
-            } else {
-                listStyle = "disc";
-            }
             // @ts-ignore
             targetItemBlock.innerBlocks = [
                 createBlock(
                     "tableberg/styled-list",
                     {
-                        parentCount: listAttrs.parentCount + 1,
-                        listStyle,
+                        listStyle:
+                            listBlock.attributes.listStyle === "disc"
+                                ? "circle"
+                                : "disc",
+                        parentCount: listBlock.attributes.parentCount + 1,
                     },
                     clonedBlocks,
                 ),
@@ -162,23 +121,34 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 clonedBlocks[clonedBlocks.length - 1].clientId,
             );
         }
-    }, [clientId, listAttrs]);
+    }, [clientId]);
 
     const outdentItem = useCallback(() => {
         const isMultiple = storeSelect.hasMultiSelection();
+        const listItemBlock = storeSelect.getBlock(clientId)!;
         const toOutdents = isMultiple
             ? storeSelect.getMultiSelectedBlocks()
             : [listItemBlock];
-        const targetListId = parentIds[parentIds.length - 3];
-        const targetList = storeSelect.getBlock(targetListId)!;
-        const insertIndex = storeSelect.getBlockIndex(listBlock.clientId)! + 1;
 
-        const lastItem = toOutdents[toOutdents.length - 1];
+        let lastItem = toOutdents[toOutdents.length - 1];
         const firstIndex = storeSelect.getBlockIndex(toOutdents[0].clientId);
         const lastIndex = storeSelect.getBlockIndex(lastItem.clientId);
 
+        const parentListId = storeSelect.getBlockRootClientId(
+            toOutdents[0].clientId,
+        )!;
+        const parentItemId = storeSelect.getBlockRootClientId(parentListId)!;
+
+        const targetListId = storeSelect.getBlockRootClientId(parentItemId)!;
+        const targetList = storeSelect.getBlock(targetListId)!;
+
+        const insertIndex = storeSelect.getBlockIndex(parentItemId)! + 1;
         const selectionStart = storeSelect.getSelectionStart();
         const selectionEnd = storeSelect.getSelectionEnd();
+
+        const listBlock = storeSelect.getBlock(
+            storeSelect.getBlockRootClientId(clientId)!,
+        )!;
 
         const outdents: BlockInstance[] = [];
         const remainings: BlockInstance[] = [];
@@ -195,15 +165,21 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 outdents.push(cloned);
             }
         }
-
-        if (firstIndex === 0 && lastIndex === totalItems - 1) {
+        if (firstIndex === 0) {
             toRemoves.push(listBlock.clientId);
         }
+
+        lastItem = outdents[outdents.length - 1];
+
+        storeActions.insertBlocks(outdents, insertIndex, targetListId);
 
         if (remainings.length) {
             if (lastItem.innerBlocks?.length) {
                 const remTarget = lastItem.innerBlocks[0];
-                remTarget.innerBlocks.push(...remainings);
+                storeActions.replaceInnerBlocks(lastItem.clientId, [
+                    ...remTarget.innerBlocks,
+                    ...remainings,
+                ]);
             } else {
                 const remTarget = createBlock(
                     "tableberg/styled-list",
@@ -219,7 +195,6 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 storeActions.replaceInnerBlocks(lastItem.clientId, [remTarget]);
             }
         }
-        storeActions.insertBlocks(outdents, insertIndex, targetListId);
         storeActions.removeBlocks(toRemoves);
         if (!isMultiple) {
             storeActions.selectionChange(
@@ -237,6 +212,54 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             );
         }
     }, [clientId]);
+
+    return { indentItem, outdentItem };
+}
+
+function edit(props: BlockEditProps<StyledListItemProps>) {
+    const { attributes, setAttributes, clientId } = props;
+    const { text } = attributes;
+
+    const storeActions: BlockEditorStoreActions = useDispatch(
+        blockEditorStore,
+    ) as any;
+
+    const {
+        listItemBlock,
+        listBlock,
+        listAttrs,
+        hasIcon,
+        currentIndex,
+    } = useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore,
+        ) as BlockEditorStoreSelectors;
+        const listItemBlock = storeSelect.getBlock(clientId)!;
+        const listBlock: BlockInstance<StyledListProps> = storeSelect.getBlock(
+            storeSelect.getBlockRootClientId(clientId)!,
+        )! as any;
+        const listAttrs = listBlock.attributes;
+        const currentIndex = storeSelect.getBlockIndex(clientId);
+        return {
+            listItemBlock,
+            listBlock,
+            listAttrs,
+            currentIndex,
+            hasIcon: !listAttrs.isOrdered && !!listAttrs.icon,
+        };
+    }, [clientId]);
+
+    const blockProps = useBlockProps({
+        style: getItemStyles(attributes, listAttrs),
+    });
+    const innerBlocksProps = useInnerBlocksProps({
+        allowedBlocks: ["tableberg/styled-list"],
+        className: "tableberg-inner-list-holder",
+    });
+
+    const [isLibraryOpen, setLibraryOpen] = useState(false);
+
+    const {indentItem, outdentItem} = useIndentOutdent(clientId);
 
     const handleItemDeletion = (forward: boolean) => {
         if (forward) {
