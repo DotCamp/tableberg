@@ -22,7 +22,7 @@ export function getStyles(attributes: StyledListProps) {
         "--tableberg-styled-list-icon-size": `${attributes.iconSize || 15}px`,
         "--tableberg-styled-list-icon-color": attributes.iconColor,
         "--tableberg-styled-list-icon-spacing": `${
-            attributes.iconSpacing || 0
+            attributes.iconSpacing || 5
         }px`,
         "--tableberg-styled-list-inner-spacing": listIndentObj?.left,
     };
