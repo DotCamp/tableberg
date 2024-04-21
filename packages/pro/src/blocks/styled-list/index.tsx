@@ -363,7 +363,7 @@ function edit(props: BlockEditProps<StyledListProps>) {
                                         setAttributes({ iconSize });
                                     }}
                                     min={0}
-                                    max={10}
+                                    max={500}
                                 />
                                 <SpacingControlSingle
                                     label={__("Icon Spacing", "tableberg-pro")}

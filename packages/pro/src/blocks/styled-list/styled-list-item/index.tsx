@@ -428,7 +428,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                                 setAttributes({ iconSize });
                             }}
                             min={0}
-                            max={100}
+                            max={500}
                         />
                         <SpacingControlSingle
                             label={__("Item Icon Spacing", "tableberg-pro")}
