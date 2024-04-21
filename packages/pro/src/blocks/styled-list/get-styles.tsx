@@ -24,7 +24,6 @@ export function getStyles(attributes: StyledListProps) {
     const paddingLeft = listSpacingObj?.left;
 
     if (attributes.isOrdered || !attributes.icon) {
-        
         styles["list-style"] = attributes.listStyle || "auto";
         if (!paddingLeft || paddingLeft == "0") {
             styles["paddingLeft"] = "1em";
@@ -32,7 +31,7 @@ export function getStyles(attributes: StyledListProps) {
             styles["paddingLeft"] = `calc(1em + ${paddingLeft})`;
         }
     } else {
-        styles["paddingLeft"] = paddingLeft;
+        styles["paddingLeft"] = paddingLeft || '0';
     }
 
     return omitBy(
