@@ -25,8 +25,8 @@
                "default": "left"
           },
           "itemSpacing": {
-               "type": "object",
-               "default": {}
+               "type": "string",
+               "default": "0px"
           },
           "iconColor": {
                "type": "string",
@@ -37,8 +37,8 @@
                "default": 15
           },
           "iconSpacing": {
-               "type": "number",
-               "default": 5
+               "type": "string",
+               "default": "5px"
           },
           "fontSize": {
                "type": "string",
@@ -57,8 +57,8 @@
                "default": {}
           },
           "listIndent": {
-               "type": "object",
-               "default": {}
+               "type": "string",
+               "default": "var:preset|spacing|10"
           },
           "listStyle": {
                "type": "string",

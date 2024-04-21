@@ -12,7 +12,11 @@ import {
     store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { getStyles } from "./get-styles";
-import { ColorControl, SpacingControl } from "@tableberg/components";
+import {
+    ColorControl,
+    SpacingControl,
+    SpacingControlSingle,
+} from "@tableberg/components";
 import IconsLibrary from "@tableberg/components/icon-library";
 import { __ } from "@wordpress/i18n";
 import {
@@ -24,6 +28,7 @@ import {
     RangeControl,
     SelectControl,
     ToolbarButton,
+    __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
 import { useState } from "react";
 import { formatOutdent, trash } from "@wordpress/icons";
@@ -40,13 +45,13 @@ export interface StyledListProps {
     alignment: string;
     iconColor: string;
     iconSize: number;
-    iconSpacing: number;
+    iconSpacing: string;
     fontSize: string;
-    itemSpacing: object;
+    itemSpacing: string;
     textColor: string;
     backgroundColor: string;
     listSpacing: object;
-    listIndent: object;
+    listIndent: string;
     parentCount: number;
 }
 
@@ -241,24 +246,9 @@ function edit(props: BlockEditProps<StyledListProps>) {
                     }
                     onDeselect={() => setAttributes({ listSpacing: undefined })}
                 />
-                <SpacingControl
-                    label={__("List item Indentation", "tableberg-pro")}
-                    value={attributes.listIndent}
-                    onChange={(listIndent) => setAttributes({ listIndent })}
-                    onDeselect={() => setAttributes({ listIndent: undefined })}
-                    sides={["left"]}
-                />
-                <SpacingControl
-                    label={__("Item Spacing", "tableberg-pro")}
-                    value={attributes.itemSpacing}
-                    onChange={(itemSpacing) => setAttributes({ itemSpacing })}
-                    onDeselect={() => setAttributes({ itemSpacing: undefined })}
-                    sides={["bottom"]}
-                />
             </InspectorControls>
 
             <InspectorControls group="settings">
-
                 <PanelBody title="List Settings" initialOpen={true}>
                     <BaseControl __nextHasNoMarginBottom>
                         <SelectControl
@@ -289,6 +279,26 @@ function edit(props: BlockEditProps<StyledListProps>) {
                             />
                         </BaseControl>
                     )}
+                    <BaseControl __nextHasNoMarginBottom>
+                        <SpacingControlSingle
+                            label={__("List item Indentation", "tableberg-pro")}
+                            value={attributes.listIndent}
+                            onChange={(listIndent) =>
+                                setAttributes({ listIndent })
+                            }
+                            style={{marginTop: "40px"}}
+                        />
+                    </BaseControl>
+
+                    <BaseControl __nextHasNoMarginBottom>
+                        <SpacingControlSingle
+                            label={__("Item Spacing", "tableberg-pro")}
+                            value={attributes.itemSpacing}
+                            onChange={(itemSpacing) =>
+                                setAttributes({ itemSpacing })
+                            }
+                        />
+                    </BaseControl>
                 </PanelBody>
                 {!attributes.isOrdered && (
                     <PanelBody title="Icon Settings" initialOpen={true}>
@@ -352,17 +362,15 @@ function edit(props: BlockEditProps<StyledListProps>) {
                                     onChange={(iconSize) => {
                                         setAttributes({ iconSize });
                                     }}
-                                    min={10}
-                                    max={100}
+                                    min={0}
+                                    max={10}
                                 />
-                                <RangeControl
+                                <SpacingControlSingle
                                     label={__("Icon Spacing", "tableberg-pro")}
                                     value={attributes.iconSpacing}
-                                    onChange={(iconSpacing) => {
-                                        setAttributes({ iconSpacing });
-                                    }}
-                                    min={0}
-                                    max={20}
+                                    onChange={(iconSpacing) =>
+                                        setAttributes({ iconSpacing })
+                                    }
                                 />
                             </>
                         )}

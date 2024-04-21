@@ -41,13 +41,8 @@ class StyledList
 	public static function get_styles(array $attributes, string $id)
 	{
 		$padding = Utils::get_spacing_css(isset($attributes['listSpacing']) ? $attributes['listSpacing'] : []);
-		$listIndent = Utils::get_spacing_css(isset($attributes['listIndent']) ? $attributes['listIndent'] : []);
 
-		if (!isset($listIndent['left']) || $listIndent['left'] === '0') {
-			$indent = '10px';
-		} else {
-			$indent = $listIndent['left'];
-		}
+		
 
 		$styles = array(
 			'color' => $attributes['textColor'],
@@ -57,8 +52,8 @@ class StyledList
 			'padding-bottom' => $padding['bottom'] ?? '',
 			'--tableberg-styled-list-icon-color' => $attributes['iconColor'],
 			'--tableberg-styled-list-icon-size' => $attributes['iconSize'] . 'px',
-			'--tableberg-styled-list-icon-spacing' => $attributes['iconSpacing'] . 'px',
-			'--tableberg-styled-list-inner-spacing' => $indent,
+			'--tableberg-styled-list-icon-spacing' => Utils::get_spacing_css_single($attributes['iconSpacing']),
+			'--tableberg-styled-list-inner-spacing' => Utils::get_spacing_css_single(isset($attributes['listIndent']) ? $attributes['listIndent'] : ''),
 		);
 
 		$pleft = $padding['left'] ?? '0';
@@ -75,9 +70,9 @@ class StyledList
 		}
 
 		if (isset($attributes['itemSpacing'])) {
-			$iSpacing = Utils::get_spacing_css($attributes['itemSpacing']);
-			if (isset($iSpacing['bottom']) && $iSpacing['bottom'] != '0') {
-				Assets::$dynamicStyles .= '#'.$id.' > li {margin-bottom: '.$iSpacing['bottom'].';}';
+			$iSpacing = Utils::get_spacing_css_single($attributes['itemSpacing']);
+			if ($iSpacing != '0') {
+				Assets::$dynamicStyles .= '#' . $id . ' > li {margin-bottom: ' . $iSpacing . ';}';
 			}
 		}
 
@@ -105,7 +100,7 @@ class StyledList
 
 		}
 
-		$id = '__tableberg_styled_list_'.self::$count++;
+		$id = '__tableberg_styled_list_' . self::$count++;
 
 		$contents = HtmlUtils::append_attr_value($contents, $tag, self::get_styles($attributes, $id), 'style');
 		$contents = HtmlUtils::append_attr_value($contents, $tag, $id, 'id');

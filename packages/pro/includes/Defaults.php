@@ -84,7 +84,7 @@ class Defaults
 						'default' => null,
 					),
 					'iconSpacing' => array(
-						'type' => 'number',
+						'type' => 'string',
 						'default' => null,
 					),
 					'fontSize' => array(
@@ -109,16 +109,16 @@ class Defaults
 					'default' => 'left',
 				),
 				'itemSpacing' => array(
-					'type' => 'object',
-					'default' => [],
+					'type' => 'string',
+					'default' => '',
 				),
 				'listSpacing' => [
 					'type' => 'object',
 					'default' => []
 				],
 				'listIndent' => [
-					'type' => 'object',
-					'default' => []
+					'type' => 'string',
+					'default' => 'var:preset|spacing|10'
 				],
 				'iconColor' => array(
 					'type' => 'string',
@@ -129,8 +129,8 @@ class Defaults
 					'default' => 15,
 				),
 				'iconSpacing' => array(
-					'type' => 'number',
-					'default' => 5,
+					'type' => 'string',
+					'default' => '5px',
 				),
 				'fontSize' => array(
 					'type' => 'string',

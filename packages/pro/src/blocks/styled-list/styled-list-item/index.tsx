@@ -27,7 +27,7 @@ import {
 } from "@wordpress/components";
 
 import { formatIndent, formatOutdent, trash } from "@wordpress/icons";
-import { ColorControl, SpacingControl } from "@tableberg/components";
+import { ColorControl, SpacingControl, SpacingControlSingle } from "@tableberg/components";
 import IconsLibrary from "@tableberg/components/icon-library";
 
 import { listItemIcon } from "../icon";
@@ -41,7 +41,7 @@ export interface StyledListItemProps {
     text: string;
     iconColor?: string;
     iconSize?: number;
-    iconSpacing?: number;
+    iconSpacing?: string;
     fontSize?: string;
     textColor?: string;
 }
@@ -430,14 +430,13 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                             min={0}
                             max={100}
                         />
-                        <RangeControl
+                        <SpacingControlSingle
                             label={__("Item Icon Spacing", "tableberg-pro")}
+                            // @ts-ignore
                             value={attributes.iconSpacing}
                             onChange={(iconSpacing) => {
                                 setAttributes({ iconSpacing });
                             }}
-                            min={0}
-                            max={20}
                         />
                     </PanelBody>
                     {isLibraryOpen && (
