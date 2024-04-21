@@ -259,9 +259,10 @@ function edit(props: BlockEditProps<StyledListProps>) {
                                 { label: "Unordered", value: "0" },
                             ]}
                             onChange={(isOrdered: any) => {
+                                isOrdered = isOrdered == "1";
                                 setAttributes({
                                     listStyle: isOrdered ? 'decimal' : 'disc',
-                                    isOrdered: isOrdered == "1",
+                                    isOrdered,
                                 });
                             }}
                         />
