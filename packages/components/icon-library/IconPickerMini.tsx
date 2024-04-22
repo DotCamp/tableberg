@@ -7,6 +7,7 @@ import { isEmpty } from "lodash";
 
 interface Props {
     onSelect: (icon: any) => void;
+    maxHeight?: string;
 }
 
 const ALL_ICONS: Array<any> = [];
@@ -120,9 +121,10 @@ const stringDistance = (function () {
     };
 })();
 
-export default function IconPickerMini({ onSelect }: Props) {
-    const [search, setSearch] = useState("");
+export default function IconPickerMini({ onSelect, maxHeight }: Props) {
+    maxHeight ||= "250px";
 
+    const [search, setSearch] = useState("");
     const [icons, setIcons] = useState([]);
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [iconsKey, setIconsKey] = useState(0);
@@ -138,7 +140,7 @@ export default function IconPickerMini({ onSelect }: Props) {
         const icons: any = [];
         const weighted = ALL_ICONS.map((icon) => ({
             icon,
-            weigth: stringDistance(debouncedSearch, icon.name)
+            weigth: stringDistance(debouncedSearch, icon.name),
         }));
 
         weighted.sort((a, b) => a.weigth - b.weigth);
@@ -179,7 +181,11 @@ export default function IconPickerMini({ onSelect }: Props) {
                 }}
                 placeholder={__("Search Icon", "tableberg")}
             />
-            <div className="tableberg_icons_library_mini_icons" key={iconsKey}>
+            <div
+                className="tableberg_icons_library_mini_icons"
+                key={iconsKey}
+                style={{ maxHeight }}
+            >
                 {icons.map((icon: any) => (
                     <Button
                         key={icon.name}
