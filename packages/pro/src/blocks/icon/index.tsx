@@ -2,9 +2,12 @@ import { __ } from "@wordpress/i18n";
 import metadata from "./block.json";
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 import {
+    BlockControls,
     HeightControl,
     InspectorControls,
     useBlockProps,
+    // @ts-ignore
+    JustifyContentControl,
 } from "@wordpress/block-editor";
 import {
     getSpacingStyle,
@@ -18,6 +21,9 @@ import {
     RangeControl,
     SelectControl,
     TabPanel,
+    TextControl,
+    TextareaControl,
+    ToolbarGroup,
 } from "@wordpress/components";
 import {
     BorderControl,
@@ -27,6 +33,7 @@ import {
 } from "@tableberg/components";
 import classNames from "classnames";
 import { Icon, IconPickerMini } from "@tableberg/components/icon-library";
+import { useState } from "react";
 
 interface IconAttrs {
     icon: any;
@@ -83,6 +90,9 @@ const getStyle = (attrs: IconAttrs) => {
 
 function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
     const { size } = attributes;
+    const [iconMode, setIconMode] = useState(
+        attributes.icon?.type === "url" ? "url" : "icon",
+    );
 
     const blockProps = useBlockProps({
         style: getStyle(attributes),
@@ -185,7 +195,13 @@ function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
     return (
         <>
             <div {...blockProps}>
-                {icon.type === "url" ? (
+                {icon.type !== "url" ? (
+                    <Icon
+                        icon={icon}
+                        size={size}
+                        style={{ fill: attributes.color }}
+                    />
+                ) : (
                     <img
                         src={icon.url}
                         style={{
@@ -193,14 +209,19 @@ function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
                             width: size,
                         }}
                     />
-                ) : (
-                    <Icon
-                        icon={icon}
-                        size={size}
-                        style={{ fill: attributes.color }}
-                    />
                 )}
             </div>
+            <BlockControls>
+                <ToolbarGroup>
+                    <JustifyContentControl
+                        value={attributes.justify}
+                        allowedControls={["left", "center", "right"]}
+                        onChange={(justify: any) => {
+                            setAttributes({ justify });
+                        }}
+                    />
+                </ToolbarGroup>
+            </BlockControls>
             <InspectorControls>
                 <PanelBody>
                     <SelectControl
@@ -231,9 +252,40 @@ function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
                     />
                 </PanelBody>
                 <PanelBody title="Icon" initialOpen>
-                    <IconPickerMini
-                        onSelect={(icon) => setAttributes({ icon })}
+                    <SelectControl
+                        label={__("Icon type", "tableberg-pro")}
+                        options={[
+                            {
+                                value: "icon",
+                                label: "Icon",
+                            },
+                            {
+                                value: "url",
+                                label: "URL",
+                            },
+                        ]}
+                        value={iconMode}
+                        onChange={(mode) => setIconMode(mode)}
                     />
+                    {iconMode === "icon" ? (
+                        <IconPickerMini
+                            onSelect={(icon) => setAttributes({ icon })}
+                            maxHeight="180px"
+                        />
+                    ) : (
+                        <TextControl
+                            label={__("Icon Url", "tableberg-pro")}
+                            value={attributes.icon?.url}
+                            onChange={(url) =>
+                                setAttributes({
+                                    icon: {
+                                        type: "url",
+                                        url: encodeURI(url),
+                                    },
+                                })
+                            }
+                        />
+                    )}
                 </PanelBody>
             </InspectorControls>
             <InspectorControls group="color">

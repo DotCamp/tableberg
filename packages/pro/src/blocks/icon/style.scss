@@ -1,5 +1,6 @@
 .tableberg-icon {
     display: flex;
+
     &.tableberg-icon-as-char {
         display: inline;
 
@@ -13,5 +14,10 @@
         svg {
             fill: var(--tableberg-icon-color-hover) !important;
         }
+    }
+
+    img {
+        border-radius: inherit;
+        overflow: hidden;
     }
 }
