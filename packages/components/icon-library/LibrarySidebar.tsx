@@ -18,7 +18,6 @@ function Sidebar(props: IconsLibrarySidebarProps) {
         search,
         setSearch,
         subCategoryFilter,
-        mainCategoryFilter,
         setSubCategoryFilter,
         setMainCategoryFilter,
     } = props;
@@ -67,6 +66,7 @@ function Sidebar(props: IconsLibrarySidebarProps) {
                                         <MenuItem
                                             key={category?.name}
                                             className="tableberg_icons_library_sidebar_item"
+                                            // @ts-ignore
                                             isPressed={
                                                 subCategoryFilter ===
                                                 category?.name

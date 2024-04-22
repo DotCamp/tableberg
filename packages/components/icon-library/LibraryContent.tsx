@@ -22,7 +22,7 @@ function Content(props: IconsLibraryContentProps) {
     const { value, search, onSelect, subCategoryFilter, mainCategoryFilter } =
         props;
 
-    const mergeIcons = (filteredIcons) => {
+    const mergeIcons = (filteredIcons: any) => {
         let finalIcons = [];
         for (let i = 0; i < filteredIcons.length; i++) {
             finalIcons.push(...filteredIcons[i]);
@@ -38,9 +38,9 @@ function Content(props: IconsLibraryContentProps) {
                 return icon?.categories?.includes(subCategoryFilter);
             });
             if (subCategoryFilter.includes("all-")) {
-                setIcons(iconObj?.icons);
+                setIcons(iconObj?.icons as any);
             } else {
-                setIcons(preparedIcons);
+                setIcons(preparedIcons as any);
             }
         } else {
             const preparedIcons = tablebergIcons.map((iconPack) => {
@@ -52,7 +52,7 @@ function Content(props: IconsLibraryContentProps) {
                 });
                 return iconPackIcons;
             });
-            setIcons(mergeIcons(preparedIcons));
+            setIcons(mergeIcons(preparedIcons) as any);
         }
     }, [subCategoryFilter, mainCategoryFilter, debouncedSearch]);
     useEffect(() => {
@@ -69,7 +69,7 @@ function Content(props: IconsLibraryContentProps) {
                     "no-results": isNoResults,
                 })}
             >
-                {map(icons, (icon) => {
+                {map(icons, (icon: any) => {
                     return (
                         <Button
                             key={icon?.name}

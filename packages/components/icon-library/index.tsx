@@ -20,10 +20,10 @@ function IconsLibrary(props: IconsLibraryProps) {
             <Sidebar
                 subCategoryFilter={subCategoryFilter}
                 search={search}
-                setSubCategoryFilter={setSubCategoryFilter}
-                setSearch={setSearch}
+                setSubCategoryFilter={setSubCategoryFilter as any}
+                setSearch={setSearch as any}
                 mainCategoryFilter={mainCategoryFilter}
-                setMainCategoryFilter={setMainCategoryFilter}
+                setMainCategoryFilter={setMainCategoryFilter as any}
             />
             <Content
                 search={search}
@@ -37,3 +37,16 @@ function IconsLibrary(props: IconsLibraryProps) {
 }
 
 export default IconsLibrary;
+
+export { default as IconPickerMini } from "./IconPickerMini";
+
+export function Icon({ icon, size, style }: any) {
+    const { viewBox, xmlns, children } = icon.icon.props;
+    const pathData = children.props.d;
+
+    return (
+        <svg viewBox={viewBox} xmlns={xmlns} height={size} width={size} style={style}>
+            <path d={pathData} />
+        </svg>
+    );
+}
