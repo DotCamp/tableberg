@@ -34,6 +34,20 @@ function BorderRadiusControl({
         resetAllFilter = onDeselect;
     }
 
+    const handleChange = (value: any) => {
+        if (typeof value === "string") {
+            // attributes does not support both string & object types
+            onChange({
+                topLeft: value,
+                topRight: value,
+                bottomLeft: value,
+                bottomRight: value,
+            });
+            return;
+        }
+        onChange(value);
+    }
+
     return (
         <ToolsPanelItem
             panelId={clientId}
@@ -44,7 +58,7 @@ function BorderRadiusControl({
             onDeselect={onDeselect}
         >
             <RadiusControl
-                onChange={onChange}
+                onChange={handleChange}
                 values={value}
             />
         </ToolsPanelItem>
