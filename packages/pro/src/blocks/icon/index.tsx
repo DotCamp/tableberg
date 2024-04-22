@@ -8,6 +8,7 @@ import {
     useBlockProps,
     // @ts-ignore
     JustifyContentControl,
+    __experimentalLinkControl as LinkControl,
 } from "@wordpress/block-editor";
 import {
     getSpacingStyle,
@@ -18,11 +19,12 @@ import {
 import { isEmpty, isUndefined, omitBy, trim } from "lodash";
 import {
     PanelBody,
+    Popover,
     RangeControl,
     SelectControl,
     TabPanel,
     TextControl,
-    TextareaControl,
+    ToolbarButton,
     ToolbarGroup,
 } from "@wordpress/components";
 import {
@@ -34,6 +36,7 @@ import {
 import classNames from "classnames";
 import { Icon, IconPickerMini } from "@tableberg/components/icon-library";
 import { useState } from "react";
+import { link } from "@wordpress/icons";
 
 interface IconAttrs {
     icon: any;
@@ -89,10 +92,12 @@ const getStyle = (attrs: IconAttrs) => {
 };
 
 function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
-    const { size } = attributes;
+    const { size, linkUrl, linkTarget } = attributes;
     const [iconMode, setIconMode] = useState(
         attributes.icon?.type === "url" ? "url" : "icon",
     );
+
+    const [isUrlEditing, setUrlEditingMode] = useState(false);
 
     const blockProps = useBlockProps({
         style: getStyle(attributes),
@@ -221,6 +226,17 @@ function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
                         }}
                     />
                 </ToolbarGroup>
+                <ToolbarGroup>
+                    <ToolbarButton
+                        icon={link}
+                        title={__("Link", "tableberg-pro")}
+                        onClick={() => setUrlEditingMode(true)}
+                        isActive={!!linkUrl}
+                        placeholder={undefined}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
+                    />
+                </ToolbarGroup>
             </BlockControls>
             <InspectorControls>
                 <PanelBody>
@@ -323,6 +339,38 @@ function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
                     onDeselect={() => setAttributes({ margin: {} })}
                 />
             </InspectorControls>
+
+            {isUrlEditing && (
+                <Popover
+                    position="bottom center"
+                    onClose={() => {
+                        setUrlEditingMode(false);
+                    }}
+                    focusOnMount={isUrlEditing ? "firstElement" : false}
+                >
+                    <LinkControl
+                        value={{
+                            url: linkUrl,
+                            opensInNewTab: linkTarget === "_blank",
+                        }}
+                        onChange={({ url = "", opensInNewTab }) => {
+                            setAttributes({
+                                linkUrl: url,
+                                linkTarget: opensInNewTab ? "_blank" : "_self",
+                            });
+                        }}
+                        onRemove={() => {
+                            setAttributes({
+                                // @ts-ignore
+                                linkUrl: metadata.attributes.linkUrl.default,
+                                linkTarget:
+                                    //@ts-ignore
+                                    metadata.attributes.linkTarget.default,
+                            });
+                        }}
+                    />
+                </Popover>
+            )}
         </>
     );
 }
