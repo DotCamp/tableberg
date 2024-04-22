@@ -1,0 +1,17 @@
+.tableberg-icon {
+    display: flex;
+    &.tableberg-icon-as-char {
+        display: inline;
+
+        + * {
+            display: inline-block;
+        }
+    }
+
+    &:hover {
+        background: var(--tableberg-icon-bg-hover) !important;
+        svg {
+            fill: var(--tableberg-icon-color-hover) !important;
+        }
+    }
+}
