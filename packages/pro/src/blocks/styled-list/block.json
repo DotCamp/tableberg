@@ -56,10 +56,6 @@
                "type": "string",
                "default": "var:preset|spacing|10"
           },
-          "listStyle": {
-               "type": "string",
-               "default": "disc"
-          },
           "icon": {
                "type": "object",
                "default": {

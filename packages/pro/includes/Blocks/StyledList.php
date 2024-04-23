@@ -49,25 +49,13 @@ class StyledList
 			'background' => $attributes['backgroundColor'],
 			'padding-top' => $padding['top'] ?? '',
 			'padding-right' => $padding['right'] ?? '',
+			'padding-left' => $padding['left'] ?? '',
 			'padding-bottom' => $padding['bottom'] ?? '',
 			'--tableberg-styled-list-icon-color' => $attributes['iconColor'],
 			'--tableberg-styled-list-icon-size' => $attributes['iconSize'] . 'px',
 			'--tableberg-styled-list-icon-spacing' => Utils::get_spacing_css_single($attributes['iconSpacing']),
 			'--tableberg-styled-list-inner-spacing' => Utils::get_spacing_css_single(isset($attributes['listIndent']) ? $attributes['listIndent'] : ''),
 		);
-
-		$pleft = $padding['left'] ?? '0';
-
-		if (!$hasIcon) {
-			$styles['list-style'] = $attributes['listStyle'] ?? "auto";
-			if ($pleft == '0') {
-				$styles['padding-left'] = '1em';
-			} else {
-				$styles['padding-left'] = "calc(1em + $pleft)";
-			}
-		} else {
-			$styles['padding-left'] = $pleft;
-		}
 
 		if (isset($attributes['itemSpacing'])) {
 			$iSpacing = Utils::get_spacing_css_single($attributes['itemSpacing']);
@@ -90,13 +78,8 @@ class StyledList
 	{
 
 		$icon = Common::get_icon_svg($attributes);
-		if ($icon) {
-			$contents = str_replace('::__TABLEBERG_STYLED_LIST_ICON__::', $icon, $contents);
-			$contents = HtmlUtils::append_attr_value($contents, 'ul', ' tableberg-styled-list tableberg-list-has-icon', 'class');
-		} else {
-			$contents = str_replace('::__TABLEBERG_STYLED_LIST_ICON__::', '', $contents);
-			$contents = HtmlUtils::append_attr_value($contents, 'ul', ' tableberg-styled-list', 'class');
-		}
+		$contents = str_replace('::__TABLEBERG_STYLED_LIST_ICON__::', $icon, $contents);
+		$contents = HtmlUtils::append_attr_value($contents, 'ul', ' tableberg-styled-list', 'class');
 
 		$id = '__tableberg_styled_list_' . self::$count++;
 

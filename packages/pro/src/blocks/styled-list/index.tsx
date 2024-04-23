@@ -40,7 +40,6 @@ import { useDispatch } from "@wordpress/data";
 
 export interface StyledListProps {
     icon: any;
-    listStyle: string;
     alignment: string;
     iconColor: string;
     iconSize: number;
@@ -55,19 +54,6 @@ export interface StyledListProps {
 }
 
 const ALLOWED_BLOCKS = ["tableberg/styled-list-item"];
-
-const listTypes: {
-    label: string;
-    value: string;
-}[] = [
-    { label: "Custom", value: "" },
-    { label: "Circle", value: "circle" },
-    { label: "Disc", value: "disc" },
-    { label: "Disclosure Closed", value: "disclosure-closed" },
-    { label: "Disclosure Open", value: "disclosure-open" },
-];
-
-const DEFAULT_ICON = metadata.attributes.icon.default;
 
 function edit(props: BlockEditProps<StyledListProps>) {
     const { attributes, setAttributes, clientId } = props;
@@ -208,78 +194,40 @@ function edit(props: BlockEditProps<StyledListProps>) {
                     </BaseControl>
                 </PanelBody>
                 <PanelBody title="Icon Settings" initialOpen={true}>
-                    {!attributes.icon && (
-                        <BaseControl __nextHasNoMarginBottom>
-                            <SelectControl
-                                label="List Style"
-                                value={attributes.listStyle}
-                                options={listTypes}
-                                onChange={(listStyle: any) => {
-                                    if (listStyle === "") {
-                                        setAttributes({
-                                            icon: DEFAULT_ICON,
-                                        });
-                                        return;
-                                    }
-                                    setAttributes({
-                                        listStyle,
-                                        icon: undefined,
-                                    });
+                    <PanelRow className="tableberg-styled-list-icon-selector">
+                        <label>Select Icon</label>
+                        <div>
+                            <Button
+                                style={{
+                                    border: "1px solid #eeeeee",
                                 }}
-                            />
-                        </BaseControl>
-                    )}
-                    {attributes.icon && (
-                        <>
-                            <PanelRow className="tableberg-styled-list-icon-selector">
-                                <label>Select Icon</label>
-                                <div>
-                                    <Button
-                                        style={{
-                                            border: "1px solid #eeeeee",
-                                        }}
-                                        icon={
-                                            <SVGComponent
-                                                icon={attributes.icon}
-                                                iconName="wordpress"
-                                                type="wordpress"
-                                            />
-                                        }
-                                        onClick={() => setLibraryOpen(true)}
+                                icon={
+                                    <SVGComponent
+                                        icon={attributes.icon}
+                                        iconName="wordpress"
+                                        type="wordpress"
                                     />
-                                    <Button
-                                        style={{
-                                            border: "1px solid red",
-                                            marginLeft: "5px",
-                                            color: "red",
-                                        }}
-                                        icon={trash}
-                                        onClick={() =>
-                                            setAttributes({
-                                                icon: null,
-                                            })
-                                        }
-                                    />
-                                </div>
-                            </PanelRow>
-                            <RangeControl
-                                label={__("Icon size", "tableberg-pro")}
-                                value={attributes.iconSize}
-                                onChange={(iconSize) => {
-                                    setAttributes({ iconSize });
-                                }}
-                                min={0}
-                                max={500}
-                            />
-                            <SpacingControlSingle
-                                label={__("Icon Spacing", "tableberg-pro")}
-                                value={attributes.iconSpacing}
-                                onChange={(iconSpacing) =>
-                                    setAttributes({ iconSpacing })
                                 }
+                                onClick={() => setLibraryOpen(true)}
                             />
-                        </>
-                    )}
+                        </div>
+                    </PanelRow>
+                    <RangeControl
+                        label={__("Icon size", "tableberg-pro")}
+                        value={attributes.iconSize}
+                        onChange={(iconSize) => {
+                            setAttributes({ iconSize });
+                        }}
+                        min={0}
+                        max={500}
+                    />
+                    <SpacingControlSingle
+                        label={__("Icon Spacing", "tableberg-pro")}
+                        value={attributes.iconSpacing}
+                        onChange={(iconSpacing) =>
+                            setAttributes({ iconSpacing })
+                        }
+                    />
                 </PanelBody>
                 <PanelBody title="Font Size" initialOpen={true}>
                     <BaseControl __nextHasNoMarginBottom>
@@ -303,7 +251,6 @@ function edit(props: BlockEditProps<StyledListProps>) {
                             onSelect={(newIcon) => {
                                 setAttributes({
                                     icon: newIcon,
-                                    listStyle: "custom",
                                 });
                                 setLibraryOpen(false);
                                 return null;
