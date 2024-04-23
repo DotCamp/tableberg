@@ -24,7 +24,7 @@ export interface Props {
     label: string;
     value: string;
     onChange: (value: string) => void;
-    style?: HTMLAttributes<HTMLFieldSetElement>['style']
+    style?: HTMLAttributes<HTMLFieldSetElement>["style"];
 }
 
 const getSpacingPresetSlug = (value: string) => {
@@ -54,15 +54,16 @@ const getSliderValueFromPreset = (presetValue: any, spacingSizes: any) => {
 };
 
 function useSpacingSizes() {
-    const spacingSizes = [{ name: 0, slug: "0", size: 0 }, { name: '5px', slug: "5", size: '5px' }];
+    const spacingSizes = [
+        { name: 0, slug: "0", size: 0 },
+        { name: "5px", slug: "5", size: "5px" },
+    ];
 
     const [settingsSizes] = useSettings("spacing.spacingSizes");
     if (settingsSizes) {
         spacingSizes.push(...settingsSizes);
     }
 
-    console.log(spacingSizes);
-    
     if (spacingSizes.length > 8) {
         spacingSizes.unshift({
             // @ts-ignore
@@ -80,14 +81,14 @@ export default function SpacingControlSingle({
     label,
     value,
     onChange,
-    style
+    style,
 }: Props) {
     const [showCustomValueControl, setShowCustomValueControl] = useState(
         !!value && !isValueSpacingPreset(value),
     );
 
     style ||= {};
-    style.position = 'relative';
+    style.position = "relative";
 
     const [availableUnits] = useSettings("spacing.units");
     const units = useCustomUnits({
@@ -130,10 +131,7 @@ export default function SpacingControlSingle({
         onChange([next, selectedUnit].join(""));
     };
     return (
-        <fieldset
-            className="spacing-sizes-control"
-            style={style}
-        >
+        <fieldset className="spacing-sizes-control" style={style}>
             {showCustomValueControl && (
                 <BaseControl.VisualLabel
                     as="legend"
@@ -148,63 +146,60 @@ export default function SpacingControlSingle({
                     {label}
                 </BaseControl.VisualLabel>
             )}
-            <VStack spacing={0.5}>
-                <HStack className="spacing-sizes-control__wrapper">
-                    {showCustomValueControl ? (
-                        <>
-                            <UnitControl
-                                hideLabelFromVision
-                                className="spacing-sizes-control__custom-value-input"
-                                size={"__unstable-large"}
-                                value={currentValue}
-                                onChange={(newSize: any) =>
-                                    onChange(getNewCustomValue(newSize) as any)
-                                }
-                            />
-                            <RangeControl
-                                min={0}
-                                max={100}
-                                step={1}
-                                withInputField={false}
-                                className="spacing-sizes-control__custom-value-range"
-                                value={customRangeValue}
-                                onChange={handleCustomValueSliderChange as any}
-                                __nextHasNoMarginBottom
-                            />
-                        </>
-                    ) : (
-                        <RangeControl
-                            className="spacing-sizes-control__range-control"
-                            label={label}
+            <HStack className="spacing-sizes-control__wrapper">
+                {showCustomValueControl ? (
+                    <>
+                        <UnitControl
+                            hideLabelFromVision
+                            className="spacing-sizes-control__custom-value-input"
+                            size={"__unstable-large"}
                             value={currentValue}
-                            min={0}
-                            max={marks.length - 1}
-                            marks={marks}
-                            withInputField={false}
-                            onChange={(newSize) =>
-                                onChange(getNewPresetValue(newSize))
+                            onChange={(newSize: any) =>
+                                onChange(getNewCustomValue(newSize) as any)
                             }
                         />
-                    )}
-
-                    <Button
-                        label={
-                            showCustomValueControl
-                                ? __("Use size preset")
-                                : __("Set custom size")
+                        <RangeControl
+                            min={0}
+                            max={100}
+                            step={1}
+                            withInputField={false}
+                            className="spacing-sizes-control__custom-value-range"
+                            value={customRangeValue}
+                            onChange={handleCustomValueSliderChange as any}
+                            __nextHasNoMarginBottom
+                        />
+                    </>
+                ) : (
+                    <RangeControl
+                        className="spacing-sizes-control__range-control"
+                        label={label}
+                        value={currentValue}
+                        min={0}
+                        max={marks.length - 1}
+                        marks={marks}
+                        withInputField={false}
+                        onChange={(newSize) =>
+                            onChange(getNewPresetValue(newSize))
                         }
-                        icon={settings}
-                        onClick={() => {
-                            setShowCustomValueControl(!showCustomValueControl);
-                        }}
-
-                        isPressed={showCustomValueControl}
-                        size="small"
-                        className="spacing-sizes-control__custom-toggle"
-                        iconSize={24}
                     />
-                </HStack>
-            </VStack>
+                )}
+
+                <Button
+                    label={
+                        showCustomValueControl
+                            ? __("Use size preset")
+                            : __("Set custom size")
+                    }
+                    icon={settings}
+                    onClick={() => {
+                        setShowCustomValueControl(!showCustomValueControl);
+                    }}
+                    isPressed={showCustomValueControl}
+                    size="small"
+                    className="spacing-sizes-control__custom-toggle"
+                    iconSize={24}
+                />
+            </HStack>
         </fieldset>
     );
 }
