@@ -34,7 +34,7 @@
           },
           "iconSpacing": {
                "type": "string",
-               "default": "5px"
+               "default": "var:preset|spacing|5"
           },
           "fontSize": {
                "type": "string",

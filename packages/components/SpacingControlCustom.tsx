@@ -54,13 +54,15 @@ const getSliderValueFromPreset = (presetValue: any, spacingSizes: any) => {
 };
 
 function useSpacingSizes() {
-    const spacingSizes = [{ name: 0, slug: "0", size: 0 }];
+    const spacingSizes = [{ name: 0, slug: "0", size: 0 }, { name: '5px', slug: "5", size: '5px' }];
 
     const [settingsSizes] = useSettings("spacing.spacingSizes");
     if (settingsSizes) {
         spacingSizes.push(...settingsSizes);
     }
 
+    console.log(spacingSizes);
+    
     if (spacingSizes.length > 8) {
         spacingSizes.unshift({
             // @ts-ignore
