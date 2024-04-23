@@ -81,7 +81,7 @@ export default function SpacingControlSingle({
     style
 }: Props) {
     const [showCustomValueControl, setShowCustomValueControl] = useState(
-        !isValueSpacingPreset(value),
+        !!value && !isValueSpacingPreset(value),
     );
 
     style ||= {};
@@ -195,6 +195,7 @@ export default function SpacingControlSingle({
                         onClick={() => {
                             setShowCustomValueControl(!showCustomValueControl);
                         }}
+
                         isPressed={showCustomValueControl}
                         size="small"
                         className="spacing-sizes-control__custom-toggle"
