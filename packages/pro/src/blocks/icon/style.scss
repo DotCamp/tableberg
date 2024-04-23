@@ -21,3 +21,8 @@
         overflow: hidden;
     }
 }
+
+p:has(+ .tableberg-icon-as-char) {
+    display: inline;
+    text-align: justify;
+}
