@@ -1,82 +1,8 @@
-// @ts-ignore
-import { isEmpty, has } from "lodash";
-import { __experimentalHasSplitBorders as hasSplitBorders } from "@wordpress/components";
-import { BorderTypes } from "./types";
+import {
+    // @ts-ignore
+    isValueSpacingPreset,
+} from "@wordpress/block-editor";
 
-export const getBorderCSS = (object: object) => {
-    let borders: BorderTypes = {};
-
-    if (!hasSplitBorders(object)) {
-        borders["top"] = object;
-        borders["right"] = object;
-        borders["bottom"] = object;
-        borders["left"] = object;
-        return borders;
-    }
-    return object;
-};
-
-export function getSingleSideBorderValue(
-    border: BorderTypes,
-    side: keyof BorderTypes,
-) {
-    const { width = "", style = "", color = "" } = border[side] || {};
-    if (isEmpty(width)) {
-        return "";
-    }
-    const borderWidth = width || "0";
-    const borderStyle = isEmpty(style) ? "solid" : style;
-
-    return `${borderWidth} ${borderStyle} ${color}`;
-}
-
-export function getBorderVariablesCss(border: object, slug: string) {
-    const borderInFourDimension = getBorderCSS(border);
-    const borderSides = ["top", "right", "bottom", "left"];
-    let borders = {};
-    for (let i = 0; i < borderSides.length; i++) {
-        const side = borderSides[i];
-        const sideProperty = [`--tableberg-${slug}-border-${side}`];
-        // @ts-ignore
-        const sideValue = getSingleSideBorderValue(borderInFourDimension, side);
-        // @ts-ignore
-        borders[sideProperty] = sideValue;
-    }
-
-    return borders;
-}
-/**
- *  Check values are mixed.
- * @param {any} values - value string or object
- * @returns true | false
- */
-export function hasMixedValues(values = {}) {
-    return typeof values === "string";
-}
-export function splitBorderRadius(value: string | object) {
-    const isValueMixed = hasMixedValues(value);
-    const splittedBorderRadius = {
-        topLeft: value,
-        topRight: value,
-        bottomLeft: value,
-        bottomRight: value,
-    };
-    return isValueMixed ? splittedBorderRadius : value;
-}
-
-/**
- * Checks is given value is a spacing preset.
- *
- * @param {string} value Value to check
- *
- * @return {boolean} Return true if value is string in format var:preset|spacing|.
- */
-export function isValueSpacingPreset(value: string) {
-    if (!value?.includes) {
-        return false;
-    }
-    return value === "0" || value.includes("var:preset|spacing|");
-}
 
 /**
  * Converts a spacing preset into a custom value.
@@ -112,4 +38,13 @@ export function getSpacingCss(object: object) {
         }
     }
     return css;
+}
+
+
+export function getSpacingCssSingle(value: string) {
+    if (isValueSpacingPreset(value)) {
+        return getSpacingPresetCssVar(value);
+    } else {
+        return value;
+    }
 }

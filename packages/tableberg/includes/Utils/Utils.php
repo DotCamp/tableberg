@@ -266,6 +266,21 @@ class Utils
 	}
 
 	/**
+	 * Get the CSS for spacing.
+	 *
+	 * @param string $value - spacing value.
+	 * @return string CSS styles for spacing.
+	 */
+	public static function get_spacing_css_single($value)
+	{
+		if (self::is_value_spacing_preset($value)) {
+			return self::get_spacing_preset_css_var($value);
+		} else {
+			return $value;
+		}
+	}
+
+	/**
 	 * Check if a value is undefined.
 	 *
 	 * @param mixed $value - value.

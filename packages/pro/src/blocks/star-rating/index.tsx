@@ -2,8 +2,7 @@
  * Wordpress Dependencies
  */
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
-// @ts-ignore
-import { useState } from "@wordpress/element";
+import { useState } from "react";
 import { useBlockProps, RichText } from "@wordpress/block-editor";
 /**
  * Internal Imports

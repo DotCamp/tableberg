@@ -90,6 +90,26 @@ class HtmlUtils
     }
 
     /**
+     * Replace closing of the offset'th specified tag
+     * 
+     * @param string $content
+     * @param string $tag
+     * @param string $replacement
+     * @param int $offset
+     * @return string new content with added attributes
+     */
+    public static function replace_starting_tag($content, $tag, $replacement, $offset = 0)
+    {
+        $tag = '<' . $tag;
+        $idx = strpos($content, $tag, $offset);
+        if ($idx === false) {
+            return $content;
+        }
+
+        return substr_replace($content, $replacement, $idx, strlen($tag));
+    }
+
+    /**
      * Append attribute value to the offset'th specified tag
      * <div class"abc"></div> -> <div class"abc newclass"></div>
      * 

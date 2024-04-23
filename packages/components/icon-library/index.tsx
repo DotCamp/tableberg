@@ -1,15 +1,14 @@
 /**
  * WordPress Dependencies
  */
-//@ts-ignore
-import { useState } from "@wordpress/element";
+import { useState } from "react";
 
 /**
  * Custom Dependencies
  */
 import Content from "./LibraryContent";
 import Sidebar from "./LibrarySidebar";
-import { IconsLibraryProps } from "../type";
+import { IconsLibraryProps } from "./type";
 
 function IconsLibrary(props: IconsLibraryProps) {
     const [search, setSearch] = useState("");

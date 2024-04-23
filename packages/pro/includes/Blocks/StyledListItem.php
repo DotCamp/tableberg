@@ -2,8 +2,11 @@
 
 namespace Tableberg\Pro\Blocks;
 
+use Tableberg\Pro\Common;
 use Tableberg\Pro\Defaults;
+use Tableberg\Utils\HtmlUtils;
 use Tableberg\Utils\Utils;
+
 /**
  * Register Styled list item
  *
@@ -13,15 +16,17 @@ use Tableberg\Utils\Utils;
 /**
  * Manage Styled list item registration.
  */
-class StyledListItem {
+class StyledListItem
+{
 
 	/**
 	 * Constructor
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		add_action( 'init', array( $this, 'styled_list_item_block_registration' ) );
+	public function __construct()
+	{
+		add_action('init', array($this, 'styled_list_item_block_registration'));
 	}
 	/**
 	 * Get block styles.
@@ -29,24 +34,16 @@ class StyledListItem {
 	 * @param array $attributes - block attributes.
 	 * @return string Generated CSS styles.
 	 */
-	public static function get_styles( $attributes ) {
-
-		$utils   = new Utils();
-		$padding = $utils->get_spacing_css( isset( $attributes['padding'] ) ? $attributes['padding'] : array() );
-		$margin  = $utils->get_spacing_css( isset( $attributes['margin'] ) ? $attributes['margin'] : array() );
-
+	public static function get_styles($attributes)
+	{
 		$styles = array(
-			'padding-top'    => $padding['top'] ?? '',
-			'padding-right'  => $padding['right'] ?? '',
-			'padding-bottom' => $padding['bottom'] ?? '',
-			'padding-left'   => $padding['left'] ?? '',
-			'margin-top'     => $margin['top'] ?? '',
-			'margin-right'   => $margin['right'] ?? '',
-			'margin-bottom'  => $margin['bottom'] ?? '',
-			'margin-left'    => $margin['left'] ?? '',
+			'color' => $attributes['textColor'] ?? '',
+			'--tableberg-styled-list-icon-color' => $attributes['iconColor'] ?? '',
+			'--tableberg-styled-list-icon-size' => $attributes['iconSize'] ?? false ? $attributes['iconSize'] . 'px' : '',
+			'--tableberg-styled-list-icon-spacing' => Utils::get_spacing_css_single($attributes['iconSpacing'] ?? ''),
 		);
 
-		return $utils->generate_css_string( $styles );
+		return Utils::generate_css_string($styles);
 	}
 	/**
 	 * Renders the block on the server.
@@ -56,26 +53,41 @@ class StyledListItem {
 	 * @param WP_Block $block      The block object.
 	 * @return string Returns the HTML content for the custom cell block.
 	 */
-	public function tableberg_render_styled_list_item_block( $attributes, $contents, $block ) {
-		$item_text = isset( $attributes['itemText'] ) ? $attributes['itemText'] : '';
+	public function tableberg_render_styled_list_item_block($attributes, $contents, $block)
+	{
+		$item_text = isset($attributes['text']) ? $attributes['text'] : '';
+		$styles = $this->get_styles($attributes);
+		$icon = Common::get_icon_svg($attributes);
+		if (!$icon) {
+			$icon = '::__TABLEBERG_STYLED_LIST_ICON__::';
+		}
 
-		$styles = $this->get_styles( $attributes );
+		$contents = HtmlUtils::append_attr_value($contents, 'div', 'tableberg-inner-list-holder', 'class');
 
-		return '<li class="tableberg_styled_list_item" style="' . $styles . '">' . $item_text . $contents . '</li>';
+		return
+			'<li style="' . $styles . '">
+			    <div class="tableberg-list-item-inner">
+				    ' . $icon . '<div>' . $item_text . '</div>
+				</div>
+				' . $contents . '
+			</li>';
 	}
 
 	/**
 	 * Register the block.
 	 */
-	public function styled_list_item_block_registration() {
-		$defaults = new Defaults();
+	public function styled_list_item_block_registration()
+	{
+		$json =
+			TABLEBERG_PRO_DIR_PATH . 'dist/blocks/styled-list/styled-list-item/block.json';
+		$attrs = json_decode(file_get_contents($json), true)['attributes'];
 
 		register_block_type_from_metadata(
-			TABLEBERG_PRO_DIR_PATH . 'dist/blocks/styled-list/styled-list-item/block.json',
-			array(
-				'attributes'      => $defaults->get_default_attributes( 'tableberg/styled-list-item' ),
-				'render_callback' => array( $this, 'tableberg_render_styled_list_item_block' ),
-			)
+			$json,
+			[
+				'attributes' => $attrs,
+				'render_callback' => array($this, 'tableberg_render_styled_list_item_block'),
+			]
 		);
 	}
 }
