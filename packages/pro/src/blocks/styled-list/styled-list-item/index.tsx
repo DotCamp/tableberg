@@ -245,7 +245,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             listBlock,
             listAttrs,
             currentIndex,
-            hasIcon: !listAttrs.isOrdered && !!listAttrs.icon,
+            hasIcon: !!listAttrs.icon,
         };
     }, [clientId]);
 

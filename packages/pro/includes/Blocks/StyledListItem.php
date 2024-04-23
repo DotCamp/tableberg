@@ -40,7 +40,7 @@ class StyledListItem
 			'color' => $attributes['textColor'] ?? '',
 			'--tableberg-styled-list-icon-color' => $attributes['iconColor'] ?? '',
 			'--tableberg-styled-list-icon-size' => $attributes['iconSize'] ?? false ? $attributes['iconSize'] . 'px' : '',
-			'--tableberg-styled-list-icon-spacing' => Utils::get_spacing_css_single($attributes['iconSpacing']??''),
+			'--tableberg-styled-list-icon-spacing' => Utils::get_spacing_css_single($attributes['iconSpacing'] ?? ''),
 		);
 
 		return Utils::generate_css_string($styles);
@@ -63,7 +63,7 @@ class StyledListItem
 		}
 
 		$contents = HtmlUtils::append_attr_value($contents, 'div', 'tableberg-inner-list-holder', 'class');
-		
+
 		return
 			'<li style="' . $styles . '">
 			    <div class="tableberg-list-item-inner">
@@ -78,14 +78,16 @@ class StyledListItem
 	 */
 	public function styled_list_item_block_registration()
 	{
-		$defaults = new Defaults();
+		$json =
+			TABLEBERG_PRO_DIR_PATH . 'dist/blocks/styled-list/styled-list-item/block.json';
+		$attrs = json_decode(file_get_contents($json), true)['attributes'];
 
 		register_block_type_from_metadata(
-			TABLEBERG_PRO_DIR_PATH . 'dist/blocks/styled-list/styled-list-item/block.json',
-			array(
-				'attributes' => $defaults->get_default_attributes('tableberg/styled-list-item'),
+			$json,
+			[
+				'attributes' => $attrs,
 				'render_callback' => array($this, 'tableberg_render_styled_list_item_block'),
-			)
+			]
 		);
 	}
 }

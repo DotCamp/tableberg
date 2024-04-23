@@ -38,11 +38,11 @@ class StyledList
 	 * @param array $attributes - block attributes.
 	 * @return string Generated CSS styles.
 	 */
-	public static function get_styles(array $attributes, string $id)
+	public static function get_styles(array $attributes, string $id, bool $hasIcon)
 	{
 		$padding = Utils::get_spacing_css(isset($attributes['listSpacing']) ? $attributes['listSpacing'] : []);
 
-		
+
 
 		$styles = array(
 			'color' => $attributes['textColor'],
@@ -58,7 +58,7 @@ class StyledList
 
 		$pleft = $padding['left'] ?? '0';
 
-		if ($attributes['isOrdered'] || !isset($attributes['icon']) || !$attributes['icon']) {
+		if (!$hasIcon) {
 			$styles['list-style'] = $attributes['listStyle'] ?? "auto";
 			if ($pleft == '0') {
 				$styles['padding-left'] = '1em';
@@ -88,22 +88,20 @@ class StyledList
 	 */
 	public function tableberg_render_styled_list_block($attributes, $contents, $block)
 	{
-		$tag = $attributes['isOrdered'] ? 'ol' : 'ul';
-		$contents = HtmlUtils::replace_starting_tag($contents, 'ul', '<' . $tag);
-		if (!$attributes['isOrdered'] && isset($attributes['icon']) && $attributes['icon']) {
-			$icon = Common::get_icon_svg($attributes);
+
+		$icon = Common::get_icon_svg($attributes);
+		if ($icon) {
 			$contents = str_replace('::__TABLEBERG_STYLED_LIST_ICON__::', $icon, $contents);
-			$contents = HtmlUtils::append_attr_value($contents, $tag, ' tableberg-styled-list tableberg-list-has-icon', 'class');
+			$contents = HtmlUtils::append_attr_value($contents, 'ul', ' tableberg-styled-list tableberg-list-has-icon', 'class');
 		} else {
 			$contents = str_replace('::__TABLEBERG_STYLED_LIST_ICON__::', '', $contents);
-			$contents = HtmlUtils::append_attr_value($contents, $tag, ' tableberg-styled-list', 'class');
-
+			$contents = HtmlUtils::append_attr_value($contents, 'ul', ' tableberg-styled-list', 'class');
 		}
 
 		$id = '__tableberg_styled_list_' . self::$count++;
 
-		$contents = HtmlUtils::append_attr_value($contents, $tag, self::get_styles($attributes, $id), 'style');
-		$contents = HtmlUtils::append_attr_value($contents, $tag, $id, 'id');
+		$contents = HtmlUtils::append_attr_value($contents, 'ul', self::get_styles($attributes, $id, !!$icon), 'style');
+		$contents = HtmlUtils::append_attr_value($contents, 'ul', $id, 'id');
 		return $contents;
 	}
 
@@ -112,12 +110,14 @@ class StyledList
 	 */
 	public function styled_list_block_registration()
 	{
-		$defaults = new Defaults();
+
+		$json = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/styled-list/block.json';
+		$attrs = json_decode(file_get_contents($json), true)['attributes'];
 
 		register_block_type_from_metadata(
-			TABLEBERG_PRO_DIR_PATH . 'dist/blocks/styled-list/block.json',
+			$json,
 			array(
-				'attributes' => $defaults->get_default_attributes('tableberg/styled-list'),
+				'attributes' => $attrs,
 				'render_callback' => array($this, 'tableberg_render_styled_list_block'),
 			)
 		);
