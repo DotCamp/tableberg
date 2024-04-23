@@ -422,6 +422,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                             setAttributes({ iconSize });
                         }}
                         min={0}
+                        initialPosition={listAttrs.iconSize}
                         max={500}
                     />
                     <SpacingControlSingle
