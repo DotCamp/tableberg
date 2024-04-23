@@ -29,8 +29,8 @@ class Icon
         $styles += Utils::get_border_style($attributes['border'] ?? [], );
         $styles += Utils::get_border_radius_style($attributes['borderRadius'] ?? []);
 
-        if (isset($attributes['rotation']) &&  $attributes['rotation']> 0) {
-            $styles['transform'] = 'rotate('.$attributes['rotation'].'deg)';
+        if (isset($attributes['rotation']) && $attributes['rotation'] > 0) {
+            $styles['transform'] = 'rotate(' . $attributes['rotation'] . 'deg)';
         }
 
         return Utils::generate_css_string($styles);
@@ -42,19 +42,23 @@ class Icon
         $size = $attributes['size'];
         $icon = $attributes['icon'];
         if (isset($icon['type']) && $icon['type'] === 'url') {
-            $iconStr = '<img src="' . $icon['url'] . '" style="height: '.$size.'; width: '.$size.';"/>';
+            $iconStr = '<img src="' . $icon['url'] . '" style="height: ' . $size . '; width: ' . $size . ';"/>';
         } else {
             $iconAttrs = [
                 'height' => $size,
                 'width' => $size,
             ];
             if (isset($attributes['color']) && $attributes['color']) {
-                $iconAttrs['style'] = 'fill:'.$attributes['color'].';';
+                $iconAttrs['style'] = 'fill:' . $attributes['color'] . ';';
             }
             $iconStr = Common::get_icon_svg($attributes, $iconAttrs);
-            
+
         }
         $content = '<div class="tableberg-icon" style="' . self::get_styles($attributes) . '">' . $iconStr . '</div>';
+        if (isset($attributes['linkUrl']) && $attributes['linkUrl']) {
+            $target = $attributes['linkTarget'] ?? '_self';
+            $content = '<a href="' . $attributes['linkUrl'] . '" target="' . $target . '">' . $content . '</a>';
+        }
         return $content;
     }
 
