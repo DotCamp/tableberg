@@ -269,15 +269,14 @@ function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
                 </PanelBody>
                 <PanelBody title="Icon" initialOpen>
                     <SelectControl
-                        label={__("Icon type", "tableberg-pro")}
                         options={[
                             {
                                 value: "icon",
-                                label: "Icon",
+                                label: "Select icon from library",
                             },
                             {
                                 value: "url",
-                                label: "URL",
+                                label: "Import icon from URL",
                             },
                         ]}
                         value={iconMode}
