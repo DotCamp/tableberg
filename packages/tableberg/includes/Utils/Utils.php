@@ -156,6 +156,47 @@ class Utils
 		return $object;
 	}
 
+	
+	
+	public static function get_border_style(array | string $object): array
+	{
+		
+		if (is_string($object)) {
+			return [
+				'border' => $object
+			];
+		}
+		if (isset($object['color']) || isset($object['width'])) {
+			return [
+				'border-width' => $object['width']??'',
+				'border-color' => $object['color']??'',
+			];
+		}
+		$css = [];
+
+		foreach ($object as $key => $value) {
+			$css['border-'.$key.'-width'] = $value['width']??'';
+            $css['border-'.$key.'-color'] = $value['color']??'';
+		}
+		return $css;
+	}
+	public static function get_border_radius_style(array $object): array
+	{
+		if (is_string($object)) {
+			return [
+				'border-radius' => $object
+			];
+		}
+		
+		$css = [];
+
+		foreach ($object as $key => $value) {
+			$corner  = strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $key));
+			$css['border-'.$corner.'-radius'] = $value;
+		}
+		return $css;
+	}
+
 	/**
 	 * Get the CSS value for a single side of the border.
 	 *
@@ -268,6 +309,28 @@ class Utils
 	/**
 	 * Get the CSS for spacing.
 	 *
+	 * @param array $object - spacing object.
+	 * @return array CSS styles for spacing.
+	 */
+	public static function get_spacing_style(array $object, string $prop)
+	{
+		$css = [];
+
+		foreach ($object as $key => $value) {
+			if (self::is_value_spacing_preset($value)) {
+				$css[$prop.'-'.$key] = self::get_spacing_preset_css_var($value);
+			} else {
+				$css[$prop.'-'.$key] = $value;
+			}
+		}
+
+		return $css;
+	}
+
+
+	/**
+	 * Get the CSS for spacing.
+	 *
 	 * @param string $value - spacing value.
 	 * @return string CSS styles for spacing.
 	 */
@@ -329,4 +392,13 @@ class Utils
 		return $bg_color;
 	}
 
+
+	public static function get_any(array $attributes, string ...$keys) {
+		foreach ($keys as $key) {
+			if (isset($attributes[$key]) && $attributes[$key]) {
+				return $attributes[$key];
+			}
+		}
+		return '';
+	}
 }
