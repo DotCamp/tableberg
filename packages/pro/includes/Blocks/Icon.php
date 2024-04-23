@@ -54,11 +54,17 @@ class Icon
             $iconStr = Common::get_icon_svg($attributes, $iconAttrs);
 
         }
-        $content = '<div class="tableberg-icon" style="' . self::get_styles($attributes) . '">' . $iconStr . '</div>';
+
+        $className = 'tableberg-icon';
+        if ($attributes['behavior'] === 'char') {
+            $className .= ' tableberg-icon-as-char';
+        }
+
         if (isset($attributes['linkUrl']) && $attributes['linkUrl']) {
             $target = $attributes['linkTarget'] ?? '_self';
-            $content = '<a href="' . $attributes['linkUrl'] . '" target="' . $target . '">' . $content . '</a>';
+            $iconStr = '<a href="' . $attributes['linkUrl'] . '" target="' . $target . '">' . $iconStr . '</a>';
         }
+        $content = '<div class="'.$className.'" style="' . self::get_styles($attributes) . '">' . $iconStr . '</div>';
         return $content;
     }
 

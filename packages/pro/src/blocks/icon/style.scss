@@ -2,10 +2,10 @@
     display: flex;
 
     &.tableberg-icon-as-char {
-        display: inline;
-
-        + * {
-            display: inline-block;
+        display: inline-block;
+        + p {
+            display: inline;
+            text-align: justify;
         }
     }
 
