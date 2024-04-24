@@ -1,8 +1,9 @@
 import { InspectorControls } from "@wordpress/block-editor";
 import { Breakpoint, TablebergBlockAttrs, ResponsiveOptions } from "./types";
-import { BaseControl, PanelBody, ToggleControl, __experimentalNumberControl as NumberControl, SelectControl } from "@wordpress/components";
+import { BaseControl, PanelBody, ToggleControl, __experimentalNumberControl as NumberControl, SelectControl, Button, ButtonGroup } from "@wordpress/components";
 import { useDispatch } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
+import { desktop, mobile, tablet } from "@wordpress/icons";
 
 export const ResponsiveControls = ({ preview, attributes, setTableAttributes }: {
     preview: keyof ResponsiveOptions["breakpoints"];
@@ -66,26 +67,33 @@ export const ResponsiveControls = ({ preview, attributes, setTableAttributes }: 
     return <InspectorControls group="settings">
         <PanelBody title="Responsiveness Settings" initialOpen={true}>
             <BaseControl __nextHasNoMarginBottom>
-                <SelectControl
-                    label="Preview Mode"
-                    value={preview}
-                    options={[
-                        { label: "Desktop", value: "desktop" },
-                        { label: "Tablet", value: "tablet" },
-                        { label: "Mobile", value: "mobile" },
-                    ]}
-                    onChange={async (previewMode: any) => {
-                        previewMode = (previewMode as string).charAt(0).toUpperCase() + previewMode.slice(1)
-                        // prettier-ignore
-                        if (editorActions?.setDeviceType) {
-                            editorActions.setDeviceType(previewMode);
-                        } else if (siteEditorActions?.__experimentalSetPreviewDeviceType) {
-                            siteEditorActions.__experimentalSetPreviewDeviceType(previewMode);
-                        } else if (postEditorActions?.__experimentalSetPreviewDeviceType) {
-                            postEditorActions.__experimentalSetPreviewDeviceType(previewMode);
-                        }
-                    }}
-                />
+                <ButtonGroup
+                    className="tableberg-responsiveness-device-switcher-container"
+                >
+                    {[
+                        { label: "Desktop", value: "desktop", icon: desktop },
+                        { label: "Tablet", value: "tablet", icon: tablet },
+                        { label: "Mobile", value: "mobile", icon: mobile },
+                    ].map(({ label, value, icon }) => {
+                        return <Button
+                            isPressed={preview === value}
+                            icon={icon}
+                            className="tableberg-responsiveness-device-switcher"
+                            onClick={() => {
+                                // prettier-ignore
+                                if (editorActions?.setDeviceType) {
+                                    editorActions.setDeviceType(label);
+                                } else if (siteEditorActions?.__experimentalSetPreviewDeviceType) {
+                                    siteEditorActions.__experimentalSetPreviewDeviceType(label);
+                                } else if (postEditorActions?.__experimentalSetPreviewDeviceType) {
+                                    postEditorActions.__experimentalSetPreviewDeviceType(label);
+                                }
+                            }}
+                        >
+                            {label}
+                        </Button>
+                    })}
+                </ButtonGroup>
 
                 <ToggleControl
                     label={__("Enable Breakpoint", "tableberg")}

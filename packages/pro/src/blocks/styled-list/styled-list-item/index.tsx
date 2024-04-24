@@ -27,7 +27,7 @@ import {
 } from "@wordpress/components";
 
 import { formatIndent, formatOutdent, trash } from "@wordpress/icons";
-import { ColorControl, SpacingControl, SpacingControlSingle } from "@tableberg/components";
+import { ColorControl, SpacingControlSingle } from "@tableberg/components";
 import IconsLibrary from "@tableberg/components/icon-library";
 
 import { listItemIcon } from "../icon";
@@ -224,30 +224,27 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         blockEditorStore,
     ) as any;
 
-    const {
-        listItemBlock,
-        listBlock,
-        listAttrs,
-        hasIcon,
-        currentIndex,
-    } = useSelect((select) => {
-        const storeSelect = select(
-            blockEditorStore,
-        ) as BlockEditorStoreSelectors;
-        const listItemBlock = storeSelect.getBlock(clientId)!;
-        const listBlock: BlockInstance<StyledListProps> = storeSelect.getBlock(
-            storeSelect.getBlockRootClientId(clientId)!,
-        )! as any;
-        const listAttrs = listBlock.attributes;
-        const currentIndex = storeSelect.getBlockIndex(clientId);
-        return {
-            listItemBlock,
-            listBlock,
-            listAttrs,
-            currentIndex,
-            hasIcon: !listAttrs.isOrdered && !!listAttrs.icon,
-        };
-    }, [clientId]);
+    const { listItemBlock, listBlock, listAttrs, currentIndex } = useSelect(
+        (select) => {
+            const storeSelect = select(
+                blockEditorStore,
+            ) as BlockEditorStoreSelectors;
+            const listItemBlock = storeSelect.getBlock(clientId)!;
+            const listBlock: BlockInstance<StyledListProps> =
+                storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(clientId)!,
+                )! as any;
+            const listAttrs = listBlock.attributes;
+            const currentIndex = storeSelect.getBlockIndex(clientId);
+            return {
+                listItemBlock,
+                listBlock,
+                listAttrs,
+                currentIndex,
+            };
+        },
+        [clientId],
+    );
 
     const blockProps = useBlockProps({
         style: getItemStyles(attributes, listAttrs),
@@ -259,7 +256,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
 
     const [isLibraryOpen, setLibraryOpen] = useState(false);
 
-    const {indentItem, outdentItem} = useIndentOutdent(clientId);
+    const { indentItem, outdentItem } = useIndentOutdent(clientId);
 
     const handleItemDeletion = (forward: boolean) => {
         if (forward) {
@@ -316,9 +313,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         <>
             <li {...blockProps}>
                 <div className="tableberg-list-item-inner">
-                    {hasIcon && itemIcon.type !== "native" && (
-                        <SVGComponent icon={itemIcon} />
-                    )}
+                    <SVGComponent icon={itemIcon} />
                     <RichText
                         tagName="div"
                         value={text}
@@ -387,79 +382,78 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                     onDeselect={() => setAttributes({ textColor: undefined })}
                 />
             </InspectorControls>
-            {hasIcon && (
-                <InspectorControls group="settings">
-                    <PanelBody title="Icon Settings" initialOpen={true}>
-                        <PanelRow className="tableberg-styled-list-icon-selector">
-                            <label>Select Icon</label>
-                            <div>
-                                <Button
-                                    style={{ border: "1px solid #eeeeee" }}
-                                    icon={
-                                        <SVGComponent
-                                            icon={itemIcon}
-                                            iconName="wordpress"
-                                            type="wordpress"
-                                        />
-                                    }
-                                    onClick={() => setLibraryOpen(true)}
-                                />
-                                {attributes.icon && (
-                                    <Button
-                                        style={{
-                                            border: "1px solid red",
-                                            marginLeft: "5px",
-                                            color: "red",
-                                        }}
-                                        icon={trash}
-                                        onClick={() =>
-                                            setAttributes({
-                                                icon: undefined,
-                                            })
-                                        }
+            <InspectorControls group="settings">
+                <PanelBody title="Icon Settings" initialOpen={true}>
+                    <PanelRow className="tableberg-styled-list-icon-selector">
+                        <label>Select Icon</label>
+                        <div>
+                            <Button
+                                style={{ border: "1px solid #eeeeee" }}
+                                icon={
+                                    <SVGComponent
+                                        icon={itemIcon}
+                                        iconName="wordpress"
+                                        type="wordpress"
                                     />
-                                )}
-                            </div>
-                        </PanelRow>
-                        <RangeControl
-                            label={__("Item Icon size", "tableberg-pro")}
-                            value={attributes.iconSize}
-                            onChange={(iconSize) => {
-                                setAttributes({ iconSize });
-                            }}
-                            min={0}
-                            max={500}
-                        />
-                        <SpacingControlSingle
-                            label={__("Item Icon Spacing", "tableberg-pro")}
-                            // @ts-ignore
-                            value={attributes.iconSpacing}
-                            onChange={(iconSpacing) => {
-                                setAttributes({ iconSpacing });
-                            }}
-                        />
-                    </PanelBody>
-                    {isLibraryOpen && (
-                        <Modal
-                            isFullScreen
-                            className="tableberg_icons_library_modal"
-                            title={__("Icons", "tableberg-pro")}
-                            onRequestClose={() => setLibraryOpen(false)}
-                        >
-                            <IconsLibrary
-                                value={itemIcon?.iconName as any}
-                                onSelect={(newIcon) => {
-                                    setAttributes({
-                                        icon: newIcon,
-                                    });
-                                    setLibraryOpen(false);
-                                    return null;
-                                }}
+                                }
+                                onClick={() => setLibraryOpen(true)}
                             />
-                        </Modal>
-                    )}
-                </InspectorControls>
-            )}
+                            {attributes.icon && (
+                                <Button
+                                    style={{
+                                        border: "1px solid red",
+                                        marginLeft: "5px",
+                                        color: "red",
+                                    }}
+                                    icon={trash}
+                                    onClick={() =>
+                                        setAttributes({
+                                            icon: undefined,
+                                        })
+                                    }
+                                />
+                            )}
+                        </div>
+                    </PanelRow>
+                    <RangeControl
+                        label={__("Item Icon size", "tableberg-pro")}
+                        value={attributes.iconSize}
+                        onChange={(iconSize) => {
+                            setAttributes({ iconSize });
+                        }}
+                        min={0}
+                        initialPosition={listAttrs.iconSize}
+                        max={500}
+                    />
+                    <SpacingControlSingle
+                        label={__("Item Icon Spacing", "tableberg-pro")}
+                        // @ts-ignore
+                        value={attributes.iconSpacing}
+                        onChange={(iconSpacing) => {
+                            setAttributes({ iconSpacing });
+                        }}
+                    />
+                </PanelBody>
+                {isLibraryOpen && (
+                    <Modal
+                        isFullScreen
+                        className="tableberg_icons_library_modal"
+                        title={__("Icons", "tableberg-pro")}
+                        onRequestClose={() => setLibraryOpen(false)}
+                    >
+                        <IconsLibrary
+                            value={itemIcon?.iconName as any}
+                            onSelect={(newIcon) => {
+                                setAttributes({
+                                    icon: newIcon,
+                                });
+                                setLibraryOpen(false);
+                                return null;
+                            }}
+                        />
+                    </Modal>
+                )}
+            </InspectorControls>
         </>
     );
 }

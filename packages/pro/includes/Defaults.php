@@ -130,7 +130,7 @@ class Defaults
 				),
 				'iconSpacing' => array(
 					'type' => 'string',
-					'default' => '5px',
+					'default' => 'var:preset|spacing|5',
 				),
 				'fontSize' => array(
 					'type' => 'string',

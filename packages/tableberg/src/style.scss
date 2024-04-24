@@ -6,6 +6,8 @@
  */
 
 div.wp-block-tableberg-wrapper {
+    --wp--preset--spacing--5: 5px;
+    
     box-sizing: border-box;
 
 
@@ -103,5 +105,21 @@ div.wp-block-tableberg-wrapper {
 
 .add-margin-bottom {
     margin-bottom: 20px;
+}
+
+.tableberg-responsiveness-device-switcher-container {
+    display: flex;
+    margin-bottom: 1rem;
+}
+
+.tableberg-responsiveness-device-switcher.components-button {
+    flex-direction: column;
+    height: 3.5rem;
+    flex-grow: 1;
+    box-shadow: inset 0 0 0 1px #949494;
+}
+
+.tableberg-responsiveness-device-switcher.is-pressed.components-button {
+    box-shadow: inset 0 0 0 1px #1e1e1e;
 }
 
