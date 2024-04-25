@@ -56,6 +56,7 @@ if ( ! class_exists( 'Tableberg_Pro_Main' ) ) {
 			new Blocks\StyledListItem();
 			new Blocks\Html();
 			new Blocks\Icon();
+			new Blocks\Ribbon();
 			new Assets();
 		}
 	}

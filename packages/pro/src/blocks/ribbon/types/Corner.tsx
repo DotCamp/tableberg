@@ -29,7 +29,6 @@ const getBlockStyle = (attrs: RibbonAttrs): CSSProperties => {
 
     const size = attrs.individual?.distance || "50px";
     style.width = `calc( 2 * ${size})`;
-    style.aspectRatio = 1;
 
     return style;
 };
