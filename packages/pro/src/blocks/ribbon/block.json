@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "tableberg/ribbon",
+    "title": "Ribbon",
+    "category": "design",
+    "description": "This block lets you add ribbons in tableberg.",
+    "keywords": ["Ribbon", "Tableberg"],
+    "parent": ["tableberg/cell"],
+    "attributes": {
+        "type": {
+            "type": "string",
+            "default": "bookmark"
+        },
+        "text": {
+            "type": "string",
+            "default": "Tableberg"
+        },
+        "individual": {
+            "type": "object",
+            "default": {
+                "x": "20px",
+                "y": "-3px",
+                "originX": "right",
+                "originY": "top",
+                "height": "70px",
+                "width": "100px"
+            }
+        },
+        "fontSize": {
+            "type": "string",
+            "default": null
+        },
+        "color": {
+            "type": "string",
+            "default": null
+        },
+        "background": {
+            "type": "string",
+            "default": "#ffffff"
+        },
+        "bgGradient": {
+            "type": "string",
+            "default": null
+        }
+    }
+}
