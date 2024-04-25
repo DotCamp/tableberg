@@ -25,6 +25,7 @@ interface IconAttrs {
     y: string;
     size: string;
     shape: "rectangle" | "up" | "down" | "slant-up" | "slant-down";
+    icon: any;
 }
 
 const getBlockStyle = (attrs: RibbonAttrs): CSSProperties => {
@@ -67,7 +68,7 @@ export default function Corner({ attrs, setAttributes }: RibbonProps) {
                     style={{
                         background: attrs.bgGradient || attrs.background,
                         ...getSpacingStyle(iAttrs.padding, "padding"),
-                        fill: attrs.color
+                        fill: attrs.color,
                     }}
                     className={`tableberg-shape-${iAttrs.shape}`}
                 >
@@ -140,7 +141,11 @@ export default function Corner({ attrs, setAttributes }: RibbonProps) {
                     />
                 </PanelBody>
                 <PanelBody title="Icon" initialOpen>
-                    <IconPickerMini onSelect={(icon) => setAttrs(icon)} />
+                    <IconPickerMini
+                        onSelect={(icon) => {
+                            setAttrs({icon});
+                        }}
+                    />
                 </PanelBody>
             </InspectorControls>
             <InspectorControls group="dimensions">
