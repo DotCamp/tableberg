@@ -11,10 +11,10 @@ import {
 
 import metadata from "./block.json";
 
-import Bookmark from "./types/Bookmark";
-import Corner from "./types/Corner";
-import Icon from "./types/Icon";
-import Side from "./types/Side";
+import Bookmark from "./ribbons/Bookmark";
+import Corner from "./ribbons/Corner";
+import Icon from "./ribbons/Icon";
+import Side from "./ribbons/Side";
 
 export interface RibbonAttrs {
     type: "bookmark" | "corner" | "side" | "icon";
