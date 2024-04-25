@@ -48,7 +48,7 @@ export default function Corner({ attrs, setAttributes }: RibbonProps) {
                         isLefty ? "left" : "right"
                     }`}
                     style={{
-                        background: attrs.bgGradient || attrs.background,
+                        background: attrs.bgGradient ?? attrs.background ?? "#ffffff",
                     }}
                 >
                     {attrs.text}

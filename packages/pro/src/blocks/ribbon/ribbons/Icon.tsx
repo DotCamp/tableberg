@@ -66,7 +66,7 @@ export default function Corner({ attrs, setAttributes }: RibbonProps) {
             <div {...blockProps}>
                 <div
                     style={{
-                        background: attrs.bgGradient || attrs.background,
+                        background: attrs.bgGradient ?? attrs.background ?? "#ffffff",
                         ...getSpacingStyle(iAttrs.padding, "padding"),
                         fill: attrs.color,
                     }}

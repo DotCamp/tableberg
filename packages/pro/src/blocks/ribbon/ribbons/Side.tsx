@@ -65,7 +65,7 @@ export default function Side({ attrs, setAttributes, clientId }: RibbonProps) {
                 <div
                     className="tableberg-ribbon-side-content"
                     style={{
-                        background: attrs.bgGradient || attrs.background,
+                        background: attrs.bgGradient ?? attrs.background ?? "#ffffff",
                         ...getSpacingStyle(iAttrs.padding, "padding"),
                         ...getBorderCSS(iAttrs.border),
                     }}
