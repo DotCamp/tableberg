@@ -102,7 +102,7 @@ function Edit(props: BlockEditProps<StarRatingProps>) {
                 </div>
                 <RichText
                     tagName="div"
-                    placeholder={__("The text of the review goes here")}
+                    placeholder={__("Review text")}
                     value={reviewText}
                     style={{
                         textAlign: reviewTextAlign as any,
