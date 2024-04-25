@@ -75,7 +75,7 @@ class Ribbon
         $content = '<div class="tableberg-ribbon-side-content" style="' . $contentStyle . '">' . $attributes['text'] . '</div>';
 
         return '<div class="tableberg-ribbon tableberg-ribbon-side tableberg-ribbon-side-' . $ind['side'] . '" style="' . $style . '">' . $content .
-            '<div class="tableberg-ribbon-side-shadow" /></div>';
+            '<div class="tableberg-ribbon-side-shadow"></div></div>';
     }
 
     private static function render_icon(array $attributes): string
@@ -92,7 +92,10 @@ class Ribbon
             'fill' => $attributes['color'] ?? null
         ]);
 
-        $icon = Common::get_icon_svg($ind);
+        $icon = Common::get_icon_svg($ind, [
+            'height' => $ind['size'],
+            'width' => $ind['size'],
+        ]);
 
         $content = '<div class="tableberg-shape-'.$ind['shape'].'" style="' . $contentStyle . '">' . $icon . '</div>';
 
