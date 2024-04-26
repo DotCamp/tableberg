@@ -75,7 +75,7 @@ class Common
 		return $stars;
 	}
 
-	private static function get_wp_icon_svg(array $icon) : string {
+	private static function get_wp_icon_svg(array $icon, array $custom_attrs) : string {
 		if (isset($icon['type'])) {
 			$tag = strtolower($icon['type']['displayName']);
 		} else{
@@ -87,11 +87,17 @@ class Common
 		$childrenStr = false;
 		foreach($icon['props'] as $attr => $val) {
 			if ($attr == 'children') {
-				$childrenStr = self::get_wp_icon_svg($val);
+				$childrenStr = self::get_wp_icon_svg($val, []);
 				continue;
 			} 
 			$attrs .= ' '.$attr.'="'.$val.'"';
 		}
+		
+		foreach($custom_attrs as $attr => $val) {
+			$attrs .= ' '.$attr.'="'.$val.'"';
+		}
+
+
 		if ($childrenStr) {
 			return '<'.$tag.$attrs.'>'.$childrenStr.'</'.$tag.'>';
 		}
@@ -99,14 +105,18 @@ class Common
 	}
 
 
-	private static function get_fontawesome_icon_svg(array $icon) : string {
+	private static function get_fontawesome_icon_svg(array $icon, array $custom_attrs) : string {
 		$attrs = '';
 		$childrenStr = false;
 		foreach($icon['props'] as $attr => $val) {
 			if ($attr == 'children') {
-				$childrenStr = self::get_fontawesome_icon_svg($val);
+				$childrenStr = self::get_fontawesome_icon_svg($val, []);
 				continue;
 			} 
+			$attrs .= ' '.$attr.'="'.$val.'"';
+		}
+
+		foreach($custom_attrs as $attr => $val) {
 			$attrs .= ' '.$attr.'="'.$val.'"';
 		}
 
@@ -117,14 +127,14 @@ class Common
 		return '<'.$tag.$attrs.'/>';
 	}
 
-	public static function get_icon_svg(array $attrs): string | bool {
+	public static function get_icon_svg(array $attrs, array $custom_attrs = []): string | bool {
 		if (!isset($attrs['icon']) || !isset($attrs['icon']['icon'])) {
 			return '';
 		}
 		$icon = $attrs['icon'];
 		if ($icon['type'] === 'wordpress') {
-			return self::get_wp_icon_svg($icon['icon']);
+			return self::get_wp_icon_svg($icon['icon'], $custom_attrs);
 		}
-		return self::get_fontawesome_icon_svg($icon['icon']);
+		return self::get_fontawesome_icon_svg($icon['icon'], $custom_attrs);
 	}
 }

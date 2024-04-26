@@ -86,3 +86,36 @@
         }
     }
 }
+
+.tableberg_icons_library_mini {
+    .components-input-control.components-search-control {
+        margin-bottom: 0 !important;
+    }
+    .tableberg_icons_providers {
+        display: flex;
+        gap: 5px;
+
+        button {
+            border: 1px solid #e7e7e7;
+            border-radius: 3px;
+            padding: 4px;
+        }
+    }
+
+    .tableberg_icons_library_mini_icons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 3px;
+        overflow: auto;
+
+        .tableberg_min_icon_library_item {
+            padding: 2px;
+
+            svg {
+                height: 20px;
+                width: 20px;
+            }
+        }
+    }
+}

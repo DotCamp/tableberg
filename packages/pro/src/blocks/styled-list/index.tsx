@@ -28,7 +28,6 @@ import {
     RangeControl,
     SelectControl,
     ToolbarButton,
-    __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
 import { useState } from "react";
 import { formatOutdent, trash } from "@wordpress/icons";
