@@ -10,3 +10,4 @@ import "./blocks/styled-list";
 import "./blocks/styled-list/styled-list-item";
 import "./blocks/html";
 import "./blocks/icon";
+import "./blocks/ribbon";

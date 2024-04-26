@@ -1,0 +1,121 @@
+.tableberg-ribbon {
+    position: absolute !important;
+    text-align: center;
+
+    &-corner {
+        overflow: hidden;
+        top: -3px;
+        font-weight: bold;
+        aspect-ratio: 1;
+
+        &-left,
+        &-right {
+            position: absolute;
+            width: 150%;
+            box-shadow: 0 0 5px gray;
+            padding: 2px;
+        }
+        &-left {
+            inset: 0 auto auto 0;
+            transform-origin: 100% 0;
+            transform: translate(-30%) rotate(-45deg) translateY(-130%);
+        }
+        &-right {
+            inset: 0 0 auto auto;
+            transform-origin: 0 0;
+            transform: translate(30%) rotate(45deg) translateY(-130%);
+        }
+    }
+
+    &-bookmark {
+        position: absolute;
+        z-index: 9999;
+        border-radius: 5px;
+        filter: drop-shadow(4px 3px 11px rgba(0, 0, 0, 0.2));
+        /* animation: slidein 3s ease-in-out forwards; */
+
+        &-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 150%;
+            border-top-left-radius: inherit;
+            border-top-right-radius: inherit;
+            clip-path: polygon(100% 0, 100% 100%, 50% 67%, 0 100%, 0 0);
+        }
+    }
+
+    &-icon {
+        filter: drop-shadow(2px 3px 2px rgba(black, 0.5));
+
+        .tableberg-shape {
+            &-up {
+                clip-path: polygon(
+                    0 0,
+                    100% 0,
+                    100% 100%,
+                    50% calc(100% - 8px),
+                    0 100%
+                );
+            }
+            &-down {
+                clip-path: polygon(
+                    0 0,
+                    100% 0,
+                    100% calc(100% - 8px),
+                    50% 100%,
+                    0 calc(100% - 8px)
+                );
+            }
+
+            &-slant-up {
+                clip-path: polygon(
+                    0 0,
+                    100% 0,
+                    100% calc(100% - 12px),
+                    50% calc(100% - 6px),
+                    0 100%
+                );
+            }
+
+            &-slant-down {
+                clip-path: polygon(
+                    0 0,
+                    100% 0,
+                    100% 100%,
+                    50% calc(100% - 6px),
+                    0 calc(100% - 12px)
+                );
+            }
+        }
+    }
+
+    &-side {
+        &-left &-content {
+            border-radius: 10px 0 10px 0;
+        }
+        &-right &-content {
+            border-radius: 0 10px 0 10px;
+        }
+
+        &-shadow {
+            height: 0;
+            width: 0;
+            border: 10px solid transparent;
+            border-top-color: gray;
+        }
+
+        &-right {
+            text-align: right;
+        }
+
+        &-left &-shadow {
+            border-right-color: gray;
+        }
+        &-right &-shadow {
+            border-left-color: gray;
+            margin-left: auto;
+        }
+    }
+}
