@@ -10,7 +10,7 @@
     "attributes": {
         "type": {
             "type": "string",
-            "default": "bookmark"
+            "default": "corner"
         },
         "text": {
             "type": "string",
@@ -19,12 +19,8 @@
         "individual": {
             "type": "object",
             "default": {
-                "x": "20px",
-                "y": "-3px",
-                "originX": "right",
-                "originY": "top",
-                "height": "70px",
-                "width": "100px"
+                "side": "left",
+                "distance": "50px"
             }
         },
         "fontSize": {
