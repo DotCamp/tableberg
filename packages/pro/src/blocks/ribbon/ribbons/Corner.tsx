@@ -1,6 +1,5 @@
 import { __ } from "@wordpress/i18n";
 import {
-    HeightControl,
     InspectorControls,
     useBlockProps,
 } from "@wordpress/block-editor";
@@ -11,8 +10,9 @@ import {
 } from "@wordpress/components";
 import { CSSProperties } from "react";
 
-import { RibbonAttrs, RibbonProps } from "..";
+import { RANGE_CONFIG_SIZE, RibbonAttrs, RibbonProps } from "..";
 import { StyleAttr } from "../../../utils/styling-helpers";
+import { SizeControl } from "@tableberg/components";
 
 const getBlockStyle = (attrs: RibbonAttrs): CSSProperties => {
     const style: StyleAttr = {
@@ -72,7 +72,7 @@ export default function Corner({ attrs, setAttributes }: RibbonProps) {
                         <ToggleGroupControlOption value="left" label="Left" />
                         <ToggleGroupControlOption value="right" label="Right" />
                     </ToggleGroupControl>
-                    <HeightControl
+                    <SizeControl
                         label={__("Distance", "tableberg-pro")}
                         value={attrs.individual?.distance}
                         onChange={(distance) =>
@@ -83,6 +83,7 @@ export default function Corner({ attrs, setAttributes }: RibbonProps) {
                                 },
                             })
                         }
+                        rangeConfig={RANGE_CONFIG_SIZE}
                     />
                 </PanelBody>
             </InspectorControls>

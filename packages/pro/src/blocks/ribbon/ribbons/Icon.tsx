@@ -1,6 +1,5 @@
 import { __ } from "@wordpress/i18n";
 import {
-    HeightControl,
     InspectorControls,
     useBlockProps,
 } from "@wordpress/block-editor";
@@ -12,10 +11,10 @@ import {
 } from "@wordpress/components";
 import { CSSProperties } from "react";
 
-import { RibbonAttrs, RibbonProps } from "..";
+import { RANGE_CONFIG_POSITION, RANGE_CONFIG_SIZE, RibbonAttrs, RibbonProps } from "..";
 import { getSpacingStyle } from "../../../utils/styling-helpers";
 import { Icon, IconPickerMini } from "@tableberg/components/icon-library";
-import { SpacingControl } from "@tableberg/components";
+import { SizeControl, SpacingControl } from "@tableberg/components";
 
 interface IconAttrs {
     originX: "left" | "right";
@@ -124,20 +123,23 @@ export default function Corner({ attrs, setAttributes }: RibbonProps) {
                             />
                         </ToggleGroupControl>
                     </div>
-                    <HeightControl
+                    <SizeControl
                         label="Position X"
                         value={iAttrs.x}
                         onChange={(x) => setAttrs({ x })}
+                        rangeConfig={RANGE_CONFIG_POSITION}
                     />
-                    <HeightControl
+                    <SizeControl
                         label="Position Y"
                         value={iAttrs.y}
                         onChange={(y) => setAttrs({ y })}
+                        rangeConfig={RANGE_CONFIG_POSITION}
                     />
-                    <HeightControl
+                    <SizeControl
                         label="Icon Size"
                         value={iAttrs.size}
                         onChange={(size) => setAttrs({ size })}
+                        rangeConfig={RANGE_CONFIG_SIZE}
                     />
                 </PanelBody>
                 <PanelBody title="Icon" initialOpen>

@@ -15,6 +15,7 @@ import Bookmark from "./ribbons/Bookmark";
 import Corner from "./ribbons/Corner";
 import Icon from "./ribbons/Icon";
 import Side from "./ribbons/Side";
+import { SizeControlProps } from "@tableberg/components/SizeControl";
 
 export interface RibbonAttrs {
     type: "bookmark" | "corner" | "side" | "icon";
@@ -31,6 +32,16 @@ export interface RibbonProps {
     setAttributes: (attrs: Partial<RibbonAttrs>) => void;
     clientId: string;
 }
+
+export const RANGE_CONFIG_POSITION: SizeControlProps["rangeConfig"] = {
+    px: { min: -100, max: 300, step: 1 },
+    "%": { min: -20, max: 100, step: 1 },
+    em: { min: -10, max: 50, step: 0.1 },
+    rem: { min: -10, max: 50, step: 0.1 },
+};
+export const RANGE_CONFIG_SIZE: SizeControlProps["rangeConfig"] = {
+    px: { max: 300, step: 1 },
+};
 
 const RIBBONS_MAP = {
     bookmark: Bookmark,

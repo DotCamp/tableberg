@@ -1,9 +1,5 @@
-import {
-    HeightControl,
-    InspectorControls,
-    useBlockProps,
-} from "@wordpress/block-editor";
-import { RibbonAttrs, RibbonProps } from "..";
+import { InspectorControls, useBlockProps } from "@wordpress/block-editor";
+import { RANGE_CONFIG_POSITION, RibbonAttrs, RibbonProps } from "..";
 import {
     PanelBody,
     __experimentalToggleGroupControl as ToggleGroupControl,
@@ -12,7 +8,11 @@ import {
 import { __ } from "@wordpress/i18n";
 import { CSSProperties } from "react";
 
-import { BorderControl, SpacingControl } from "@tableberg/components";
+import {
+    BorderControl,
+    SizeControl,
+    SpacingControl,
+} from "@tableberg/components";
 import { getSpacingStyle, getBorderCSS } from "../../../utils/styling-helpers";
 
 interface SideAttrs {
@@ -65,7 +65,8 @@ export default function Side({ attrs, setAttributes, clientId }: RibbonProps) {
                 <div
                     className="tableberg-ribbon-side-content"
                     style={{
-                        background: attrs.bgGradient ?? attrs.background ?? "#ffffff",
+                        background:
+                            attrs.bgGradient ?? attrs.background ?? "#ffffff",
                         ...getSpacingStyle(iAttrs.padding, "padding"),
                         ...getBorderCSS(iAttrs.border),
                     }}
@@ -97,10 +98,11 @@ export default function Side({ attrs, setAttributes, clientId }: RibbonProps) {
                             label="Bottom"
                         />
                     </ToggleGroupControl>
-                    <HeightControl
+                    <SizeControl
                         label="Position Y"
                         value={iAttrs.y}
                         onChange={(y) => setAttrs({ y })}
+                        rangeConfig={RANGE_CONFIG_POSITION}
                     />
                 </PanelBody>
             </InspectorControls>

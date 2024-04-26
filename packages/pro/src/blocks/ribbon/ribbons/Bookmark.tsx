@@ -1,9 +1,7 @@
 import {
-    HeightControl,
     InspectorControls,
     useBlockProps,
 } from "@wordpress/block-editor";
-import { RibbonAttrs, RibbonProps } from "..";
 import {
     PanelBody,
     __experimentalToolsPanelItem as ToolsPanelItem,
@@ -13,7 +11,8 @@ import {
 import { __ } from "@wordpress/i18n";
 import { CSSProperties } from "react";
 
-import { SpacingControl } from "@tableberg/components";
+import { RANGE_CONFIG_POSITION, RANGE_CONFIG_SIZE, RibbonAttrs, RibbonProps } from "..";
+import { SizeControl, SpacingControl } from "@tableberg/components";
 import { getSpacingStyle } from "../../../utils/styling-helpers";
 
 interface BookmarkAttrs {
@@ -116,15 +115,17 @@ export default function Bookmark({
                             />
                         </ToggleGroupControl>
                     </div>
-                    <HeightControl
+                    <SizeControl
                         label="Position X"
                         value={iAttrs.x}
                         onChange={(x) => setAttrs({ x })}
+                        rangeConfig={RANGE_CONFIG_POSITION}
                     />
-                    <HeightControl
+                    <SizeControl
                         label="Position Y"
                         value={iAttrs.y}
                         onChange={(y) => setAttrs({ y })}
+                        rangeConfig={RANGE_CONFIG_POSITION}
                     />
                 </PanelBody>
             </InspectorControls>
@@ -142,7 +143,7 @@ export default function Bookmark({
                     panelId={clientId}
                     onDeselect={() => setAttrs({ height: "70px" })}
                 >
-                    <HeightControl
+                    <SizeControl
                         label={__("Height", "tableberg-pro")}
                         value={iAttrs.height}
                         onChange={(height) => setAttrs({ height })}
@@ -155,10 +156,11 @@ export default function Bookmark({
                     panelId={clientId}
                     onDeselect={() => setAttrs({ width: "100px" })}
                 >
-                    <HeightControl
+                    <SizeControl
                         label={__("Width", "tableberg-pro")}
                         value={iAttrs.width}
                         onChange={(width) => setAttrs({ width })}
+                        rangeConfig={RANGE_CONFIG_SIZE}
                     />
                 </ToolsPanelItem>
             </InspectorControls>
