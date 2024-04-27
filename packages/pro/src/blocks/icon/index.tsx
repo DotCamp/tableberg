@@ -10,12 +10,6 @@ import {
     JustifyContentControl,
     __experimentalLinkControl as LinkControl,
 } from "@wordpress/block-editor";
-import {
-    getSpacingStyle,
-    getBorderCSS,
-    getBorderRadiusCSS,
-    StyleAttr,
-} from "../../utils/styling-helpers";
 import { isEmpty, isUndefined, omitBy, trim } from "lodash";
 import {
     PanelBody,
@@ -37,6 +31,16 @@ import classNames from "classnames";
 import { Icon, IconPickerMini } from "@tableberg/components/icon-library";
 import { useState } from "react";
 import { link } from "@wordpress/icons";
+
+
+import {
+    getSpacingStyle,
+    getBorderCSS,
+    getBorderRadiusCSS,
+    StyleAttr,
+} from "../../utils/styling-helpers";
+
+import IconBlockIcon from "./Icon";
 
 interface IconAttrs {
     icon: any;
@@ -377,4 +381,5 @@ function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
 registerBlockType(metadata as any, {
     attributes: metadata.attributes as any,
     edit,
+    icon: IconBlockIcon,
 });

@@ -16,6 +16,7 @@ import Corner from "./ribbons/Corner";
 import Icon from "./ribbons/Icon";
 import Side from "./ribbons/Side";
 import { SizeControlProps } from "@tableberg/components/SizeControl";
+import RibbonBlockIcon from "./Icon";
 
 export interface RibbonAttrs {
     type: "bookmark" | "corner" | "side" | "icon";
@@ -210,4 +211,5 @@ function edit({
 registerBlockType(metadata as any, {
     attributes: metadata.attributes as any,
     edit,
+    icon: RibbonBlockIcon,
 });

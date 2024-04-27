@@ -20,13 +20,13 @@ import {
 } from "@wordpress/components";
 import { useInstanceId } from "@wordpress/compose";
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
-import { html } from "@wordpress/icons";
 
 /**
  * Internal dependencies
  */
 import metadata from "./block.json";
 import { useSelect } from "@wordpress/data";
+import HtmlBlockIcon from "./Icon";
 
 interface HtmlBlockProps {
     content: string;
@@ -219,8 +219,8 @@ function edit({
     );
 }
 
-// @ts-ignore
-registerBlockType(metadata, {
-    icon: html,
+registerBlockType(metadata as any, {
+    attributes: metadata.attributes as any,
     edit,
+    icon: HtmlBlockIcon,
 });
