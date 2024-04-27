@@ -3,6 +3,10 @@ import BlockControlCard from "../components/BlockControlCard";
 import UpgradeBoxContent from "../components/UpgradeBoxContent";
 
 export default function BlocksPage() {
+    const redirectToPricing = () => {
+        window.open("https://tableberg.com/pricing", "_blank")
+    };
+
     return (
         <div
             style={{
@@ -25,7 +29,7 @@ export default function BlocksPage() {
                             iconElement={icon}
                             info={"IDK What it is"}
                             isPro={isPro}
-                            showUpsell={() => {}}
+                            showUpsell={redirectToPricing}
                             isProPlugin={window.__is_tableberg_pro_active}
                             demoUrl={"https://tableberg.com/"}
                         />
