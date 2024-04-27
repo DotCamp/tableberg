@@ -36,7 +36,11 @@ import {
 
 import "./style.scss";
 import { link, linkOff } from "@wordpress/icons";
-import { ColorControl, SpacingControl } from "@tableberg/components";
+import {
+    ColorControl,
+    InspectorUpsell,
+    SpacingControl,
+} from "@tableberg/components";
 import { __ } from "@wordpress/i18n";
 import { getStyleClass } from "./get-classes";
 import { ButtonBlockTypes } from "./type";
@@ -148,7 +152,7 @@ function edit({
     // This is a temporary fix. See https://github.com/WordPress/gutenberg/issues/51256.
     const linkValue = useMemo(
         () => ({ url, opensInNewTab }),
-        [url, opensInNewTab]
+        [url, opensInNewTab],
     );
 
     const handleRelChange = (relOpt: string, state = true) => {
@@ -191,7 +195,7 @@ function edit({
                         borderProps.className,
                         {
                             [`has-text-align-${textAlign}`]: textAlign,
-                        }
+                        },
                     )}
                     aria-label="Button text"
                     placeholder="Add text…"
@@ -220,12 +224,15 @@ function edit({
                         setAttributes({ textAlign: nextAlign });
                     }}
                 />
-                <ToolbarButton
-                    icon={isURLSet ? linkOff : link}
-                    title={isURLSet ? "Unlink" : "Link"}
-                    onClick={isURLSet ? unlink : startEditing}
-                    isActive={isURLSet}
-                />
+                {
+                    // @ts-ignore
+                    <ToolbarButton
+                        icon={isURLSet ? linkOff : link}
+                        title={isURLSet ? "Unlink" : "Link"}
+                        onClick={isURLSet ? unlink : startEditing}
+                        isActive={isURLSet}
+                    />
+                }
                 {isSelected && (isEditingURL || isURLSet) && (
                     <Popover
                         placement="bottom"
@@ -264,54 +271,62 @@ function edit({
                 <ColorControl
                     label={__("Text", "tableberg")}
                     colorValue={attributes.textColor}
-                    onColorChange={(newValue) => setAttributes(
-                        { textColor: newValue }
-                    )}
-                    onDeselect={() => setAttributes({
-                        textColor: undefined
-                    })}
+                    onColorChange={(newValue) =>
+                        setAttributes({ textColor: newValue })
+                    }
+                    onDeselect={() =>
+                        setAttributes({
+                            textColor: undefined,
+                        })
+                    }
                 />
                 <ColorControl
                     label={__("Hover Text", "tableberg")}
                     colorValue={attributes.textHoverColor}
-                    onColorChange={(newValue) => setAttributes(
-                        { textHoverColor: newValue }
-                    )}
-                    onDeselect={() => setAttributes({
-                        textHoverColor: undefined
-                    })}
+                    onColorChange={(newValue) =>
+                        setAttributes({ textHoverColor: newValue })
+                    }
+                    onDeselect={() =>
+                        setAttributes({
+                            textHoverColor: undefined,
+                        })
+                    }
                 />
                 <ColorControl
                     label={__("Background Color", "tableberg")}
                     colorValue={attributes.backgroundColor}
                     gradientValue={attributes.backgroundGradient}
-                    onColorChange={(newValue) => setAttributes(
-                        { backgroundColor: newValue }
-                    )}
+                    onColorChange={(newValue) =>
+                        setAttributes({ backgroundColor: newValue })
+                    }
                     allowGradient
-                    onGradientChange={(newValue) => setAttributes(
-                        { backgroundGradient: newValue }
-                    )}
-                    onDeselect={() => setAttributes({
-                        backgroundColor: undefined,
-                        backgroundGradient: undefined
-                    })}
+                    onGradientChange={(newValue) =>
+                        setAttributes({ backgroundGradient: newValue })
+                    }
+                    onDeselect={() =>
+                        setAttributes({
+                            backgroundColor: undefined,
+                            backgroundGradient: undefined,
+                        })
+                    }
                 />
                 <ColorControl
                     label={__("Hover Background Color", "tableberg")}
                     colorValue={attributes.backgroundHoverColor}
                     gradientValue={attributes.backgroundHoverGradient}
-                    onColorChange={(newValue) => setAttributes(
-                        { backgroundHoverColor: newValue }
-                    )}
+                    onColorChange={(newValue) =>
+                        setAttributes({ backgroundHoverColor: newValue })
+                    }
                     allowGradient
-                    onGradientChange={(newValue) => setAttributes(
-                        { backgroundHoverGradient: newValue }
-                    )}
-                    onDeselect={() => setAttributes({
-                        backgroundHoverColor: undefined,
-                        backgroundHoverGradient: undefined
-                    })}
+                    onGradientChange={(newValue) =>
+                        setAttributes({ backgroundHoverGradient: newValue })
+                    }
+                    onDeselect={() =>
+                        setAttributes({
+                            backgroundHoverColor: undefined,
+                            backgroundHoverGradient: undefined,
+                        })
+                    }
                 />
             </InspectorControls>
             <InspectorControls>
@@ -358,6 +373,8 @@ function edit({
                     </PanelBody>
                 </InspectorControls>
             )}
+
+            <InspectorUpsell />
         </>
     );
 }

@@ -30,6 +30,7 @@ import {
     SpacingControl,
     ColorControl,
     ColorPickerDropdown,
+    InspectorUpsell,
 } from "@tableberg/components";
 
 const AVAILABLE_JUSTIFICATIONS = [
@@ -92,8 +93,8 @@ function TablebergControls(
     } = tableAttributes;
 
     const { updateBlockAttributes } = useDispatch(
-        blockEditorStore
-    ) as BlockEditorStoreActions;
+        blockEditorStore as any
+    );
 
     const setTableAttributes = (attributes: Record<string, any>) => {
         updateBlockAttributes(tableBlockClientId, attributes);
@@ -436,6 +437,7 @@ function TablebergControls(
                     controls={["left", "center", "right"]}
                 />
             </BlockControls>
+            <InspectorUpsell />
         </>
     );
 }
