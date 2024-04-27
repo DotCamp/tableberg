@@ -26,7 +26,7 @@ import {
     DEFAULT_SCALE_OPTIONS,
     DEFAULT_SIZE_SLUG_OPTIONS,
 } from "./constants";
-import { BorderControl, InspectorUpsell } from "@tableberg/components";
+import { BorderControl } from "@tableberg/components";
 import { isEmpty } from "lodash";
 
 function Inspector(props: MainPropTypes) {
@@ -246,8 +246,6 @@ function Inspector(props: MainPropTypes) {
                     </div>
                 </ToolsPanelItem>
             </InspectorControls >
-            
-            <InspectorUpsell />
         </>
     );
 }

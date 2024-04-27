@@ -38,7 +38,6 @@ import "./style.scss";
 import { link, linkOff } from "@wordpress/icons";
 import {
     ColorControl,
-    InspectorUpsell,
     SpacingControl,
 } from "@tableberg/components";
 import { __ } from "@wordpress/i18n";
@@ -373,8 +372,6 @@ function edit({
                     </PanelBody>
                 </InspectorControls>
             )}
-
-            <InspectorUpsell />
         </>
     );
 }

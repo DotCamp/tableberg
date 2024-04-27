@@ -38,6 +38,9 @@ import { PrimaryTable } from "./table";
 import StackRowTable from "./table/StackRowTable";
 import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
+import { createPortal } from "react-dom";
+import { isProActive } from "./utils";
+import { SidebarUpsell } from "./SidebarUpsell";
 
 export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
 interface TablebergCtx {
@@ -326,7 +329,7 @@ const useUndoRedo = (attrs: TablebergBlockAttrs, blockCount: number, setAttrs: (
         [attrs.cells, blockCount]
     );
 
-    if(shouldSomethingBeDone) {
+    if (shouldSomethingBeDone) {
         if (hasUndo) {
             editorActions.undo();
         } else {
@@ -334,9 +337,9 @@ const useUndoRedo = (attrs: TablebergBlockAttrs, blockCount: number, setAttrs: (
                 cells: blockCount
             });
         }
-        
+
     }
-    
+
 };
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
@@ -376,7 +379,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const [previewDevice, updatePreview] = useState<
         keyof TablebergBlockAttrs["responsive"]["breakpoints"]
-        // @ts-ignore
+    // @ts-ignore
     >(tablebergGetLastDevice() || "desktop");
 
     useEffect(() => {
@@ -565,6 +568,23 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         );
     }
 
+    const targetEl = document.querySelector(".interface-complementary-area");
+
+    const { currentBlockIsTablebergCellChild } = useSelect((select) => {
+        const storeSelect = select(blockEditorStore) as BlockEditorStoreSelectors;
+        const currentBlockId = storeSelect.getSelectedBlockClientId()!;
+        const currentBlockParents = storeSelect.getBlockParents(currentBlockId);
+        let currentBlockIsTablebergCellChild = false;
+
+        if (currentBlockParents.indexOf(clientId) !== -1) {
+            currentBlockIsTablebergCellChild = true;
+        }
+
+        return { currentBlockIsTablebergCellChild };
+    }, [])
+
+    const showUpsell = targetEl && currentBlockIsTablebergCellChild && !isProActive();
+
     return (
         <>
             <div {...blockProps}>
@@ -594,6 +614,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 </TablebergCtx.Provider>
             </div>
             <TablebergControls clientId={clientId} preview={previewDevice} />
+            {showUpsell && createPortal(<SidebarUpsell />, targetEl)}
         </>
     );
 }

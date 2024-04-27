@@ -30,7 +30,6 @@ import {
     SpacingControl,
     ColorControl,
     ColorPickerDropdown,
-    InspectorUpsell,
 } from "@tableberg/components";
 
 const AVAILABLE_JUSTIFICATIONS = [
@@ -437,7 +436,6 @@ function TablebergControls(
                     controls={["left", "center", "right"]}
                 />
             </BlockControls>
-            <InspectorUpsell />
         </>
     );
 }
