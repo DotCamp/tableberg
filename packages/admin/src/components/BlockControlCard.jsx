@@ -62,22 +62,16 @@ function BlockControlCard({
                     )}
                 </div>
                 <div className={"tableberg-block-title-right-container"}>
-                    {isPro && !isProPlugin ? (
-                        <div
-                            role={"button"}
-                            className={"tableberg-pro-block-card-info-button"}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                showUpsell(name);
-                            }}
-                        >
-                            <FontAwesomeIcon icon="fa-solid fa-info" />
-                        </div>
-                    ) : (
-                        <ToggleControl
-                            status={status}
-                        />
-                    )}
+                    <div
+                        role={"button"}
+                        className={"tableberg-pro-block-card-info-button"}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            showUpsell(name);
+                        }}
+                    >
+                        <FontAwesomeIcon icon="fa-solid fa-info" />
+                    </div>
                 </div>
             </div>
         </div>
