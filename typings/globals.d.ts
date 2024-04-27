@@ -1,5 +1,8 @@
 declare const tablebergAdminMenuData: {
-    assets: { logo: string };
+    assets: {
+        logo: string;
+        logoTransparent: string;
+    };
     individual_control: {
         data: any;
         ajax: {

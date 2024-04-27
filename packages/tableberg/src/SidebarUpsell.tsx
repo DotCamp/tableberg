@@ -9,7 +9,7 @@ export function SidebarUpsell() {
         >
             <div className={"tableberg-upsell-notice-icon-container"}>
                 <img alt={"Tableberg logo"}
-                    src={tablebergAdminMenuData?.assets.logo}
+                    src={tablebergAdminMenuData?.assets.logoTransparent}
                 />
             </div>
             <div className={"tableberg-upsell-notice"}>

@@ -133,6 +133,7 @@ class Tableberg_Admin
     {
         $data['assets'] = array(
             'logo' => trailingslashit($this->plugin_url) . 'includes/Admin/images/logos/menu-icon-colored.svg',
+            'logoTransparent' => trailingslashit($this->plugin_url) . 'includes/Admin/images/logos/menu-icon-colored-transparent.svg',
         );
 
         $data['individual_control'] = array(
