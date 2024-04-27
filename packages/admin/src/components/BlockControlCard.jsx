@@ -1,6 +1,6 @@
 import { __ } from "@wordpress/i18n";
-import ToggleControl from "./ToggleControl";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 
 /**
  * Menu block control component.
@@ -70,7 +70,7 @@ function BlockControlCard({
                             showUpsell(name);
                         }}
                     >
-                        <FontAwesomeIcon icon="fa-solid fa-info" />
+                        <FontAwesomeIcon icon={faCircleInfo} />
                     </div>
                 </div>
             </div>

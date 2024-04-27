@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { __ } from "@wordpress/i18n";
 import MenuButton, { BUTTON_TYPES } from "./MenuButton";
+import { faRightLong } from '@fortawesome/free-solid-svg-icons'
 
 /**
  * Version control popup component.
@@ -117,7 +118,7 @@ function VersionControlPopup({
                         )}
                     >
                         <div className={"version-icon-inner-wrapper"}>
-                            <FontAwesomeIcon icon="fa-solid fa-right-long" />
+                            <FontAwesomeIcon icon={faRightLong} />
                         </div>
                     </div>
                     <div
