@@ -8,17 +8,18 @@
 
     .tableberg-upsell-inspector-notice {
         display: flex;
-        padding: 10px;
+        padding: 15px;
         background: #d4bcff;
         align-items: center;
         gap: 10px;
         position: sticky;
         bottom: 0;
+        font-size: 15px;
 
         .tableberg-upsell-notice-icon-container {
             img {
-                height: 40px;
-                width: 40px;
+                height: 50px;
+                width: 50px;
             }
         }
         .tableberg-upsell-notice {
