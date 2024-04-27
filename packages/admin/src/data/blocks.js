@@ -3,9 +3,21 @@ import IconBlockIcon from "../../../pro/src/blocks/icon/icon";
 import ListBlockIcon from "../../../pro/src/blocks/styled-list/icon";
 import RibbonBlockIcon from "../../../pro/src/blocks/ribbon/icon";
 import { BlockIcon as StarBlockIcon } from "../../../pro/src/blocks/star-rating/icons";
-import { image, button } from "@wordpress/icons";
+import { image, button, paragraph, list } from "@wordpress/icons";
 
 export default [
+    {
+        name: "tableberg/paragraph",
+        title: "Paragraph",
+        icon: paragraph,
+        isPro: false,
+    },
+    {
+        name: "tableberg/list",
+        title: "List",
+        icon: list,
+        isPro: false,
+    },
     {
         name: "tableberg/button",
         title: "Button",
