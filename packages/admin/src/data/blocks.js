@@ -7,6 +7,18 @@ import { image, button } from "@wordpress/icons";
 
 export default [
     {
+        name: "tableberg/button",
+        title: "Button",
+        icon: button,
+        isPro: false,
+    },
+    {
+        name: "tableberg/image",
+        title: "Image",
+        icon: image,
+        isPro: false,
+    },
+    {
         name: "tableberg/styled-list",
         title: "Styled List",
         icon: ListBlockIcon,
@@ -20,7 +32,7 @@ export default [
     },
     {
         name: "tableberg/html",
-        title: "Html",
+        title: "Custom Html",
         icon: HtmlBlockIcon,
         isPro: true,
     },
@@ -36,16 +48,4 @@ export default [
         icon: StarBlockIcon,
         isPro: true,
     },
-    {
-        name: "tableberg/button",
-        title: "Button",
-        icon: button,
-        isPro: false,
-    },
-    {
-        name: "tableberg/image",
-        title: "Image",
-        icon: image,
-        isPro: false,
-    }
 ];
