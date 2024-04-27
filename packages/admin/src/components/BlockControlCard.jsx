@@ -56,7 +56,7 @@ function BlockControlCard({
                                 rel="noreferrer"
                                 className={"tableberg-strip-anchor-styles"}
                             >
-                                {__("See Demo", "tableberg")}
+                                {__("See Documentation", "tableberg")}
                             </a>
                         </div>
                     )}
