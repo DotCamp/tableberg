@@ -26,7 +26,7 @@ import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
  */
 import metadata from "./block.json";
 import { useSelect } from "@wordpress/data";
-import HtmlBlockIcon from "./Icon";
+import HtmlBlockIcon from "./icon";
 
 interface HtmlBlockProps {
     content: string;

@@ -1,7 +1,7 @@
-import HtmlBlockIcon from "../../../pro/src/blocks/html/Icon";
-import IconBlockIcon from "../../../pro/src/blocks/icon/Icon";
+import HtmlBlockIcon from "../../../pro/src/blocks/html/icon";
+import IconBlockIcon from "../../../pro/src/blocks/icon/icon";
 import ListBlockIcon from "../../../pro/src/blocks/styled-list/icon";
-import RibbonBlockIcon from "../../../pro/src/blocks/ribbon/Icon";
+import RibbonBlockIcon from "../../../pro/src/blocks/ribbon/icon";
 import { BlockIcon as StarBlockIcon } from "../../../pro/src/blocks/star-rating/icons";
 import { image, button } from "@wordpress/icons";
 
