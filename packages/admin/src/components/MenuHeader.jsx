@@ -27,7 +27,7 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
 
     const routeObjectsMinus404 = useMemo(
         () => routeObjects.slice(0, routeObjects.length - 1),
-        []
+        [],
     );
     const logoUrl = tablebergAdminMenuData?.assets.logo;
     const versionData = tablebergAdminMenuData?.versionControl;
@@ -89,6 +89,16 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
                                 onVersionRollBack={rollbackToVersion}
                             />
                         </div>
+                    </RightContainerItem>
+                    <RightContainerItem>
+                        <AssetProvider assetIds={["proBuyUrl"]}>
+                            {({ proBuyUrl }) => (
+                                <ButtonLink
+                                    url={proBuyUrl}
+                                    title="Upgrade to PRO"
+                                />
+                            )}
+                        </AssetProvider>
                     </RightContainerItem>
                 </div>
                 {/* TODO  WIlL ADD IT LATER GETTING ERROR FROM ICON*/}
