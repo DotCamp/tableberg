@@ -7,7 +7,6 @@
 @import "@wordpress/base-styles/default-custom-properties";
 @import "./base/common";
 @import "./base/themes/admin-menu-theme";
-@import "./inc/welcome-content-styles";
 @import "./inc/settings-control-card";
 @import "./inc/box-content";
 @import "./inc/button-link";
@@ -15,6 +14,8 @@
 @import "./inc/navigation";
 @import "./inc/controls-container";
 @import "./inc/block-control-card";
+@import "./pages/welcome-content-styles";
+@import "./pages/blocks-style";
 
 .tableberg-admin-menu-wrapper {
     @extend %size-full;

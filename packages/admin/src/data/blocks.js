@@ -11,53 +11,71 @@ export default [
         title: "Paragraph",
         icon: paragraph,
         isPro: false,
+        image: "https://picsum.photos/400/250",
+        upsellText: "Effortlessly create and customize interactive timelines to showcase your story or project milestones."
     },
     {
         name: "tableberg/list",
         title: "List",
         icon: list,
         isPro: false,
+        image: "https://picsum.photos/400/250",
+        upsellText: "Effortlessly create and customize interactive timelines to showcase your story or project milestones."
     },
     {
         name: "tableberg/button",
         title: "Button",
         icon: button,
         isPro: false,
+        image: "https://picsum.photos/400/250",
+        upsellText: "Effortlessly create and customize interactive timelines to showcase your story or project milestones."
     },
     {
         name: "tableberg/image",
         title: "Image",
         icon: image,
         isPro: false,
+        image: "https://picsum.photos/400/250",
+        upsellText: "Effortlessly create and customize interactive timelines to showcase your story or project milestones."
     },
     {
         name: "tableberg/styled-list",
         title: "Styled List",
         icon: ListBlockIcon,
         isPro: true,
+        image: "https://picsum.photos/400/250",
+        upsellText: "Effortlessly create and customize interactive timelines to showcase your story or project milestones."
     },
     {
         name: "tableberg/ribbon",
         title: "Ribbon",
         icon: RibbonBlockIcon,
         isPro: true,
+        image: "https://picsum.photos/400/250",
+        upsellText: "Effortlessly create and customize interactive timelines to showcase your story or project milestones."
     },
     {
         name: "tableberg/html",
         title: "Custom Html",
         icon: HtmlBlockIcon,
         isPro: true,
+        image: "https://picsum.photos/400/250",
+        upsellText: "Effortlessly create and customize interactive timelines to showcase your story or project milestones."
     },
     {
         name: "tableberg/icon",
         title: "Icon",
         icon: IconBlockIcon,
         isPro: true,
+        image: "https://picsum.photos/400/250",
+        upsellText: "Effortlessly create and customize interactive timelines to showcase your story or project milestones."
     },
     {
         name: "tableberg/star-rating",
         title: "Star Rating",
         icon: StarBlockIcon,
         isPro: true,
+        image: "https://picsum.photos/400/250",
+        upsellText: "Effortlessly create and customize interactive timelines to showcase your story or project milestones."
     },
 ];
