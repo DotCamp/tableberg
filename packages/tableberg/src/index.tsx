@@ -359,9 +359,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         }),
     });
 
-    const storeActions = useDispatch(
+    const storeActions: BlockEditorStoreActions = useDispatch(
         blockEditorStore
-    ) as BlockEditorStoreActions;
+    ) as any;
 
     const { tableBlock } = useSelect((select) => {
         const storeSelect = select(
@@ -473,6 +473,23 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         [rootRef.current]
     );
 
+    const targetEl = document.querySelector(".interface-complementary-area");
+
+    const { currentBlockIsTablebergCellChild } = useSelect((select) => {
+        const storeSelect = select(blockEditorStore) as BlockEditorStoreSelectors;
+        const currentBlockId = storeSelect.getSelectedBlockClientId()!;
+        const currentBlockParents = storeSelect.getBlockParents(currentBlockId);
+        let currentBlockIsTablebergCellChild = false;
+
+        if (currentBlockParents.indexOf(clientId) !== -1) {
+            currentBlockIsTablebergCellChild = true;
+        }
+
+        return { currentBlockIsTablebergCellChild };
+    }, [])
+    
+    const showUpsell = targetEl && currentBlockIsTablebergCellChild && !isProActive();
+
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
         const { rows, cols } = attributes;
@@ -567,23 +584,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             </div>
         );
     }
-
-    const targetEl = document.querySelector(".interface-complementary-area");
-
-    const { currentBlockIsTablebergCellChild } = useSelect((select) => {
-        const storeSelect = select(blockEditorStore) as BlockEditorStoreSelectors;
-        const currentBlockId = storeSelect.getSelectedBlockClientId()!;
-        const currentBlockParents = storeSelect.getBlockParents(currentBlockId);
-        let currentBlockIsTablebergCellChild = false;
-
-        if (currentBlockParents.indexOf(clientId) !== -1) {
-            currentBlockIsTablebergCellChild = true;
-        }
-
-        return { currentBlockIsTablebergCellChild };
-    }, [])
-
-    const showUpsell = targetEl && currentBlockIsTablebergCellChild && !isProActive();
 
     return (
         <>
