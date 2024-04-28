@@ -127,11 +127,17 @@ export default function SizeControl({
         }
     };
 
-    const cfg =
-        // @ts-ignore
-        rangeConfig[selectedUnit] ??
-        // @ts-ignore
-        RANGE_CONTROL_CUSTOM_SETTINGS[selectedUnit];
+    // @ts-ignore
+    const customConfig = rangeConfig[selectedUnit];
+    // @ts-ignore
+    const defaultConfig = RANGE_CONTROL_CUSTOM_SETTINGS[selectedUnit];
+
+    let minVal = customConfig?.min ?? defaultConfig?.min ?? 0;
+    let maxVal = customConfig?.max ?? defaultConfig?.max ?? 100;
+    const stepVal = customConfig?.step ?? defaultConfig?.step ?? 0.1;
+
+    minVal = Math.min(minVal, customRangeValue);
+    maxVal = Math.max(maxVal, customRangeValue);
 
     return (
         <fieldset className="block-editor-height-control">
@@ -145,7 +151,7 @@ export default function SizeControl({
                         units={units}
                         onChange={onChange}
                         onUnitChange={handleUnitChange}
-                        min={cfg?.min ?? 0}
+                        min={minVal}
                         size={"__unstable-large"}
                         label={label}
                         hideLabelFromVision
@@ -155,9 +161,9 @@ export default function SizeControl({
                     <Spacer marginX={2} marginBottom={0}>
                         <RangeControl
                             value={customRangeValue}
-                            min={cfg?.min ?? 0}
-                            max={cfg?.max ?? 100}
-                            step={cfg?.step ?? 0.1}
+                            min={minVal}
+                            max={maxVal}
+                            step={stepVal}
                             withInputField={false}
                             onChange={handleSliderChange}
                             __nextHasNoMarginBottom
