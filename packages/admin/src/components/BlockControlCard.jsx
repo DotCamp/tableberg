@@ -1,6 +1,6 @@
 import { __ } from "@wordpress/i18n";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Menu block control component.
@@ -12,7 +12,6 @@ import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
  * @param {Object}        props                component properties
  * @param {string}        props.title          block title
  * @param {string}        props.name           registry id of block
- * @param {boolean}       props.isActive       if the block is activated
  * @param {HTMLElement}   props.iconElement    block icon element
  * @param {boolean}       props.isPro          block belongs to pro version
  * @param {boolean}       props.isProPlugin    plugin pro status
@@ -22,7 +21,6 @@ import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 function BlockControlCard({
     title,
     name,
-    status,
     iconElement,
     isPro,
     isProPlugin,
@@ -32,7 +30,7 @@ function BlockControlCard({
     return (
         <div
             className={"tableberg-block-control"}
-            data-enabled={isPro && isProPlugin ? "true" : "false"}
+            data-enabled={JSON.stringify(isProPlugin ? true : !isPro)}
         >
             <div className={"tableberg-block-title"}>
                 <div
@@ -43,7 +41,11 @@ function BlockControlCard({
                     <div className={"tableberg-title-text"}>
                         {title}
                         {isPro && (
-                            <span className={"tableberg-pro-block-card-title-suffix"}>
+                            <span
+                                className={
+                                    "tableberg-pro-block-card-title-suffix"
+                                }
+                            >
                                 PRO
                             </span>
                         )}
