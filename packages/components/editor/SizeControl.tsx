@@ -52,8 +52,8 @@ export interface SizeControlProps {
     rangeConfig?: {
         [Key in keyof typeof RANGE_CONTROL_CUSTOM_SETTINGS]?: {
             min?: number;
-            max: number;
-            step: number;
+            max?: number;
+            step?: number;
         };
     };
 }
