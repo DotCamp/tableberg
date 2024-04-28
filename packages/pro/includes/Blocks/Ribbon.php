@@ -41,6 +41,7 @@ class Ribbon
         $style = Utils::generate_css_string([
             "color" => $attributes["color"]??'',
             "font-size" => $attributes["fontSize"]??'',
+            "height" => "calc( 2 * {$ind['distance']})",
             "width" => "calc( 2 * {$ind['distance']})",
             $ind["side"] => "-3px"
         ]);
@@ -49,7 +50,7 @@ class Ribbon
             'background' => Utils::get_any($attributes, 'bgGradient', 'background')
         ]);
 
-        $content = '<div class="tableberg-ribbon-corner-' . $ind['side'] . '" style="' . $contentStyle . '">' . $attributes['text'] . '</div>';
+        $content = '<div class="tableberg-ribbon-corner-' . $ind['side'] . '"><div class="tableberg-ribbon-corner-text" style="' . $contentStyle . '">' . $attributes['text'] . '</div></div>';
 
         return '<div class="tableberg-ribbon tableberg-ribbon-corner" style="' . $style . '">' . $content . '</div>';
     }

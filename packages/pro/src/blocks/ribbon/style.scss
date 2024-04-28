@@ -6,24 +6,29 @@
         overflow: hidden;
         top: -3px;
         font-weight: bold;
-        aspect-ratio: 1;
 
         &-left,
         &-right {
-            position: absolute;
-            width: 150%;
-            box-shadow: 0 0 5px gray;
-            padding: 2px;
+            position: relative;
+            height: 100%;
+            width: 100%;
         }
         &-left {
-            inset: 0 auto auto 0;
-            transform-origin: 100% 0;
-            transform: translate(-30%) rotate(-45deg) translateY(-130%);
+            transform: rotate(-45deg);
         }
         &-right {
-            inset: 0 0 auto auto;
-            transform-origin: 0 0;
-            transform: translate(30%) rotate(45deg) translateY(-130%);
+            transform: rotate(45deg);
+        }
+
+        &-text {
+            position: absolute;
+            bottom: 50%;
+            width: 150%;
+            left: -25%;
+            padding: 2px calc(25% + 2px);
+            box-sizing: border-box;
+            overflow: hidden;
+            box-shadow: 0 0 5px gray;
         }
     }
 
