@@ -1,8 +1,5 @@
 import { __ } from "@wordpress/i18n";
-import {
-    InspectorControls,
-    useBlockProps,
-} from "@wordpress/block-editor";
+import { InspectorControls, useBlockProps } from "@wordpress/block-editor";
 import {
     PanelBody,
     __experimentalToggleGroupControl as ToggleGroupControl,
@@ -29,6 +26,7 @@ const getBlockStyle = (attrs: RibbonAttrs): CSSProperties => {
 
     const size = attrs.individual?.distance || "50px";
     style.width = `calc( 2 * ${size})`;
+    style.height = `calc( 2 * ${size})`;
 
     return style;
 };
@@ -47,11 +45,18 @@ export default function Corner({ attrs, setAttributes }: RibbonProps) {
                     className={`tableberg-ribbon-corner-${
                         isLefty ? "left" : "right"
                     }`}
-                    style={{
-                        background: attrs.bgGradient ?? attrs.background ?? "#ffffff",
-                    }}
                 >
-                    {attrs.text}
+                    <div
+                        className="tableberg-ribbon-corner-text"
+                        style={{
+                            background:
+                                attrs.bgGradient ??
+                                attrs.background ??
+                                "#ffffff",
+                        }}
+                    >
+                        {attrs.text}
+                    </div>
                 </div>
             </div>
             <InspectorControls>
