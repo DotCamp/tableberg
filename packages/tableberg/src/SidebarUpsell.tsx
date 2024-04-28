@@ -1,6 +1,8 @@
 export function SidebarUpsell() {
     return <div
-        onClick={() => { window.open("", "_blank") }}
+        onClick={() => {
+            window.open("https://tableberg.com/pricing", "_blank")
+        }}
         className="tableberg-upsell-inspector-notice-wrapper"
     >
         <div
