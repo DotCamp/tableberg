@@ -56,6 +56,7 @@ export interface SizeControlProps {
             step?: number;
         };
     };
+    initialPosition?: string;
 }
 
 export default function SizeControl({
@@ -63,8 +64,9 @@ export default function SizeControl({
     onChange,
     value,
     rangeConfig = {},
+    initialPosition,
 }: SizeControlProps) {
-    const customRangeValue = parseFloat(value);
+    const customRangeValue = parseFloat(value || "0");
 
     const [availableUnits] = useSettings("spacing.units");
     const units = useCustomUnits({
@@ -160,7 +162,9 @@ export default function SizeControl({
                 <FlexItem isBlock>
                     <Spacer marginX={2} marginBottom={0}>
                         <RangeControl
-                            value={customRangeValue}
+                            value={
+                                !value ? undefined : customRangeValue
+                            }
                             min={minVal}
                             max={maxVal}
                             step={stepVal}
@@ -169,6 +173,11 @@ export default function SizeControl({
                             __nextHasNoMarginBottom
                             label={label}
                             hideLabelFromVision
+                            initialPosition={
+                                initialPosition
+                                    ? parseFloat(initialPosition)
+                                    : undefined
+                            }
                         />
                     </Spacer>
                 </FlexItem>
