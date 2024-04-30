@@ -5,41 +5,39 @@ import RibbonBlockIcon from "../../../pro/src/blocks/ribbon/icon";
 import { BlockIcon as StarBlockIcon } from "../../../pro/src/blocks/star-rating/icons";
 import { image, button, paragraph, list } from "@wordpress/icons";
 
+const IMAGE_BASE = TABLEBERG_CFG.plugin_url + 'includes/Admin/images/upsell/';
+
 export default [
     {
         name: "tableberg/paragraph",
         title: "Paragraph",
         icon: paragraph,
         isPro: false,
-        image: "https://picsum.photos/400/250",
     },
     {
         name: "tableberg/list",
         title: "List",
         icon: list,
         isPro: false,
-        image: "https://picsum.photos/400/250",
     },
     {
         name: "tableberg/button",
         title: "Button",
         icon: button,
         isPro: false,
-        image: "https://picsum.photos/400/250",
     },
     {
         name: "tableberg/image",
         title: "Image",
         icon: image,
         isPro: false,
-        image: "https://picsum.photos/400/250",
     },
     {
         name: "tableberg/styled-list",
         title: "Styled List",
         icon: ListBlockIcon,
         isPro: true,
-        image: "https://picsum.photos/400/250",
+        image:  IMAGE_BASE + "styled_list_block_1.png",
         upsellText: "Elevate your lists with customizable icons as bullets for a polished look."
     },
     {
@@ -47,7 +45,7 @@ export default [
         title: "Ribbon",
         icon: RibbonBlockIcon,
         isPro: true,
-        image: "https://picsum.photos/400/250",
+        image:  IMAGE_BASE + "ribbon_block_1.png",
         upsellText: "Overlay a decorative ribbon on your table, ideal for highlighting special offers or important notices."
     },
     {
@@ -55,7 +53,7 @@ export default [
         title: "Custom Html",
         icon: HtmlBlockIcon,
         isPro: true,
-        image: "https://picsum.photos/400/250",
+        image:  IMAGE_BASE + "html_block_1.png",
         upsellText: "Add your own HTML code to create specialized content and integrate custom elements."
     },
     {
@@ -63,7 +61,7 @@ export default [
         title: "Icon",
         icon: IconBlockIcon,
         isPro: true,
-        image: "https://picsum.photos/400/250",
+        image:  IMAGE_BASE + "icon_block_1.png",
         upsellText: "Add scalable icons to your tables to support text and enhance user engagement."
     },
     {
@@ -71,7 +69,7 @@ export default [
         title: "Star Rating",
         icon: StarBlockIcon,
         isPro: true,
-        image: "https://picsum.photos/400/250",
+        image:  IMAGE_BASE + "star_rating_block_1.png",
         upsellText: "Add customizable star ratings, perfect for reviews and comparison tables."
     },
 ];
