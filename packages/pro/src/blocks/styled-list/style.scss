@@ -21,6 +21,7 @@
             display: initial;
             height: var(--tableberg-styled-list-icon-size, 15px);
             width: var(--tableberg-styled-list-icon-size, 15px);
+            min-width: var(--tableberg-styled-list-icon-size, 15px);
             fill: var(--tableberg-styled-list-icon-color);
         }
         > div {
