@@ -40,6 +40,7 @@ import { useDispatch } from "@wordpress/data";
 export interface StyledListProps {
     icon: any;
     alignment: string;
+    alignItems: "center" | "baseline" | "flex-start" | "flex-end";
     iconColor: string;
     iconSize: number;
     iconSpacing: string;
@@ -189,6 +190,21 @@ function edit(props: BlockEditProps<StyledListProps>) {
                             onChange={(itemSpacing) =>
                                 setAttributes({ itemSpacing })
                             }
+                        />
+                    </BaseControl>
+                    <BaseControl __nextHasNoMarginBottom>
+                        <SelectControl
+                            label={__("Vertical Alignment", "tableberg-pro")}
+                            value={attributes.alignItems}
+                            onChange={(alignItems: any) =>
+                                setAttributes({ alignItems })
+                            }
+                            options={[
+                                {label: "Center", value: "center"},
+                                {label: "Baseline", value: "baseline"},
+                                {label: "Top", value: "flex-start"},
+                                {label: "Bottom", value: "flex-end"},
+                            ]}
                         />
                     </BaseControl>
                 </PanelBody>

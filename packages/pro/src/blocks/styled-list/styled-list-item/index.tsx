@@ -312,10 +312,18 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
     return (
         <>
             <li {...blockProps}>
-                <div className="tableberg-list-item-inner">
-                    <SVGComponent icon={itemIcon} />
+                <div
+                    className="tableberg-list-item-inner"
+                    style={{
+                        alignItems: listAttrs.alignItems,
+                    }}
+                >
+                    <div className="tableberg-list-icon">
+                        <SVGComponent icon={itemIcon} />
+                    </div>
                     <RichText
                         tagName="div"
+                        className="tableberg-list-text"
                         value={text}
                         placeholder="List item"
                         keepPlaceholderOnFocus={true}

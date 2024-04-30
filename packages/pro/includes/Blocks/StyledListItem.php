@@ -67,7 +67,8 @@ class StyledListItem
 		return
 			'<li style="' . $styles . '">
 			    <div class="tableberg-list-item-inner">
-				    ' . $icon . '<div>' . $item_text . '</div>
+				    <div class="tableberg-list-icon">' . $icon . '</div>
+					<div class="tableberg-list-text">' . $item_text . '</div>
 				</div>
 				' . $contents . '
 			</li>';

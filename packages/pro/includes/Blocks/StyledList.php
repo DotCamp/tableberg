@@ -57,6 +57,8 @@ class StyledList
 			'--tableberg-styled-list-inner-spacing' => Utils::get_spacing_css_single(isset($attributes['listIndent']) ? $attributes['listIndent'] : ''),
 		);
 
+		Assets::$dynamicStyles .= '#' . $id . ' > li > .tableberg-list-item-inner {align-items: ' . $attributes['alignItems'] . ';}';
+
 		if (isset($attributes['itemSpacing'])) {
 			$iSpacing = Utils::get_spacing_css_single($attributes['itemSpacing']);
 			if ($iSpacing != '0') {

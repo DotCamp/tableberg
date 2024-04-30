@@ -20,6 +20,10 @@
                "type": "string",
                "default": "left"
           },
+          "alignItems": {
+               "type": "string",
+               "default": "center"
+          },
           "itemSpacing": {
                "type": "string",
                "default": null
