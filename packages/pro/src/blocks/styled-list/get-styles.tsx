@@ -12,6 +12,7 @@ export function getStyles(attributes: StyledListProps) {
         backgroundColor: backgroundColor,
         color: attributes.textColor,
         fontSize: attributes.fontSize,
+        textAlign: attributes.alignment,
         paddingTop: listSpacingObj?.top,
         paddingRight: listSpacingObj?.right,
         paddingBottom: listSpacingObj?.bottom,
@@ -21,18 +22,7 @@ export function getStyles(attributes: StyledListProps) {
         "--tableberg-styled-list-inner-spacing": getSpacingCssSingle(listIndent),
     };
 
-    const paddingLeft = listSpacingObj?.left;
-
-    if (attributes.isOrdered || !attributes.icon) {
-        styles["list-style"] = attributes.listStyle || "auto";
-        if (!paddingLeft || paddingLeft == "0") {
-            styles["paddingLeft"] = "1em";
-        } else {
-            styles["paddingLeft"] = `calc(1em + ${paddingLeft})`;
-        }
-    } else {
-        styles["paddingLeft"] = paddingLeft || '0';
-    }
+    styles["paddingLeft"] = listSpacingObj?.left;
 
     return omitBy(
         styles,
