@@ -16,7 +16,7 @@ export function getStyles(attributes: StyledListProps) {
         paddingTop: listSpacingObj?.top,
         paddingRight: listSpacingObj?.right,
         paddingBottom: listSpacingObj?.bottom,
-        "--tableberg-styled-list-icon-size": `${attributes.iconSize || 15}px`,
+        "--tableberg-styled-list-icon-size": attributes.iconSize,
         "--tableberg-styled-list-icon-color": attributes.iconColor,
         "--tableberg-styled-list-icon-spacing": getSpacingCssSingle(attributes.iconSpacing),
         "--tableberg-styled-list-inner-spacing": getSpacingCssSingle(listIndent),
@@ -41,15 +41,10 @@ export function getItemStyles(attributes: StyledListItemProps, listAttrs: Styled
         fontSize: attributes.fontSize,
         marginBottom: getSpacingCssSingle(listAttrs.itemSpacing),
         "--tableberg-styled-list-icon-color": attributes.iconColor,
+        "--tableberg-styled-list-icon-size": attributes.iconSize
     };
 
 
-
-    if (attributes.iconSize! > 0) {
-        styles[
-            "--tableberg-styled-list-icon-size"
-        ] = `${attributes.iconSize}px`;
-    }
     if (attributes.iconSpacing) {
         styles[
             "--tableberg-styled-list-icon-spacing"

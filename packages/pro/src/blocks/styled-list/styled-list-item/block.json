@@ -28,7 +28,7 @@
                "default": null
           },
           "iconSize": {
-               "type": "number",
+               "type": "string",
                "default": null
           },
           "iconSpacing": {

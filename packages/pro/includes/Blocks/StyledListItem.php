@@ -39,7 +39,7 @@ class StyledListItem
 		$styles = array(
 			'color' => $attributes['textColor'] ?? '',
 			'--tableberg-styled-list-icon-color' => $attributes['iconColor'] ?? '',
-			'--tableberg-styled-list-icon-size' => $attributes['iconSize'] ?? false ? $attributes['iconSize'] . 'px' : '',
+			'--tableberg-styled-list-icon-size' => $attributes['iconSize'] ?? '',
 			'--tableberg-styled-list-icon-spacing' => Utils::get_spacing_css_single($attributes['iconSpacing'] ?? ''),
 		);
 

@@ -15,19 +15,18 @@ import {
     useInnerBlocksProps,
     BlockControls,
 } from "@wordpress/block-editor";
-import { useDispatch, useRegistry, useSelect } from "@wordpress/data";
+import { useDispatch, useSelect } from "@wordpress/data";
 import { useCallback, useState } from "react";
 import {
     Button,
     Modal,
     PanelBody,
     PanelRow,
-    RangeControl,
     ToolbarButton,
 } from "@wordpress/components";
 
 import { formatIndent, formatOutdent, trash } from "@wordpress/icons";
-import { ColorControl, SpacingControlSingle } from "@tableberg/components";
+import { ColorControl, SizeControl, SpacingControlSingle } from "@tableberg/components";
 import IconsLibrary from "@tableberg/components/icon-library";
 
 import { listItemIcon } from "../icon";
@@ -40,7 +39,7 @@ export interface StyledListItemProps {
     icon?: any;
     text: string;
     iconColor?: string;
-    iconSize?: number;
+    iconSize?: string;
     iconSpacing?: string;
     fontSize?: string;
     textColor?: string;
@@ -423,15 +422,18 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                             )}
                         </div>
                     </PanelRow>
-                    <RangeControl
+                    <SizeControl
                         label={__("Item Icon size", "tableberg-pro")}
-                        value={attributes.iconSize}
+                        value={attributes.iconSize as any}
                         onChange={(iconSize) => {
                             setAttributes({ iconSize });
                         }}
-                        min={0}
+                        rangeConfig={{
+                            px: {
+                                max: 200
+                            }
+                        }}
                         initialPosition={listAttrs.iconSize}
-                        max={500}
                     />
                     <SpacingControlSingle
                         label={__("Item Icon Spacing", "tableberg-pro")}
