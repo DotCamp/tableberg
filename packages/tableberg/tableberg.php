@@ -51,7 +51,7 @@ if (!function_exists('tab_fs')) {
 				'type'                => 'plugin',
 				'public_key'          => 'pk_8043aa788c004c4b385af8384c74b',
 				'is_premium'          => false,
-				'has_addons'          => false,
+				'has_addons'          => true,
 				'has_paid_plans'      => false,
 				'menu'                => array(
 					'slug'           => 'tableberg-settings',
