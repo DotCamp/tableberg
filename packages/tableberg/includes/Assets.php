@@ -97,6 +97,11 @@ class Assets
 			Constants::plugin_version(),
 			true
 		);
+
+		wp_localize_script( 'tableberg-admin-script', 'TABLEBERG_CFG', [
+			'plugin_url' => TABLEBERG_URL
+		]);
+
 		wp_enqueue_script(
 			'tableberg-preview-device-change-observer',
 			TABLEBERG_URL . 'includes/assets/js/PreviewDeviceChangeObserver.js',
