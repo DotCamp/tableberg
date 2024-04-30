@@ -1,11 +1,9 @@
-import HtmlBlockIcon from "../../../pro/src/blocks/html/icon.tsx";
-import IconBlockIcon from "../../../pro/src/blocks/icon/icon.tsx";
-import ListBlockIcon from "../../../pro/src/blocks/styled-list/icon.tsx";
-import RibbonBlockIcon from "../../../pro/src/blocks/ribbon/icon.tsx";
-import { BlockIcon as StarBlockIcon } from "../../../pro/src/blocks/star-rating/icons.tsx";
+import HtmlBlockIcon from "./icons/html";
+import IconBlockIcon from "./icons/icon";
+import ListBlockIcon from "./icons/styled-list";
+import RibbonBlockIcon from "./icons/ribbon";
+import { BlockIcon as StarBlockIcon } from "./icons/star-rating";
 import { image, button, paragraph, list } from "@wordpress/icons";
-
-const IMAGE_BASE = TABLEBERG_CFG.plugin_url + 'includes/Admin/images/upsell/';
 
 export default [
     {
@@ -37,7 +35,7 @@ export default [
         title: "Styled List",
         icon: ListBlockIcon,
         isPro: true,
-        image:  IMAGE_BASE + "styled_list_block_1.png",
+        image: "styled_list_block_1.png",
         upsellText: "Elevate your lists with customizable icons as bullets for a polished look."
     },
     {
@@ -45,7 +43,7 @@ export default [
         title: "Ribbon",
         icon: RibbonBlockIcon,
         isPro: true,
-        image:  IMAGE_BASE + "ribbon_block_1.png",
+        image: "ribbon_block_1.png",
         upsellText: "Overlay a decorative ribbon on your table, ideal for highlighting special offers or important notices."
     },
     {
@@ -53,7 +51,7 @@ export default [
         title: "Custom Html",
         icon: HtmlBlockIcon,
         isPro: true,
-        image:  IMAGE_BASE + "html_block_1.png",
+        image: "html_block_1.png",
         upsellText: "Add your own HTML code to create specialized content and integrate custom elements."
     },
     {
@@ -61,7 +59,7 @@ export default [
         title: "Icon",
         icon: IconBlockIcon,
         isPro: true,
-        image:  IMAGE_BASE + "icon_block_1.png",
+        image: "icon_block_1.png",
         upsellText: "Add scalable icons to your tables to support text and enhance user engagement."
     },
     {
@@ -69,7 +67,7 @@ export default [
         title: "Star Rating",
         icon: StarBlockIcon,
         isPro: true,
-        image:  IMAGE_BASE + "star_rating_block_1.png",
+        image: "star_rating_block_1.png",
         upsellText: "Add customizable star ratings, perfect for reviews and comparison tables."
     },
 ];

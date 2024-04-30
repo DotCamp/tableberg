@@ -65,3 +65,8 @@ declare const tablebergAdminMenuData: {
         };
     };
 };
+
+declare const TABLEBERG_CFG: {
+    plugin_url: string;
+}
+

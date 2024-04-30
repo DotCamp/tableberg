@@ -1,4 +1,4 @@
-import blocks from "../data/blocks";
+import blocks from "@tableberg/shared/blocks";
 import BlockControlCard from "../components/BlockControlCard";
 import UpgradeBoxContent from "../components/UpgradeBoxContent";
 import { useState } from "react";
@@ -14,7 +14,11 @@ function UpsellModal({ info, onClose }) {
                         {info.icon} {info.title}
                     </h2>
                     <div className="tableberg-upsell-modal-content">
-                        <img src={info.image} alt={info.title + " Demo"} />
+                        <img src={
+                            TABLEBERG_CFG.plugin_url +
+                            'includes/Admin/images/upsell/' +
+                            info.image
+                        } alt={info.title + " Demo"} />
                         <p>{info.upsellText}</p>
                         <p>
                             Limited Time: Use code <b>TB10</b> to get a 10%

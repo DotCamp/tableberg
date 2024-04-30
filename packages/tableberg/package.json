@@ -26,6 +26,7 @@
         "playwright": "^1.41.1"
     },
     "dependencies": {
-        "@tableberg/components": "workspace:*"
+        "@tableberg/components": "workspace:*",
+        "@tableberg/shared": "workspace:*"
     }
 }
