@@ -15,7 +15,7 @@
 
     .tableberg-list-item-inner {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         gap: var(--tableberg-styled-list-icon-spacing);
         > svg {
             display: initial;
