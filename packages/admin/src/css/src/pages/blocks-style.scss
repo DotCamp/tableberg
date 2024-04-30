@@ -9,6 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 999;
 
     &-backdrop {
         position: absolute;
@@ -29,7 +30,7 @@
     &-area {
         background: white;
         border-radius: 5px;
-        box-shadow: 2px 4px 6px gray;
+        box-shadow: 2px 4px 6px #100e65;
 
         h2 {
             border-top-left-radius: inherit;
@@ -89,5 +90,26 @@
             color: white;
             text-decoration: none;
         }
+    }
+
+    .tableberg-upsell-modal-prev,
+    .tableberg-upsell-modal-next {
+        position: absolute;
+        top: 50%;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 4rem;
+        filter: drop-shadow(2px 4px 6px #100e65);
+        transform: translateY(-50%);
+    }
+
+    .tableberg-upsell-modal-prev {
+        right: calc(100% + 80px);
+    }
+
+    .tableberg-upsell-modal-next {
+        left: calc(100% + 80px);
     }
 }

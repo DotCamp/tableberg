@@ -74,6 +74,8 @@ class Assets
 			Constants::plugin_version(),
 			false
 		);
+		
+		self::pass_data_to_js('tableberg-script');
 	}
 	/**
 	 * Enqueue Admin assets
@@ -98,9 +100,7 @@ class Assets
 			true
 		);
 
-		wp_localize_script( 'tableberg-admin-script', 'TABLEBERG_CFG', [
-			'plugin_url' => TABLEBERG_URL
-		]);
+		self::pass_data_to_js('tableberg-admin-script');
 
 		wp_enqueue_script(
 			'tableberg-preview-device-change-observer',
@@ -118,5 +118,12 @@ class Assets
 			Constants::plugin_version(),
 			'all'
 		);
+	}
+
+
+	private static function pass_data_to_js(string $handle) {
+		wp_localize_script( $handle, 'TABLEBERG_CFG', [
+			'plugin_url' => TABLEBERG_URL
+		]);
 	}
 }

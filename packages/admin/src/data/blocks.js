@@ -1,8 +1,8 @@
-import HtmlBlockIcon from "../../../pro/src/blocks/html/icon";
-import IconBlockIcon from "../../../pro/src/blocks/icon/icon";
-import ListBlockIcon from "../../../pro/src/blocks/styled-list/icon";
-import RibbonBlockIcon from "../../../pro/src/blocks/ribbon/icon";
-import { BlockIcon as StarBlockIcon } from "../../../pro/src/blocks/star-rating/icons";
+import HtmlBlockIcon from "../../../pro/src/blocks/html/icon.tsx";
+import IconBlockIcon from "../../../pro/src/blocks/icon/icon.tsx";
+import ListBlockIcon from "../../../pro/src/blocks/styled-list/icon.tsx";
+import RibbonBlockIcon from "../../../pro/src/blocks/ribbon/icon.tsx";
+import { BlockIcon as StarBlockIcon } from "../../../pro/src/blocks/star-rating/icons.tsx";
 import { image, button, paragraph, list } from "@wordpress/icons";
 
 const IMAGE_BASE = TABLEBERG_CFG.plugin_url + 'includes/Admin/images/upsell/';

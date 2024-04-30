@@ -40,7 +40,7 @@ import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
 import { createPortal } from "react-dom";
 import { isProActive } from "./utils";
-import { SidebarUpsell } from "./SidebarUpsell";
+import { SidebarUpsell } from "./components/SidebarUpsell";
 
 export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
 interface TablebergCtx {
