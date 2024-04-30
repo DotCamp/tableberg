@@ -40,22 +40,18 @@ class StyledList
 	 */
 	public static function get_styles(array $attributes, string $id, bool $hasIcon)
 	{
-		$padding = Utils::get_spacing_css(isset($attributes['listSpacing']) ? $attributes['listSpacing'] : []);
-
-
 
 		$styles = array(
 			'color' => $attributes['textColor'],
 			'background' => $attributes['backgroundColor'],
-			'padding-top' => $padding['top'] ?? '',
-			'padding-right' => $padding['right'] ?? '',
-			'padding-left' => $padding['left'] ?? '',
-			'padding-bottom' => $padding['bottom'] ?? '',
+			'font-size' => $attributes['fontSize']??'',
 			'--tableberg-styled-list-icon-color' => $attributes['iconColor'],
 			'--tableberg-styled-list-icon-size' => $attributes['iconSize'],
 			'--tableberg-styled-list-icon-spacing' => Utils::get_spacing_css_single($attributes['iconSpacing']),
 			'--tableberg-styled-list-inner-spacing' => Utils::get_spacing_css_single(isset($attributes['listIndent']) ? $attributes['listIndent'] : ''),
 		);
+
+		$styles += Utils::get_spacing_style($attributes['listSpacing']??[], 'padding');
 
 		Assets::$dynamicStyles .= '#' . $id . ' > li > .tableberg-list-item-inner {align-items: ' . $attributes['alignItems'] . ';}';
 
