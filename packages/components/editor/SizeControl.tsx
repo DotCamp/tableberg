@@ -52,10 +52,11 @@ export interface SizeControlProps {
     rangeConfig?: {
         [Key in keyof typeof RANGE_CONTROL_CUSTOM_SETTINGS]?: {
             min?: number;
-            max: number;
-            step: number;
+            max?: number;
+            step?: number;
         };
     };
+    initialPosition?: string;
 }
 
 export default function SizeControl({
@@ -63,8 +64,9 @@ export default function SizeControl({
     onChange,
     value,
     rangeConfig = {},
+    initialPosition,
 }: SizeControlProps) {
-    const customRangeValue = parseFloat(value);
+    const customRangeValue = parseFloat(value || "0");
 
     const [availableUnits] = useSettings("spacing.units");
     const units = useCustomUnits({
@@ -127,11 +129,17 @@ export default function SizeControl({
         }
     };
 
-    const cfg =
-        // @ts-ignore
-        rangeConfig[selectedUnit] ??
-        // @ts-ignore
-        RANGE_CONTROL_CUSTOM_SETTINGS[selectedUnit];
+    // @ts-ignore
+    const customConfig = rangeConfig[selectedUnit];
+    // @ts-ignore
+    const defaultConfig = RANGE_CONTROL_CUSTOM_SETTINGS[selectedUnit];
+
+    let minVal = customConfig?.min ?? defaultConfig?.min ?? 0;
+    let maxVal = customConfig?.max ?? defaultConfig?.max ?? 100;
+    const stepVal = customConfig?.step ?? defaultConfig?.step ?? 0.1;
+
+    minVal = Math.min(minVal, customRangeValue);
+    maxVal = Math.max(maxVal, customRangeValue);
 
     return (
         <fieldset className="block-editor-height-control">
@@ -145,7 +153,7 @@ export default function SizeControl({
                         units={units}
                         onChange={onChange}
                         onUnitChange={handleUnitChange}
-                        min={cfg?.min ?? 0}
+                        min={minVal}
                         size={"__unstable-large"}
                         label={label}
                         hideLabelFromVision
@@ -154,15 +162,22 @@ export default function SizeControl({
                 <FlexItem isBlock>
                     <Spacer marginX={2} marginBottom={0}>
                         <RangeControl
-                            value={customRangeValue}
-                            min={cfg?.min ?? 0}
-                            max={cfg?.max ?? 100}
-                            step={cfg?.step ?? 0.1}
+                            value={
+                                !value ? undefined : customRangeValue
+                            }
+                            min={minVal}
+                            max={maxVal}
+                            step={stepVal}
                             withInputField={false}
                             onChange={handleSliderChange}
                             __nextHasNoMarginBottom
                             label={label}
                             hideLabelFromVision
+                            initialPosition={
+                                initialPosition
+                                    ? parseFloat(initialPosition)
+                                    : undefined
+                            }
                         />
                     </Spacer>
                 </FlexItem>

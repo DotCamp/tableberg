@@ -1,7 +1,7 @@
 import React from "react";
 import Route, { generateRouteArray } from "./Route";
-import WelcomeContent from "../containers/WelcomeContent";
-import SettingsContent from "../containers/SettingsContent";
+import WelcomePage from "../pages/WelcomePage";
+import BlocksPage from "../pages/BlocksPage";
 
 /**
  * Routes for admin menu.
@@ -14,7 +14,12 @@ const routes = [
     {
         path: "welcome",
         title: "Welcome",
-        element: <WelcomeContent />,
+        element: <WelcomePage />,
+    },
+    {
+        path: "blocks",
+        title: "Blocks",
+        element: <BlocksPage />,
     },
     // TODO WIll ADD LATER.
     // {

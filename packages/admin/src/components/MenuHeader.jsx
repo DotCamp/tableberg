@@ -1,13 +1,11 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useEffect } from "react";
 import { __ } from "@wordpress/i18n";
 import RightContainerItem from "./RightContainerItem";
 import VersionControl from "./VersionControl";
 import Navigation from "./Navigation";
 import { routeObjects } from "../inc/routes";
-import HamburgerMenu from "./HamburgerMenu";
 import AssetProvider from "./AssetProvider";
-import ButtonLink, { ButtonLinkType } from "./ButtonLink";
-import ProFilter from "./ProFilter";
+import ButtonLink  from "./ButtonLink";
 
 /**
  * Settings menu header element.
@@ -15,10 +13,6 @@ import ProFilter from "./ProFilter";
  * @return {JSX.Element} component
  */
 function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
-    // status of hamburger menu
-
-    const [menuStatus, setMenuStatus] = useState(false);
-
     useEffect(() => {
         const url = new URL(window.location.href);
         url.searchParams.set("route", currentRoutePath);
@@ -27,7 +21,7 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
 
     const routeObjectsMinus404 = useMemo(
         () => routeObjects.slice(0, routeObjects.length - 1),
-        []
+        [],
     );
     const logoUrl = tablebergAdminMenuData?.assets.logo;
     const versionData = tablebergAdminMenuData?.versionControl;
@@ -90,16 +84,20 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
                             />
                         </div>
                     </RightContainerItem>
+                    <RightContainerItem>
+                        <AssetProvider assetIds={["proBuyUrl"]}>
+                            {({ proBuyUrl }) => (
+                                <ButtonLink
+                                    url={proBuyUrl}
+                                    title="Upgrade to PRO"
+                                />
+                            )}
+                        </AssetProvider>
+                    </RightContainerItem>
                 </div>
-                {/* TODO  WIlL ADD IT LATER GETTING ERROR FROM ICON*/}
-                {/* <HamburgerMenu
-                    clickHandler={() => setMenuStatus(!menuStatus)}
-                    status={menuStatus}
-                /> */}
             </div>
             <div
                 className={"dropdown-navigation"}
-                data-menu-status={menuStatus}
             >
                 <div className={"dropdown-drawer"}>
                     <Navigation

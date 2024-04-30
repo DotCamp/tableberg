@@ -8,22 +8,25 @@
         &:nth-last-of-type(1) {
             margin-bottom: 0 !important;
         }
-        svg {
-            display: none;
-        }
     }
 
     .tableberg-list-item-inner {
         display: flex;
-        align-items: center;
         gap: var(--tableberg-styled-list-icon-spacing);
-        > svg {
-            display: initial;
-            height: var(--tableberg-styled-list-icon-size, 15px);
-            width: var(--tableberg-styled-list-icon-size, 15px);
-            fill: var(--tableberg-styled-list-icon-color);
+
+        .tableberg-list-icon {
+            svg {
+                position: relative;
+                top: 2px;
+
+                height: var(--tableberg-styled-list-icon-size, 15px);
+                width: var(--tableberg-styled-list-icon-size, 15px);
+                min-width: var(--tableberg-styled-list-icon-size, 15px);
+                fill: var(--tableberg-styled-list-icon-color);
+            }
         }
-        > div {
+
+        .tableberg-list-text {
             flex-grow: 1;
         }
     }

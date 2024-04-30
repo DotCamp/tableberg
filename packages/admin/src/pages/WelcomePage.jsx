@@ -13,7 +13,7 @@ import AssetProvider from "../components/AssetProvider";
  *
  * @class
  */
-function WelcomeContent() {
+function WelcomePage() {
     return (
         <AssetProvider
             assetIds={[
@@ -44,6 +44,7 @@ function WelcomeContent() {
                                 videoId={youtubeVideoId}
                             />
                         </BoxContentProvider>
+                        <UpgradeBoxContent />
                     </div>
                     <div className={"tableberg-welcome-content__right-sidebar"}>
                         <BoxContentProvider contentId={"documentation"}>
@@ -68,6 +69,6 @@ function WelcomeContent() {
 }
 
 /**
- * @module WelcomeContent
+ * @module WelcomePage
  */
-export default WelcomeContent;
+export default WelcomePage;

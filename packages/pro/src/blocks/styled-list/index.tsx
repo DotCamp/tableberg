@@ -14,6 +14,7 @@ import {
 import { getStyles } from "./get-styles";
 import {
     ColorControl,
+    SizeControl,
     SpacingControl,
     SpacingControlSingle,
 } from "@tableberg/components";
@@ -25,7 +26,6 @@ import {
     Modal,
     PanelBody,
     PanelRow,
-    RangeControl,
     SelectControl,
     ToolbarButton,
 } from "@wordpress/components";
@@ -40,8 +40,9 @@ import { useDispatch } from "@wordpress/data";
 export interface StyledListProps {
     icon: any;
     alignment: string;
+    alignItems: "center" | "baseline" | "flex-start" | "flex-end";
     iconColor: string;
-    iconSize: number;
+    iconSize: string;
     iconSpacing: string;
     fontSize: string;
     itemSpacing: string;
@@ -191,6 +192,21 @@ function edit(props: BlockEditProps<StyledListProps>) {
                             }
                         />
                     </BaseControl>
+                    <BaseControl __nextHasNoMarginBottom>
+                        <SelectControl
+                            label={__("Vertical Alignment", "tableberg-pro")}
+                            value={attributes.alignItems}
+                            onChange={(alignItems: any) =>
+                                setAttributes({ alignItems })
+                            }
+                            options={[
+                                { label: "Center", value: "center" },
+                                { label: "Baseline", value: "baseline" },
+                                { label: "Top", value: "flex-start" },
+                                { label: "Bottom", value: "flex-end" },
+                            ]}
+                        />
+                    </BaseControl>
                 </PanelBody>
                 <PanelBody title="Icon Settings" initialOpen={true}>
                     <PanelRow className="tableberg-styled-list-icon-selector">
@@ -211,14 +227,18 @@ function edit(props: BlockEditProps<StyledListProps>) {
                             />
                         </div>
                     </PanelRow>
-                    <RangeControl
+                    <SizeControl
                         label={__("Icon size", "tableberg-pro")}
                         value={attributes.iconSize}
                         onChange={(iconSize) => {
                             setAttributes({ iconSize });
                         }}
-                        min={0}
-                        max={500}
+                        rangeConfig={{
+                            px: {
+                                min: 10,
+                                max: 200,
+                            },
+                        }}
                     />
                     <SpacingControlSingle
                         label={__("Icon Spacing", "tableberg-pro")}

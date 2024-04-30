@@ -1,8 +1,9 @@
 // eslint-disable-next-line no-unused-vars
 import { createRoot } from "react-dom";
 import AdminMenuContainer from "./containers/AdminMenuContainer";
-import "./css/src/tableberg-admin-settings.scss";
 import AdminMenuWrapper from "./components/AdminMenuWrapper";
+
+import "./css/src/tableberg-admin-settings.scss";
 
 const mountPoint = document.querySelector("#tableberg-admin-menu");
 

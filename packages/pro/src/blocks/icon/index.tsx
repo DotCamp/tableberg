@@ -40,7 +40,7 @@ import {
     StyleAttr,
 } from "../../utils/styling-helpers";
 
-import IconBlockIcon from "./Icon";
+import IconBlockIcon from "./icon";
 
 interface IconAttrs {
     icon: any;

@@ -1,0 +1,29 @@
+.tableberg-upsell-inspector-notice-wrapper {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    z-index: 15;
+    box-shadow: 0 -4px 6px -1px rgba(0,0,0,.1),0 -2px 4px -2px rgba(0,0,0,.1);
+    cursor: pointer;
+
+    .tableberg-upsell-inspector-notice {
+        display: flex;
+        padding: 15px;
+        background: #d4bcff;
+        align-items: center;
+        gap: 10px;
+        position: sticky;
+        bottom: 0;
+        font-size: 15px;
+
+        .tableberg-upsell-notice-icon-container {
+            img {
+                height: 50px;
+                width: 50px;
+            }
+        }
+        .tableberg-upsell-notice {
+            flex-grow: 1;
+        }
+    }
+}

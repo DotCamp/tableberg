@@ -23,7 +23,7 @@ function UpgradeBoxContent(props) {
                     >
                         <ButtonLink
                             url={proBuyUrl}
-                            title={"GET Tableberg PRO"}
+                            title={"GET TABLEBERG PRO"}
                             type={ButtonLinkType.PRIMARY}
                         />
                     </BoxContentProvider>

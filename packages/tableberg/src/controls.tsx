@@ -92,8 +92,8 @@ function TablebergControls(
     } = tableAttributes;
 
     const { updateBlockAttributes } = useDispatch(
-        blockEditorStore
-    ) as BlockEditorStoreActions;
+        blockEditorStore as any
+    );
 
     const setTableAttributes = (attributes: Record<string, any>) => {
         updateBlockAttributes(tableBlockClientId, attributes);
