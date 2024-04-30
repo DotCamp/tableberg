@@ -16,14 +16,10 @@
     "scripts": {
         "build": "wp-scripts build",
         "export": "wp-scripts build && wp-scripts plugin-zip",
-        "start": "wp-scripts start",
-        "test:e2e": "playwright test",
-        "test:e2e:ui": "playwright test --ui"
+        "start": "wp-scripts start"
     },
     "devDependencies": {
-        "@playwright/test": "^1.41.1",
-        "dotenv": "^16.4.1",
-        "playwright": "^1.41.1"
+        "dotenv": "^16.4.1"
     },
     "dependencies": {
         "@tableberg/components": "workspace:*",
