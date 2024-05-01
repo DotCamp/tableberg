@@ -8,7 +8,6 @@ import {
 } from "@wordpress/blocks";
 import {
     BlockVerticalAlignmentToolbar,
-    BlockAlignmentToolbar,
     BlockControls,
     store as blockEditorStore,
     ButtonBlockAppender,
@@ -22,6 +21,7 @@ import {
 } from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ToolbarDropdownMenu } from "@wordpress/components";
+import { ToolbarWithDropdown } from "@tableberg/components";
 import {
     tableRowBefore,
     tableRowAfter,
@@ -30,6 +30,7 @@ import {
     tableColumnBefore,
     tableColumnDelete,
     table,
+    alignNone,
 } from "@wordpress/icons";
 
 import classNames from "classnames";
@@ -830,7 +831,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         setAttributes({ vAlign: newValue });
     };
 
-    const changeChildrenAlign = (align: BlockAlignmentToolbar.Control) => {
+    const changeChildrenAlign = (align: string | undefined) => {
         childBlocks?.forEach((block) => {
             storeActions.updateBlockAttributes(block.clientId, { align });
         });
@@ -888,9 +889,12 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                     value={attributes.vAlign}
                     onChange={setVAlign}
                 />
-                <BlockAlignmentToolbar
+                <ToolbarWithDropdown
+                    icon={alignNone}
+                    title="Align cell children"
                     onChange={changeChildrenAlign}
                     value={undefined}
+                    controlset="alignment"
                 />
             </BlockControls>
 
@@ -924,3 +928,4 @@ registerBlockType(metadata.name, {
     edit,
     save,
 });
+

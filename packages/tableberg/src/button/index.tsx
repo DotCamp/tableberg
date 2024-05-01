@@ -23,7 +23,6 @@ import {
     __experimentalUseBorderProps as useBorderProps,
     __experimentalLinkControl as LinkControl,
     BlockControls,
-    BlockAlignmentToolbar,
 } from "@wordpress/block-editor";
 import {
     MouseEvent,
@@ -35,10 +34,11 @@ import {
 } from "react";
 
 import "./style.scss";
-import { link, linkOff } from "@wordpress/icons";
+import { alignNone, link, linkOff } from "@wordpress/icons";
 import {
     ColorControl,
     SpacingControl,
+    ToolbarWithDropdown,
 } from "@tableberg/components";
 import { __ } from "@wordpress/i18n";
 import { getStyleClass } from "./get-classes";
@@ -111,8 +111,8 @@ function edit({
 
     const innerStyle = getInnerStyles(attributes);
 
-    const blockAlignChange = (newValue: "left" | "right" | "center") => {
-        setAttributes({ align: newValue });
+    const blockAlignChange = (newValue: string | undefined) => {
+        setAttributes({ align: (newValue as "left" | "center" | "right" | undefined) });
     };
 
     const onToggleOpenInNewTab = (value: boolean | undefined) => {
@@ -212,10 +212,12 @@ function edit({
             </div>
 
             <BlockControls group="block">
-                <BlockAlignmentToolbar
+                <ToolbarWithDropdown
+                    icon={alignNone}
+                    title="Align button"
                     value={align}
                     onChange={blockAlignChange}
-                    controls={["left", "center", "right"]}
+                    controlset="alignment"
                 />
                 <AlignmentControl
                     value={textAlign}

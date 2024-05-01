@@ -1,16 +1,16 @@
 import { get } from "lodash";
 import { __ } from "@wordpress/i18n";
 import { useEffect } from "react";
-import { caption as captionIcon, crop } from "@wordpress/icons";
+import { alignNone, caption as captionIcon, crop } from "@wordpress/icons";
 import {
     BlockControls as WPBlockControls,
     MediaReplaceFlow,
     __experimentalImageURLInputUI as ImageURLInputUI,
-    BlockAlignmentToolbar,
 } from "@wordpress/block-editor";
 import { usePrevious } from "@wordpress/compose";
 import { ToolbarButton, ToolbarGroup } from "@wordpress/components";
 import type { ExtendMainPropTypes } from "./types";
+import { ToolbarWithDropdown } from "@tableberg/components";
 
 function BlockControls(props: ExtendMainPropTypes) {
     const {
@@ -46,12 +46,14 @@ function BlockControls(props: ExtendMainPropTypes) {
     return (
         <>
             <WPBlockControls group={"block"}>
-                <BlockAlignmentToolbar
+                <ToolbarWithDropdown
+                    icon={alignNone}
+                    title="Align table"
                     value={align}
                     onChange={(newVal) => {
                         setAttributes({ align: newVal });
                     }}
-                    controls={["left", "center", "right"]}
+                    controlset="alignment"
                 />
                 <ToolbarButton
                     onClick={() => {

@@ -2,12 +2,11 @@
  * WordPress Imports
  */
 import { __ } from "@wordpress/i18n";
-import { justifyLeft, justifyCenter, justifyRight } from "@wordpress/icons";
+import { justifyLeft, justifyCenter, justifyRight, alignNone } from "@wordpress/icons";
 import {
     InspectorControls,
     HeightControl,
     BlockControls,
-    BlockAlignmentToolbar,
     FontSizePicker,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
@@ -30,6 +29,7 @@ import {
     SpacingControl,
     ColorControl,
     ColorPickerDropdown,
+    ToolbarWithDropdown,
 } from "@tableberg/components";
 
 const AVAILABLE_JUSTIFICATIONS = [
@@ -428,12 +428,14 @@ function TablebergControls(
                 />
             }
             <BlockControls>
-                <BlockAlignmentToolbar
+                <ToolbarWithDropdown
+                    icon={alignNone}
+                    title="Align table"
                     value={tableAlignment}
-                    onChange={(newValue) => {
-                        setTableAttributes({ tableAlignment: newValue });
+                    onChange={(tableAlignment) => {
+                        setTableAttributes({ tableAlignment });
                     }}
-                    controls={["left", "center", "right"]}
+                    controlset="alignment"
                 />
             </BlockControls>
         </>
