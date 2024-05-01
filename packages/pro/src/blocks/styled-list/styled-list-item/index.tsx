@@ -29,7 +29,7 @@ import { formatIndent, formatOutdent, trash } from "@wordpress/icons";
 import { ColorControl, SizeControl, SpacingControlSingle } from "@tableberg/components";
 import IconsLibrary from "@tableberg/components/icon-library";
 
-import { listItemIcon } from "../icon";
+import { listItemIcon } from "@tableberg/shared/icons/styled-list";
 import metadata from "./block.json";
 import { getItemStyles } from "../get-styles";
 import { StyledListProps } from "..";

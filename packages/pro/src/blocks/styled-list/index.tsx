@@ -1,7 +1,7 @@
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 
 import metadata from "./block.json";
-import blockIcon from "./icon";
+import blockIcon from "@tableberg/shared/icons/styled-list";
 import {
     AlignmentToolbar,
     BlockControls,

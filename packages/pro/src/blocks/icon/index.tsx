@@ -40,7 +40,7 @@ import {
     StyleAttr,
 } from "../../utils/styling-helpers";
 
-import IconBlockIcon from "./icon";
+import IconBlockIcon from "@tableberg/shared/icons/icon";
 
 interface IconAttrs {
     icon: any;

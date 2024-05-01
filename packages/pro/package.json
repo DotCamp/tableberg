@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "@tableberg/components": "workspace:*",
+        "@tableberg/shared": "workspace:*",
         "clean-webpack-plugin": "^4.0.0",
         "ignore-emit-webpack-plugin": "^2.0.6",
         "mini-css-extract-plugin": "^2.7.6"

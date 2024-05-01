@@ -10,7 +10,7 @@ import { useBlockProps, RichText } from "@wordpress/block-editor";
 
 import metadata from "./block.json";
 import { getStyles } from "./get-styles";
-import { BlockIcon, Star } from "./icons";
+import { BlockIcon, Star } from "@tableberg/shared/icons/star-rating";
 import { __ } from "@wordpress/i18n";
 import StarBlockControls from "./controls";
 import classNames from "classnames";
