@@ -17,4 +17,4 @@ import "./blocks/ribbon";
  * TODO: detect the plugin activation here
  */
 // @ts-ignore
-window.__is_tableberg_pro_active = false;
+window.__is_tableberg_pro_active = true;
