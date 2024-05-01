@@ -45,6 +45,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { TablebergBlockAttrs } from "../types";
 import TablebergControls from "../controls";
+import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";
@@ -764,7 +765,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         addMergingEvt(cellRef.current);
     }, [cellRef.current]);
 
-    const tableControls: Record<string, any>[] = [
+    const tableControls: DropdownOption[] = [
         {
             icon: tableRowBefore,
             title: "Insert row before",
@@ -895,7 +896,6 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
 
             <BlockControls group="other" __experimentalShareWithChildBlocks>
                 <ToolbarDropdownMenu
-                    hasArrowIndicator
                     icon={table}
                     label={"Edit table"}
                     controls={tableControls}
