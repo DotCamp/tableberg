@@ -12,9 +12,3 @@ import "./blocks/html";
 import "./blocks/icon";
 import "./blocks/ribbon";
 
-
-/**
- * TODO: detect the plugin activation here
- */
-// @ts-ignore
-window.__is_tableberg_pro_active = true;

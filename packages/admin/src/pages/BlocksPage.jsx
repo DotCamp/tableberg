@@ -62,7 +62,7 @@ export default function BlocksPage() {
                             iconElement={icon}
                             isPro={isPro}
                             showUpsell={() => setUpsellView(info)}
-                            isProPlugin={window.__is_tableberg_pro_active}
+                            isProPlugin={false}
                             demoUrl={"https://tableberg.com/"}
                         />
                     );

@@ -39,7 +39,6 @@ import StackRowTable from "./table/StackRowTable";
 import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
 import { createPortal } from "react-dom";
-import { isProActive } from "./utils";
 import { SidebarUpsell } from "./components/SidebarUpsell";
 
 export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
@@ -488,7 +487,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         return { currentBlockIsTablebergCellChild };
     }, [])
     
-    const showUpsell = targetEl && currentBlockIsTablebergCellChild && !isProActive();
+    const showUpsell = targetEl && currentBlockIsTablebergCellChild;
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();
