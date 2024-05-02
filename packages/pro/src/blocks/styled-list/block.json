@@ -1,0 +1,93 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "version": "0.1.0",
+    "name": "tableberg/styled-list",
+    "title": "Styled List",
+    "category": "design",
+    "description": "This block lets you add a styled list in your post or pages. Instead of bullets you can use various icons as your list style type. ",
+    "keywords": [
+        "List",
+        "Styled List",
+        "tableberg"
+    ],
+    "parent": [
+        "tableberg/cell",
+        "tableberg/styled-list-item"
+    ],
+    "textdomain": "tableberg-pro",
+    "attributes": {
+        "alignment": {
+            "type": "string",
+            "default": "left"
+        },
+        "alignItems": {
+            "type": "string",
+            "default": "center"
+        },
+        "itemSpacing": {
+            "type": "string",
+            "default": null
+        },
+        "iconColor": {
+            "type": "string",
+            "default": "#000000"
+        },
+        "iconSize": {
+            "type": "string",
+            "default": "15px"
+        },
+        "iconSpacing": {
+            "type": "string",
+            "default": "var:preset|spacing|5"
+        },
+        "fontSize": {
+            "type": "string",
+            "default": ""
+        },
+        "textColor": {
+            "type": "string",
+            "default": ""
+        },
+        "backgroundColor": {
+            "type": "string",
+            "default": ""
+        },
+        "listSpacing": {
+            "type": "object",
+            "default": {}
+        },
+        "listIndent": {
+            "type": "string",
+            "default": "var:preset|spacing|10"
+        },
+        "icon": {
+            "type": "object",
+            "default": {
+                "iconName": "check",
+                "type": "font-awesome",
+                "icon": {
+                    "type": "svg",
+                    "props": {
+                        "xmlns": "http://www.w3.org/2000/svg",
+                        "viewBox": "0 0 512 512",
+                        "children": {
+                            "type": "path",
+                            "props": {
+                                "d": "M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "parentCount": {
+            "type": "number",
+            "default": 0
+        }
+    },
+    "supports": {},
+    "editorScript": "tableberg-pro-block-script",
+    "editorStyle": "tableberg-pro-editor-style",
+    "style": "tableberg-pro-frontend-style"
+}

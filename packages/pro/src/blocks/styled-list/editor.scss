@@ -1,0 +1,16 @@
+.tableberg-styled-list-icon-selector {
+    margin-bottom: 15px;
+    label {
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+}
+.tableberg-styled-list {
+    .block-list-appender.wp-block {
+        display: none;
+    }
+}
+
+.editor-styles-wrapper ul.tableberg-styled-list {
+    padding-left: 0;
+}

@@ -2,11 +2,14 @@
 node_modules/
 .vscode
 build
+dist
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 # Files
 tableberg.zip
+tableberg-pro.zip
 .DS_Store
 .env
+packages/tableberg/includes/Admin/assets

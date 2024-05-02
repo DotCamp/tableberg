@@ -1,0 +1,28 @@
+.tableberg-icon {
+    display: flex;
+
+    &.tableberg-icon-as-char {
+        display: inline-block;
+        + p {
+            display: inline;
+            text-align: justify;
+        }
+    }
+
+    &:hover {
+        background: var(--tableberg-icon-bg-hover) !important;
+        svg {
+            fill: var(--tableberg-icon-color-hover) !important;
+        }
+    }
+
+    img {
+        border-radius: inherit;
+        overflow: hidden;
+    }
+}
+
+p:has(+ .tableberg-icon-as-char) {
+    display: inline;
+    text-align: justify;
+}

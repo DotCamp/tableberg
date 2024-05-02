@@ -1,0 +1,14 @@
+{
+    "name": "dotcamp/tableberg-pro",
+    "description": "Tableberg pro plugin by Dotcamp.",
+    "scripts": {},
+    "require": {},
+    "require-dev": {},
+    "autoload": {
+        "psr-4": {
+            "Tableberg\\Pro\\": [
+                "includes/"
+            ]
+        }
+    }
+}

@@ -1,0 +1,609 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/animations";
+@import "@wordpress/base-styles/z-index";
+@import "@wordpress/base-styles/default-custom-properties";
+@import "./base/common";
+@import "./base/themes/admin-menu-theme";
+@import "./inc/settings-control-card";
+@import "./inc/box-content";
+@import "./inc/button-link";
+@import "./inc/screen-center-mark";
+@import "./inc/navigation";
+@import "./inc/controls-container";
+@import "./inc/block-control-card";
+@import "./pages/welcome-content-styles";
+@import "./pages/blocks-style";
+
+.tableberg-admin-menu-wrapper {
+    @extend %size-full;
+
+    font-family: $font-family;
+    font-size: $font-size;
+    position: absolute;
+    background-color: $white;
+    color: $text-color;
+    z-index: 10;
+
+    &,
+    & * {
+        box-sizing: border-box;
+    }
+
+    .content-phrase {
+        @extend %flex-center-all;
+        @extend %unselectable;
+
+        flex-direction: column;
+        font-size: $phrase-font-size;
+        margin: 60px 0;
+
+        .line-wrapper {
+            margin: 15px 0;
+            font-weight: 400;
+        }
+    }
+
+    .tableberg-admin-menu-container {
+        @extend %size-full;
+
+        background-color: $white;
+        display: grid;
+        position: relative;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+
+        & > div {
+            padding: 0 160px;
+
+            @include screen-max($screen-xl) {
+                padding: 0 50px;
+            }
+        }
+
+        .header-wrapper {
+            @extend %flex-center-all;
+            @extend %default-border;
+
+            position: relative;
+
+            .menu-header {
+                display: grid;
+                width: 100%;
+                max-width: $main-wrapper-max-width;
+                position: relative;
+                grid-template: 1fr / repeat(3, minmax(0, 1fr));
+                grid-template-areas: "logo nav right";
+                align-items: center;
+                border-width: 0 0 1px;
+                height: $header-height;
+                background-color: $white;
+
+                @include screen-max($screen-md2) {
+                    grid-template-areas: "hamburger logo right";
+
+                    .tableberg-hamburger-menu {
+                        display: block !important;
+                    }
+
+                    .version-control-header-wrapper {
+                        display: none;
+                    }
+                }
+
+                .logo-container {
+                    @extend %flex-center-all;
+                    @extend %unselectable;
+
+                    grid-area: logo;
+                    justify-content: flex-start;
+                    flex-direction: row;
+                    height: $logo-height;
+
+                    img {
+                        height: 100%;
+                    }
+
+                    .tableberg-plugin-logo-text {
+                        @extend %weight-bold;
+
+                        margin: 0 5px;
+                        font-size: 1.4rem;
+                    }
+                }
+
+                .right-container {
+                    @extend %flex-center-all-row;
+
+                    grid-area: right;
+                    justify-content: flex-end;
+                    height: 100%;
+
+                    .right-container-item {
+                        @extend %flex-center-all;
+
+                        gap: 10px;
+                        height: 100%;
+
+                        &:not(:first-child) {
+                            margin-left: 24px;
+                        }
+                    }
+
+                    .version-control-container {
+                        @extend %flex-center-all-row;
+
+                        .tableberg-header-version-info {
+                            * {
+                                color: $text-faded-color;
+                                font-size: $font-pill-size;
+                            }
+                        }
+
+                        .version-control-status-indicator {
+                            @include size(15);
+
+                            border-radius: 100%;
+                            padding: 0 !important;
+
+                            &[data-level="none"] {
+                                background-color: $green-500;
+                            }
+
+                            &[data-level="medium"] {
+                                background-color: $yellow-500;
+                            }
+
+                            &[data-level="high"] {
+                                background-color: $deep-aqua-500;
+                            }
+                        }
+                    }
+
+                    .share-node {
+                        @extend %pointer;
+
+                        & svg {
+                            @include size(16);
+                        }
+                    }
+                }
+
+                .tableberg-menu-navigation-wrapper {
+                    grid-area: nav;
+                    height: 100%;
+
+                    @include screen-max($screen-md2) {
+                        display: none;
+                    }
+                }
+
+                .tableberg-hamburger-menu {
+                    grid-area: hamburger;
+                    display: none;
+
+                    &-icon-wrapper {
+                        @extend %pointer;
+                        @extend %tableberg-click;
+
+                        width: fit-content;
+
+                        /* stylelint-disable-next-line no-descending-specificity */
+                        svg {
+                            @include size(20);
+                        }
+                    }
+                }
+            }
+
+            .dropdown-navigation {
+                display: none;
+
+                .dropdown-drawer {
+                    @extend %default-transition;
+                    @extend %shadow-md;
+
+                    z-index: 10000;
+                }
+
+                @include screen-max($screen-md2) {
+                    display: block;
+
+                    .dropdown-drawer {
+                        position: absolute;
+                        height: auto;
+                        left: -50%;
+                        top: 100%;
+
+                        .tableberg-menu-navigation {
+                            grid-template-columns: 1fr !important;
+                            border: 1px solid $border-color;
+                            z-index: 10;
+
+                            .tableberg-menu-navigation-header-button {
+                                padding: 15px 10px !important;
+                            }
+                        }
+
+                        .hamburger-version-control {
+                            background-color: $white;
+
+                            .tableberg-header-version-info {
+                                select {
+                                    margin: 0 !important;
+                                    width: 100%;
+                                    border-radius: 0 !important;
+                                    border: 0 !important;
+
+                                    &:focus,
+                                    &:active {
+                                        outline: 0 !important;
+                                        border: 0 !important;
+                                        box-shadow: none !important;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    &[data-menu-status="true"] {
+                        .dropdown-drawer {
+                            left: 0 !important;
+                        }
+                    }
+                }
+            }
+        }
+
+        .route-404 {
+            @extend %flex-center-all;
+            @extend %size-full;
+
+            box-sizing: border-box;
+        }
+
+        .menu-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto 1fr;
+            justify-content: center;
+            justify-items: center;
+            overflow: auto;
+
+            .block-status-filter-control {
+                @extend %default-border;
+                @extend %pill;
+
+                position: relative;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: 1fr;
+                padding: 5px;
+                justify-content: center;
+                align-items: center;
+
+                .active-indicator {
+                    @extend %default-transition;
+                    @extend %pill;
+
+                    position: absolute;
+                    width: 10px;
+                    height: 30px;
+                    background-color: $deep-aqua-500;
+                    z-index: 9;
+                }
+
+                .filter-control-item {
+                    @extend %flex-center-all;
+                    @extend %default-transition;
+                    @extend %unselectable;
+
+                    cursor: pointer;
+                    padding: 5px 20px;
+                    text-transform: capitalize;
+                    z-index: 10;
+
+                    &[data-active="true"] {
+                        color: $white;
+                    }
+                }
+            }
+        }
+
+        .pro-content {
+            @extend %flex-center-all;
+
+            flex-direction: column;
+
+            .content-phrase {
+                margin-top: 0 !important;
+            }
+
+            .tableberg-pro-content-main {
+                @extend %default-transition;
+
+                font-size: 1.2rem;
+
+                &:hover {
+                    transform: scale(1.2);
+                }
+            }
+        }
+    }
+
+    .tableberg-toggle-control {
+        @extend %default-transition;
+        @extend %pill;
+
+        box-sizing: content-box;
+        position: relative;
+        width: 42px;
+        height: 20px;
+        background-color: $deep-aqua-500;
+        border: 2px solid $deep-aqua-500;
+        cursor: pointer;
+
+        &[data-enabled="false"] {
+            background-color: $gray-500;
+            border: 2px solid $gray-500;
+        }
+
+        .knob {
+            @extend %default-transition;
+
+            position: absolute;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 100%;
+            background-color: $white;
+        }
+
+        &[data-enabled="true"] .knob {
+            left: calc(100% - 20px);
+        }
+    }
+
+    .tableberg-router-content-wrapper {
+        @extend %appear-anim;
+
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 40px !important;
+        padding-bottom: 40px !important;
+        overflow: auto;
+
+        /* stylelint-disable-next-line no-descending-specificity */
+        & > div {
+            max-width: $main-wrapper-max-width;
+        }
+    }
+}
+
+.block-control-transition-enter {
+    opacity: 0;
+}
+
+.block-control-transition-enter-active {
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+.block-control-transition-exit {
+    opacity: 1;
+}
+
+.block-control-transition-exit-active {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes disappear {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.visibility-wrapper {
+    &[data-visible="true"] {
+        display: block !important;
+        animation: appear 0.2s ease-out forwards;
+    }
+
+    &[data-visible="false"] {
+        animation: disappear 0.2s ease-out forwards;
+    }
+}
+
+.version-control-popup {
+    @extend %flex-center-all;
+
+    position: fixed;
+    inset: 0;
+    background-color: $version-control-popup-bg;
+    z-index: 10000;
+    font-family: $font-family;
+    font-size: $version-control-general-font-size;
+    animation: blur-anim 0.2s ease-out forwards;
+
+    .modal-container {
+        @extend %default-border;
+
+        background-color: $white;
+        border-radius: $block-control-border-radius;
+        overflow: hidden;
+        padding: 20px 60px;
+
+        /* stylelint-disable-next-line no-descending-specificity */
+        & > div {
+            margin: 10px 0;
+        }
+
+        .version-content {
+            @extend %flex-center-all;
+
+            margin-top: 30px;
+
+            /* stylelint-disable no-descending-specificity */
+            & > div {
+                margin-top: 20px;
+
+                & > div:not(div:first-child) {
+                    margin-top: 20px;
+                }
+
+                & > div {
+                    @extend %flex-center-all;
+                }
+            }
+
+            /* stylelint-enable no-descending-specificity */
+
+            .operation-finished-wrapper {
+                .version-control-response {
+                    font-weight: bold;
+                    color: $positive;
+
+                    &[data-resp-type="error"] {
+                        @extend %tableberg-negative-color;
+                    }
+                }
+            }
+
+            .version-warning {
+                @extend %flex-center-all;
+
+                flex-direction: column;
+
+                @extend %unselectable;
+            }
+
+            .version-rollback-button-container {
+                @extend %flex-center-all-row;
+            }
+        }
+
+        .rollback-versions {
+            @extend %flex-center-all;
+
+            .version-id {
+                @extend %unselectable;
+
+                font-size: $versions-font-size;
+                font-weight: bold;
+                margin: 0 40px;
+            }
+
+            .version-icon {
+                @extend %flex-center-all;
+
+                width: fit-content;
+                height: fit-content;
+                overflow: hidden;
+
+                &[data-in-progress="true"] .version-icon-inner-wrapper {
+                    @extend %default-transition;
+
+                    animation: stay-a-while-and-listen 2s ease-out infinite;
+                }
+
+                /* stylelint-disable no-descending-specificity */
+                .version-icon-inner-wrapper {
+                    padding: 0 10px;
+                }
+
+                svg {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                }
+
+                /* stylelint-enable no-descending-specificity */
+            }
+        }
+    }
+}
+
+@keyframes stay-a-while-and-listen {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    40% {
+        transform: translateX(0);
+    }
+
+    60% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.tableberg-menu-button {
+    @extend %flex-center-all;
+    @extend %default-transition;
+    @extend %unselectable;
+
+    padding: 10px 20px;
+    background-color: $deep-aqua-500;
+    color: $white;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 10px 20px;
+
+    &[data-enabled="false"] {
+        background-color: $gray-800 !important;
+        cursor: default;
+    }
+
+    &[data-enabled="true"]:active {
+        transform: scale(0.8);
+    }
+}
+
+.tableberg-pro-settings-menu-nav-container {
+    color: $logo-color !important;
+    font-weight: bold !important;
+}
+
+.text-indicate {
+    color: $deep-aqua-500;
+    font-weight: 500;
+}
+
+.tableberg-youtube-embed {
+    @extend %flex-center-all;
+    @extend %default-border;
+
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+
+    iframe {
+        width: 100%;
+    }
+}
+
+%appear-anim {
+    animation: appear 0.2s ease-out forwards;
+}

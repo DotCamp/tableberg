@@ -1,0 +1,28 @@
+{
+    "name": "tableberg-pro",
+    "version": "0.5.0",
+    "description": "Tableberg: table builder Gutenberg block",
+    "author": "Dotcamp",
+    "license": "GPL-2.0-or-later",
+    "main": "build/index.js",
+    "files": [
+        "dist",
+        "includes",
+        "vendor/composer",
+        "vendor/autoload.php",
+        "readme.txt",
+        "tableberg-pro.php"
+    ],
+    "scripts": {
+        "build": "wp-scripts build",
+        "export": "wp-scripts build && wp-scripts plugin-zip",
+        "start": "wp-scripts start"
+    },
+    "dependencies": {
+        "@tableberg/components": "workspace:*",
+        "@tableberg/shared": "workspace:*",
+        "clean-webpack-plugin": "^4.0.0",
+        "ignore-emit-webpack-plugin": "^2.0.6",
+        "mini-css-extract-plugin": "^2.7.6"
+    }
+}

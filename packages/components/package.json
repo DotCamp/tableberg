@@ -1,0 +1,40 @@
+{
+  "name": "@tableberg/components",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "module": "dist/components.js",
+  "files": [
+      "dist"
+  ],
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.202",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "@types/wordpress__block-editor": "^11.5.1",
+    "@types/wordpress__blocks": "^12.5.4",
+    "@types/wordpress__editor": "^13.6.7",
+    "@wordpress/base-styles": "^4.39.0",
+    "@wordpress/scripts": "^26.6.0",
+    "@wordpress/blob": "^3.37.0",
+    "@wordpress/components": "^25.3.0",
+    "@wordpress/compose": "^6.18.0",
+    "@wordpress/data": "^9.7.0",
+    "@wordpress/editor": "^13.25.0",
+    "@wordpress/i18n": "^4.37.0",
+    "@wordpress/icons": "^9.28.0",
+    "@wordpress/url": "^3.42.0"
+  }
+}

@@ -1,0 +1,14 @@
+.tableberg-star-rating {
+    .tableberg-stars {
+        display: flex;
+
+        &.tableberg-stars {
+            &-center {
+                justify-content: center;
+            }
+            &-right {
+                justify-content: right;
+            }
+        }
+    }
+}
