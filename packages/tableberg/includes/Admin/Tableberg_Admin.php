@@ -167,6 +167,18 @@ class Tableberg_Admin
             ),
         );
 
+        global $tp_fs;
+        if (isset($tp_fs)) {
+            $data['misc'] = [
+                'pro_status' => $tp_fs->is__premium_only()
+                    && $tp_fs->can_use_premium_code()
+            ];
+        } else {
+            $data['misc'] = [
+                'pro_status' => false
+            ];
+        }
+
         $data = array_merge($data, Tableberg\Utils\Utils::welcome_page());
         return $data;
     }
