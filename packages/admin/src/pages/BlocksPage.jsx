@@ -63,7 +63,7 @@ export default function BlocksPage() {
                             isPro={isPro}
                             showUpsell={() => setUpsellView(info)}
                             isProPlugin={tablebergAdminMenuData.misc.pro_status}
-                            demoUrl={"https://tableberg.com/"}
+                            demoUrl={"https://tableberg.com/docs"}
                         />
                     );
                 })}
