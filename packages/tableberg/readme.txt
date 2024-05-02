@@ -35,6 +35,21 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 
 == Changelog ==
 
+= 0.5.0 =
+* NEW: Add device type switching in responsive mode
+* PRO: NEW: New pro blocks: custom html, styled list, star rating, icon, ribbon
+* IMPROVE: Show table block controls in cell block (toolbar and sidebar)
+* IMPROVE: Split js bundles and reduce bundle sizes
+* IMPROVE: Exclude empty paragraphs when cells are merged
+* IMPROVE: Change toolbar button labels to differentiate
+* IMPROVE: Show block toolbar when creating table
+* FIX: An issue with even odd row color
+* FIX: An issue with cell background color in responsive mode
+* FIX: An issue where tableberg will not load on a fresh wordpress install
+* FIX: Move blocks to the proper cells on undo of cell merge
+* FIX: An issue where splitting rows on last column would break
+* FIX: Resetting values now work properly
+
 = 0.4.1 =
 * NEW: Add padding controls to button block
 * IMPROVE: Change table border in responsive mode
