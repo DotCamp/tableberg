@@ -33,6 +33,9 @@ declare const tablebergAdminMenuData: {
             };
         };
     };
+    misc: {
+        pro_status: boolean;
+    };
     welcome: {
         title: "Welcome to Tableberg!";
         content: "Elevate Your Content with Seamless Tables - The Ultimate WordPress Block Editor Plugin for Effortless Table Creation!";
