@@ -63,7 +63,7 @@ function BlockControlCard({
                         </div>
                     )}
                 </div>
-                {isPro && (
+                {isPro && !isProPlugin && (
                     <div className={"tableberg-block-title-right-container"}>
                         <div
                             role={"button"}

@@ -62,13 +62,13 @@ export default function BlocksPage() {
                             iconElement={icon}
                             isPro={isPro}
                             showUpsell={() => setUpsellView(info)}
-                            isProPlugin={false}
+                            isProPlugin={tablebergAdminMenuData.misc.pro_status}
                             demoUrl={"https://tableberg.com/"}
                         />
                     );
                 })}
             </div>
-            <UpgradeBoxContent />
+            {!tablebergAdminMenuData.misc.pro_status && <UpgradeBoxContent />}
             {upsellView && (
                 <UpsellModal
                     info={upsellView}

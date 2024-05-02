@@ -487,7 +487,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         return { currentBlockIsTablebergCellChild };
     }, [])
     
-    const showUpsell = targetEl && currentBlockIsTablebergCellChild;
+    const showUpsell = targetEl && currentBlockIsTablebergCellChild && !tablebergAdminMenuData.misc.pro_status;
 
     function onCreateTable(event: FormEvent) {
         event.preventDefault();

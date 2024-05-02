@@ -5,7 +5,7 @@ import VersionControl from "./VersionControl";
 import Navigation from "./Navigation";
 import { routeObjects } from "../inc/routes";
 import AssetProvider from "./AssetProvider";
-import ButtonLink  from "./ButtonLink";
+import ButtonLink from "./ButtonLink";
 
 /**
  * Settings menu header element.
@@ -84,7 +84,7 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
                             />
                         </div>
                     </RightContainerItem>
-                    <RightContainerItem>
+                    {!tablebergAdminMenuData.misc.pro_status && <RightContainerItem>
                         <AssetProvider assetIds={["proBuyUrl"]}>
                             {({ proBuyUrl }) => (
                                 <ButtonLink
@@ -93,7 +93,7 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
                                 />
                             )}
                         </AssetProvider>
-                    </RightContainerItem>
+                    </RightContainerItem>}
                 </div>
             </div>
             <div
