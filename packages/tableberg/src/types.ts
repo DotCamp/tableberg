@@ -25,6 +25,7 @@ export interface TablebergBlockAttrs {
     rows: number;
     cols: number;
     cells: number;
+    fixedColWidth: boolean;
     colWidths: string[];
     rowHeights: string[];
     hasTableCreated: boolean;

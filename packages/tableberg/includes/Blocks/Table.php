@@ -71,9 +71,7 @@ class Table
 
 		foreach (['top', 'left'] as $k) {
 			if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
-				$styles['--tableberg-border-collapse'] = 'separate';
-			} else {
-				$styles += $table_border_css;
+				$separateBorder = true;
 			}
 		}
 
@@ -81,6 +79,7 @@ class Table
 			$styles['border-collapse'] = 'separate';
 		} else {
 			$styles += $table_border_css;
+			$styles['border-collapse'] = 'collapse';
 		}
 
 		return Utils::generate_css_string($styles);
@@ -121,8 +120,10 @@ class Table
 
 
 
-	private static function setRowColSizes($content, $heights, $widths)
+	private static function setRowColSizes($content, $attributes)
 	{
+		$heights = $attributes['rowHeights'];
+		$widths = $attributes['colWidths'];
 		$lastIdx = 0;
 		foreach ($heights as $height) {
 			$idx = strpos($content, '<tr', $lastIdx);
@@ -132,9 +133,18 @@ class Table
 			$lastIdx = $idx + 1;
 		}
 		$colgroup = '<colgroup>';
-		foreach ($widths as $w) {
-			$colgroup .= "<col width=\"$w\" style=\"min-width:$w;\"/>";
+		if ($attributes['fixedColWidth']) {
+			$cols = sizeof($widths);
+			$w = 100 / $cols.'%';
+			for ($i = 0; $i < $cols; $i++) {
+				$colgroup .= "<col width=\"$w\" style=\"min-width:$w;\"/>";
+			}
+		} else {
+			foreach ($widths as $w) {
+				$colgroup .= "<col width=\"$w\" style=\"min-width:$w;\"/>";
+			}
 		}
+
 		$colgroup .= '</colgroup>';
 		$content = HtmlUtils::insert_inside_tag($content, 'table', $colgroup);
 		return $content;
@@ -228,7 +238,7 @@ class Table
 		}
 
 
-		$content = self::setRowColSizes($content, $attributes['rowHeights'], $attributes['colWidths']);
+		$content = self::setRowColSizes($content, $attributes);
 		$content = self::even_odd_rows($attributes, $content);
 
 		$responsive = trim(self::get_responsiveness_metadata($attributes, 'mobile') . self::get_responsiveness_metadata($attributes, 'tablet'));

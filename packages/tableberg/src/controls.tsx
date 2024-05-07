@@ -141,46 +141,59 @@ function TablebergControls({
 
     return (
         <>
-            {!isTableControls && cellBlock && (
-                <InspectorControls>
-                    <ToolsPanel
-                        label={__("Cell Settings", "tableberg")}
-                        resetAll={() => {
-                            setHeight("");
-                            setWidth("");
-                        }}
-                    >
-                        <ToolsPanelItem
-                            label={__("Column Width", "tableberg")}
-                            hasValue={() => true}
-                        >
-                            <HeightControl
-                                value={
-                                    tableAttributes.colWidths[
-                                        cellBlock.attributes.col
-                                    ] as any
-                                }
-                                label={__("Column Width", "tableberg")}
-                                onChange={setWidth}
-                            />
-                        </ToolsPanelItem>
-                        <ToolsPanelItem
-                            label={__("Row Height", "tableberg")}
-                            hasValue={() => true}
-                        >
-                            <HeightControl
-                                value={
-                                    tableAttributes.rowHeights[
-                                        cellBlock.attributes.row
-                                    ] as any
-                                }
+            <InspectorControls>
+                <ToolsPanel
+                    label={__("Cell Settings", "tableberg")}
+                    resetAll={() => {}}
+                >
+                    <ToolsPanelItem label={__("")} hasValue={() => true}>
+                        <ToggleControl
+                            checked={tableAttributes.fixedColWidth}
+                            label="Fixed width cells"
+                            onChange={(fixedColWidth) => {
+                                setTableAttributes({
+                                    fixedColWidth,
+                                });
+                            }}
+                        />
+                    </ToolsPanelItem>
+                    {cellBlock && (
+                        <>
+                            {!tableAttributes.fixedColWidth && (
+                                <ToolsPanelItem
+                                    label={__("Column Width", "tableberg")}
+                                    hasValue={() => true}
+                                >
+                                    <HeightControl
+                                        value={
+                                            tableAttributes.colWidths[
+                                                cellBlock.attributes.col
+                                            ] as any
+                                        }
+                                        label={__("Column Width", "tableberg")}
+                                        onChange={setWidth}
+                                    />
+                                </ToolsPanelItem>
+                            )}
+                            <ToolsPanelItem
                                 label={__("Row Height", "tableberg")}
-                                onChange={setHeight}
-                            />
-                        </ToolsPanelItem>
-                    </ToolsPanel>
-                </InspectorControls>
-            )}
+                                hasValue={() => true}
+                            >
+                                <HeightControl
+                                    value={
+                                        tableAttributes.rowHeights[
+                                            cellBlock.attributes.row
+                                        ] as any
+                                    }
+                                    label={__("Row Height", "tableberg")}
+                                    onChange={setHeight}
+                                />
+                            </ToolsPanelItem>
+                        </>
+                    )}
+                </ToolsPanel>
+            </InspectorControls>
+
             <InspectorControls>
                 <PanelBody title="Header Settings">
                     <ToggleControl
