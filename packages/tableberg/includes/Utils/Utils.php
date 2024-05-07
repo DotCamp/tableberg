@@ -158,7 +158,7 @@ class Utils
 
 
 
-	public static function get_border_style(array|string $object): array
+	public static function get_border_style($object): array
 	{
 
 		if (is_string($object)) {
@@ -193,6 +193,7 @@ class Utils
 		foreach ($object as $key => $value) {
 			$corner = strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $key));
 			$css['border-' . $corner . '-radius'] = $value;
+<<<<<<< HEAD
 		}
 		return $css;
 	}
@@ -217,6 +218,8 @@ class Utils
 			if ($value != '0px') {
 				$hasValue = true;
 			}
+=======
+>>>>>>> develop
 		}
 		return $css;
 	}
