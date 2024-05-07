@@ -50,7 +50,8 @@ class Table
 
 
 		$table_border_css = Utils::get_border_css($attributes['tableBorder']);
-		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : array();
+		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : [];
+		$cell_radius = Utils::get_border_radius_var($attributes['cellBorderRadius'], '--tableberg-cell', $separateBorder);
 
 		$styles = [
 			'width' => $attributes['tableWidth'],
@@ -65,14 +66,16 @@ class Table
 			'border-spacing' => ($table_spacing['top'] ?? 0) . ' ' . ($table_spacing['left'] ?? 0),
 		]
 			+ Utils::get_spacing_style($attributes['cellPadding'], '--tableberg-cell-padding')
-			+ $inner_border_variables;
+			+ $inner_border_variables
+			+ $cell_radius;
 
-		$separateBorder = false;
 
-		foreach (['top', 'left'] as $k) {
-			if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
-				$separateBorder = true;
-				break;
+		if (!$separateBorder) {
+			foreach (['top', 'left'] as $k) {
+				if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
+					$separateBorder = true;
+					break;
+				}
 			}
 		}
 

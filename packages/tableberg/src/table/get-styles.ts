@@ -2,6 +2,7 @@ import { omitBy, isUndefined, trim, isEmpty } from "lodash";
 import { getBorderVariablesCss, getSpacingCss } from "../utils/styling-helpers";
 import {
     getBorderCSS,
+    getBorderRadiusVar,
     getSpacingStyle,
 } from "@tableberg/shared/utils/styling-helpers";
 import { TablebergBlockAttrs } from "../types";
@@ -13,6 +14,7 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         enableInnerBorder,
         innerBorder,
         tableBorder,
+        cellBorderRadius,
         headerBackgroundColor,
         headerBackgroundGradient,
         evenRowBackgroundColor,
@@ -31,25 +33,37 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         : {};
 
     let spacingDependantStyles: Record<string, any> = {};
+
+    let borderCollapse = true;
+    
+    if (cellBorderRadius) {
+        for (const side in cellBorderRadius) {
+            if (cellBorderRadius[side] !== "0px") {
+                borderCollapse = false;
+                break;
+            }
+        }
+    }
+
     if (
         (cellSpacingCSS?.top ?? "0") !== "0" ||
         (cellSpacingCSS.left ?? "0") !== "0"
     ) {
         spacingDependantStyles = {
-            "border-collapse": "separate",
             border: "none",
             "border-spacing": `${cellSpacingCSS?.top || 0} ${
                 cellSpacingCSS?.left || 0
             }`,
         };
+        borderCollapse = false;
     } else {
         spacingDependantStyles = getBorderCSS(tableBorder);
-        spacingDependantStyles["border-collapse"] = "collapse";
     }
 
     let styles: Record<string, any> = {
         color: fontColor,
         "font-size": fontSize,
+        "border-collapse": borderCollapse ? "collapse" : "separate",
         "--tableberg-global-link-color": linkColor,
         "--tableberg-header-bg":
             headerBackgroundGradient || headerBackgroundColor,
@@ -61,6 +75,7 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         ...spacingDependantStyles,
         ...tableInnerBorder,
         ...getSpacingStyle(cellPadding, "--tableberg-cell-padding"),
+        ...getBorderRadiusVar(cellBorderRadius, "--tableberg-cell"),
     };
 
     return omitBy(

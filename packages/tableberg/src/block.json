@@ -98,6 +98,10 @@
             "type": "object",
             "default": {}
         },
+        "cellBorderRadius": {
+            "type": "object",
+            "default": {}
+        },
         "innerBorder": {
             "type": "object",
             "default": {}
