@@ -69,13 +69,11 @@ class Table
 			+ $inner_border_variables
 			+ $cell_radius;
 
-
-		if (!$separateBorder) {
-			foreach (['top', 'left'] as $k) {
-				if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
-					$separateBorder = true;
-					break;
-				}
+		foreach (['top', 'left'] as $k) {
+			if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
+				$styles['--tableberg-border-collapse'] = 'separate';
+			} else {
+				$styles += $table_border_css;
 			}
 		}
 
@@ -263,18 +261,21 @@ class Table
 	 */
 	public function block_registration()
 	{
-		$defaults = new \Tableberg\Defaults();
 		$tableberg_assets = new \Tableberg\Assets();
 		$tableberg_assets->register_blocks_assets();
 		if (!is_admin()) {
 			$tableberg_assets->register_frontend_assets();
 		}
-		register_block_type(
-			TABLEBERG_DIR_PATH . 'build/block.json',
-			array(
-				'attributes' => $defaults->get_default_attributes('tableberg/table'),
+		$jsonPath = TABLEBERG_DIR_PATH . 'build/block.json';
+		$attrs = json_decode(file_get_contents($jsonPath), true)['attributes'];
+
+		register_block_type_from_metadata(
+			$jsonPath,
+			[
+				'attributes' => $attrs,
 				'render_callback' => array($this, 'render_tableberg_table_block'),
-			)
+			]
 		);
+
 	}
 }
