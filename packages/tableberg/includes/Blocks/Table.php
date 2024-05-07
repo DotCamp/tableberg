@@ -46,7 +46,6 @@ class Table
 
 		$global_font_style = Utils::get_global_style_variables_css($attributes);
 
-		$cell_padding = Utils::get_spacing_css($attributes['cellPadding']);
 		$cellSpacing = $attributes['cellSpacing'] ?? [];
 		$table_spacing = Utils::get_spacing_css($cellSpacing);
 
@@ -61,13 +60,13 @@ class Table
 			'--tableberg-odd-bg' => $odd_row_bg,
 			'--tableberg-header-bg' => $header_bg,
 			'--tableberg-footer-bg' => $footer_bg,
-			'--tableberg-cell-padding-top' => $cell_padding['top'] ?? '',
-			'--tableberg-cell-padding-right' => $cell_padding['right'] ?? '',
-			'--tableberg-cell-padding-bottom' => $cell_padding['bottom'] ?? '',
-			'--tableberg-cell-padding-left' => $cell_padding['left'] ?? '',
 			'--tableberg-cell-spacing-top' => $table_spacing['top'] ?? '',
 			'--tableberg-cell-spacing-left' => $table_spacing['left'] ?? '',
-		] + $table_border_variables + $inner_border_variables + $global_font_style;
+		]
+			+ Utils::get_spacing_style($attributes['cellPadding'], '--tableberg-cell-padding')
+			+ $table_border_variables
+			+ $inner_border_variables
+			+ $global_font_style;
 
 		foreach (['top', 'left'] as $k) {
 			if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
