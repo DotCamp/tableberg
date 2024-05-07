@@ -156,11 +156,11 @@ class Utils
 		return $object;
 	}
 
-	
-	
-	public static function get_border_style(array | string $object): array
+
+
+	public static function get_border_style(array|string $object): array
 	{
-		
+
 		if (is_string($object)) {
 			return [
 				'border' => $object
@@ -168,15 +168,15 @@ class Utils
 		}
 		if (isset($object['color']) || isset($object['width'])) {
 			return [
-				'border-width' => $object['width']??'',
-				'border-color' => $object['color']??'',
+				'border-width' => $object['width'] ?? '',
+				'border-color' => $object['color'] ?? '',
 			];
 		}
 		$css = [];
 
 		foreach ($object as $key => $value) {
-			$css['border-'.$key.'-width'] = $value['width']??'';
-            $css['border-'.$key.'-color'] = $value['color']??'';
+			$css['border-' . $key . '-width'] = $value['width'] ?? '';
+			$css['border-' . $key . '-color'] = $value['color'] ?? '';
 		}
 		return $css;
 	}
@@ -187,12 +187,36 @@ class Utils
 				'border-radius' => $object
 			];
 		}
-		
+
 		$css = [];
 
 		foreach ($object as $key => $value) {
-			$corner  = strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $key));
-			$css['border-'.$corner.'-radius'] = $value;
+			$corner = strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $key));
+			$css['border-' . $corner . '-radius'] = $value;
+		}
+		return $css;
+	}
+
+	public static function get_border_radius_var(array $object, string $prefix,  &$hasValue = false): array
+	{
+		if (is_string($object)) {
+			$hasValue = $object != '0px';
+			return [
+				$prefix . '-top-left' => $object,
+				$prefix . '-top-right' => $object,
+				$prefix . '-bottom-left' => $object,
+				$prefix . '-bottom-right' => $object,
+			];
+		}
+
+		$css = [];
+
+		foreach ($object as $key => $value) {
+			$corner = strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $key));
+			$css[$prefix . '-' . $corner] = $value;
+			if ($value != '0px') {
+				$hasValue = true;
+			}
 		}
 		return $css;
 	}
@@ -318,9 +342,9 @@ class Utils
 
 		foreach ($object as $key => $value) {
 			if (self::is_value_spacing_preset($value)) {
-				$css[$prop.'-'.$key] = self::get_spacing_preset_css_var($value);
+				$css[$prop . '-' . $key] = self::get_spacing_preset_css_var($value);
 			} else {
-				$css[$prop.'-'.$key] = $value;
+				$css[$prop . '-' . $key] = $value;
 			}
 		}
 
@@ -393,7 +417,8 @@ class Utils
 	}
 
 
-	public static function get_any(array $attributes, string ...$keys) {
+	public static function get_any(array $attributes, string ...$keys)
+	{
 		foreach ($keys as $key) {
 			if (isset($attributes[$key]) && $attributes[$key]) {
 				return $attributes[$key];

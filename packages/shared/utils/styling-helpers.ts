@@ -2,6 +2,7 @@ import {
     // @ts-ignore
     isValueSpacingPreset,
 } from "@wordpress/block-editor";
+import { kebabCase } from "lodash";
 import { HTMLAttributes } from "react";
 
 export type StyleAttr = NonNullable<HTMLAttributes<HTMLDivElement>["style"]>;
@@ -118,6 +119,30 @@ export const getBorderRadiusCSS = (object: any): StyleAttr => {
         const uCorner = corner.charAt(0).toUpperCase() + corner.slice(1);
         // @ts-ignore
         css[`border${uCorner}Radius`] = object[corner];
+    }
+    return css;
+};
+
+export const getBorderRadiusVar = (
+    object: any,
+    prefix: string,
+): StyleAttr => {
+    if (!object) {
+        return {};
+    }
+    if (typeof object === "string") {
+        return {
+            [prefix + "-top-left"]: object,
+            [prefix + "-top-right"]: object,
+            [prefix + "-bottom-left"]: object,
+            [prefix + "-bottom-right"]: object,
+        } as any;
+    }
+    const css: StyleAttr = {};
+    for (const corner in object) {
+        const kCorner = kebabCase(corner);
+        // @ts-ignore
+        css[prefix + `-${kCorner}`] = object[corner];
     }
     return css;
 };
