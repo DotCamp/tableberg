@@ -193,12 +193,11 @@ class Utils
 		foreach ($object as $key => $value) {
 			$corner = strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $key));
 			$css['border-' . $corner . '-radius'] = $value;
-<<<<<<< HEAD
 		}
 		return $css;
 	}
 
-	public static function get_border_radius_var(array $object, string $prefix,  &$hasValue = false): array
+	public static function get_border_radius_var(array $object, string $prefix, &$hasValue = false): array
 	{
 		if (is_string($object)) {
 			$hasValue = $object != '0px';
@@ -218,8 +217,6 @@ class Utils
 			if ($value != '0px') {
 				$hasValue = true;
 			}
-=======
->>>>>>> develop
 		}
 		return $css;
 	}
