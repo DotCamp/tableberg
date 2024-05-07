@@ -435,7 +435,7 @@ function TablebergControls(
                     onChange={(tableAlignment) => {
                         setTableAttributes({ tableAlignment });
                     }}
-                    controlset="alignment"
+                    controlset="all"
                 />
             </BlockControls>
         </>
