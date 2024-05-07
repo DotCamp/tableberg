@@ -40,41 +40,46 @@ class Table
 	public static function get_styles($attributes)
 	{
 		$even_row_bg = Utils::get_background_color($attributes, 'evenRowBackgroundColor', 'evenRowBackgroundGradient');
-		$odd_row_bg  = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
+		$odd_row_bg = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
 		$header_bg = Utils::get_background_color($attributes, 'headerBackgroundColor', 'headerBackgroundGradient');
-		$footer_bg  = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
+		$footer_bg = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
 
-		$global_font_style = Utils::get_global_style_variables_css($attributes);
 
-		$cell_padding  = Utils::get_spacing_css($attributes['cellPadding']);
-		$cellSpacing   = $attributes['cellSpacing'] ?? [];
+		$cellSpacing = $attributes['cellSpacing'] ?? [];
 		$table_spacing = Utils::get_spacing_css($cellSpacing);
 
 
-		$table_border_variables = Utils::get_border_variables_css($attributes['tableBorder'], 'table');
+		$table_border_css = Utils::get_border_css($attributes['tableBorder']);
 		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : array();
 
 		$styles = [
 			'width' => $attributes['tableWidth'],
 			'max-width' => $attributes['tableWidth'],
+			'color' => $attributes['fontColor'] ?? '',
+			'font-size' => $attributes['fontSize'] ?? '',
+			'--tableberg-global-link-color' => $attributes['linkColor'] ?? '',
 			'--tableberg-even-bg' => $even_row_bg,
 			'--tableberg-odd-bg' => $odd_row_bg,
 			'--tableberg-header-bg' => $header_bg,
 			'--tableberg-footer-bg' => $footer_bg,
-			'--tableberg-cell-padding-top' => $cell_padding['top'] ?? '',
-			'--tableberg-cell-padding-right' => $cell_padding['right'] ?? '',
-			'--tableberg-cell-padding-bottom' => $cell_padding['bottom'] ?? '',
-			'--tableberg-cell-padding-left' => $cell_padding['left'] ?? '',
-			'--tableberg-cell-spacing-top' => $table_spacing['top'] ?? '',
-			'--tableberg-cell-spacing-left' => $table_spacing['left'] ?? '',
-		] + $table_border_variables + $inner_border_variables + $global_font_style;
+			'border-spacing' => ($table_spacing['top'] ?? 0) . ' ' . ($table_spacing['left'] ?? 0),
+		]
+			+ Utils::get_spacing_style($attributes['cellPadding'], '--tableberg-cell-padding')
+			+ $inner_border_variables;
+
+		$separateBorder = false;
 
 		foreach (['top', 'left'] as $k) {
 			if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
-				$styles['--tableberg-border-collapse'] = 'separate';
-			} else {
-				$styles += $table_border_variables;
+				$separateBorder = true;
+				break;
 			}
+		}
+
+		if ($separateBorder) {
+			$styles['border-collapse'] = 'separate';
+		} else {
+			$styles += $table_border_css;
 		}
 
 		return Utils::generate_css_string($styles);
@@ -91,7 +96,7 @@ class Table
 		$table_width = $attributes['tableWidth'];
 
 		$enable_inner_border = $attributes['enableInnerBorder'];
-		$classes             = array();
+		$classes = array();
 		if ($enable_inner_border) {
 			$classes[] = 'has-inner-border';
 		}
@@ -130,26 +135,26 @@ class Table
 			$colgroup .= "<col width=\"$w\" style=\"min-width:$w;\"/>";
 		}
 		$colgroup .= '</colgroup>';
-		$content  = HtmlUtils::insert_inside_tag($content, 'table', $colgroup);
+		$content = HtmlUtils::insert_inside_tag($content, 'table', $colgroup);
 		return $content;
 	}
 
 	private function even_odd_rows($attributes, $content)
 	{
 		$even_color = Utils::get_background_color($attributes, 'evenRowBackgroundColor', 'evenRowBackgroundGradient');
-		$odd_color  = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
+		$odd_color = Utils::get_background_color($attributes, 'oddRowBackgroundColor', 'oddRowBackgroundGradient');
 
 		if (!$even_color && !$odd_color) {
 			return $content;
 		}
 
-		
+
 
 		$cursor = 0;
-		$i      = 0;
-		$end    = $attributes['rows'] - 1;
+		$i = 0;
+		$end = $attributes['rows'] - 1;
 		if ($attributes['enableTableHeader']) {
-			$i       = 1;
+			$i = 1;
 			$content = HtmlUtils::append_attr_value($content, 'tr', '', 'class', 0, $cursor);
 		}
 		if ($attributes['enableTableFooter']) {
@@ -170,7 +175,7 @@ class Table
 			return '';
 		}
 		$responsive = $attributes["responsive"]["breakpoints"];
-		$str        = " ";
+		$str = " ";
 		if (isset($responsive[$device]) && $responsive[$device]["enabled"]) {
 			$deviceOpts = $responsive[$device];
 			$str .= 'data-tableberg-' . $device . '-width="' . $deviceOpts["maxWidth"] . '" ';
@@ -196,7 +201,7 @@ class Table
 	public function render_tableberg_table_block($attributes, $content, $block)
 	{
 		$table_class_names = $this->get_style_class($attributes);
-		$table_style       = $this->get_styles($attributes);
+		$table_style = $this->get_styles($attributes);
 
 		$table_attrs = 'class = "' . trim(join(' ', $table_class_names)) . '" style="' . $table_style . '"';
 
@@ -205,7 +210,7 @@ class Table
 		$content = HtmlUtils::replace_closing_tag($content, 'table', '</tr></tbody></table>');
 
 		if ($attributes['enableTableHeader']) {
-			$content  = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-header', 'class');
+			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-header', 'class');
 			$bg_color = Utils::get_background_color($attributes, 'headerBackgroundColor', 'headerBackgroundGradient');
 			if ($bg_color) {
 				$content = HtmlUtils::append_attr_value($content, 'tr', "background: {$bg_color} !important;", 'style');
@@ -214,8 +219,8 @@ class Table
 		}
 		if ($attributes['enableTableFooter']) {
 			$footer_idx = strrpos($content, '<tr');
-			$content    = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-footer', 'class', $footer_idx);
-			$bg_color   = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
+			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-footer', 'class', $footer_idx);
+			$bg_color = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
 			if ($bg_color) {
 				$content = HtmlUtils::append_attr_value($content, 'tr', "background: {$bg_color} !important;", 'style', $footer_idx);
 			}
@@ -228,11 +233,11 @@ class Table
 		$responsive = trim(self::get_responsiveness_metadata($attributes, 'mobile') . self::get_responsiveness_metadata($attributes, 'tablet'));
 
 		if ($responsive) {
-			
-			$str  = 'data-tableberg-header="'.$attributes['enableTableHeader'].'" ';
-			$str .= 'data-tableberg-footer="'.$attributes['enableTableFooter'].'" ';
-			$responsive = 'data-tableberg-responsive '.$str.' data-tableberg-rows="' . $attributes['rows'] . '" data-tableberg-cols="' . $attributes['cols'] . '" ' . $responsive;
-			$content    = HtmlUtils::add_attrs_to_tag($content, 'table', $responsive);
+
+			$str = 'data-tableberg-header="' . $attributes['enableTableHeader'] . '" ';
+			$str .= 'data-tableberg-footer="' . $attributes['enableTableFooter'] . '" ';
+			$responsive = 'data-tableberg-responsive ' . $str . ' data-tableberg-rows="' . $attributes['rows'] . '" data-tableberg-cols="' . $attributes['cols'] . '" ' . $responsive;
+			$content = HtmlUtils::add_attrs_to_tag($content, 'table', $responsive);
 		}
 
 		self::$lastRow = null;
@@ -255,7 +260,7 @@ class Table
 	 */
 	public function block_registration()
 	{
-		$defaults         = new \Tableberg\Defaults();
+		$defaults = new \Tableberg\Defaults();
 		$tableberg_assets = new \Tableberg\Assets();
 		$tableberg_assets->register_blocks_assets();
 		if (!is_admin()) {

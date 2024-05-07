@@ -43,6 +43,7 @@ export interface TablebergBlockAttrs {
     footerBackgroundColor: string | null;
     footerBackgroundGradient: string | null;
     tableBorder: SingleBorderTypes;
+    cellBorderRadius: any;
     innerBorder: SingleBorderTypes;
     enableInnerBorder: boolean;
     isExample: boolean;
@@ -52,4 +53,3 @@ export interface TablebergBlockAttrs {
     responsive: ResponsiveOptions;
 }
 
-export { PaddingTypes } from "./utils/common-types";
