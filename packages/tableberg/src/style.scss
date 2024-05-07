@@ -7,11 +7,10 @@
 
 div.wp-block-tableberg-wrapper {
     --wp--preset--spacing--5: 5px;
-    
+
     box-sizing: border-box;
 
-
-    &[id*="block-"] {
+    @mixin justify-table {
         &.justify-table-left {
             margin-left: 0 !important;
             margin-right: auto !important;
@@ -24,18 +23,23 @@ div.wp-block-tableberg-wrapper {
             margin-left: auto !important;
             margin-right: 0 !important;
         }
+        &.justify-table-wide {
+            max-width: none !important;
+        }
+        &.justify-table-full {
+            max-width: none !important;
+            margin-right: calc(
+                var(--wp--style--root--padding-right) * -1
+            ) !important;
+            margin-left: calc(
+                var(--wp--style--root--padding-left) * -1
+            ) !important;
+        }
     }
-    &.justify-table-left {
-        margin-left: 0 !important;
-        margin-right: auto !important;
-    }
-    &.justify-table-center {
-        margin-left: auto !important;
-        margin-right: auto !important;
-    }
-    &.justify-table-right {
-        margin-left: auto !important;
-        margin-right: 0 !important;
+
+    @include justify-table;
+    &[id*="block-"] {
+        @include justify-table;
     }
 
     &.tableberg-scroll-x {
@@ -91,15 +95,14 @@ div.wp-block-tableberg-wrapper {
                 );
             }
         }
-
     }
 
     .wp-block-paragraph [data-rich-text-placeholder]::after {
-        content: "Type here"
+        content: "Type here";
     }
 
     .wp-block-paragraph:focus [data-rich-text-placeholder]::after {
-        content: "Type / to choose a block"
+        content: "Type / to choose a block";
     }
 }
 
@@ -122,4 +125,3 @@ div.wp-block-tableberg-wrapper {
 .tableberg-responsiveness-device-switcher.is-pressed.components-button {
     box-shadow: inset 0 0 0 1px #1e1e1e;
 }
-
