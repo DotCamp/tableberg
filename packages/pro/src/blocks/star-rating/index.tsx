@@ -14,7 +14,6 @@ import { BlockIcon, Star } from "@tableberg/shared/icons/star-rating";
 import { __ } from "@wordpress/i18n";
 import StarBlockControls from "./controls";
 import classNames from "classnames";
-import { SpacingTypes } from "../../utils/types";
 
 export interface StarRatingProps {
     starCount: number;
@@ -25,8 +24,8 @@ export interface StarRatingProps {
     reviewTextAlign: string;
     reviewTextColor: string | null;
     starAlign: string;
-    padding: SpacingTypes;
-    margin: SpacingTypes;
+    padding: any;
+    margin: any;
 }
 
 function Edit(props: BlockEditProps<StarRatingProps>) {
