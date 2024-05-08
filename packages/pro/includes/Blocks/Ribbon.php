@@ -18,8 +18,8 @@ class Ribbon
     {
         $ind = $attributes['individual'];
         $style = Utils::generate_css_string([
-            "color" => $attributes["color"]??'',
-            "font-size" => $attributes["fontSize"]??'',
+            "color" => $attributes["color"] ?? '',
+            "font-size" => $attributes["fontSize"] ?? '',
             "height" => $ind["height"],
             "width" => $ind["width"],
             $ind["originX"] => $ind["x"],
@@ -39,8 +39,8 @@ class Ribbon
     {
         $ind = $attributes['individual'];
         $style = Utils::generate_css_string([
-            "color" => $attributes["color"]??'',
-            "font-size" => $attributes["fontSize"]??'',
+            "color" => $attributes["color"] ?? '',
+            "font-size" => $attributes["fontSize"] ?? '',
             "height" => "calc( 2 * {$ind['distance']})",
             "width" => "calc( 2 * {$ind['distance']})",
             $ind["side"] => "-3px"
@@ -59,15 +59,15 @@ class Ribbon
     {
         $ind = $attributes['individual'];
         $style = Utils::generate_css_string([
-            "color" => $attributes["color"]??'',
-            "font-size" => $attributes["fontSize"]??'',
+            "color" => $attributes["color"] ?? '',
+            "font-size" => $attributes["fontSize"] ?? '',
             $ind["originY"] => $ind["y"],
             $ind["side"] => "-20px"
         ]);
 
         $contentStyle = Utils::generate_css_string(
-            Utils::get_spacing_style($ind['padding'] ?? [], 'padding') + 
-            Utils::get_border_style($ind['border'] ?? []) + 
+            Utils::get_spacing_style($ind['padding'] ?? [], 'padding') +
+            Utils::get_border_style($ind['border'] ?? []) +
             [
                 'background' => Utils::get_any($attributes, 'bgGradient', 'background')
             ]
@@ -83,7 +83,7 @@ class Ribbon
     {
         $ind = $attributes['individual'];
         $style = Utils::generate_css_string([
-            "font-size" => $attributes["fontSize"]??'',
+            "font-size" => $attributes["fontSize"] ?? '',
             $ind["originX"] => $ind["x"],
             $ind["originY"] => $ind["y"],
         ]);
@@ -98,20 +98,29 @@ class Ribbon
             'width' => $ind['size'],
         ]);
 
-        $content = '<div class="tableberg-shape-'.$ind['shape'].'" style="' . $contentStyle . '">' . $icon . '</div>';
+        $content = '<div class="tableberg-shape-' . $ind['shape'] . '" style="' . $contentStyle . '">' . $icon . '</div>';
 
         return '<div class="tableberg-ribbon tableberg-ribbon-icon" style="' . $style . '">' . $content . '</div>';
     }
 
     public function render_block(array $attributes, $content, $block)
     {
-        return match ($attributes['type']) {
-            'bookmark' => self::render_bookmark($attributes),
-            'corner' => self::render_corner($attributes),
-            'side' => self::render_side($attributes),
-            'icon' => self::render_icon($attributes),
-            default => 'Unsupported ribbon type'
-        };
+        switch ($attributes['type']) {
+            case 'bookmark':
+                return self::render_bookmark($attributes);
+
+            case 'corner':
+                return self::render_corner($attributes);
+
+            case 'side':
+                return self::render_side($attributes);
+
+            case 'icon':
+                return self::render_icon($attributes);
+
+        }
+        
+        return 'Unsupported ribbon type';
     }
 
 
