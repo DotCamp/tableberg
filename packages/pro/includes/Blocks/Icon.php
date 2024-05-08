@@ -26,7 +26,7 @@ class Icon
 
         $styles += Utils::get_spacing_style($attributes['padding'] ?? [], 'padding');
         $styles += Utils::get_spacing_style($attributes['margin'] ?? [], 'margin');
-        $styles += Utils::get_border_style($attributes['border'] ?? [], );
+        $styles += Utils::get_border_style($attributes['border'] ?? []);
         $styles += Utils::get_border_radius_style($attributes['borderRadius'] ?? []);
 
         if (isset($attributes['rotation']) && $attributes['rotation'] > 0) {
