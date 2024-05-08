@@ -196,7 +196,7 @@ class Image {
 			esc_url( $url ),
 			esc_attr( $alt ),
 			esc_attr( $image_classes ),
-			$this->build_image_style( $border, $aspect_ratio, $scale, $width, $height, $border_radius ),
+			$this->build_image_style( $border, $aspect_ratio, $scale, $width, $height, $border_radius )
 		);
 
 		$figure = '';

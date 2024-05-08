@@ -35,6 +35,12 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 
 == Changelog ==
 
+= 0.5.1 =
+* NEW: Added table alignment option for full screen
+* FIX: Tableberg breaks dashboard in lower PHP versions
+* FIX: Cell padding not working on frontend
+* IMPROVE: Reduce css variables
+
 = 0.5.0 =
 * NEW: Add device type switching in responsive mode
 * PRO: NEW: New pro blocks: custom html, styled list, star rating, icon, ribbon

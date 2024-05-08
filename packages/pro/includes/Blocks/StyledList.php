@@ -20,7 +20,7 @@ use Tableberg\Utils\Utils;
 class StyledList
 {
 
-	public static int $count = 0;
+	public static $count = 0;
 	/**
 	 * Constructor
 	 *

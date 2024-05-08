@@ -75,59 +75,62 @@ class Common
 		return $stars;
 	}
 
-	private static function get_wp_icon_svg(array $icon, array $custom_attrs) : string {
+	private static function get_wp_icon_svg(array $icon, array $custom_attrs): string
+	{
 		if (isset($icon['type'])) {
 			$tag = strtolower($icon['type']['displayName']);
-		} else{
+		} else {
 			$tag = 'path';
 		}
 
 
 		$attrs = '';
 		$childrenStr = false;
-		foreach($icon['props'] as $attr => $val) {
+		foreach ($icon['props'] as $attr => $val) {
 			if ($attr == 'children') {
 				$childrenStr = self::get_wp_icon_svg($val, []);
 				continue;
-			} 
-			$attrs .= ' '.$attr.'="'.$val.'"';
+			}
+			$attrs .= ' ' . $attr . '="' . $val . '"';
 		}
-		
-		foreach($custom_attrs as $attr => $val) {
-			$attrs .= ' '.$attr.'="'.$val.'"';
+
+		foreach ($custom_attrs as $attr => $val) {
+			$attrs .= ' ' . $attr . '="' . $val . '"';
 		}
 
 
 		if ($childrenStr) {
-			return '<'.$tag.$attrs.'>'.$childrenStr.'</'.$tag.'>';
+			return '<' . $tag . $attrs . '>' . $childrenStr . '</' . $tag . '>';
 		}
-		return '<'.$tag.$attrs.'/>';
+		return '<' . $tag . $attrs . '/>';
 	}
 
 
-	private static function get_fontawesome_icon_svg(array $icon, array $custom_attrs) : string {
+	private static function get_fontawesome_icon_svg(array $icon, array $custom_attrs): string
+	{
 		$attrs = '';
 		$childrenStr = false;
-		foreach($icon['props'] as $attr => $val) {
+		foreach ($icon['props'] as $attr => $val) {
 			if ($attr == 'children') {
 				$childrenStr = self::get_fontawesome_icon_svg($val, []);
 				continue;
-			} 
-			$attrs .= ' '.$attr.'="'.$val.'"';
+			}
+			$attrs .= ' ' . $attr . '="' . $val . '"';
 		}
 
-		foreach($custom_attrs as $attr => $val) {
-			$attrs .= ' '.$attr.'="'.$val.'"';
+		foreach ($custom_attrs as $attr => $val) {
+			$attrs .= ' ' . $attr . '="' . $val . '"';
 		}
 
 		$tag = $icon['type'];
 		if ($childrenStr) {
-			return '<'.$tag.$attrs.'>'.$childrenStr.'</'.$tag.'>';
+			return '<' . $tag . $attrs . '>' . $childrenStr . '</' . $tag . '>';
 		}
-		return '<'.$tag.$attrs.'/>';
+		return '<' . $tag . $attrs . '/>';
 	}
 
-	public static function get_icon_svg(array $attrs, array $custom_attrs = []): string | bool {
+	public static function get_icon_svg(array $attrs, array $custom_attrs = [])
+	{
 		if (!isset($attrs['icon']) || !isset($attrs['icon']['icon'])) {
 			return '';
 		}
