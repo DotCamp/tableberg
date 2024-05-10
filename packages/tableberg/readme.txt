@@ -1,11 +1,11 @@
-=== Table Block by Tableberg - Best WordPress Table Block Plugin ===
+=== Table Block by Tableberg – Best WordPress Table Plugin ===
 Contributors: dotcamp, imtiazrayhan, istiakrayhan, permafrost06, ultimateblocks, wptb
-Tags: table, comparison-tables, comparison-table, amazon-affiliate
+Tags: table, comparison-tables, data-visualization, responsive-table, amazon-affiliate
 Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 0.5.0
+Stable tag: 0.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,17 +13,49 @@ Table Block For the Block Editor. Craft Beautiful Tables With Ease.
 
 == Description ==
 
+The “Table Block by Tableberg” plugin for WordPress simplifies creating and managing tables within the block editor. It features intuitive sub-blocks, allowing users to add and customize tables easily. 
+From pricing tables to product tables, you can build any type of tables using Tableberg. The plugin is designed for both novices and experienced users. It offers advanced functionalities like responsive controls, alignment adjustments, and cell merging, ensuring that tables look great on all devices without the need for coding skills.
+
 https://youtu.be/TKsL_bUVCTU
 
-Meet TableBerg, a simple WordPress plugin that makes adding tables to your website easy as pie. With TableBerg, creating a table in the block editor is straightforward and hassle-free.
+It comes with the following easy-to-use sub-blocks:
 
-It comes with three easy-to-use sub-blocks: text, image, and button. The text block lets you type out information, the image block lets you add pictures, and the button block lets you insert clickable buttons. It’s all pretty intuitive!
+* **Paragraph**: Allows for simple text entries within a table cell.
+* **List**: Facilitates the addition of organized lists to enhance clarity.
+* **Button**: Enables the insertion of clickable buttons for calls to action.
+* **Image**: Supports adding images directly into the table cells.
+* **Star Rating (Pro)**: Provides an option to include interactive star ratings.
+* **Styled List (Pro)**: Offers lists with additional styling options.
+* **Icon (Pro)**: Allows for the integration of icons to visually represent concepts or actions.
+* **Ribbon (Pro)**: Adds decorative ribbons for highlighting special information.
+* **Custom HTML (Pro)**: Enables the use of HTML for complex customizations.
 
-Whether you’re sharing a list of your favorite books, showcasing a menu for your restaurant, or displaying a product catalogue, TableBerg helps you do it in a tidy and attractive way. 
+And here are the key features of the Tableberg plugin: 
 
-You don’t need to be tech-savvy to use it—TableBerg is designed for everyone. 
+* **Header Settings**: Options to disable the header, designate the top row as header, or insert a new header.
+* **Footer Settings**: Similar to header settings, with options for the footer including disable, designate, or insert.
+* **Table Width & Alignment**: Adjust the overall table width and its alignment on the page.
+* **Responsive Settings**: Ensures the table adapts to different device screens (Desktop, Tablet, Mobile)  for optimal display.
+* **Color Customizations**: Change colors for the header, footer, even and odd rows for better visual hierarchy.
+* **Cell Padding & Cell Spacing**: Customize the space within and between cells to improve readability.
+* **Border Options**: Set the table border size, color, and decide whether to include inner borders with customization.
+* **Global Font Style**: Control the font color, link color, and font size across the entire table.
+* **Column Width & Row Height**: Adjust the size of columns and rows to fit content or aesthetic preferences.
+* **Customizations for Each Block**: Detailed settings for each type of block inserted into the table.
 
-It’s a simple tool to make your tables informative, engaging, and easy on the eyes, right within your WordPress block editor.
+Now let’s see some of the use cases of the Tableberg plugin: 
+
+* **Pricing Tables**: Ideal for displaying different pricing tiers with clear comparisons of features and costs.
+* **Comparison Tables**: Compare products, services, or options side by side to aid decision-making.
+* **Amazon Product Tables**: Showcase Amazon products effectively, enhancing affiliate marketing efforts.
+* **Pros & Cons Table**: Clearly list the advantages and disadvantages of any item, helping readers make informed choices.
+* **Team Members Table**: Display team member information such as roles, bios, and contact info in an organized manner.
+* **Schedule Tables**: Perfect for laying out event schedules, class times, or appointment slots.
+* **Restaurant Menu Tables**: List menu items along with descriptions and prices in an attractive, easy-to-read format.
+* **More**: The plugin's flexibility supports a wide range of other applications tailored to specific needs.
+
+If you have any suggestions or have faced any issues, contact us [here](https://tableberg.com/contact/). You can also follow Tableberg on [Twitter](https://twitter.com/Tableberg).
+
 
 == Installation ==
 1. Upload the plugin zip file via the plugin page of WordPress by clicking \'Add New\' and selecting the zip from your local computer.
@@ -31,7 +63,8 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 
 == Screenshot ==
 
-1. Core Table Block vs Tableberg Block
+1. Creating a table with Tableberg
+2. Core Table Block vs Tableberg Block
 
 == Changelog ==
 
@@ -120,3 +153,4 @@ It’s a simple tool to make your tables informative, engaging, and easy on the 
 * FIX: (Table Block) Fixed an issue with undoing adding a row.
 * FIX: (Table Block) Fixed an issue with undoing adding a column.
 * FIX: (Button Block) Fixed an issue with color.
+
