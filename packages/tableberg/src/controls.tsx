@@ -36,6 +36,7 @@ import {
     ColorPickerDropdown,
     ToolbarWithDropdown,
     BorderRadiusControl,
+    SizeControl,
 } from "@tableberg/components";
 
 const AVAILABLE_JUSTIFICATIONS = [
@@ -144,7 +145,7 @@ function TablebergControls({
             <InspectorControls>
                 <ToolsPanel
                     label={__("Cell Settings", "tableberg")}
-                    resetAll={() => {}}
+                    resetAll={() => { }}
                 >
                     <ToolsPanelItem label={__("")} hasValue={() => true}>
                         <ToggleControl
@@ -159,22 +160,21 @@ function TablebergControls({
                     </ToolsPanelItem>
                     {cellBlock && (
                         <>
-                            {!tableAttributes.fixedColWidth && (
-                                <ToolsPanelItem
+                            <ToolsPanelItem
+                                label={__("Column Width", "tableberg")}
+                                hasValue={() => true}
+                            >
+                                <SizeControl
+                                    value={
+                                        tableAttributes.colWidths[
+                                        cellBlock.attributes.col
+                                        ] as any
+                                    }
                                     label={__("Column Width", "tableberg")}
-                                    hasValue={() => true}
-                                >
-                                    <HeightControl
-                                        value={
-                                            tableAttributes.colWidths[
-                                                cellBlock.attributes.col
-                                            ] as any
-                                        }
-                                        label={__("Column Width", "tableberg")}
-                                        onChange={setWidth}
-                                    />
-                                </ToolsPanelItem>
-                            )}
+                                    onChange={setWidth as any}
+                                    disabled={tableAttributes.fixedColWidth}
+                                />
+                            </ToolsPanelItem>
                             <ToolsPanelItem
                                 label={__("Row Height", "tableberg")}
                                 hasValue={() => true}
@@ -182,7 +182,7 @@ function TablebergControls({
                                 <HeightControl
                                     value={
                                         tableAttributes.rowHeights[
-                                            cellBlock.attributes.row
+                                        cellBlock.attributes.row
                                         ] as any
                                     }
                                     label={__("Row Height", "tableberg")}
