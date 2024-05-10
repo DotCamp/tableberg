@@ -6,6 +6,11 @@
     padding-bottom: var(--tableberg-cell-padding-bottom, 8px);
     padding-left: var(--tableberg-cell-padding-left, 8px);
 
+    border-top-left-radius: var(--tableberg-cell-top-left);
+    border-top-right-radius: var(--tableberg-cell-top-right);
+    border-bottom-left-radius: var(--tableberg-cell-bottom-left);
+    border-bottom-right-radius: var(--tableberg-cell-bottom-right);
+
     &.tableberg-v-align-top {
         vertical-align: top;
     }

@@ -26,6 +26,10 @@
             "type": "number",
             "default": 0
         },
+        "fixedColWidth": {
+            "type": "boolean",
+            "default": false
+        },
         "colWidths": {
             "type": "array",
             "default": []
@@ -95,6 +99,10 @@
             "default": null
         },
         "tableBorder": {
+            "type": "object",
+            "default": {}
+        },
+        "cellBorderRadius": {
             "type": "object",
             "default": {}
         },

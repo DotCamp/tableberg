@@ -44,36 +44,42 @@ class Table
 		$header_bg = Utils::get_background_color($attributes, 'headerBackgroundColor', 'headerBackgroundGradient');
 		$footer_bg = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
 
-		$global_font_style = Utils::get_global_style_variables_css($attributes);
 
 		$cellSpacing = $attributes['cellSpacing'] ?? [];
 		$table_spacing = Utils::get_spacing_css($cellSpacing);
 
 
-		$table_border_variables = Utils::get_border_variables_css($attributes['tableBorder'], 'table');
-		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : array();
+		$table_border_css = Utils::get_border_css($attributes['tableBorder']);
+		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : [];
+		$cell_radius = Utils::get_border_radius_var($attributes['cellBorderRadius'], '--tableberg-cell', $separateBorder);
 
 		$styles = [
 			'width' => $attributes['tableWidth'],
 			'max-width' => $attributes['tableWidth'],
+			'color' => $attributes['fontColor'] ?? '',
+			'font-size' => $attributes['fontSize'] ?? '',
+			'--tableberg-global-link-color' => $attributes['linkColor'] ?? '',
 			'--tableberg-even-bg' => $even_row_bg,
 			'--tableberg-odd-bg' => $odd_row_bg,
 			'--tableberg-header-bg' => $header_bg,
 			'--tableberg-footer-bg' => $footer_bg,
-			'--tableberg-cell-spacing-top' => $table_spacing['top'] ?? '',
-			'--tableberg-cell-spacing-left' => $table_spacing['left'] ?? '',
+			'border-spacing' => ($table_spacing['top'] ?? 0) . ' ' . ($table_spacing['left'] ?? 0),
 		]
 			+ Utils::get_spacing_style($attributes['cellPadding'], '--tableberg-cell-padding')
-			+ $table_border_variables
 			+ $inner_border_variables
-			+ $global_font_style;
+			+ $cell_radius;
 
 		foreach (['top', 'left'] as $k) {
 			if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
-				$styles['--tableberg-border-collapse'] = 'separate';
-			} else {
-				$styles += $table_border_variables;
+				$separateBorder = true;
 			}
+		}
+
+		if ($separateBorder) {
+			$styles['border-collapse'] = 'separate';
+		} else {
+			$styles += $table_border_css;
+			$styles['border-collapse'] = 'collapse';
 		}
 
 		return Utils::generate_css_string($styles);
@@ -114,8 +120,10 @@ class Table
 
 
 
-	private static function setRowColSizes($content, $heights, $widths)
+	private static function setRowColSizes($content, $attributes)
 	{
+		$heights = $attributes['rowHeights'];
+		$widths = $attributes['colWidths'];
 		$lastIdx = 0;
 		foreach ($heights as $height) {
 			$idx = strpos($content, '<tr', $lastIdx);
@@ -125,9 +133,18 @@ class Table
 			$lastIdx = $idx + 1;
 		}
 		$colgroup = '<colgroup>';
-		foreach ($widths as $w) {
-			$colgroup .= "<col width=\"$w\" style=\"min-width:$w;\"/>";
+		if ($attributes['fixedColWidth']) {
+			$cols = sizeof($widths);
+			$w = 100 / $cols.'%';
+			for ($i = 0; $i < $cols; $i++) {
+				$colgroup .= "<col width=\"$w\" style=\"min-width:$w;\"/>";
+			}
+		} else {
+			foreach ($widths as $w) {
+				$colgroup .= "<col width=\"$w\" style=\"min-width:$w;\"/>";
+			}
 		}
+
 		$colgroup .= '</colgroup>';
 		$content = HtmlUtils::insert_inside_tag($content, 'table', $colgroup);
 		return $content;
@@ -221,7 +238,7 @@ class Table
 		}
 
 
-		$content = self::setRowColSizes($content, $attributes['rowHeights'], $attributes['colWidths']);
+		$content = self::setRowColSizes($content, $attributes);
 		$content = self::even_odd_rows($attributes, $content);
 
 		$responsive = trim(self::get_responsiveness_metadata($attributes, 'mobile') . self::get_responsiveness_metadata($attributes, 'tablet'));

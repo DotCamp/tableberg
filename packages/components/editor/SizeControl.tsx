@@ -57,6 +57,7 @@ export interface SizeControlProps {
         };
     };
     initialPosition?: string;
+    disabled?: boolean;
 }
 
 export default function SizeControl({
@@ -65,6 +66,7 @@ export default function SizeControl({
     value,
     rangeConfig = {},
     initialPosition,
+    disabled
 }: SizeControlProps) {
     const customRangeValue = parseFloat(value || "0");
 
@@ -157,6 +159,7 @@ export default function SizeControl({
                         size={"__unstable-large"}
                         label={label}
                         hideLabelFromVision
+                        disabled={disabled}
                     />
                 </FlexItem>
                 <FlexItem isBlock>
@@ -178,6 +181,7 @@ export default function SizeControl({
                                     ? parseFloat(initialPosition)
                                     : undefined
                             }
+                            disabled={disabled}
                         />
                     </Spacer>
                 </FlexItem>

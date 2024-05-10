@@ -16,7 +16,7 @@ export const ALLOWED_BLOCKS = ["tableberg/cell"];
 export const PrimaryTable = (
     props: BlockEditProps<TablebergBlockAttrs> & {
         tableBlock: BlockInstance<TablebergBlockAttrs>;
-    }
+    },
 ) => {
     const { attributes, tableBlock, setAttributes } = props;
     const blockProps = {
@@ -35,9 +35,9 @@ export const PrimaryTable = (
         allowedBlocks: ALLOWED_BLOCKS,
     });
 
-    const storeActions = useDispatch(
-        blockEditorStore
-    ) as BlockEditorStoreActions;
+    const storeActions: BlockEditorStoreActions = useDispatch(
+        blockEditorStore,
+    ) as any;
 
     const [colUpt, setColUpt] = useState(0);
     const lastRowCount = useRef(attributes.rows);
@@ -62,7 +62,7 @@ export const PrimaryTable = (
                     ...(attributes.responsive || {}),
                     last: "",
                 },
-                cells: attributes.cells - toRemoves.length
+                cells: attributes.cells - toRemoves.length,
             });
             storeActions.removeBlocks(toRemoves);
         }
@@ -90,13 +90,26 @@ export const PrimaryTable = (
         );
     });
 
+    let fixedWidth: any = null;
+
+    if (attributes.fixedColWidth) {
+        fixedWidth = `${100 / attributes.cols}%`;
+    }
+
     return (
         <>
             <table {...blockProps}>
                 <colgroup>
-                    {attributes.colWidths.map((w) => (
-                        <col width={w} style={{ minWidth: w }} />
-                    ))}
+                    {fixedWidth
+                        ? attributes.colWidths.map(() => (
+                              <col
+                                  width={fixedWidth}
+                                  style={{ minWidth: fixedWidth }}
+                              />
+                          ))
+                        : attributes.colWidths.map((w) => (
+                              <col width={w} style={{ minWidth: w }} />
+                          ))}
                 </colgroup>
                 {rowTemplate}
             </table>
