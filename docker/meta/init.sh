@@ -9,13 +9,19 @@ if ! wp core is-installed; then
         --dbname=dotcamp \
         --allow-root
     wp core install --path=/var/www/html \
-        --url="http://localhost:8000" \
         --title="Tableberg Test - Docker" \
+        --url="http://localhost:$TABLEBERG_PORT" \
         --admin_user="admin" \
         --admin_email="admin@dotcamp.com" \
         --admin_password="admin"  \
         --allow-root
 fi
+
+echo "Updating url..."
+echo "Port: $TABLEBERG_PORT"
+wp option update home "http://localhost:$TABLEBERG_PORT" --allow-root
+wp option update siteurl "http://localhost:$TABLEBERG_PORT" --allow-root
+
 
 if ! wp plugin is-active tableberg; then
     echo "Activating plugin...";

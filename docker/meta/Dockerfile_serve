@@ -30,7 +30,7 @@ RUN curl -o /var/www/html/latest.zip https://wordpress.org/wordpress-__WP_VERSIO
 RUN unzip /var/www/html/latest.zip \
     && mv -f /var/www/html/wordpress/* /var/www/html/
 
-COPY init.sh /usr/local/bin/entry.sh
+ADD init.sh /usr/local/bin/entry.sh
 
 RUN chmod +x /usr/local/bin/entry.sh
 

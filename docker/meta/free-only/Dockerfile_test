@@ -37,7 +37,7 @@ COPY packages/tableberg/tableberg.zip .
 RUN unzip -o tableberg.zip
 
 
-COPY docker/images/__TABLEBERG_DOCKER_ID__/init.sh /usr/local/bin/entry.sh
+ADD docker/images/__TABLEBERG_DOCKER_ID__/init.sh /usr/local/bin/entry.sh
 
 RUN chmod +x /usr/local/bin/entry.sh
 

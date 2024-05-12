@@ -32,13 +32,13 @@ RUN unzip /var/www/html/latest.zip \
 
 WORKDIR /var/www/html/wp-content/plugins
 
-COPY packages/tableberg/tableberg.zip .
-COPY packages/pro/tableberg-pro.zip .
+ADD packages/tableberg/tableberg.zip ./
+ADD packages/pro/tableberg-pro.zip ./
 
 RUN unzip -o tableberg.zip && unzip -o tableberg-pro.zip
 
 
-COPY docker/images/__TABLEBERG_DOCKER_ID__/init.sh /usr/local/bin/entry.sh
+ADD docker/images/__TABLEBERG_DOCKER_ID__/init.sh /usr/local/bin/entry.sh
 
 RUN chmod +x /usr/local/bin/entry.sh
 

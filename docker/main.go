@@ -26,6 +26,8 @@ type CommonOptions struct {
 	WordPress   string `optional:"" name:"wp" short:"w" help:"Specify WordPress version."`
 	FreeOnly    bool   `optional:"" name:"free-only" short:"f" help:"Use only free resources."`
 	Interactive bool   `optional:"" short:"i" help:"Run in interactive mode."`
+	Port        string `optional:"" help:"Specify the port"`
+	Rebuild     bool   `optional:"" help:"Rebuild the docker image"`
 }
 
 func main() {
@@ -53,26 +55,38 @@ func main() {
 
 	info, err := os.Stat(dirpath)
 
+	if cmd.Port == "" {
+		cmd.Port = "8000"
+	}
+
 	if os.IsNotExist(err) {
 		copyFiles(php, wp, slug, cmd.FreeOnly, isServe)
-		startServer(slug)
+		startServer(slug, cmd)
 	} else if err == nil && info.IsDir() {
-		startServer(slug)
+		startServer(slug, cmd)
 	} else {
 		fmt.Println("Something went wrong!")
 		return
 	}
 }
 
-func startServer(slug string) {
+func startServer(slug string, opts CommonOptions) {
 	fmt.Println("Starting the server...")
 	if err := os.Chdir(DOCKER_DIR + "/images/" + slug); err != nil {
 		fmt.Println(err)
 	}
 
-	cmd := exec.Command("docker-compose", "up", "-d")
+	var cmd *exec.Cmd
+	if opts.Rebuild {
+		cmd = exec.Command("docker-compose", "up", "-d", "--build")
+	} else {
+		cmd = exec.Command("docker-compose", "up", "-d")
+
+	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+
+	cmd.Env = append(os.Environ(), "TABLEBERG_PORT="+opts.Port)
 
 	if err := cmd.Run(); err != nil {
 		fmt.Println("command execution failed: %w", err)

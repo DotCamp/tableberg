@@ -22,8 +22,10 @@ services:
     depends_on:
       db: 
         condition: service_healthy
+    environment:
+      - TABLEBERG_PORT=${TABLEBERG_PORT}
     ports:
-      - "8000:80"
+      - ${TABLEBERG_PORT}:80
     volumes:
       - ../../../packages/tableberg:/var/www/html/wp-content/plugins/tableberg
       - ../../../packages/pro:/var/www/html/wp-content/plugins/tableberg-pro
