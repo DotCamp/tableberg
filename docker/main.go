@@ -204,20 +204,20 @@ func copyFiles(php string, wp string, slug string, freeOnly bool, serve bool) {
 	}
 
 	if freeOnly {
-		copyFile(DOCKER_DIR+"/meta/free-only/init.sh", DOCKER_DIR+"/images/"+slug+"/init.sh")
+		copyFile(DOCKER_DIR+"/meta/init-free.sh", DOCKER_DIR+"/images/"+slug+"/init.sh")
 	} else {
 		copyFile(DOCKER_DIR+"/meta/init.sh", DOCKER_DIR+"/images/"+slug+"/init.sh")
 	}
 	if serve {
 		if freeOnly {
-			copyFile(DOCKER_DIR+"/meta/free-only/docker-compose-serve.yml", DOCKER_DIR+"/images/"+slug+"/docker-compose.yml")
+			copyFile(DOCKER_DIR+"/meta/docker-compose-serve-free.yml", DOCKER_DIR+"/images/"+slug+"/docker-compose.yml")
 		} else {
 			copyFile(DOCKER_DIR+"/meta/docker-compose-serve.yml", DOCKER_DIR+"/images/"+slug+"/docker-compose.yml")
 		}
 		copyFile(DOCKER_DIR+"/meta/Dockerfile_serve", DOCKER_DIR+"/images/"+slug+"/Dockerfile")
 	} else {
 		if freeOnly {
-			copyFile(DOCKER_DIR+"/meta/free-only/Dockerfile_test", DOCKER_DIR+"/images/"+slug+"/Dockerfile")
+			copyFile(DOCKER_DIR+"/meta/Dockerfile_test_free", DOCKER_DIR+"/images/"+slug+"/Dockerfile")
 		} else {
 			copyFile(DOCKER_DIR+"/meta/Dockerfile_test", DOCKER_DIR+"/images/"+slug+"/Dockerfile")
 		}
