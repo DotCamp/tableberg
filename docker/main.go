@@ -14,7 +14,7 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-const DOCKER_DIR = "."
+const DOCKER_DIR = "./docker"
 
 var CLI struct {
 	Serve CommonOptions `cmd:"" help:"Serve a module."`
