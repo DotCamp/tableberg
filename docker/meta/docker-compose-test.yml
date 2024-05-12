@@ -17,8 +17,8 @@ services:
   wordpress:
     container_name: __TABLEBERG_DOCKER_ID__
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../../../
+      dockerfile: docker/images/__TABLEBERG_DOCKER_ID__/Dockerfile
     depends_on:
       db: 
         condition: service_healthy

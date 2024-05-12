@@ -192,7 +192,7 @@ func copyFiles(php string, wp string, slug string, freeOnly bool, serve bool) {
 	if freeOnly {
 		copyFile(DOCKER_DIR+"/meta/free-only/init.sh", DOCKER_DIR+"/images/"+slug+"/init.sh")
 	} else {
-		copyFile(DOCKER_DIR+"/meta/free-only/init.sh", DOCKER_DIR+"/images/"+slug+"/init.sh")
+		copyFile(DOCKER_DIR+"/meta/init.sh", DOCKER_DIR+"/images/"+slug+"/init.sh")
 	}
 	if serve {
 		if freeOnly {
@@ -207,14 +207,15 @@ func copyFiles(php string, wp string, slug string, freeOnly bool, serve bool) {
 		} else {
 			copyFile(DOCKER_DIR+"/meta/Dockerfile_test", DOCKER_DIR+"/images/"+slug+"/Dockerfile")
 		}
-		copyFile(DOCKER_DIR+"/meta/docker-compose-serve.yml", DOCKER_DIR+"/images/"+slug+"/docker-compose.yml")
+		copyFile(DOCKER_DIR+"/meta/docker-compose-test.yml", DOCKER_DIR+"/images/"+slug+"/docker-compose.yml")
 	}
 
 	replaceStringsInFile(DOCKER_DIR+"/images/"+slug+"/docker-compose.yml", map[string]string{
 		"__TABLEBERG_DOCKER_ID__": slug,
 	})
 	replaceStringsInFile(DOCKER_DIR+"/images/"+slug+"/Dockerfile", map[string]string{
-		"__PHP_VERSION__": php,
-		"__WP_VERSION__":  wp,
+		"__TABLEBERG_DOCKER_ID__": slug,
+		"__PHP_VERSION__":         php,
+		"__WP_VERSION__":          wp,
 	})
 }
