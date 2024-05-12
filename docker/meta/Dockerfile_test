@@ -1,0 +1,47 @@
+FROM php:__PHP_VERSION__-apache
+
+EXPOSE 80
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libcurl4-openssl-dev \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        libicu-dev \
+        less \
+        default-mysql-client \
+        unzip \
+        curl \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd mysqli curl intl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# To hide a warning none will see and in case you want to view on another device
+RUN echo "ServerName 0.0.0.0" >> /etc/apache2/apache2.conf
+
+
+# Install WP-CLI
+RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x /usr/local/bin/wp
+
+RUN curl -o /var/www/html/latest.zip https://wordpress.org/wordpress-__WP_VERSION__.zip
+
+RUN unzip /var/www/html/latest.zip \
+    && mv -f /var/www/html/wordpress/* /var/www/html/
+
+WORKDIR /var/www/html/wp-content/plugins
+
+COPY ../../../packages/tableberg/tableberg.zip .
+COPY ../../../packages/pro/tableberg-pro.zip .
+
+RUN unzip tableberg.zip && unzip tableberg-pro.zip
+
+
+COPY init.sh /usr/local/bin/entry.sh
+
+RUN chmod +x /usr/local/bin/entry.sh
+
+ENTRYPOINT [ "entry.sh" ]
+
+
