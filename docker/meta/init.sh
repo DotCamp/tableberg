@@ -7,10 +7,11 @@ if ! wp core is-installed; then
         --dbuser=root \
         --dbpass=1234 \
         --dbname=dotcamp \
-        --allow-root
-    wp core install --path=/var/www/html \
-        --title="Tableberg Test - Docker" \
         --url="http://localhost:$TABLEBERG_PORT" \
+        --allow-root
+
+    wp core install --path=/var/www/html \
+        --title="Tableberg - php-$PHP_VERSION wp-$WP_VERSION" \
         --admin_user="admin" \
         --admin_email="admin@dotcamp.com" \
         --admin_password="admin"  \

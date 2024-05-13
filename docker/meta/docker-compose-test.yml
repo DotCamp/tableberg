@@ -26,5 +26,7 @@ services:
       - ${TABLEBERG_PORT}:80
     environment:
       - TABLEBERG_PORT=${TABLEBERG_PORT}
+      - PHP_VERSION=__PHP_VERSION__
+      - WP_VERSION=__WP_VERSION__
 volumes:
   db_data:

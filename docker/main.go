@@ -117,11 +117,15 @@ func stopContainers() {
 	containers := strings.Split(string(ids), "\n")
 
 	for _, id := range containers {
+		if id == "" {
+			continue
+		}
+		fmt.Print(id + "...\r")
 		cmdStop := exec.Command("docker", "stop", id)
 		cmdStop.Stdout = os.Stdout
 		cmdStop.Stderr = os.Stderr
 		if err := cmdStop.Run(); err != nil {
-			fmt.Printf("Failed to stop containers: %v\n", err)
+			fmt.Printf("Failed to stop container: %v\n", err)
 		}
 	}
 }
@@ -259,6 +263,8 @@ func copyFiles(php string, wp string, slug string, freeOnly bool, serve bool) {
 
 	replaceStringsInFile(DOCKER_DIR+"/images/"+slug+"/docker-compose.yml", map[string]string{
 		"__TABLEBERG_DOCKER_ID__": slug,
+		"__PHP_VERSION__":         php,
+		"__WP_VERSION__":          wp,
 	})
 	replaceStringsInFile(DOCKER_DIR+"/images/"+slug+"/Dockerfile", map[string]string{
 		"__TABLEBERG_DOCKER_ID__": slug,
