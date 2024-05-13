@@ -9,12 +9,11 @@ interface CellAttributesPro {
     bgGradient: string;
 }
 
-const withMyPluginControls = createHigherOrderComponent((BlockEdit) => {
+const CellBlockPro = createHigherOrderComponent((BlockEdit) => {
     return (props) => {
         if (!props.isSelected || props.name !== "tableberg/cell") {
             return <BlockEdit {...props} />;
         }
-        console.log(props.attributes);
 
         const attrs: CellAttributesPro = props.attributes.pro || {};
         const setProAttrs = (newVals: Partial<CellAttributesPro>) => {
@@ -53,4 +52,4 @@ const withMyPluginControls = createHigherOrderComponent((BlockEdit) => {
     };
 }, "tableberg/pro-enhancements");
 
-addFilter("editor.BlockEdit", "tableberg/cell", withMyPluginControls);
+addFilter("editor.BlockEdit", "tableberg/cell", CellBlockPro);
