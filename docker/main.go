@@ -19,6 +19,7 @@ const DOCKER_DIR = "./docker"
 var CLI struct {
 	Serve CommonOptions `cmd:"" help:"Serve a module."`
 	Test  CommonOptions `cmd:"" help:"Test a module."`
+	Stop  struct{}      `cmd:"" help:"Stop all running containers."`
 }
 
 type CommonOptions struct {
@@ -41,6 +42,9 @@ func main() {
 	case "test":
 		isServe = false
 		cmd = CLI.Test
+	case "stop":
+		stopContainers()
+		return
 	default:
 		fmt.Println("Unknown command")
 		ctx.PrintUsage(true)
@@ -48,8 +52,14 @@ func main() {
 	}
 
 	php, wp := getVesions(cmd)
+
+	slug_pre := "tableberg_" + ctx.Command()
+	if cmd.FreeOnly {
+		slug_pre += "_free"
+	}
+
 	reg := regexp.MustCompile(`[^a-zA-Z0-9]+`)
-	slug := reg.ReplaceAllString("tableberg_"+ctx.Command()+"_php_"+php+"_wp_"+wp, "_")
+	slug := reg.ReplaceAllString(slug_pre+"_php_"+php+"_wp_"+wp, "_")
 
 	dirpath := DOCKER_DIR + "/images/" + slug
 
@@ -90,6 +100,29 @@ func startServer(slug string, opts CommonOptions) {
 
 	if err := cmd.Run(); err != nil {
 		fmt.Println("command execution failed: %w", err)
+	}
+}
+
+func stopContainers() {
+	fmt.Println("Stopping all containers...")
+
+	cmdList := exec.Command("docker", "ps", "-q")
+	cmdList.Stderr = os.Stderr
+	ids, err := cmdList.Output()
+	if err != nil {
+		fmt.Printf("Failed to list containers: %v\n", err)
+		return
+	}
+
+	containers := strings.Split(string(ids), "\n")
+
+	for _, id := range containers {
+		cmdStop := exec.Command("docker", "stop", id)
+		cmdStop.Stdout = os.Stdout
+		cmdStop.Stderr = os.Stderr
+		if err := cmdStop.Run(); err != nil {
+			fmt.Printf("Failed to stop containers: %v\n", err)
+		}
 	}
 }
 
