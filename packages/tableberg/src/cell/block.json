@@ -37,9 +37,13 @@
             "type": "string",
             "default": ""
         },
+        "pro": {
+            "type": "object",
+            "default": null
+        },
         "isTmp": {
             "type": "boolean",
-            "default": false
+            "default": {}
         }
     },
     "supports": {
