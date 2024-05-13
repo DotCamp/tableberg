@@ -39,11 +39,11 @@
         },
         "pro": {
             "type": "object",
-            "default": null
+            "default": {}
         },
         "isTmp": {
             "type": "boolean",
-            "default": {}
+            "default": false
         }
     },
     "supports": {

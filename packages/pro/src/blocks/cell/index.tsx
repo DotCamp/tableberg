@@ -30,7 +30,7 @@ const CellBlockPro = createHigherOrderComponent((BlockEdit) => {
                 <InspectorControls group="color">
                     <ColorControl
                         allowGradient
-                        label="Cell Background (Pro)"
+                        label="[PRO] Cell Background"
                         colorValue={attrs.background}
                         gradientValue={attrs.bgGradient}
                         onColorChange={(background) =>
