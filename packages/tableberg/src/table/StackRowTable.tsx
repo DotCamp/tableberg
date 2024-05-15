@@ -1,12 +1,11 @@
 import { BlockEditProps, BlockInstance, cloneBlock } from "@wordpress/blocks";
-import { TablebergBlockAttrs } from "../types";
+import { TablebergBlockAttrs, TablebergCellInstance } from "@tableberg/shared/types";
 import {
     useInnerBlocksProps,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { ALLOWED_BLOCKS } from ".";
-import { TablebergCellInstance } from "../cell";
 import { useDispatch } from "@wordpress/data";
 
 import { getStyles } from "./get-styles";
@@ -35,7 +34,7 @@ export default function StackRowTable(
         },
         className: classNames(
             getStyleClass(attributes),
-            "tableberg-rowstack-table"
+            "tableberg-rowstack-table",
         ),
     } as Record<string, any>;
 
@@ -46,9 +45,9 @@ export default function StackRowTable(
         setColUpt((old) => old + 1);
     }, [attributes.cols]);
 
-    const storeActions = useDispatch(
+    const storeActions: BlockEditorStoreActions = useDispatch(
         blockEditorStore
-    ) as BlockEditorStoreActions;
+    ) as any;
 
     const breakpoints = tableBlock.attributes.responsive.breakpoints;
     const breakpoint =

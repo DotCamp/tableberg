@@ -26,7 +26,7 @@ import {
 /**
  * Internal Imports
  */
-import { ResponsiveOptions, TablebergBlockAttrs } from "./types";
+import { ResponsiveOptions, TablebergBlockAttrs } from "@tableberg/shared/types";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ResponsiveControls } from "./responsiveControls";
 import {

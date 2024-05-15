@@ -1,13 +1,14 @@
-// @ts-ignore
-import { addFilter } from "@wordpress/hooks";
-import { createHigherOrderComponent } from "@wordpress/compose";
 import {
     BlockControls,
     InspectorControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
 // @ts-ignore
-import { ToolbarDropdownMenu } from "@wordpress/components";
+import {
+    PanelBody,
+    ToggleControl,
+    ToolbarDropdownMenu,
+} from "@wordpress/components";
 import { ColorControl } from "@tableberg/components";
 
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -15,11 +16,13 @@ import { useDispatch, useSelect } from "@wordpress/data";
 import { copy, columns, tableRowAfter } from "@wordpress/icons";
 
 import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
-import { BlockInstance, cloneBlock } from "@wordpress/blocks";
+import { BlockEditProps, BlockInstance, cloneBlock } from "@wordpress/blocks";
 import {
     TablebergBlockAttrs,
+    TablebergCellBlockAttrs,
     TablebergCellInstance,
 } from "@tableberg/shared/types";
+import { ProBlockProps } from "..";
 
 const duplicateRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
@@ -150,7 +153,7 @@ const duplicateCol = (
     const colWidths = tableBlock.attributes.colWidths;
     const copyWidths = colWidths.slice(startCol, endCol);
     colWidths.splice(endCol, 0, ...copyWidths);
-    
+
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         cols: tableBlock.attributes.cols + count,
@@ -159,56 +162,63 @@ const duplicateCol = (
     });
 };
 
-const CellBlockPro = createHigherOrderComponent((BlockEdit) => {
-    return (props) => {
-        const storeSelect: BlockEditorStoreSelectors = useSelect(
-            (select) => select(blockEditorStore),
-            [],
-        ) as any;
-        const storeActions: BlockEditorStoreActions = useDispatch(
+export const CellBlockPro = ({
+    props,
+    BlockEdit,
+}: ProBlockProps<TablebergCellBlockAttrs>) => {
+
+    const storeActions: BlockEditorStoreActions = useDispatch(
+        blockEditorStore,
+    ) as any;
+
+    const { storeSelect, tableAttrs, setTableAttrs } = useSelect((select) => {
+        const storeSelect: BlockEditorStoreSelectors = select(
             blockEditorStore,
         ) as any;
 
-        if (props.name !== "tableberg/cell") {
-            return <BlockEdit {...props} />;
-        }
+        const tableBlockId = storeSelect.getBlockRootClientId(props.clientId)!;
+        const tableBlock = storeSelect.getBlock(tableBlockId)!;
 
-        const attrs = props.attributes;
+        const setTableAttrs = (attrs: Partial<TablebergBlockAttrs>) =>
+            storeActions.updateBlockAttributes(tableBlockId, attrs);
 
-        const tableControls: DropdownOption[] = [
-            {
-                icon: tableRowAfter,
-                title: "Duplicate this row",
-                onClick: () => {
-                    const tableBlock: any = storeSelect.getBlock(
-                        storeSelect.getBlockRootClientId(props.clientId)!,
-                    )!;
-                    duplicateRow(
-                        tableBlock,
-                        storeActions,
-                        props.attributes.row,
-                    );
-                },
+        return {
+            storeSelect,
+            tableBlock,
+            tableAttrs: tableBlock.attributes as TablebergBlockAttrs,
+            setTableAttrs,
+        };
+    }, []);
+
+    const attrs = props.attributes;
+
+    const tableControls: DropdownOption[] = [
+        {
+            icon: tableRowAfter,
+            title: "Duplicate this row",
+            onClick: () => {
+                const tableBlock: any = storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(props.clientId)!,
+                )!;
+                duplicateRow(tableBlock, storeActions, props.attributes.row);
             },
-            {
-                icon: columns,
-                title: "Duplicate the column",
-                onClick: () => {
-                    const tableBlock: any = storeSelect.getBlock(
-                        storeSelect.getBlockRootClientId(props.clientId)!,
-                    )!;
-                    duplicateCol(
-                        tableBlock,
-                        storeActions,
-                        props.attributes.col,
-                    );
-                },
+        },
+        {
+            icon: columns,
+            title: "Duplicate the column",
+            onClick: () => {
+                const tableBlock: any = storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(props.clientId)!,
+                )!;
+                duplicateCol(tableBlock, storeActions, props.attributes.col);
             },
-        ];
-        return (
-            <>
-                <BlockEdit {...props} />
-                {props.isSelected && (
+        },
+    ];
+    return (
+        <>
+            <BlockEdit {...props} />
+            {props.isSelected && (
+                <>
                     <InspectorControls group="color">
                         <ColorControl
                             allowGradient
@@ -229,17 +239,37 @@ const CellBlockPro = createHigherOrderComponent((BlockEdit) => {
                             }
                         />
                     </InspectorControls>
-                )}
-                <BlockControls group="other" __experimentalShareWithChildBlocks>
-                    <ToolbarDropdownMenu
-                        icon={copy}
-                        label={"[Pro] Edit table"}
-                        controls={tableControls}
-                    />
-                </BlockControls>
-            </>
-        );
-    };
-}, "tableberg/pro-enhancements");
-
-addFilter("editor.BlockEdit", "tableberg/cell", CellBlockPro);
+                    <InspectorControls>
+                        <PanelBody title="[PRO] Table Sticky Row/Col">
+                            <ToggleControl
+                                checked={tableAttrs.stickyTopRow}
+                                label="Sticky Top Row"
+                                onChange={(stickyTopRow) => {
+                                    setTableAttrs({
+                                        stickyTopRow,
+                                    });
+                                }}
+                            />
+                            <ToggleControl
+                                checked={tableAttrs.stickyFirstCol}
+                                label="Sticky First Col"
+                                onChange={(stickyFirstCol) => {
+                                    setTableAttrs({
+                                        stickyFirstCol,
+                                    });
+                                }}
+                            />
+                        </PanelBody>
+                    </InspectorControls>
+                </>
+            )}
+            <BlockControls group="other" __experimentalShareWithChildBlocks>
+                <ToolbarDropdownMenu
+                    icon={copy}
+                    label={"[Pro] Edit table"}
+                    controls={tableControls}
+                />
+            </BlockControls>
+        </>
+    );
+};

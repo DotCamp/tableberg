@@ -1,5 +1,5 @@
 import { BlockEditProps, BlockInstance } from "@wordpress/blocks";
-import { TablebergBlockAttrs } from "../types";
+import { TablebergBlockAttrs } from "@tableberg/shared/types";
 import { createArray } from "../utils";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -107,7 +107,7 @@ export const PrimaryTable = (
                                   style={{ minWidth: fixedWidth }}
                               />
                           ))
-                        : attributes.colWidths.map((w) => (
+                        : attributes.colWidths.map((w: any) => (
                               <col width={w} style={{ minWidth: w }} />
                           ))}
                 </colgroup>
