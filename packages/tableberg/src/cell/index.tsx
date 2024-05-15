@@ -44,24 +44,9 @@ import "./editor.scss";
 import metadata from "./block.json";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { TablebergBlockAttrs } from "../types";
 import TablebergControls from "../controls";
 import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
-
-export interface TablebergCellBlockAttrs {
-    vAlign: "bottom" | "center" | "top";
-    tagName: "td" | "th";
-    rowspan: number;
-    colspan: number;
-    row: number;
-    col: number;
-    responsiveTarget: string;
-    background?: string;
-    bgGradient?: string;
-    isTmp: boolean;
-}
-
-export type TablebergCellInstance = BlockInstance<TablebergCellBlockAttrs>;
+import { TablebergBlockAttrs, TablebergCellBlockAttrs, TablebergCellInstance } from "@tableberg/shared/types";
 
 const ALLOWED_BLOCKS = [
     "core/paragraph",
