@@ -56,7 +56,8 @@ export interface TablebergCellBlockAttrs {
     row: number;
     col: number;
     responsiveTarget: string;
-    pro: any;
+    background?: string;
+    bgGradient?: string;
     isTmp: boolean;
 }
 
@@ -727,7 +728,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             verticalAlign:
                 attributes.vAlign === "center" ? "middle" : attributes.vAlign,
             height: tableBlock.attributes.rowHeights[props.attributes.row],
-            background: attributes.pro?.bgGradient || attributes.pro?.background
+            background: attributes.bgGradient || attributes.background
         },
         ref: cellRef,
         className: classNames(

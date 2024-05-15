@@ -15,15 +15,7 @@ const CellBlockPro = createHigherOrderComponent((BlockEdit) => {
             return <BlockEdit {...props} />;
         }
 
-        const attrs: CellAttributesPro = props.attributes.pro || {};
-        const setProAttrs = (newVals: Partial<CellAttributesPro>) => {
-            props.setAttributes({
-                pro: {
-                    ...props.attributes.pro,
-                    ...newVals,
-                },
-            });
-        };
+        const attrs = props.attributes;
         return (
             <>
                 <BlockEdit {...props} />
@@ -34,13 +26,13 @@ const CellBlockPro = createHigherOrderComponent((BlockEdit) => {
                         colorValue={attrs.background}
                         gradientValue={attrs.bgGradient}
                         onColorChange={(background) =>
-                            setProAttrs({ background })
+                            props.setAttributes({ background })
                         }
                         onGradientChange={(bgGradient) =>
-                            setProAttrs({ bgGradient })
+                            props.setAttributes({ bgGradient })
                         }
                         onDeselect={() =>
-                            setProAttrs({
+                            props.setAttributes({
                                 background: undefined,
                                 bgGradient: undefined,
                             })

@@ -37,9 +37,13 @@
             "type": "string",
             "default": ""
         },
-        "pro": {
-            "type": "object",
-            "default": {}
+        "background" : {
+            "type": "string",
+            "default": null
+        },
+        "bgGradient" : {
+            "type": "string",
+            "default": null
         },
         "isTmp": {
             "type": "boolean",

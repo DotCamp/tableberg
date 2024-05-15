@@ -30,11 +30,9 @@ class Cell
 
 
 	private static function getStyles($attributes) {
-		$styles = [];
-		if (isset($attributes['pro'])) {
-			$pro = $attributes['pro'];
-			$styles['background'] = Utils::get_any($pro, 'bgGradient', 'background');
-		}
+		$styles = [
+			'background' => Utils::get_any($attributes, 'bgGradient', 'background'),
+		];
 		return Utils::generate_css_string($styles);
 	}
 
