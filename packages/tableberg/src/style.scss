@@ -94,6 +94,29 @@ div.wp-block-tableberg-wrapper {
     .wp-block-paragraph:focus [data-rich-text-placeholder]::after {
         content: "Type / to choose a block";
     }
+
+    &.tableberg-sticky-top-row {
+        position: relative;
+        tr:first-of-type {
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+    }
+
+    &.tableberg-sticky-first-col {
+        position: relative;
+        tr {
+            td:first-child,
+            th:first-child {
+                background: white;
+                position: sticky;
+                left: 0;
+                z-index: 1;
+            }
+        }
+    }
 }
 
 .add-margin-bottom {

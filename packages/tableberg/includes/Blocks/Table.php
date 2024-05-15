@@ -258,6 +258,14 @@ class Table
 		if ($table_alignment && $table_alignment !== "center") {
 			$wrapper_classes[] = 'justify-table-' . $table_alignment;
 		}
+
+		if ($attributes['stickyTopRow']) {
+			$wrapper_classes[] = 'tableberg-sticky-top-row';
+		}
+		if ($attributes['stickyFirstCol']) {
+			$wrapper_classes[] = 'tableberg-sticky-first-col';
+		}
+
 		$wrapper_attributes = get_block_wrapper_attributes([
 			'class' => trim(join(' ', $wrapper_classes)),
 		]);
