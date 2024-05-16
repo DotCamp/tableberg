@@ -5,7 +5,6 @@ import {
 } from "@wordpress/block-editor";
 import {
     PanelBody,
-    SelectControl,
     ToggleControl,
     ToolbarDropdownMenu,
 } from "@wordpress/components";
@@ -23,6 +22,7 @@ import {
     TablebergCellInstance,
 } from "@tableberg/shared/types";
 import { ProBlockProps } from "..";
+import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
 
 const duplicateRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
@@ -216,31 +216,11 @@ export const CellBlockPro = ({
     return (
         <>
             {props.isSelected && (
-                <InspectorControls group="border">
-                    <div style={{ marginBottom: "0px", gridColumn: "1/-1" }}>
-                        <SelectControl
-                            label="[PRO] Inner border style"
-                            value={tableAttrs.innerBorderType}
-                            options={[
-                                {
-                                    label: "All",
-                                    value: "",
-                                },
-                                {
-                                    label: "Column Only",
-                                    value: "col",
-                                },
-                                {
-                                    label: "Row only",
-                                    value: "row",
-                                },
-                            ]}
-                            onChange={(innerBorderType: any) =>
-                                setTableAttrs({ innerBorderType })
-                            }
-                        />
-                    </div>
-                </InspectorControls>
+                <RowColOnlyBorderControl
+                    value={tableAttrs.innerBorderType}
+                    setAttr={setTableAttrs}
+                    clientId={props.clientId}
+                />
             )}
             <BlockEdit {...props} />
             {props.isSelected && (
