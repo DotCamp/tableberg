@@ -265,6 +265,11 @@ class Table
 		if ($attributes['stickyFirstCol']) {
 			$wrapper_classes[] = 'tableberg-sticky-first-col';
 		}
+		if ($attributes['innerBorderType'] === 'col') {
+			$wrapper_classes[] = 'tableberg-border-col-only';
+		} elseif ($attributes['innerBorderType'] === 'row') {
+			$wrapper_classes[] = 'tableberg-border-row-only';
+		}
 
 		$wrapper_attributes = get_block_wrapper_attributes([
 			'class' => trim(join(' ', $wrapper_classes)),
