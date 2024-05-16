@@ -26,7 +26,10 @@ import {
 /**
  * Internal Imports
  */
-import { ResponsiveOptions, TablebergBlockAttrs } from "@tableberg/shared/types";
+import {
+    ResponsiveOptions,
+    TablebergBlockAttrs,
+} from "@tableberg/shared/types";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ResponsiveControls } from "./responsiveControls";
 import {
@@ -145,7 +148,7 @@ function TablebergControls({
             <InspectorControls>
                 <ToolsPanel
                     label={__("Cell Settings", "tableberg")}
-                    resetAll={() => { }}
+                    resetAll={() => {}}
                 >
                     <ToolsPanelItem label={__("")} hasValue={() => true}>
                         <ToggleControl
@@ -167,7 +170,7 @@ function TablebergControls({
                                 <SizeControl
                                     value={
                                         tableAttributes.colWidths[
-                                        cellBlock.attributes.col
+                                            cellBlock.attributes.col
                                         ] as any
                                     }
                                     label={__("Column Width", "tableberg")}
@@ -182,7 +185,7 @@ function TablebergControls({
                                 <HeightControl
                                     value={
                                         tableAttributes.rowHeights[
-                                        cellBlock.attributes.row
+                                            cellBlock.attributes.row
                                         ] as any
                                     }
                                     label={__("Row Height", "tableberg")}
@@ -457,7 +460,12 @@ function TablebergControls({
                         setTableAttributes({ tableBorder: newBorder });
                     }}
                     onDeselect={() => {
-                        setTableAttributes({ tableBorder: undefined });
+                        setTableAttributes({
+                            tableBorder: {
+                                color: "#000000",
+                                width: "1px",
+                            },
+                        });
                     }}
                 />
                 <ToolsPanelItem

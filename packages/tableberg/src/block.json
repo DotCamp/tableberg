@@ -100,7 +100,10 @@
         },
         "tableBorder": {
             "type": "object",
-            "default": {}
+            "default": {
+                "color": "#000000",
+                "width": "1px"
+            }
         },
         "cellBorderRadius": {
             "type": "object",

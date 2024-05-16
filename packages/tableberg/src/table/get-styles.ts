@@ -5,7 +5,7 @@ import {
     getBorderRadiusVar,
     getSpacingStyle,
 } from "@tableberg/shared/utils/styling-helpers";
-import { TablebergBlockAttrs } from "../types";
+import { TablebergBlockAttrs } from "@tableberg/shared/types";
 
 export function getStyles(attributes: TablebergBlockAttrs) {
     const {
