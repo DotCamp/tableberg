@@ -146,6 +146,10 @@
         "stickyFirstCol": {
             "type": "boolean",
             "default": false
+        },
+        "innerBorderType": {
+            "type": "string",
+            "default": ""
         }
     },
     "example": {

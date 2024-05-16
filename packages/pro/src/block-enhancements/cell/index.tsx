@@ -3,9 +3,9 @@ import {
     InspectorControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-// @ts-ignore
 import {
     PanelBody,
+    SelectControl,
     ToggleControl,
     ToolbarDropdownMenu,
 } from "@wordpress/components";
@@ -16,7 +16,7 @@ import { useDispatch, useSelect } from "@wordpress/data";
 import { copy, columns, tableRowAfter } from "@wordpress/icons";
 
 import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
-import { BlockEditProps, BlockInstance, cloneBlock } from "@wordpress/blocks";
+import { BlockInstance, cloneBlock } from "@wordpress/blocks";
 import {
     TablebergBlockAttrs,
     TablebergCellBlockAttrs,
@@ -166,7 +166,6 @@ export const CellBlockPro = ({
     props,
     BlockEdit,
 }: ProBlockProps<TablebergCellBlockAttrs>) => {
-
     const storeActions: BlockEditorStoreActions = useDispatch(
         blockEditorStore,
     ) as any;
@@ -216,6 +215,33 @@ export const CellBlockPro = ({
     ];
     return (
         <>
+            {props.isSelected && (
+                <InspectorControls group="border">
+                    <div style={{ marginBottom: "0px", gridColumn: "1/-1" }}>
+                        <SelectControl
+                            label="[PRO] Inner border style"
+                            value={tableAttrs.innerBorderType}
+                            options={[
+                                {
+                                    label: "All",
+                                    value: "",
+                                },
+                                {
+                                    label: "Column Only",
+                                    value: "col",
+                                },
+                                {
+                                    label: "Row only",
+                                    value: "row",
+                                },
+                            ]}
+                            onChange={(innerBorderType: any) =>
+                                setTableAttrs({ innerBorderType })
+                            }
+                        />
+                    </div>
+                </InspectorControls>
+            )}
             <BlockEdit {...props} />
             {props.isSelected && (
                 <>
