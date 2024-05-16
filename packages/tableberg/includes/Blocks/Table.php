@@ -49,7 +49,7 @@ class Table
 		$table_spacing = Utils::get_spacing_css($cellSpacing);
 
 
-		$table_border_css = Utils::get_border_css($attributes['tableBorder']);
+		$table_border_css = Utils::get_border_style($attributes['tableBorder']);
 		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : [];
 		$cell_radius = Utils::get_border_radius_var($attributes['cellBorderRadius'], '--tableberg-cell', $separateBorder);
 
