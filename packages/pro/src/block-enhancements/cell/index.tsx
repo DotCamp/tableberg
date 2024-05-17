@@ -3,11 +3,7 @@ import {
     InspectorControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import {
-    PanelBody,
-    ToggleControl,
-    ToolbarDropdownMenu,
-} from "@wordpress/components";
+import { ToolbarDropdownMenu } from "@wordpress/components";
 import { ColorControl } from "@tableberg/components";
 
 import { useDispatch, useSelect } from "@wordpress/data";
