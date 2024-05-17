@@ -1,6 +1,5 @@
 import { createReduxStore, register } from "@wordpress/data";
-import { BlockInstance } from "@wordpress/blocks";
-import { TablebergCellBlockAttrs, TablebergCellInstance } from "../cell";
+import { TablebergCellInstance } from "@tableberg/shared/types";
 
 interface ITBStoreState {
     tableId: string;

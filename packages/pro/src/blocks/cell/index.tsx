@@ -1,44 +1,244 @@
 // @ts-ignore
 import { addFilter } from "@wordpress/hooks";
 import { createHigherOrderComponent } from "@wordpress/compose";
-import { InspectorControls } from "@wordpress/block-editor";
+import {
+    BlockControls,
+    InspectorControls,
+    store as blockEditorStore,
+} from "@wordpress/block-editor";
+// @ts-ignore
+import { ToolbarDropdownMenu } from "@wordpress/components";
 import { ColorControl } from "@tableberg/components";
 
-interface CellAttributesPro {
-    background: string;
-    bgGradient: string;
-}
+import { useDispatch, useSelect } from "@wordpress/data";
+
+import { copy, columns, tableRowAfter } from "@wordpress/icons";
+
+import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
+import { BlockInstance, cloneBlock } from "@wordpress/blocks";
+import {
+    TablebergBlockAttrs,
+    TablebergCellInstance,
+} from "@tableberg/shared/types";
+
+const duplicateRow = (
+    tableBlock: BlockInstance<TablebergBlockAttrs>,
+    storeActions: BlockEditorStoreActions,
+    rowIndex: number,
+    count: number = 1,
+) => {
+    const cellBlocks: TablebergCellInstance[] = [];
+    const cells: TablebergCellInstance[] = tableBlock.innerBlocks as any;
+
+    let startRow = rowIndex,
+        endRow = rowIndex + count;
+
+    for (let i = 0; i < cells.length; i++) {
+        const { row, rowspan } = cells[i].attributes;
+
+        if (row < startRow && row + rowspan > startRow) {
+            startRow = row;
+            i = -1;
+        }
+
+        if (row <= startRow && row + rowspan > endRow) {
+            endRow = row + rowspan;
+            i = -1;
+        }
+    }
+
+    count = endRow - startRow;
+
+    const clonedCells: TablebergCellInstance[] = [];
+    let isInserted = false;
+
+    cells.forEach((cell) => {
+        if (cell.attributes.row < startRow) {
+            cellBlocks.push(cell);
+            return;
+        }
+        if (cell.attributes.row >= endRow) {
+            if (!isInserted) {
+                cellBlocks.push(...clonedCells);
+                isInserted = true;
+            }
+            cell.attributes.row += count;
+            cellBlocks.push(cell);
+            return;
+        }
+        cellBlocks.push(cell);
+        const newCell = cloneBlock(cell);
+        newCell.attributes.row += count;
+        clonedCells.push(newCell);
+    });
+
+    if(!isInserted) {
+        cellBlocks.push(...clonedCells);
+    }
+
+    const rowHeights = tableBlock.attributes.rowHeights;
+    const copyHeights = rowHeights.slice(startRow, endRow);
+    rowHeights.splice(endRow, 0, ...copyHeights);
+
+    storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
+    storeActions.updateBlockAttributes(tableBlock.clientId, {
+        rows: tableBlock.attributes.rows + count,
+        cells: cellBlocks.length,
+        rowHeights,
+    });
+};
+
+const duplicateCol = (
+    tableBlock: BlockInstance<TablebergBlockAttrs>,
+    storeActions: BlockEditorStoreActions,
+    colIndex: number,
+    count: number = 1,
+) => {
+    const cellBlocks: TablebergCellInstance[] = [];
+    const cells: TablebergCellInstance[] = tableBlock.innerBlocks as any;
+
+    let startCol = colIndex,
+        endCol = colIndex + count;
+
+    for (let i = 0; i < cells.length; i++) {
+        const { col, colspan } = cells[i].attributes;
+
+        if (col < startCol && col + colspan > startCol) {
+            startCol = col;
+            i = -1;
+        }
+
+        if (col <= startCol && col + colspan > endCol) {
+            endCol = col + colspan;
+            i = -1;
+        }
+    }
+
+    count = endCol - startCol;
+
+    let lastInsertedRow = -1;
+    let pendingCells: TablebergCellInstance[] = [];
+
+    cells.forEach((cell) => {
+        if (
+            pendingCells.length > 0 &&
+            (lastInsertedRow !== cell.attributes.row ||
+                cell.attributes.col >= endCol)
+        ) {
+            lastInsertedRow = cell.attributes.row;
+            cellBlocks.push(...pendingCells);
+            pendingCells = [];
+        }
+        if (cell.attributes.col < startCol) {
+            cellBlocks.push(cell);
+            return;
+        }
+        if (cell.attributes.col >= endCol) {
+            cell.attributes.col += count;
+            cellBlocks.push(cell);
+            return;
+        }
+        const newCell = cloneBlock(cell);
+        newCell.attributes.col += count;
+        pendingCells.push(newCell);
+        cellBlocks.push(cell);
+    });
+
+    if (pendingCells.length > 0) {
+        cellBlocks.push(...pendingCells);
+        pendingCells = [];
+    }
+
+    const colWidths = tableBlock.attributes.colWidths;
+    const copyWidths = colWidths.slice(startCol, endCol);
+    colWidths.splice(endCol, 0, ...copyWidths);
+    
+    storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
+    storeActions.updateBlockAttributes(tableBlock.clientId, {
+        cols: tableBlock.attributes.cols + count,
+        cells: cellBlocks.length,
+        colWidths,
+    });
+};
 
 const CellBlockPro = createHigherOrderComponent((BlockEdit) => {
     return (props) => {
-        if (!props.isSelected || props.name !== "tableberg/cell") {
+        const storeSelect: BlockEditorStoreSelectors = useSelect(
+            (select) => select(blockEditorStore),
+            [],
+        ) as any;
+        const storeActions: BlockEditorStoreActions = useDispatch(
+            blockEditorStore,
+        ) as any;
+
+        if (props.name !== "tableberg/cell") {
             return <BlockEdit {...props} />;
         }
 
         const attrs = props.attributes;
+
+        const tableControls: DropdownOption[] = [
+            {
+                icon: tableRowAfter,
+                title: "Duplicate this row",
+                onClick: () => {
+                    const tableBlock: any = storeSelect.getBlock(
+                        storeSelect.getBlockRootClientId(props.clientId)!,
+                    )!;
+                    duplicateRow(
+                        tableBlock,
+                        storeActions,
+                        props.attributes.row,
+                    );
+                },
+            },
+            {
+                icon: columns,
+                title: "Duplicate the column",
+                onClick: () => {
+                    const tableBlock: any = storeSelect.getBlock(
+                        storeSelect.getBlockRootClientId(props.clientId)!,
+                    )!;
+                    duplicateCol(
+                        tableBlock,
+                        storeActions,
+                        props.attributes.col,
+                    );
+                },
+            },
+        ];
         return (
             <>
                 <BlockEdit {...props} />
-                <InspectorControls group="color">
-                    <ColorControl
-                        allowGradient
-                        label="[PRO] Cell Background"
-                        colorValue={attrs.background}
-                        gradientValue={attrs.bgGradient}
-                        onColorChange={(background) =>
-                            props.setAttributes({ background })
-                        }
-                        onGradientChange={(bgGradient) =>
-                            props.setAttributes({ bgGradient })
-                        }
-                        onDeselect={() =>
-                            props.setAttributes({
-                                background: undefined,
-                                bgGradient: undefined,
-                            })
-                        }
+                {props.isSelected && (
+                    <InspectorControls group="color">
+                        <ColorControl
+                            allowGradient
+                            label="[PRO] Cell Background"
+                            colorValue={attrs.background}
+                            gradientValue={attrs.bgGradient}
+                            onColorChange={(background) =>
+                                props.setAttributes({ background })
+                            }
+                            onGradientChange={(bgGradient) =>
+                                props.setAttributes({ bgGradient })
+                            }
+                            onDeselect={() =>
+                                props.setAttributes({
+                                    background: undefined,
+                                    bgGradient: undefined,
+                                })
+                            }
+                        />
+                    </InspectorControls>
+                )}
+                <BlockControls group="other" __experimentalShareWithChildBlocks>
+                    <ToolbarDropdownMenu
+                        icon={copy}
+                        label={"[Pro] Edit table"}
+                        controls={tableControls}
                     />
-                </InspectorControls>
+                </BlockControls>
             </>
         );
     };

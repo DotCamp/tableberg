@@ -44,24 +44,13 @@ import "./editor.scss";
 import metadata from "./block.json";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { TablebergBlockAttrs } from "../types";
 import TablebergControls from "../controls";
 import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
-
-export interface TablebergCellBlockAttrs {
-    vAlign: "bottom" | "center" | "top";
-    tagName: "td" | "th";
-    rowspan: number;
-    colspan: number;
-    row: number;
-    col: number;
-    responsiveTarget: string;
-    background?: string;
-    bgGradient?: string;
-    isTmp: boolean;
-}
-
-export type TablebergCellInstance = BlockInstance<TablebergCellBlockAttrs>;
+import {
+    TablebergBlockAttrs,
+    TablebergCellBlockAttrs,
+    TablebergCellInstance,
+} from "@tableberg/shared/types";
 
 const ALLOWED_BLOCKS = [
     "core/paragraph",
@@ -263,33 +252,38 @@ const deleteCol = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
     storeActions: BlockEditorStoreActions,
     colIndex: number,
+    span: number,
 ) => {
-    const cellBlocks: TablebergCellInstance[] = Array(
-        tableBlock.innerBlocks.length - tableBlock.attributes.rows,
-    );
-
-    let lastIdx = 0;
+    const cellBlocks: TablebergCellInstance[] = [];
+    const endCol = colIndex + span;
 
     tableBlock.innerBlocks.forEach((cell) => {
-        if (cell.attributes.col === colIndex || cell.attributes.isTmp) {
+        const col = cell.attributes.col;
+
+        if (col === colIndex && cell.attributes.colspan > span) {
+            cell.attributes.colspan -= span;
+            cellBlocks.push(cell as any);
             return;
         }
-        if (cell.attributes.col > colIndex) {
-            cell.attributes.col -= 1;
-        } else if (
-            cell.attributes.col < colIndex &&
-            cell.attributes.col + cell.attributes.colspan > colIndex
-        ) {
-            cell.attributes.colspan -= 1;
+
+        if (cell.attributes.isTmp || (col >= colIndex && col < endCol)) {
+            return;
         }
-        cellBlocks[lastIdx++] = cell as any;
+
+        if (col > colIndex) {
+            cell.attributes.col -= span;
+        } else if (col < colIndex && col + cell.attributes.colspan > colIndex) {
+            cell.attributes.colspan -= span;
+        }
+        cellBlocks.push(cell as any);
     });
+
     const colWidths = tableBlock.attributes.colWidths;
-    colWidths.splice(colIndex, 1);
+    colWidths.splice(colIndex, span);
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
-        cols: tableBlock.attributes.cols - 1,
+        cols: tableBlock.attributes.cols - span,
         cells: cellBlocks.length,
         colWidths,
     });
@@ -299,32 +293,42 @@ const deleteRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
     storeActions: BlockEditorStoreActions,
     rowIndex: number,
+    span: number,
 ) => {
-    const cellBlocks: TablebergCellInstance[] = Array(
-        tableBlock.innerBlocks.length - tableBlock.attributes.cols,
-    );
-    let lastIdx = 0;
+    const cellBlocks: TablebergCellInstance[] = [];
+    const endRow = rowIndex + span;
 
     tableBlock.innerBlocks.forEach((cell) => {
-        if (cell.attributes.row === rowIndex || cell.attributes.isTmp) {
+        const row = cell.attributes.row;
+
+        if (row === rowIndex && cell.attributes.rowspan > span) {
+            cell.attributes.rowspan -= span;
+            cellBlocks.push(cell as any);
+            return;
+        }
+        
+        if (
+            cell.attributes.isTmp ||
+            (cell.attributes.row >= rowIndex && cell.attributes.row < endRow)
+        ) {
             return;
         }
         if (cell.attributes.row > rowIndex) {
-            cell.attributes.row -= 1;
+            cell.attributes.row -= span;
         } else if (
             cell.attributes.row < rowIndex &&
             cell.attributes.row + cell.attributes.rowspan > rowIndex
         ) {
-            cell.attributes.rowspan -= 1;
+            cell.attributes.rowspan -= span;
         }
-        cellBlocks[lastIdx++] = cell as any;
+        cellBlocks.push(cell as any);
     });
     const rowHeights = tableBlock.attributes.rowHeights;
-    rowHeights.splice(rowIndex, 1);
+    rowHeights.splice(rowIndex, span);
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
-        rows: tableBlock.attributes.rows - 1,
+        rows: tableBlock.attributes.rows - span,
         cells: cellBlocks.length,
         rowHeights,
     });
@@ -728,7 +732,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             verticalAlign:
                 attributes.vAlign === "center" ? "middle" : attributes.vAlign,
             height: tableBlock.attributes.rowHeights[props.attributes.row],
-            background: attributes.bgGradient || attributes.background
+            background: attributes.bgGradient || attributes.background,
         },
         ref: cellRef,
         className: classNames(
@@ -808,12 +812,24 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         {
             icon: tableRowDelete,
             title: "Delete row",
-            onClick: () => deleteRow(tableBlock, storeActions, attributes.row),
+            onClick: () =>
+                deleteRow(
+                    tableBlock,
+                    storeActions,
+                    attributes.row,
+                    attributes.rowspan,
+                ),
         },
         {
             icon: tableColumnDelete,
             title: "Delete column",
-            onClick: () => deleteCol(tableBlock, storeActions, attributes.col),
+            onClick: () =>
+                deleteCol(
+                    tableBlock,
+                    storeActions,
+                    attributes.col,
+                    attributes.colspan,
+                ),
         },
     ];
 

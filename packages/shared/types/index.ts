@@ -1,4 +1,5 @@
-import { BorderTypes, PaddingTypes, SingleBorderTypes } from "./utils/common-types";
+import { BlockInstance } from "@wordpress/blocks";
+
 
 export type ResponsiveMode = "" | "stack" | "scroll";
 
@@ -33,8 +34,8 @@ export interface TablebergBlockAttrs {
     enableTableHeader: "" | "converted" | "added";
     enableTableFooter: "" | "converted" | "added";
     tableAlignment: "center" | "full" | "left" | "right" | "wide";
-    cellPadding: PaddingTypes;
-    cellSpacing: PaddingTypes;
+    cellPadding: any;
+    cellSpacing: any;
     headerBackgroundColor: string | null;
     headerBackgroundGradient: string | null;
     evenRowBackgroundColor: string | null;
@@ -43,9 +44,9 @@ export interface TablebergBlockAttrs {
     oddRowBackgroundGradient: string | null;
     footerBackgroundColor: string | null;
     footerBackgroundGradient: string | null;
-    tableBorder: SingleBorderTypes;
+    tableBorder: any;
     cellBorderRadius: any;
-    innerBorder: SingleBorderTypes;
+    innerBorder: any;
     enableInnerBorder: boolean;
     isExample: boolean;
     fontColor: string;
@@ -54,3 +55,19 @@ export interface TablebergBlockAttrs {
     responsive: ResponsiveOptions;
 }
 
+
+
+export interface TablebergCellBlockAttrs {
+    vAlign: "bottom" | "center" | "top";
+    tagName: "td" | "th";
+    rowspan: number;
+    colspan: number;
+    row: number;
+    col: number;
+    responsiveTarget: string;
+    background?: string;
+    bgGradient?: string;
+    isTmp: boolean;
+}
+
+export type TablebergCellInstance = BlockInstance<TablebergCellBlockAttrs>;
