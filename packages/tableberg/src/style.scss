@@ -93,22 +93,10 @@ div.wp-block-tableberg-wrapper {
 
         &.has-inner-border {
             .wp-block-tableberg-cell {
-                border-top: var(
-                    --tableberg-inner-border-top,
-                    1px solid #000000
-                );
-                border-right: var(
-                    --tableberg-inner-border-right,
-                    1px solid #000000
-                );
-                border-bottom: var(
-                    --tableberg-inner-border-bottom,
-                    1px solid #000000
-                );
-                border-left: var(
-                    --tableberg-inner-border-left,
-                    1px solid #000000
-                );
+                border-top: var(--tableberg-inner-border-top);
+                border-right: var(--tableberg-inner-border-right);
+                border-bottom: var(--tableberg-inner-border-bottom);
+                border-left: var(--tableberg-inner-border-left);
             }
         }
     }
@@ -151,10 +139,7 @@ div.wp-block-tableberg-wrapper {
                 border: none !important;
             }
             tr + tr {
-                border-top: var(
-                    --tableberg-inner-border-top,
-                    1px solid #000000
-                );
+                border-top: var(--tableberg-inner-border-top);
             }
         }
     }
@@ -166,10 +151,7 @@ div.wp-block-tableberg-wrapper {
                 border: none !important;
             }
             td + td {
-                border-left: var(
-                    --tableberg-inner-border-top,
-                    1px solid #000000
-                ) !important;
+                border-left: var(--tableberg-inner-border-top) !important;
             }
         }
     }

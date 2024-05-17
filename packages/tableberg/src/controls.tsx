@@ -501,7 +501,12 @@ function TablebergControls({
                             setTableAttributes({ innerBorder: newBorder });
                         }}
                         onDeselect={() => {
-                            setTableAttributes({ innerBorder: undefined });
+                            setTableAttributes({
+                                innerBorder: {
+                                    color: "#000000",
+                                    width: "1px",
+                                },
+                            });
                         }}
                     />
                 )}
