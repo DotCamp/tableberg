@@ -3,11 +3,7 @@ import {
     InspectorControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import {
-    PanelBody,
-    ToggleControl,
-    ToolbarDropdownMenu,
-} from "@wordpress/components";
+import { ToolbarDropdownMenu } from "@wordpress/components";
 import { ColorControl } from "@tableberg/components";
 
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -23,6 +19,7 @@ import {
 } from "@tableberg/shared/types";
 import { ProBlockProps } from "..";
 import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
+import StickyRowColControl from "../../shared/StickyRowColControl";
 
 const duplicateRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
@@ -53,7 +50,7 @@ const duplicateRow = (
     count = endRow - startRow;
 
     const clonedCells: TablebergCellInstance[] = [];
-    let startIdx = 0;
+    let isInserted = false;
 
     cells.forEach((cell) => {
         if (cell.attributes.row < startRow) {
@@ -61,21 +58,23 @@ const duplicateRow = (
             return;
         }
         if (cell.attributes.row >= endRow) {
+            if (!isInserted) {
+                cellBlocks.push(...clonedCells);
+                isInserted = true;
+            }
             cell.attributes.row += count;
             cellBlocks.push(cell);
-            startIdx = cellBlocks.length;
             return;
         }
+        cellBlocks.push(cell);
         const newCell = cloneBlock(cell);
         newCell.attributes.row += count;
         clonedCells.push(newCell);
-        cellBlocks.push(cell);
     });
 
-    if (startIdx === 0) {
-        startIdx = cellBlocks.length;
+    if (!isInserted) {
+        cellBlocks.push(...clonedCells);
     }
-    cellBlocks.splice(startIdx, 0, ...clonedCells);
 
     const rowHeights = tableBlock.attributes.rowHeights;
     const copyHeights = rowHeights.slice(startRow, endRow);
@@ -246,26 +245,10 @@ export const CellBlockPro = ({
                         />
                     </InspectorControls>
                     <InspectorControls>
-                        <PanelBody title="[PRO] Table Sticky Row/Col">
-                            <ToggleControl
-                                checked={tableAttrs.stickyTopRow}
-                                label="Sticky Top Row"
-                                onChange={(stickyTopRow) => {
-                                    setTableAttrs({
-                                        stickyTopRow,
-                                    });
-                                }}
-                            />
-                            <ToggleControl
-                                checked={tableAttrs.stickyFirstCol}
-                                label="Sticky First Col"
-                                onChange={(stickyFirstCol) => {
-                                    setTableAttrs({
-                                        stickyFirstCol,
-                                    });
-                                }}
-                            />
-                        </PanelBody>
+                        <StickyRowColControl
+                            attrs={tableAttrs}
+                            setAttrs={setTableAttrs}
+                        />
                     </InspectorControls>
                 </>
             )}
