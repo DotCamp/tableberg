@@ -117,6 +117,36 @@ div.wp-block-tableberg-wrapper {
             }
         }
     }
+
+    &.tableberg-border-row-only {
+        table {
+            td,
+            th {
+                border: none !important;
+            }
+            tr + tr {
+                border-top: var(
+                    --tableberg-inner-border-top,
+                    1px solid #000000
+                );
+            }
+        }
+    }
+
+    &.tableberg-border-col-only {
+        table {
+            td,
+            th {
+                border: none !important;
+            }
+            td + td {
+                border-left: var(
+                    --tableberg-inner-border-top,
+                    1px solid #000000
+                ) !important;
+            }
+        }
+    }
 }
 
 .add-margin-bottom {

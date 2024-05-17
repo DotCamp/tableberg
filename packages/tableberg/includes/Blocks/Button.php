@@ -192,9 +192,11 @@ class Button {
 	 * Register the block.
 	 */
 	public function block_registration() {
+		$json = TABLEBERG_DIR_PATH . 'build/button/block.json';
 		register_block_type(
-			TABLEBERG_DIR_PATH . 'build/button/block.json',
+			$json,
 			array(
+				'attributes' => json_decode(file_get_contents($json), true)['attributes'],
 				'render_callback' => array( $this, 'render_tableberg_button_block' ),
 			)
 		);

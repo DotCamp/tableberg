@@ -56,6 +56,7 @@ export interface TablebergBlockAttrs {
 
     stickyTopRow: boolean;
     stickyFirstCol: boolean;
+    innerBorderType: "" | "col" | "row";
 }
 
 

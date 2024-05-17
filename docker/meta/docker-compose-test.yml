@@ -1,0 +1,32 @@
+version: '3'
+services:
+  db:
+    container_name: __TABLEBERG_DOCKER_ID___db
+    image: mariadb:latest
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "dotcamp"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  wordpress:
+    container_name: __TABLEBERG_DOCKER_ID__
+    build:
+      context: ../../../
+      dockerfile: docker/images/__TABLEBERG_DOCKER_ID__/Dockerfile
+    depends_on:
+      db: 
+        condition: service_healthy
+    ports:
+      - ${TABLEBERG_PORT}:80
+    environment:
+      - TABLEBERG_PORT=${TABLEBERG_PORT}
+      - PHP_VERSION=__PHP_VERSION__
+      - WP_VERSION=__WP_VERSION__
+volumes:
+  db_data:

@@ -3,7 +3,6 @@ import {
     InspectorControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-// @ts-ignore
 import {
     PanelBody,
     ToggleControl,
@@ -16,13 +15,14 @@ import { useDispatch, useSelect } from "@wordpress/data";
 import { copy, columns, tableRowAfter } from "@wordpress/icons";
 
 import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
-import { BlockEditProps, BlockInstance, cloneBlock } from "@wordpress/blocks";
+import { BlockInstance, cloneBlock } from "@wordpress/blocks";
 import {
     TablebergBlockAttrs,
     TablebergCellBlockAttrs,
     TablebergCellInstance,
 } from "@tableberg/shared/types";
 import { ProBlockProps } from "..";
+import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
 
 const duplicateRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
@@ -166,7 +166,6 @@ export const CellBlockPro = ({
     props,
     BlockEdit,
 }: ProBlockProps<TablebergCellBlockAttrs>) => {
-
     const storeActions: BlockEditorStoreActions = useDispatch(
         blockEditorStore,
     ) as any;
@@ -216,6 +215,13 @@ export const CellBlockPro = ({
     ];
     return (
         <>
+            {props.isSelected && (
+                <RowColOnlyBorderControl
+                    value={tableAttrs.innerBorderType}
+                    setAttr={setTableAttrs}
+                    clientId={props.clientId}
+                />
+            )}
             <BlockEdit {...props} />
             {props.isSelected && (
                 <>
