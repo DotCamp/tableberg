@@ -23,6 +23,7 @@ import {
 } from "@tableberg/shared/types";
 import { ProBlockProps } from "..";
 import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
+import StickyRowColControl from "../../shared/StickyRowColControl";
 
 const duplicateRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
@@ -75,7 +76,7 @@ const duplicateRow = (
         clonedCells.push(newCell);
     });
 
-    if(!isInserted) {
+    if (!isInserted) {
         cellBlocks.push(...clonedCells);
     }
 
@@ -248,26 +249,10 @@ export const CellBlockPro = ({
                         />
                     </InspectorControls>
                     <InspectorControls>
-                        <PanelBody title="[PRO] Table Sticky Row/Col">
-                            <ToggleControl
-                                checked={tableAttrs.stickyTopRow}
-                                label="Sticky Top Row"
-                                onChange={(stickyTopRow) => {
-                                    setTableAttrs({
-                                        stickyTopRow,
-                                    });
-                                }}
-                            />
-                            <ToggleControl
-                                checked={tableAttrs.stickyFirstCol}
-                                label="Sticky First Col"
-                                onChange={(stickyFirstCol) => {
-                                    setTableAttrs({
-                                        stickyFirstCol,
-                                    });
-                                }}
-                            />
-                        </PanelBody>
+                        <StickyRowColControl
+                            attrs={tableAttrs}
+                            setAttrs={setTableAttrs}
+                        />
                     </InspectorControls>
                 </>
             )}
