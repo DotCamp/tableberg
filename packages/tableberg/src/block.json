@@ -136,6 +136,20 @@
                 "last": "primary",
                 "breakpoints": {}
             }
+        },
+
+        
+        "stickyTopRow": {
+            "type": "boolean",
+            "default": false
+        },
+        "stickyFirstCol": {
+            "type": "boolean",
+            "default": false
+        },
+        "innerBorderType": {
+            "type": "string",
+            "default": ""
         }
     },
     "example": {

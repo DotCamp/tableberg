@@ -1,12 +1,11 @@
 import { BlockEditProps, BlockInstance, cloneBlock } from "@wordpress/blocks";
-import { TablebergBlockAttrs } from "../types";
+import { TablebergBlockAttrs, TablebergCellInstance } from "@tableberg/shared/types";
 import {
     useInnerBlocksProps,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { ALLOWED_BLOCKS } from ".";
-import { TablebergCellInstance } from "../cell";
 import { useDispatch } from "@wordpress/data";
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
@@ -16,7 +15,7 @@ export default function StackColTable(
     props: BlockEditProps<TablebergBlockAttrs> & {
         tableBlock: BlockInstance<TablebergBlockAttrs>;
         preview: keyof TablebergBlockAttrs["responsive"]["breakpoints"];
-    }
+    },
 ) {
     const { attributes, tableBlock, clientId, setAttributes, preview } = props;
 
@@ -35,7 +34,7 @@ export default function StackColTable(
         },
         className: classNames(
             getStyleClass(attributes),
-            "tableberg-colstack-table"
+            "tableberg-colstack-table",
         ),
     } as Record<string, any>;
 
@@ -46,9 +45,9 @@ export default function StackColTable(
         setColUpt((old) => old + 1);
     }, [attributes.cols, attributes.cells]);
 
-    const storeActions = useDispatch(
-        blockEditorStore
-    ) as BlockEditorStoreActions;
+    const storeActions: BlockEditorStoreActions = useDispatch(
+        blockEditorStore,
+    ) as any;
 
     const breakpoints = tableBlock.attributes.responsive.breakpoints;
     const breakpoint =
@@ -77,7 +76,7 @@ export default function StackColTable(
                 <tr
                     id={`tableberg-${clientId}-${rowCount}`}
                     className="tableberg-header"
-                />
+                />,
             );
             stackTrack++;
 
@@ -100,9 +99,11 @@ export default function StackColTable(
         const footerArr: TablebergCellInstance[] = [];
         const maxRow = attributes.rows - 1;
 
-        
-
-        for (let idx = rowIdxStart; idx < tableBlock.innerBlocks.length; idx++) {
+        for (
+            let idx = rowIdxStart;
+            idx < tableBlock.innerBlocks.length;
+            idx++
+        ) {
             const cell: TablebergCellInstance = tableBlock.innerBlocks[
                 idx
             ] as any;
@@ -129,7 +130,7 @@ export default function StackColTable(
                         <tr
                             id={`tableberg-${clientId}-${rowCount}`}
                             className="tableberg-header"
-                        />
+                        />,
                     );
                     stackTrack = 1;
 
@@ -151,7 +152,7 @@ export default function StackColTable(
                                 ? "tableberg-even-row"
                                 : "tableberg-odd-row"
                         }
-                    />
+                    />,
                 );
                 stackTrack++;
             }
@@ -166,7 +167,7 @@ export default function StackColTable(
                 <tr
                     id={`tableberg-${clientId}-${rowCount}`}
                     className="tableberg-footer"
-                />
+                />,
             );
             footerArr.forEach((cell) => {
                 cell.attributes.responsiveTarget = `#tableberg-${clientId}-${rowCount}`;
@@ -176,7 +177,7 @@ export default function StackColTable(
 
         storeActions.replaceInnerBlocks(clientId, newCells);
         storeActions.updateBlockAttributes(clientId, {
-            cells: newCells.length
+            cells: newCells.length,
         });
         setRowTemplates(templates);
         setColUpt((old) => old + 1);

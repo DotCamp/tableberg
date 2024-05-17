@@ -53,6 +53,10 @@ export interface TablebergBlockAttrs {
     fontSize: string;
     linkColor: string;
     responsive: ResponsiveOptions;
+
+    stickyTopRow: boolean;
+    stickyFirstCol: boolean;
+    innerBorderType: "" | "col" | "row";
 }
 
 

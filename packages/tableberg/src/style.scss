@@ -94,6 +94,59 @@ div.wp-block-tableberg-wrapper {
     .wp-block-paragraph:focus [data-rich-text-placeholder]::after {
         content: "Type / to choose a block";
     }
+
+    &.tableberg-sticky-top-row {
+        position: relative;
+        tr:first-of-type {
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+    }
+
+    &.tableberg-sticky-first-col {
+        position: relative;
+        tr {
+            td:first-child,
+            th:first-child {
+                background: white;
+                position: sticky;
+                left: 0;
+                z-index: 1;
+            }
+        }
+    }
+
+    &.tableberg-border-row-only {
+        table {
+            td,
+            th {
+                border: none !important;
+            }
+            tr + tr {
+                border-top: var(
+                    --tableberg-inner-border-top,
+                    1px solid #000000
+                );
+            }
+        }
+    }
+
+    &.tableberg-border-col-only {
+        table {
+            td,
+            th {
+                border: none !important;
+            }
+            td + td {
+                border-left: var(
+                    --tableberg-inner-border-top,
+                    1px solid #000000
+                ) !important;
+            }
+        }
+    }
 }
 
 .add-margin-bottom {

@@ -30,10 +30,9 @@ import "./style.scss";
 import metadata from "./block.json";
 import { FormEvent, useEffect, useRef, useState, createContext } from "react";
 import TablebergControls from "./controls";
-import { TablebergBlockAttrs } from "./types";
+import { TablebergBlockAttrs, TablebergCellInstance } from "@tableberg/shared/types";
 import exampleImage from "./example.png";
 import blockIcon from "@tableberg/components/icon";
-import { TablebergCellInstance } from "./cell";
 import { PrimaryTable } from "./table";
 import StackRowTable from "./table/StackRowTable";
 import StackColTable from "./table/StackColTable";
@@ -355,6 +354,10 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             "tableberg-scroll-x": isScrollMode,
             [`justify-table-${attributes.tableAlignment}`]:
                 !!attributes.tableAlignment,
+            "tableberg-sticky-top-row": attributes.stickyTopRow,
+            "tableberg-sticky-first-col": attributes.stickyFirstCol,
+            "tableberg-border-col-only": attributes.innerBorderType === "col",
+            "tableberg-border-row-only": attributes.innerBorderType === "row",
         }),
     });
 
@@ -433,7 +436,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 setIsScrollMode(false);
             } else if (breakpoint.enabled) {
                 if (breakpoint.mode === "stack") {
-                    newRMode = `stack-${breakpoint.direction}`;
+                    newRMode = `stack-${breakpoint.direction}` as any;
                 } else {
                     setIsScrollMode(true);
                 }
