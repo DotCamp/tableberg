@@ -9,6 +9,7 @@ namespace Tableberg\Blocks;
 
 use Tableberg;
 use Tableberg\Utils\HtmlUtils;
+use Tableberg\Utils\Utils;
 
 /**
  * Handle the block registration on server side and rendering.
@@ -24,6 +25,15 @@ class Cell
 	public function __construct()
 	{
 		add_action('init', array($this, 'block_registration'));
+	}
+
+
+
+	private static function getStyles($attributes) {
+		$styles = [
+			'background' => Utils::get_any($attributes, 'bgGradient', 'background'),
+		];
+		return Utils::generate_css_string($styles);
 	}
 
 	/**
@@ -65,6 +75,8 @@ class Cell
 		}
 
 		$tagName = isset($attributes['tagName']) ? $attributes['tagName'] : 'td';
+
+		$content = HtmlUtils::append_attr_value($content, $tagName, self::getStyles($attributes), 'style');
 
 		$content = HtmlUtils::append_attr_value($content, $tagName, ' '.$classes, 'class');
 

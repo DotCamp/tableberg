@@ -115,12 +115,12 @@ class HtmlUtils
      * 
      * @param string $content
      * @param string $tag
-     * @param string $add
+     * @param string $value
      * @param string $attr
      * @param int $offset
-     * @return string new content with added classes
+     * @return string new content with added attribute
      */
-    public static function append_attr_value($content, $tag, $add, $attr, $offset = 0, &$cursor = false)
+    public static function append_attr_value($content, $tag, $value, $attr, $offset = 0, &$cursor = false)
     {
         $idx = strpos($content, '<' . $tag, $offset);
         if ($idx === false) {
@@ -133,9 +133,9 @@ class HtmlUtils
         $cursor = $lidx;
         $tagDes = substr($content, $idx, $lidx - $idx);
         $count = 0;
-        $tagDes = preg_replace("/$attr=\"(.*)\"/", "$attr=\"$1" . $add . "\"", $tagDes, -1, $count);
+        $tagDes = preg_replace("/$attr=\"(.*)\"/", "$attr=\"$1" . $value . "\"", $tagDes, -1, $count);
         if ($count == 0) {
-            $tagDes = substr_replace($tagDes, " $attr=\"$add\"", strlen($tag) + 1, 0);
+            $tagDes = substr_replace($tagDes, " $attr=\"$value\"", strlen($tag) + 1, 0);
         }
         return substr_replace($content, $tagDes, $idx, $lidx - $idx);
     }

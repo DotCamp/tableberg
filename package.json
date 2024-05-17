@@ -19,6 +19,7 @@
         "@types/wordpress__blocks": "^12.5.4",
         "@types/wordpress__editor": "^13.6.7",
         "@wordpress/base-styles": "^4.39.0",
+        "@wordpress/hooks": "^3.57.0",
         "@wordpress/scripts": "^26.6.0"
     },
     "dependencies": {
@@ -27,8 +28,8 @@
         "@fortawesome/free-solid-svg-icons": "^6.5.1",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@wordpress/api-fetch": "^6.45.0",
-        "@wordpress/components": "^25.3.0",
         "@wordpress/blob": "^3.37.0",
+        "@wordpress/components": "^25.3.0",
         "@wordpress/compose": "^6.18.0",
         "@wordpress/data": "^9.7.0",
         "@wordpress/editor": "^13.25.0",
