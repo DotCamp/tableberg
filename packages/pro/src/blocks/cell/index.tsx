@@ -50,7 +50,7 @@ const duplicateRow = (
     count = endRow - startRow;
 
     const clonedCells: TablebergCellInstance[] = [];
-    let startIdx = 0;
+    let isInserted = false;
 
     cells.forEach((cell) => {
         if (cell.attributes.row < startRow) {
@@ -58,21 +58,23 @@ const duplicateRow = (
             return;
         }
         if (cell.attributes.row >= endRow) {
+            if (!isInserted) {
+                cellBlocks.push(...clonedCells);
+                isInserted = true;
+            }
             cell.attributes.row += count;
             cellBlocks.push(cell);
-            startIdx = cellBlocks.length;
             return;
         }
+        cellBlocks.push(cell);
         const newCell = cloneBlock(cell);
         newCell.attributes.row += count;
         clonedCells.push(newCell);
-        cellBlocks.push(cell);
     });
 
-    if (startIdx === 0) {
-        startIdx = cellBlocks.length;
+    if(!isInserted) {
+        cellBlocks.push(...clonedCells);
     }
-    cellBlocks.splice(startIdx, 0, ...clonedCells);
 
     const rowHeights = tableBlock.attributes.rowHeights;
     const copyHeights = rowHeights.slice(startRow, endRow);
