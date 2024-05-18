@@ -4,3 +4,38 @@
 @import "./style.scss";
 @import "./upsell-editor.scss";
 @import "@tableberg/components/editor/color-picker-dropdown-style.scss";
+
+div.components-autocomplete__results
+button[id$='tableberg/dummyblock']::after {
+	content: 'Pro';
+
+    display: inline-block;
+
+    padding: 2px;
+	margin-left: auto;
+    border-radius: 2px;
+
+	color: white;
+	background-color: #671feb;
+
+	font-weight: 700;
+}
+
+.block-editor-inserter__panel-content
+button[class$='tableberg-dummyblock']
+> span:last-of-type
+> span:last-of-type::after {
+	content: 'Pro';
+
+	display: inline-block;
+
+	padding: 2px;
+	margin-left: 5px;
+	border-radius: 3px;
+
+	color: white;
+	background-color: #671feb;
+
+	font-weight: 700;
+}
+

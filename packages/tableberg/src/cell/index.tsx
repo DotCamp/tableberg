@@ -56,6 +56,7 @@ const ALLOWED_BLOCKS = [
     "core/paragraph",
     "tableberg/button",
     "tableberg/image",
+    "tableberg/dummyblock",
     "core/list",
 ];
 

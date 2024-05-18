@@ -88,6 +88,22 @@ if (!class_exists('Tableberg')) {
 			new Tableberg\Blocks\Image();
 			new Tableberg\Blocks\Table();
 			new Tableberg\Blocks\Cell();
+
+            $pro_activated = false;
+
+            global $tp_fs;
+
+            if (isset($tp_fs)) {
+                $pro_activated = $tp_fs->is__premium_only()
+                    && $tp_fs->can_use_premium_code();
+            }
+
+            if (!$pro_activated) {
+                add_action('init', function() {
+                    register_block_type(TABLEBERG_DIR_PATH . 'build/dummyblock/block.json');
+                });
+            }
+
 			register_activation_hook(__FILE__, array($this, 'activate_plugin'));
 			register_deactivation_hook(__FILE__, array($this, 'deactivate_plugin'));
 		}
