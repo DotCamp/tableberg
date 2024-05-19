@@ -54,14 +54,9 @@ import {
 
 const ALLOWED_BLOCKS = [
     "core/paragraph",
-    "core/list",
     "tableberg/button",
     "tableberg/image",
-    "tablenerg/html",
-    "tablenerg/icon",
-    "tablenerg/ribbon",
-    "tablenerg/styled-list",
-    "tablenerg/star-rating",
+    "core/list",
 ];
 
 const CELL_TEMPLATE: InnerBlockTemplate[] = [
