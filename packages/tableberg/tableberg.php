@@ -100,7 +100,11 @@ if (!class_exists('Tableberg')) {
 
             if (!$pro_activated) {
                 add_action('init', function() {
-                    register_block_type(TABLEBERG_DIR_PATH . 'build/dummyblock/block.json');
+                    register_block_type(TABLEBERG_DIR_PATH . 'src/upsells-blocks/styled-list-dummy/block.json');
+                    register_block_type(TABLEBERG_DIR_PATH . 'src/upsells-blocks/html-dummy/block.json');
+                    register_block_type(TABLEBERG_DIR_PATH . 'src/upsells-blocks/icon-dummy/block.json');
+                    register_block_type(TABLEBERG_DIR_PATH . 'src/upsells-blocks/ribbon-dummy/block.json');
+                    register_block_type(TABLEBERG_DIR_PATH . 'src/upsells-blocks/star-rating-dummy/block.json');
                 });
             }
 

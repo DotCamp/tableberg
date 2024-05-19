@@ -1,0 +1,16 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "version": "0.1.0",
+    "name": "tableberg/icon-dummy",
+    "title": "Icon",
+    "category": "design",
+    "description": "This block lets you add icons in tableberg.",
+    "keywords": [
+        "Icon",
+        "Tableberg"
+    ],
+    "parent": [
+        "tableberg/cell"
+    ]
+}
