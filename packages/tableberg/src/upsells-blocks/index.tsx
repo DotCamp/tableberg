@@ -30,6 +30,7 @@ function edit({ clientId }: BlockEditProps<{}>) {
     return createPortal(
         <UpsellModal
             onClose={() => removeBlock(clientId)}
+            selected={blockName}
         />,
         document.body,
     );

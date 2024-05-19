@@ -1,15 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import blocks from "@tableberg/shared/blocks";
 
 const proBlocks = blocks.filter((b: any) => b.isPro);
 
-const IMAGE_BASE = TABLEBERG_CFG.plugin_url + 'includes/Admin/images/upsell/';
+const IMAGE_BASE = TABLEBERG_CFG.plugin_url + "includes/Admin/images/upsell/";
 
-export default function UpsellModal({ onClose }: { onClose: () => void }) {
+interface Props {
+    onClose: () => void;
+    selected?: string;
+}
+
+export default function UpsellModal({ onClose, selected }: Props) {
     const [idx, setIdx] = useState(0);
     const info = proBlocks[idx];
+
+    useEffect(() => {
+        if (selected) {
+            selected = selected.replace('-dummy', '');
+            const idx = proBlocks.findIndex((b) => b.name === selected);
+            if (idx > -1) {
+                setIdx(idx);
+            }
+        }
+    }, [selected]);
 
     const prev = () =>
         setIdx((idx) => {
@@ -31,7 +46,10 @@ export default function UpsellModal({ onClose }: { onClose: () => void }) {
                         {info.icon} {info.title}
                     </h2>
                     <div className="tableberg-upsell-modal-content">
-                        <img src={IMAGE_BASE + info.image} alt={info.title + " Demo"} />
+                        <img
+                            src={IMAGE_BASE + info.image}
+                            alt={info.title + " Demo"}
+                        />
                         <p>{info.upsellText}</p>
                         <p>
                             Limited Time: Use code <b>TB10</b> to get a 10%
