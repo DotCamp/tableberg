@@ -10,9 +10,10 @@ const IMAGE_BASE = TABLEBERG_CFG.plugin_url + "includes/Admin/images/upsell/";
 interface Props {
     onClose: () => void;
     selected?: string;
+    text?: string;
 }
 
-export default function UpsellModal({ onClose, selected }: Props) {
+export default function UpsellModal({ onClose, selected, text }: Props) {
     const [idx, setIdx] = useState(0);
     const info = proBlocks[idx];
 
@@ -50,7 +51,7 @@ export default function UpsellModal({ onClose, selected }: Props) {
                             src={IMAGE_BASE + info.image}
                             alt={info.title + " Demo"}
                         />
-                        <p>{info.upsellText}</p>
+                        <p>{text || info.upsellText}</p>
                         <p>
                             Limited Time: Use code <b>TB10</b> to get a 10%
                             discount.
