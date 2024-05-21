@@ -39,3 +39,52 @@ div.components-autocomplete__results
         }
     }
 }
+
+.tableberg-locked-root {
+    margin-top: 0 !important;
+    grid-column: 1/-1;
+    position: relative;
+    > * {
+        margin-top: 0 !important;
+    }
+
+    * {
+        color: gray;
+    }
+
+    .tableberg-lock-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+
+        display: flex;
+        z-index: 1;
+        justify-content: right;
+        align-items: center;
+
+        backdrop-filter: blur(1px);
+
+        &-toolbar {
+            padding-right: 10px;
+        }
+
+        button {
+            padding: 0;
+            margin: 0;
+            background: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+
+            &:hover {
+                filter: drop-shadow(0 0 2px rgb(111, 33, 236));
+            }
+
+            * {
+                color: #671feb;
+            }
+        }
+    }
+}

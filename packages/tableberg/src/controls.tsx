@@ -22,6 +22,7 @@ import {
     __experimentalToggleGroupControl as ToggleGroupControl,
     __experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon,
     PanelBody,
+    Disabled,
 } from "@wordpress/components";
 /**
  * Internal Imports
@@ -41,6 +42,11 @@ import {
     BorderRadiusControl,
     SizeControl,
 } from "@tableberg/components";
+import LockedControl, {
+    StickyRowColControlDummy,
+} from "./components/LockedControl";
+
+const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -435,6 +441,16 @@ function TablebergControls({
                         })
                     }
                 />
+                {!IS_PRO && (
+                    <LockedControl>
+                        <ColorControl
+                            label={__("[PRO] Cell Background", "tableberg")}
+                            colorValue={null}
+                            onColorChange={() => {}}
+                            onDeselect={() => {}}
+                        />
+                    </LockedControl>
+                )}
             </InspectorControls>
 
             <InspectorControls group="dimensions">
@@ -527,6 +543,11 @@ function TablebergControls({
                     attributes={tableAttributes}
                     setTableAttributes={setTableAttributes}
                 />
+            )}
+            {!IS_PRO && (
+                <InspectorControls>
+                    <StickyRowColControlDummy />
+                </InspectorControls>
             )}
             <BlockControls>
                 <ToolbarWithDropdown
