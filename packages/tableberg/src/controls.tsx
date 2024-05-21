@@ -22,7 +22,6 @@ import {
     __experimentalToggleGroupControl as ToggleGroupControl,
     __experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon,
     PanelBody,
-    Disabled,
 } from "@wordpress/components";
 /**
  * Internal Imports
@@ -42,9 +41,7 @@ import {
     BorderRadiusControl,
     SizeControl,
 } from "@tableberg/components";
-import LockedControl, {
-    StickyRowColControlDummy,
-} from "./components/LockedControl";
+import LockedControl from "./components/LockedControl";
 
 const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
@@ -546,7 +543,22 @@ function TablebergControls({
             )}
             {!IS_PRO && (
                 <InspectorControls>
-                    <StickyRowColControlDummy />
+                    <PanelBody title="[PRO] Table Sticky Row/Col">
+                        <LockedControl inPanelBody>
+                            <ToggleControl
+                                checked={false}
+                                label="Sticky Top Row"
+                                onChange={() => {}}
+                            />
+                        </LockedControl>
+                        <LockedControl inPanelBody>
+                            <ToggleControl
+                                checked={false}
+                                label="Sticky First Col"
+                                onChange={() => {}}
+                            />
+                        </LockedControl>
+                    </PanelBody>
                 </InspectorControls>
             )}
             <BlockControls>

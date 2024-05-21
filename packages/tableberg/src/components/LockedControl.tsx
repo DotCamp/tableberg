@@ -1,4 +1,3 @@
-import { PanelBody, ToggleControl } from "@wordpress/components";
 import classNames from "classnames";
 import { useState, type SVGProps } from "react";
 import UpsellModal from "./UpsellModal";
@@ -21,27 +20,6 @@ function LockFillIcon(props: SVGProps<SVGSVGElement>) {
                 ></path>
             </g>
         </svg>
-    );
-}
-
-export function StickyRowColControlDummy() {
-    return (
-        <PanelBody title="[PRO] Table Sticky Row/Col">
-            <LockedControl inPanelBody>
-                <ToggleControl
-                    checked={false}
-                    label="Sticky Top Row"
-                    onChange={() => {}}
-                />
-            </LockedControl>
-            <LockedControl inPanelBody>
-                <ToggleControl
-                    checked={false}
-                    label="Sticky First Col"
-                    onChange={() => {}}
-                />
-            </LockedControl>
-        </PanelBody>
     );
 }
 
