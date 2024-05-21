@@ -70,18 +70,12 @@ div.components-autocomplete__results
         justify-content: right;
         align-items: center;
 
-        backdrop-filter: blur(1px);
-
         &-toolbar {
             padding-right: 10px;
         }
 
         &:hover {
-            filter: drop-shadow(0 0 2px rgb(111, 33, 236));
-        }
-
-        * {
-            color: #671feb;
+            filter: drop-shadow(1px 1px 1px rgb(116, 116, 116));
         }
     }
 }
