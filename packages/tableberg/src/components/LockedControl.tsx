@@ -4,7 +4,7 @@ import { useState, type SVGProps } from "react";
 import UpsellModal from "./UpsellModal";
 import { createPortal } from "react-dom";
 
-function MingcuteLockFill(props: SVGProps<SVGSVGElement>) {
+function LockFillIcon(props: SVGProps<SVGSVGElement>) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -66,7 +66,7 @@ export default function LockedControl({
                     })}
                     onClick={() => setVisibility(true)}
                 >
-                    <MingcuteLockFill height="25px" width="25px" />
+                    <LockFillIcon height="25px" width="25px" />
                 </button>
             </div>
             {showUpsell &&
