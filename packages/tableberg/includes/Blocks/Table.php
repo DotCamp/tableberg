@@ -214,7 +214,7 @@ class Table
 		$table_class_names = $this->get_style_class($attributes);
 		$table_style = $this->get_styles($attributes);
 
-		$table_attrs = 'class = "' . trim(join(' ', $table_class_names)) . '" style="' . $table_style . '"';
+		$table_attrs = 'class = "' . esc_attr(trim(join(' ', $table_class_names))) . '" style="' . $table_style . '"';
 
 		$content = HtmlUtils::insert_inside_tag($content, 'table', '<tbody>');
 		$content = HtmlUtils::replace_attrs_of_tag($content, 'table', $table_attrs);
@@ -224,6 +224,7 @@ class Table
 			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-header', 'class');
 			$bg_color = Utils::get_background_color($attributes, 'headerBackgroundColor', 'headerBackgroundGradient');
 			if ($bg_color) {
+				$bg_color = esc_attr($bg_color);
 				$content = HtmlUtils::append_attr_value($content, 'tr', "background: {$bg_color} !important;", 'style');
 			}
 
@@ -233,6 +234,7 @@ class Table
 			$content = HtmlUtils::append_attr_value($content, 'tr', ' tableberg-footer', 'class', $footer_idx);
 			$bg_color = Utils::get_background_color($attributes, 'footerBackgroundColor', 'footerBackgroundGradient');
 			if ($bg_color) {
+				$bg_color = esc_attr($bg_color);
 				$content = HtmlUtils::append_attr_value($content, 'tr', "background: {$bg_color} !important;", 'style', $footer_idx);
 			}
 		}

@@ -74,29 +74,27 @@ class StarRating
 			}
 		}
 
-
-
 		$reviewText = '';
 		$textStyle = '';
 		if (isset($attributes['reviewText'])) {
-			$reviewText = $attributes['reviewText'];
+			$reviewText = wp_kses_data($attributes['reviewText']);
 		}
 
 		if (isset($attributes['reviewTextAlign'])) {
-			$textStyle .= 'text-align:' . $attributes['reviewTextAlign'] . ';';
+			$textStyle .= 'text-align:' . esc_attr($attributes['reviewTextAlign']) . ';';
 		}
 		if (isset($attributes['reviewTextColor'])) {
-			$textStyle .= 'color:' . $attributes['reviewTextColor'] . ';';
+			$textStyle .= 'color:' . esc_attr($attributes['reviewTextColor']) . ';';
 		}
 
 
 		$stars = Common::generate_star_display(
-			$attributes['selectedStars'],
-			$attributes['starCount'],
+			esc_attr($attributes['selectedStars']),
+			esc_attr($attributes['starCount']),
 			'none',
-			$attributes['starColor'],
-			$attributes['starColor'],
-			$attributes['starSize']
+			esc_attr($attributes['starColor']),
+			esc_attr($attributes['starColor']),
+			esc_attr($attributes['starSize'])
 		);
 		
 		

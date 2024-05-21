@@ -49,7 +49,7 @@ class Icon
                 'width' => $size,
             ];
             if (isset($attributes['color']) && $attributes['color']) {
-                $iconAttrs['style'] = 'fill:' . $attributes['color'] . ';';
+                $iconAttrs['style'] = 'fill:' . esc_attr($attributes['color']) . ';';
             }
             $iconStr = Common::get_icon_svg($attributes, $iconAttrs);
 
@@ -62,7 +62,7 @@ class Icon
 
         if (isset($attributes['linkUrl']) && $attributes['linkUrl']) {
             $target = $attributes['linkTarget'] ?? '_self';
-            $iconStr = '<a href="' . $attributes['linkUrl'] . '" target="' . $target . '">' . $iconStr . '</a>';
+            $iconStr = '<a href="' . esc_url($attributes['linkUrl']) . '" target="' . esc_attr($target) . '">' . $iconStr . '</a>';
         }
         $content = '<div class="'.$className.'" style="' . self::get_styles($attributes) . '">' . $iconStr . '</div>';
         return $content;
