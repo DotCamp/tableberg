@@ -1,6 +1,8 @@
 import { PanelBody, ToggleControl } from "@wordpress/components";
 import classNames from "classnames";
-import type { SVGProps } from "react";
+import { useState, type SVGProps } from "react";
+import UpsellModal from "./UpsellModal";
+import { createPortal } from "react-dom";
 
 function MingcuteLockFill(props: SVGProps<SVGSVGElement>) {
     return (
@@ -43,24 +45,35 @@ export function StickyRowColControlDummy() {
     );
 }
 
-
-
 interface LockedControlProps {
     children: any;
     inPanelBody?: boolean;
 }
-export default function LockedControl({ children, inPanelBody }: LockedControlProps) {
+export default function LockedControl({
+    children,
+    inPanelBody,
+}: LockedControlProps) {
+    const [showUpsell, setVisibility] = useState(false);
+
     return (
-        <div className="tableberg-locked-root">
-            {children}
-            <div className={classNames({
-                "tableberg-lock-container": true,
-                "tableberg-lock-container-toolbar": !inPanelBody
-            })}>
-                <button>
+        <>
+            <div className="tableberg-locked-root">
+                {children}
+                <button
+                    className={classNames({
+                        "tableberg-lock-container": true,
+                        "tableberg-lock-container-toolbar": !inPanelBody,
+                    })}
+                    onClick={() => setVisibility(true)}
+                >
                     <MingcuteLockFill height="25px" width="25px" />
                 </button>
             </div>
-        </div>
+            {showUpsell &&
+                createPortal(
+                    <UpsellModal onClose={() => setVisibility(false)} />,
+                    document.body,
+                )}
+        </>
     );
 }

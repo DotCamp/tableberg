@@ -58,6 +58,12 @@ div.components-autocomplete__results
         left: 0;
         height: 100%;
         width: 100%;
+        padding: 0;
+        margin: 0;
+        background: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
 
         display: flex;
         z-index: 1;
@@ -70,21 +76,12 @@ div.components-autocomplete__results
             padding-right: 10px;
         }
 
-        button {
-            padding: 0;
-            margin: 0;
-            background: transparent;
-            border: none;
-            outline: none;
-            cursor: pointer;
+        &:hover {
+            filter: drop-shadow(0 0 2px rgb(111, 33, 236));
+        }
 
-            &:hover {
-                filter: drop-shadow(0 0 2px rgb(111, 33, 236));
-            }
-
-            * {
-                color: #671feb;
-            }
+        * {
+            color: #671feb;
         }
     }
 }
