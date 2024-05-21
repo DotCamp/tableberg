@@ -78,4 +78,11 @@ div.components-autocomplete__results
             filter: drop-shadow(1px 1px 1px rgb(116, 116, 116));
         }
     }
+    
+    .components-form-toggle__track {
+        border-color: gray !important;
+    }
+    .components-form-toggle__thumb {
+        background: gray !important;
+    }
 }
