@@ -439,7 +439,7 @@ function TablebergControls({
                     }
                 />
                 {!IS_PRO && (
-                    <LockedControl>
+                    <LockedControl isEnhanced selected="cell-bg">
                         <ColorControl
                             label={__("[PRO] Cell Background", "tableberg")}
                             colorValue={null}
@@ -544,14 +544,22 @@ function TablebergControls({
             {!IS_PRO && (
                 <InspectorControls>
                     <PanelBody title="[PRO] Table Sticky Row/Col">
-                        <LockedControl inPanelBody>
+                        <LockedControl
+                            inPanelBody
+                            isEnhanced
+                            selected="sticky-top-row"
+                        >
                             <ToggleControl
                                 checked={false}
                                 label="Sticky Top Row"
                                 onChange={() => {}}
                             />
                         </LockedControl>
-                        <LockedControl inPanelBody>
+                        <LockedControl
+                            inPanelBody
+                            isEnhanced
+                            selected="sticky-first-col"
+                        >
                             <ToggleControl
                                 checked={false}
                                 label="Sticky First Col"
