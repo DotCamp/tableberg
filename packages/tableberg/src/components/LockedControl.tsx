@@ -1,6 +1,10 @@
 import classNames from "classnames";
 import { useState, type SVGProps } from "react";
-import UpsellModal from "./UpsellModal";
+import UpsellModal, {
+    BlockUpsellInfo,
+    UpsellEnhancedModal,
+    UpsellModalComponent,
+} from "./UpsellModal";
 import { createPortal } from "react-dom";
 
 function LockFillIcon(props: SVGProps<SVGSVGElement>) {
@@ -26,10 +30,17 @@ function LockFillIcon(props: SVGProps<SVGSVGElement>) {
 interface LockedControlProps {
     children: any;
     inPanelBody?: boolean;
+    info?: BlockUpsellInfo;
+    selected?: string;
+    isEnhanced?: boolean;
 }
+
 export default function LockedControl({
     children,
     inPanelBody,
+    info,
+    selected,
+    isEnhanced,
 }: LockedControlProps) {
     const [showUpsell, setVisibility] = useState(false);
 
@@ -49,7 +60,22 @@ export default function LockedControl({
             </div>
             {showUpsell &&
                 createPortal(
-                    <UpsellModal onClose={() => setVisibility(false)} />,
+                    info ? (
+                        <UpsellModalComponent
+                            onClose={() => setVisibility(false)}
+                            info={info}
+                        />
+                    ) : isEnhanced ? (
+                        <UpsellEnhancedModal
+                            onClose={() => setVisibility(false)}
+                            selected={selected}
+                        />
+                    ) : (
+                        <UpsellModal
+                            onClose={() => setVisibility(false)}
+                            selected={selected}
+                        />
+                    ),
                     document.body,
                 )}
         </>

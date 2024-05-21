@@ -112,4 +112,8 @@
     .tableberg-upsell-modal-next {
         left: calc(100% + 80px);
     }
+
+    .tableberg-upsell-modal-text:not(img + p) {
+        font-size: 1.1rem;
+    }
 }
