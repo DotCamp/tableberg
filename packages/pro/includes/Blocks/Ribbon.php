@@ -50,7 +50,7 @@ class Ribbon
             'background' => Utils::get_any($attributes, 'bgGradient', 'background')
         ]);
 
-        $content = '<div class="tableberg-ribbon-corner-' . $ind['side'] . '"><div class="tableberg-ribbon-corner-text" style="' . $contentStyle . '">' . $attributes['text'] . '</div></div>';
+        $content = '<div class="tableberg-ribbon-corner-' . esc_attr($ind['side']) . '"><div class="tableberg-ribbon-corner-text" style="' . $contentStyle . '">' . esc_html($attributes['text']) . '</div></div>';
 
         return '<div class="tableberg-ribbon tableberg-ribbon-corner" style="' . $style . '">' . $content . '</div>';
     }
@@ -73,9 +73,9 @@ class Ribbon
             ]
         );
 
-        $content = '<div class="tableberg-ribbon-side-content" style="' . $contentStyle . '">' . $attributes['text'] . '</div>';
+        $content = '<div class="tableberg-ribbon-side-content" style="' . $contentStyle . '">' . esc_html($attributes['text']) . '</div>';
 
-        return '<div class="tableberg-ribbon tableberg-ribbon-side tableberg-ribbon-side-' . $ind['side'] . '" style="' . $style . '">' . $content .
+        return '<div class="tableberg-ribbon tableberg-ribbon-side tableberg-ribbon-side-' . esc_attr($ind['side']) . '" style="' . $style . '">' . $content .
             '<div class="tableberg-ribbon-side-shadow"></div></div>';
     }
 
@@ -98,7 +98,7 @@ class Ribbon
             'width' => $ind['size'],
         ]);
 
-        $content = '<div class="tableberg-shape-' . $ind['shape'] . '" style="' . $contentStyle . '">' . $icon . '</div>';
+        $content = '<div class="tableberg-shape-' . esc_attr($ind['shape']) . '" style="' . $contentStyle . '">' . $icon . '</div>';
 
         return '<div class="tableberg-ribbon tableberg-ribbon-icon" style="' . $style . '">' . $content . '</div>';
     }

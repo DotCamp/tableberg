@@ -394,7 +394,7 @@ class Utils
 			}
 		}
 
-		return $css_string;
+		return esc_attr($css_string);
 	}
 
 	/**

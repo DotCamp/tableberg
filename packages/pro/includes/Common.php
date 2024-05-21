@@ -91,7 +91,7 @@ class Common
 				$childrenStr = self::get_wp_icon_svg($val, []);
 				continue;
 			}
-			$attrs .= ' ' . $attr . '="' . $val . '"';
+			$attrs .= ' ' . $attr . '="' . esc_attr($val) . '"';
 		}
 
 		foreach ($custom_attrs as $attr => $val) {
@@ -115,7 +115,7 @@ class Common
 				$childrenStr = self::get_fontawesome_icon_svg($val, []);
 				continue;
 			}
-			$attrs .= ' ' . $attr . '="' . $val . '"';
+			$attrs .= ' ' . $attr . '="' . esc_attr($val) . '"';
 		}
 
 		foreach ($custom_attrs as $attr => $val) {
