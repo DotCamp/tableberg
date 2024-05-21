@@ -2,18 +2,19 @@ import HtmlBlockIcon from "./icons/html";
 import IconBlockIcon from "./icons/icon";
 import ListBlockIcon from "./icons/styled-list";
 import RibbonBlockIcon from "./icons/ribbon";
+import blockIcon from "./icons/tableberg";
 import { BlockIcon as StarBlockIcon } from "./icons/star-rating";
 import { image, button, paragraph, list } from "@wordpress/icons";
 
 export default [
     {
-        name: "tableberg/paragraph",
+        name: "core/paragraph",
         title: "Paragraph",
         icon: paragraph,
         isPro: false,
     },
     {
-        name: "tableberg/list",
+        name: "core/list",
         title: "List",
         icon: list,
         isPro: false,
@@ -36,7 +37,8 @@ export default [
         icon: ListBlockIcon,
         isPro: true,
         image: "styled_list_block_1.png",
-        upsellText: "Elevate your lists with customizable icons as bullets for a polished look."
+        upsellText:
+            "Elevate your lists with customizable icons as bullets for a polished look.",
     },
     {
         name: "tableberg/ribbon",
@@ -44,7 +46,8 @@ export default [
         icon: RibbonBlockIcon,
         isPro: true,
         image: "ribbon_block_1.png",
-        upsellText: "Overlay a decorative ribbon on your table, ideal for highlighting special offers or important notices."
+        upsellText:
+            "Overlay a decorative ribbon on your table, ideal for highlighting special offers or important notices.",
     },
     {
         name: "tableberg/html",
@@ -52,7 +55,8 @@ export default [
         icon: HtmlBlockIcon,
         isPro: true,
         image: "html_block_1.png",
-        upsellText: "Add your own HTML code to create specialized content and integrate custom elements."
+        upsellText:
+            "Add your own HTML code to create specialized content and integrate custom elements.",
     },
     {
         name: "tableberg/icon",
@@ -60,7 +64,8 @@ export default [
         icon: IconBlockIcon,
         isPro: true,
         image: "icon_block_1.png",
-        upsellText: "Add scalable icons to your tables to support text and enhance user engagement."
+        upsellText:
+            "Add scalable icons to your tables to support text and enhance user engagement.",
     },
     {
         name: "tableberg/star-rating",
@@ -68,6 +73,34 @@ export default [
         icon: StarBlockIcon,
         isPro: true,
         image: "star_rating_block_1.png",
-        upsellText: "Add customizable star ratings, perfect for reviews and comparison tables."
+        upsellText:
+            "Add customizable star ratings, perfect for reviews and comparison tables.",
     },
 ];
+
+export const ENHANCED_FEATURES = [
+    {
+        name: "sticky-top-row",
+        title: "Sticky Top Row",
+        icon: blockIcon,
+        upsellText: "<strong>/Feature/</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "sticky-first-col",
+        title: "Sticky First Column",
+        icon: blockIcon,
+        upsellText: "<strong>/Feature/</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "cell-bg",
+        title: "Individual Cell Background",
+        icon: blockIcon,
+        upsellText: "<strong>/Feature/</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "duplicate-row-call",
+        title: "Duplicate Rows and Columns",
+        icon: blockIcon,
+        upsellText: "<strong>/Feature/</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+] as const;
