@@ -41,6 +41,9 @@ import {
     BorderRadiusControl,
     SizeControl,
 } from "@tableberg/components";
+import LockedControl from "./components/LockedControl";
+
+const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
 const AVAILABLE_JUSTIFICATIONS = [
     {
@@ -435,6 +438,16 @@ function TablebergControls({
                         })
                     }
                 />
+                {!IS_PRO && (
+                    <LockedControl>
+                        <ColorControl
+                            label={__("[PRO] Cell Background", "tableberg")}
+                            colorValue={null}
+                            onColorChange={() => {}}
+                            onDeselect={() => {}}
+                        />
+                    </LockedControl>
+                )}
             </InspectorControls>
 
             <InspectorControls group="dimensions">
@@ -527,6 +540,26 @@ function TablebergControls({
                     attributes={tableAttributes}
                     setTableAttributes={setTableAttributes}
                 />
+            )}
+            {!IS_PRO && (
+                <InspectorControls>
+                    <PanelBody title="[PRO] Table Sticky Row/Col">
+                        <LockedControl inPanelBody>
+                            <ToggleControl
+                                checked={false}
+                                label="Sticky Top Row"
+                                onChange={() => {}}
+                            />
+                        </LockedControl>
+                        <LockedControl inPanelBody>
+                            <ToggleControl
+                                checked={false}
+                                label="Sticky First Col"
+                                onChange={() => {}}
+                            />
+                        </LockedControl>
+                    </PanelBody>
+                </InspectorControls>
             )}
             <BlockControls>
                 <ToolbarWithDropdown
