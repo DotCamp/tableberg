@@ -439,7 +439,7 @@ function TablebergControls({
                     }
                 />
                 {!IS_PRO && (
-                    <LockedControl isEnhanced selected="cell-bg">
+                    <LockedControl inToolsPanel isEnhanced selected="cell-bg">
                         <ColorControl
                             label={__("[PRO] Cell Background", "tableberg")}
                             colorValue={null}
@@ -466,6 +466,38 @@ function TablebergControls({
             </InspectorControls>
 
             <InspectorControls group="border">
+                {!IS_PRO && (
+                    <>
+                        <LockedControl
+                            isEnhanced
+                            inToolsPanel
+                            selected="col-only-border"
+                        >
+                            <ToggleControl
+                                label={__(
+                                    "[PRO] Column Only Border",
+                                    "tableberg",
+                                )}
+                                checked={false}
+                                onChange={() => {}}
+                            />
+                        </LockedControl>
+                        <LockedControl
+                            isEnhanced
+                            inToolsPanel
+                            selected="row-only-border"
+                        >
+                            <ToggleControl
+                                label={__(
+                                    "[PRO] Row Only Border",
+                                    "tableberg-pro",
+                                )}
+                                checked={false}
+                                onChange={() => {}}
+                            />
+                        </LockedControl>
+                    </>
+                )}
                 <BorderControl
                     label={__("Table Border Size", "tableberg")}
                     value={tableAttributes.tableBorder}
@@ -544,22 +576,14 @@ function TablebergControls({
             {!IS_PRO && (
                 <InspectorControls>
                     <PanelBody title="[PRO] Table Sticky Row/Col">
-                        <LockedControl
-                            inPanelBody
-                            isEnhanced
-                            selected="sticky-top-row"
-                        >
+                        <LockedControl isEnhanced selected="sticky-top-row">
                             <ToggleControl
                                 checked={false}
                                 label="Sticky Top Row"
                                 onChange={() => {}}
                             />
                         </LockedControl>
-                        <LockedControl
-                            inPanelBody
-                            isEnhanced
-                            selected="sticky-first-col"
-                        >
+                        <LockedControl isEnhanced selected="sticky-first-col">
                             <ToggleControl
                                 checked={false}
                                 label="Sticky First Col"
