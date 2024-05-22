@@ -466,8 +466,8 @@ const useMerging = (
             toRemoves.push(cells[i].clientId);
         }
 
-        storeActions.replaceInnerBlocks(destination.clientId, newInnerBlocks);
         storeActions.removeBlocks(toRemoves);
+        storeActions.replaceInnerBlocks(destination.clientId, newInnerBlocks);
 
         const oldSpans = getSpans();
         const newSpans = { ...oldSpans };
