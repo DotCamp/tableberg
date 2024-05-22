@@ -5,6 +5,7 @@ import {
     BlockSaveProps,
     InnerBlockTemplate,
     createBlock,
+    cloneBlock,
 } from "@wordpress/blocks";
 import {
     BlockVerticalAlignmentToolbar,
@@ -306,7 +307,7 @@ const deleteRow = (
             cellBlocks.push(cell as any);
             return;
         }
-        
+
         if (
             cell.attributes.isTmp ||
             (cell.attributes.row >= rowIndex && cell.attributes.row < endRow)
@@ -451,26 +452,22 @@ const useMerging = (
             cells: tableBlock.attributes.cells - cells.length,
         });
 
+        const newInnerBlocks: TablebergCellInstance[] =
+            destination.innerBlocks as any;
+
         const toRemoves: string[] = [];
         for (let i = 0; i < cells.length; i++) {
-            storeActions.moveBlocksToPosition(
-                cells[i].innerBlocks.reduce<string[]>((prev, b) => {
-                    if (
-                        b.name !== "core/paragraph" ||
-                        b.attributes.content?.text
-                    ) {
-                        prev.push(b.clientId);
-                    } else {
-                        toRemoves.push(b.clientId);
-                    }
-                    return prev;
-                }, []),
-                cells[i].clientId,
-                destination.clientId,
-                destination.innerBlocks.length,
-            );
+            cells[i].innerBlocks.forEach((b) => {
+                if (b.name !== "core/paragraph" || b.attributes.content?.text) {
+                    newInnerBlocks.push(cloneBlock(b) as any);
+                }
+                toRemoves.push(b.clientId);
+            });
             toRemoves.push(cells[i].clientId);
         }
+
+        storeActions.replaceInnerBlocks(destination.clientId, newInnerBlocks);
+        storeActions.removeBlocks(toRemoves);
 
         const oldSpans = getSpans();
         const newSpans = { ...oldSpans };
