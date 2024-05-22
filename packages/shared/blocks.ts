@@ -103,4 +103,16 @@ export const ENHANCED_FEATURES = [
         icon: blockIcon,
         upsellText: "<strong>/Feature/</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
+    {
+        name: "row-only-border",
+        title: "Row Only Border",
+        icon: blockIcon,
+        upsellText: "<strong>/Feature/</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "col-only-border",
+        title: "Column Only Border",
+        icon: blockIcon,
+        upsellText: "<strong>/Feature/</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
 ] as const;
