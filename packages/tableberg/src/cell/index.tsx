@@ -341,14 +341,14 @@ const useMerging = (
     storeActions: BlockEditorStoreActions,
 ) => {
     const { selectForMerge, endCellMultiSelect } = useDispatch(tbStore);
-    const { getClassName, isMergable, getSpans, getIndexes } = useSelect(
+    const { isCellSelected, isMergable, getSpans, getIndexes } = useSelect(
         (select) => {
-            const { getIndexes, getClassName, getSpans } = select(tbStore);
+            const { getIndexes, isCellSelected, getSpans } = select(tbStore);
 
             return {
                 getIndexes,
                 isMergable: () => getIndexes(tableBlock.clientId),
-                getClassName,
+                isCellSelected,
                 getSpans,
             };
         },
@@ -360,8 +360,19 @@ const useMerging = (
     }, []);
 
     const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
+        const cell: TablebergCellInstance = storeSelect.getBlock(
+            clientId,
+        ) as any;
+
         if (!evt.shiftKey) {
-            if (getIndexes(tableBlock.clientId)) {
+            if (
+                getIndexes(tableBlock.clientId) &&
+                !isCellSelected(
+                    tableBlock.clientId,
+                    cell.attributes.row,
+                    cell.attributes.col,
+                )
+            ) {
                 endCellMultiSelect(tableBlock.clientId);
             }
             return;
@@ -386,10 +397,6 @@ const useMerging = (
         }
         evt.preventDefault();
         evt.stopImmediatePropagation();
-
-        const cell: TablebergCellInstance = storeSelect.getBlock(
-            clientId,
-        ) as any;
 
         let from: any, to: any;
 
@@ -634,7 +641,7 @@ const useMerging = (
 
     return {
         endCellMultiSelect,
-        getClassName,
+        isCellSelected,
         isMergable,
         addMergingEvt: (el?: HTMLElement) => {
             el?.addEventListener("pointerdown", elClickEvt, { capture: true });
@@ -694,7 +701,7 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
     const {
         isMergable,
         addMergingEvt,
-        getClassName,
+        isCellSelected,
         mergeCells,
         unMergeCells,
     } = useMerging(clientId, tableBlock, storeActions);
@@ -732,16 +739,18 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             background: attributes.bgGradient || attributes.background,
         },
         ref: cellRef,
-        className: classNames(
-            getClassName(tableBlock.clientId, attributes.row, attributes.col),
-            {
-                "tableberg-odd-row-cell": isOddRow,
-                "tableberg-even-row-cell": !isOddRow,
-                "tableberg-header-cell": isHeaderRow,
-                "tableberg-footer-cell": isFooterRow,
-                "tableberg-has-selected": hasSelected,
-            },
-        ),
+        className: classNames({
+            "tableberg-odd-row-cell": isOddRow,
+            "tableberg-even-row-cell": !isOddRow,
+            "tableberg-header-cell": isHeaderRow,
+            "tableberg-footer-cell": isFooterRow,
+            "tableberg-has-selected": hasSelected,
+            "is-multi-selected": isCellSelected(
+                tableBlock.clientId,
+                attributes.row,
+                attributes.col,
+            ),
+        }),
     });
 
     const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
