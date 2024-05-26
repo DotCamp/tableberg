@@ -797,27 +797,18 @@ function edit(
                     const target = ctx.overInstance;
 
                     if (ctx.type === "row") {
-                        let targetRow = target.row;
-                        if (ctx.toEnd) {
-                            targetRow += target.rowspan;
-                        }
                         moveRow(
                             storeActions,
                             tableBlock,
                             subject.row,
-                            targetRow,
+                            target.row,
                         );
                     } else {
-                        let targetCol = target.col;
-                        if (ctx.toEnd) {
-                            targetCol += target.colspan;
-                        }
-
                         moveCol(
                             storeActions,
                             tableBlock,
                             subject.col,
-                            targetCol,
+                            target.col,
                         );
                     }
                 },
