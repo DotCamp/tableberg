@@ -31,6 +31,11 @@ import {
     tableColumnDelete,
     table,
     alignNone,
+    copy,
+    arrowRight,
+    arrowLeft,
+    arrowUp,
+    arrowDown,
 } from "@wordpress/icons";
 
 import classNames from "classnames";
@@ -42,7 +47,7 @@ import "./style.scss";
 import "./editor.scss";
 
 import metadata from "./block.json";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import TablebergControls from "../controls";
 import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
@@ -51,6 +56,14 @@ import {
     TablebergCellBlockAttrs,
     TablebergCellInstance,
 } from "@tableberg/shared/types";
+
+import {
+    DuplicateRowIcon,
+    DuplicateColumnIcon,
+} from "@tableberg/shared/icons/enhancements";
+import { UpsellEnhancedModal } from "../components/UpsellModal";
+
+const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
 const ALLOWED_BLOCKS = [
     "core/paragraph",
@@ -306,7 +319,7 @@ const deleteRow = (
             cellBlocks.push(cell as any);
             return;
         }
-        
+
         if (
             cell.attributes.isTmp ||
             (cell.attributes.row >= rowIndex && cell.attributes.row < endRow)
@@ -778,6 +791,8 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
         addMergingEvt(cellRef.current);
     }, [cellRef.current]);
 
+    const [upsell, setUpsell] = useState<string | null>(null);
+
     const tableControls: DropdownOption[] = [
         {
             icon: tableRowBefore,
@@ -832,6 +847,55 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                 ),
         },
     ];
+
+    let tableControlsPro: DropdownOption[] = [];
+
+    if (!IS_PRO) {
+        tableControlsPro = [
+            {
+                icon: DuplicateRowIcon,
+                title: "[PRO] Duplicate this row",
+                onClick: () => {
+                    setUpsell("duplicate-row-col");
+                },
+            },
+            {
+                icon: DuplicateColumnIcon,
+                title: "[PRO] Duplicate this column",
+                onClick: () => {
+                    setUpsell("duplicate-row-col");
+                },
+            },
+            {
+                icon: arrowRight,
+                title: "[PRO] Move column right",
+                onClick: () => {
+                    setUpsell("move-row-col");
+                },
+            },
+            {
+                icon: arrowLeft,
+                title: "[PRO] Move column left",
+                onClick: () => {
+                    setUpsell("move-row-col");
+                },
+            },
+            {
+                icon: arrowUp,
+                title: "[PRO] Move row up",
+                onClick: () => {
+                    setUpsell("move-row-col");
+                },
+            },
+            {
+                icon: arrowDown,
+                title: "[PRO] Move row down",
+                onClick: () => {
+                    setUpsell("move-row-col");
+                },
+            },
+        ];
+    }
 
     if (isMergable()) {
         tableControls.push({
@@ -929,6 +993,28 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
                     controls={tableControls}
                 />
             </BlockControls>
+            {!IS_PRO && (
+                <>
+                    <BlockControls
+                        group="other"
+                        __experimentalShareWithChildBlocks
+                    >
+                        <ToolbarDropdownMenu
+                            icon={copy}
+                            label={"[PRO] Edit table"}
+                            controls={tableControlsPro}
+                        />
+                    </BlockControls>
+                    {upsell &&
+                        createPortal(
+                            <UpsellEnhancedModal
+                                selected={upsell}
+                                onClose={() => setUpsell(null)}
+                            />,
+                            document.body,
+                        )}
+                </>
+            )}
             <TablebergControls clientId={clientId} />
         </>
     );

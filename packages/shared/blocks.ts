@@ -98,10 +98,16 @@ export const ENHANCED_FEATURES = [
         upsellText: "<strong>Individual Cell Background</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
     {
-        name: "duplicate-row-call",
+        name: "duplicate-row-col",
         title: "Duplicate Rows and Columns",
         icon: blockIcon,
         upsellText: "<strong>Duplicate Rows and Columns</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "move-row-col",
+        title: "Move Rows and Columns",
+        icon: blockIcon,
+        upsellText: "<strong>Move Rows and Columns</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
     {
         name: "row-only-border",
