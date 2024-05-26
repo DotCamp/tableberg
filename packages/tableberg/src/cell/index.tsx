@@ -52,6 +52,7 @@ import {
     TablebergCellBlockAttrs,
     TablebergCellInstance,
 } from "@tableberg/shared/types";
+import { moveCol, moveRow } from "./move-row-cols";
 
 const ALLOWED_BLOCKS = [
     "core/paragraph",
@@ -785,13 +786,43 @@ function edit(
         );
         addMergingEvt(cellRef.current);
         if (props.DragNDropSorting && cellRef.current) {
-            new props.DragNDropSorting(
+            const dins = new props.DragNDropSorting(
                 cellRef.current,
                 attributes.row,
                 attributes.col,
                 attributes.rowspan,
                 attributes.colspan,
+                (ctx: any) => {
+                    const subject = ctx.startInstance;
+                    const target = ctx.overInstance;
+
+                    if (ctx.type === "row") {
+                        let targetRow = target.row;
+                        if (ctx.toEnd) {
+                            targetRow += target.rowspan;
+                        }
+                        moveRow(
+                            storeActions,
+                            tableBlock,
+                            subject.row,
+                            targetRow,
+                        );
+                    } else {
+                        let targetCol = target.col;
+                        if (ctx.toEnd) {
+                            targetCol += target.colspan;
+                        }
+
+                        moveCol(
+                            storeActions,
+                            tableBlock,
+                            subject.col,
+                            targetCol,
+                        );
+                    }
+                },
             );
+            return () => dins.remove();
         }
     }, [cellRef.current]);
 

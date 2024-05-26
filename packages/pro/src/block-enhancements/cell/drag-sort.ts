@@ -30,6 +30,7 @@ class Context {
     public startPos?: Position;
     public startBox?: DOMRect;
     public lastSide?: Sides;
+    public toEnd?: boolean;
 
     public dragPreview?: HTMLDivElement;
 
@@ -55,12 +56,15 @@ export class DragNDropSorting {
         this.touchMove(evt);
     private cleanUpEvt: () => void = () => this.cleanUp();
 
+    private makeMove: (ctx: Context) => void;
+
     constructor(
         cellEL: HTMLTableCellElement,
         row: number,
         col: number,
         rowspan: number,
         colspan: number,
+        makeMove: (ctx: Context) => void,
     ) {
         this.cellEl = cellEL;
 
@@ -68,6 +72,7 @@ export class DragNDropSorting {
         this.col = col;
         this.rowspan = rowspan;
         this.colspan = colspan;
+        this.makeMove = makeMove;
 
         const root = cellEL.closest("div")!;
         if (!root.dataset.__tableberg_drag_ctx) {
@@ -255,6 +260,7 @@ export class DragNDropSorting {
             const newClass = SIDE_CLASSES[side];
             const over = this.ctx.overInstance!;
             const wasBegin = ["top", "left"].indexOf(this.ctx.lastSide!) > -1;
+            this.ctx.toEnd = wasBegin;
             this.ctx.cellInstances.forEach((ins) => {
                 if (wasBegin) {
                     if (over.doesMatchEnd(ins)) {
@@ -291,7 +297,10 @@ export class DragNDropSorting {
     }
 
     private onDrop() {
-        console.log("Drop");
+        if (!this.ctx.isActive) {
+            return;
+        }
+        this.makeMove(this.ctx);
     }
 
     private cleanUp() {
@@ -319,5 +328,11 @@ export class DragNDropSorting {
         this.ctx.overInstance = undefined;
         this.ctx.lastSide = undefined;
         this.ctx.activeEls = undefined;
+    }
+
+    public remove() {
+        this.ctx.cellInstances = this.ctx.cellInstances.filter(
+            (ins) => ins !== this,
+        );
     }
 }
