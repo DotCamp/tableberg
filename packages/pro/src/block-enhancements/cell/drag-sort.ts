@@ -2,16 +2,7 @@ const CONTEXT_MAP = new Map<string, Context>();
 const HAS_TOUCH: boolean =
     "ontouchstart" in window || (navigator.maxTouchPoints as any);
 
-const SIDE_CLASSES = {
-    left: "tableberg-drag-left",
-    right: "tableberg-drag-right",
-    top: "tableberg-drag-top",
-    bottom: "tableberg-drag-bottom",
-} as const;
-
 let ctxLen = 1;
-
-type Sides = "top" | "right" | "bottom" | "left";
 
 interface Position {
     x: number;
@@ -29,8 +20,6 @@ class Context {
     public startInstance?: DragNDropSorting;
     public startPos?: Position;
     public startBox?: DOMRect;
-    public lastSide?: Sides;
-    public toEnd?: boolean;
 
     public dragPreview?: HTMLDivElement;
 
@@ -221,58 +210,36 @@ export class DragNDropSorting {
                     }
                 });
             }
+
+            this.ctx.rootEl
+                .querySelectorAll(".tableberg-drag-over-" + oldType)
+                .forEach((el) => {
+                    el.classList.remove("tableberg-drag-over-" + oldType);
+                });
+
+            const over = this.ctx.overInstance!;
+            this.ctx.cellInstances.forEach((ins) => {
+                if (
+                    (this.ctx.type === "row" && ins.row === over.row) ||
+                    (this.ctx.type === "col" && ins.col === over.col)
+                ) {
+                    ins.cellEl.classList.add(
+                        "tableberg-drag-over-" + this.ctx.type,
+                    );
+                }
+            });
         }
 
-        const cellEl = this.ctx.overInstance?.cellEl!;
-        const box = cellEl.getBoundingClientRect();
-
-        let side: Sides;
-
         if (this.ctx.type === "col") {
-            if (box.left + box.width / 2 > evt.x) {
-                side = "left";
-            } else {
-                side = "right";
-            }
             this.ctx.dragPreview!.style.left = `${
                 evt.x - (this.ctx.startPos!.x - this.ctx.startBox!.left)
             }px`;
             this.ctx.dragPreview!.style.top = `${rootBox.top}px`;
         } else {
-            if (box.top + box.height / 2 > evt.y) {
-                side = "top";
-            } else {
-                side = "bottom";
-            }
             this.ctx.dragPreview!.style.top = `${
                 evt.y - (this.ctx.startPos!.y - this.ctx.startBox!.top)
             }px`;
             this.ctx.dragPreview!.style.left = `${rootBox.left}px`;
-        }
-
-        if (side !== this.ctx.lastSide) {
-            const oldClass = SIDE_CLASSES[this.ctx.lastSide!];
-
-            this.ctx.rootEl.querySelectorAll("." + oldClass).forEach((el) => {
-                el.classList.remove(oldClass);
-            });
-
-            const newClass = SIDE_CLASSES[side];
-            const over = this.ctx.overInstance!;
-            const wasBegin = ["top", "left"].indexOf(this.ctx.lastSide!) > -1;
-            this.ctx.toEnd = wasBegin;
-            this.ctx.cellInstances.forEach((ins) => {
-                if (wasBegin) {
-                    if (over.doesMatchEnd(ins)) {
-                        ins.cellEl.classList.add(newClass);
-                    }
-                } else {
-                    if (over.doesMatchBegin(ins)) {
-                        ins.cellEl.classList.add(newClass);
-                    }
-                }
-            });
-            this.ctx.lastSide = side;
         }
     }
 
@@ -288,6 +255,22 @@ export class DragNDropSorting {
         if (!this.ctx.isActive) {
             return;
         }
+        this.ctx.rootEl
+            .querySelectorAll(".tableberg-drag-over-" + this.ctx.type)
+            .forEach((el) => {
+                el.classList.remove("tableberg-drag-over-" + this.ctx.type);
+            });
+
+        this.ctx.cellInstances.forEach((ins) => {
+            if (
+                (this.ctx.type === "row" && ins.row === this.row) ||
+                (this.ctx.type === "col" && ins.col === this.col)
+            ) {
+                ins.cellEl.classList.add(
+                    "tableberg-drag-over-" + this.ctx.type,
+                );
+            }
+        });
         this.ctx.overInstance = this;
     }
     private onLeave() {
@@ -313,11 +296,11 @@ export class DragNDropSorting {
             document.removeEventListener("touchend", this.cleanUpEvt);
         }
 
-        const oldClass = SIDE_CLASSES[this.ctx.lastSide!];
-
-        this.ctx.rootEl.querySelectorAll("." + oldClass).forEach((el) => {
-            el.classList.remove(oldClass);
-        });
+        this.ctx.rootEl
+            .querySelectorAll(".tableberg-drag-over-" + this.ctx.type)
+            .forEach((el) => {
+                el.classList.remove("tableberg-drag-over-" + this.ctx.type);
+            });
 
         this.ctx.activeEls?.forEach((el) => {
             el.classList.remove("tableberg-drag-active-" + this.ctx.type);
@@ -326,7 +309,6 @@ export class DragNDropSorting {
         this.ctx.type = undefined;
         this.ctx.isActive = false;
         this.ctx.overInstance = undefined;
-        this.ctx.lastSide = undefined;
         this.ctx.activeEls = undefined;
     }
 

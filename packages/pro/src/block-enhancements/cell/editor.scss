@@ -1,46 +1,42 @@
 .wp-block-tableberg-cell {
-    &.tableberg-drag-left::before {
-        content: "";
-        position: absolute;
-        height: 100%;
-        width: 2px;
-        background: blue;
-        right: 100%;
-        top: 0;
+    &.tableberg-drag-over-row {
+        * {
+            opacity: 0.2;
+        }
+        &::before {
+            border-top: 2px dashed blue;
+            border-bottom: 2px dashed blue;
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+        }
     }
-
-    &.tableberg-drag-right::before {
-        content: "";
-        position: absolute;
-        height: 100%;
-        width: 2px;
-        background: blue;
-        left: 100%;
-        top: 0;
-    }
-
-    &.tableberg-drag-top::before {
-        content: "";
-        position: absolute;
-        height: 2px;
-        width: 100%;
-        background: blue;
-        left: 0;
-        bottom: 100%;
-    }
-
-    &.tableberg-drag-bottom::before {
-        content: "";
-        position: absolute;
-        height: 2px;
-        width: 100%;
-        background: blue;
-        left: 0;
-        top: 100%;
+    &.tableberg-drag-over-col {
+        * {
+            opacity: 0.2;
+        }
+        ::before {
+            border-right: 2px dashed blue;
+            border-left: 2px dashed blue;
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+        }
     }
 
     &.tableberg-drag-active-row {
         background: rgba(236, 213, 6, 0.055);
+        * {
+            opacity: 1;
+        }
         &::after {
             border-top: 2px dashed yellow;
             border-bottom: 2px dashed yellow;
@@ -52,10 +48,16 @@
             top: 0;
             box-sizing: border-box;
         }
+        &::before {
+            display: none !important;
+        }
     }
 
     &.tableberg-drag-active-col {
         background: rgba(236, 213, 6, 0.055);
+        * {
+            opacity: 1;
+        }
         &::after {
             border-right: 2px dashed yellow;
             border-left: 2px dashed yellow;
@@ -66,6 +68,9 @@
             left: 0;
             top: 0;
             box-sizing: border-box;
+        }
+        &::before {
+            display: none !important;
         }
     }
 }
