@@ -163,7 +163,7 @@ export class DragNDropSorting {
         );
     }
 
-    private mouseMove(evt: MouseEvent) {
+    private mouseMove(evt: Event & Position) {
         evt.preventDefault();
         evt.stopImmediatePropagation();
 
@@ -187,7 +187,9 @@ export class DragNDropSorting {
             this.ctx.activeEls = [];
             if (this.ctx.type === "col") {
                 this.ctx.dragPreview!.style.height = `${rootBox.height}px`;
-                this.ctx.dragPreview!.style.width = `${this.ctx.startBox!.width}px`;
+                this.ctx.dragPreview!.style.width = `${
+                    this.ctx.startBox!.width
+                }px`;
 
                 this.ctx.cellInstances.forEach((ins) => {
                     if (
@@ -199,9 +201,10 @@ export class DragNDropSorting {
                     }
                 });
             } else {
-                
                 this.ctx.dragPreview!.style.width = `${rootBox.width}px`;
-                this.ctx.dragPreview!.style.height = `${this.ctx.startBox!.height}px`;
+                this.ctx.dragPreview!.style.height = `${
+                    this.ctx.startBox!.height
+                }px`;
 
                 this.ctx.cellInstances.forEach((ins) => {
                     if (
@@ -226,7 +229,9 @@ export class DragNDropSorting {
             } else {
                 side = "right";
             }
-            this.ctx.dragPreview!.style.left = `${ (evt.x - (this.ctx.startPos!.x - this.ctx.startBox!.left))}px`;
+            this.ctx.dragPreview!.style.left = `${
+                evt.x - (this.ctx.startPos!.x - this.ctx.startBox!.left)
+            }px`;
             this.ctx.dragPreview!.style.top = `${rootBox.top}px`;
         } else {
             if (box.top + box.height / 2 > evt.y) {
@@ -234,7 +239,9 @@ export class DragNDropSorting {
             } else {
                 side = "bottom";
             }
-            this.ctx.dragPreview!.style.top = `${ (evt.y - (this.ctx.startPos!.y - this.ctx.startBox!.top))}px`;
+            this.ctx.dragPreview!.style.top = `${
+                evt.y - (this.ctx.startPos!.y - this.ctx.startBox!.top)
+            }px`;
             this.ctx.dragPreview!.style.left = `${rootBox.left}px`;
         }
 
@@ -261,12 +268,14 @@ export class DragNDropSorting {
             });
             this.ctx.lastSide = side;
         }
-
-        
     }
 
     private touchMove(evt: TouchEvent) {
-        console.log("Touch Move: ", evt);
+        // @ts-ignore
+        evt.x = evt.touches[0].clientX;
+        // @ts-ignore
+        evt.y = evt.touches[0].clientY;
+        this.mouseMove(evt as any);
     }
 
     private onOver() {
@@ -286,7 +295,6 @@ export class DragNDropSorting {
     }
 
     private cleanUp() {
-
         this.ctx.dragPreview?.remove();
 
         document.removeEventListener("mousemove", this.onMouseMoveFn);
