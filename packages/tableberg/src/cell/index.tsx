@@ -670,37 +670,40 @@ function edit(
         isOddRow,
         isHeaderRow,
         isFooterRow,
-    } = useSelect((select) => {
-        const storeSelect = select(
-            blockEditorStore,
-        ) as BlockEditorStoreSelectors;
+    } = useSelect(
+        (select) => {
+            const storeSelect = select(
+                blockEditorStore,
+            ) as BlockEditorStoreSelectors;
 
-        const parentBlocks = storeSelect.getBlockParents(clientId);
+            const parentBlocks = storeSelect.getBlockParents(clientId);
 
-        const tableBlockId = parentBlocks.find(
-            (parentId: string) =>
-                storeSelect.getBlockName(parentId) === "tableberg/table",
-        )!;
+            const tableBlockId = parentBlocks.find(
+                (parentId: string) =>
+                    storeSelect.getBlockName(parentId) === "tableberg/table",
+            )!;
 
-        const tableBlock: BlockInstance<TablebergBlockAttrs> =
-            storeSelect.getBlock(tableBlockId)! as any;
+            const tableBlock: BlockInstance<TablebergBlockAttrs> =
+                storeSelect.getBlock(tableBlockId)! as any;
 
-        const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
+            const childBlocks = storeSelect.getBlock(clientId)?.innerBlocks;
 
-        const headerEnabled = tableBlock.attributes.enableTableHeader;
+            const headerEnabled = tableBlock.attributes.enableTableHeader;
 
-        return {
-            storeSelect,
-            tableBlock,
-            tableBlockId,
-            childBlocks,
-            isOddRow: (attributes.row + (headerEnabled ? 0 : 1)) % 2 == 1,
-            isHeaderRow: headerEnabled && attributes.row === 0,
-            isFooterRow:
-                tableBlock.attributes.enableTableFooter &&
-                attributes.row + 1 === tableBlock.attributes.rows,
-        };
-    }, []);
+            return {
+                storeSelect,
+                tableBlock,
+                tableBlockId,
+                childBlocks,
+                isOddRow: (attributes.row + (headerEnabled ? 0 : 1)) % 2 == 1,
+                isHeaderRow: headerEnabled && attributes.row === 0,
+                isFooterRow:
+                    tableBlock.attributes.enableTableFooter &&
+                    attributes.row + 1 === tableBlock.attributes.rows,
+            };
+        },
+        [clientId],
+    );
     const {
         isMergable,
         addMergingEvt,
@@ -785,6 +788,9 @@ function edit(
             { capture: true },
         );
         addMergingEvt(cellRef.current);
+    }, [cellRef.current]);
+
+    useEffect(() => {
         if (props.DragNDropSorting && cellRef.current) {
             const dins = new props.DragNDropSorting(
                 cellRef.current,
@@ -793,20 +799,23 @@ function edit(
                 attributes.rowspan,
                 attributes.colspan,
                 (ctx: any) => {
+                    const tableBlockFresh = storeSelect.getBlock(
+                        tableBlock.clientId,
+                    )! as any;
                     const subject = ctx.startInstance;
                     const target = ctx.overInstance;
 
                     if (ctx.type === "row") {
                         moveRow(
                             storeActions,
-                            tableBlock,
+                            tableBlockFresh,
                             subject.row,
                             target.row,
                         );
                     } else {
                         moveCol(
                             storeActions,
-                            tableBlock,
+                            tableBlockFresh,
                             subject.col,
                             target.col,
                         );
@@ -815,7 +824,7 @@ function edit(
             );
             return () => dins.remove();
         }
-    }, [cellRef.current]);
+    }, [cellRef.current, attributes.row, attributes.col]);
 
     const tableControls: DropdownOption[] = [
         {

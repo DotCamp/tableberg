@@ -45,6 +45,12 @@ export class DragNDropSorting {
         this.touchMove(evt);
     private cleanUpEvt: () => void = () => this.cleanUp();
 
+    private startEvt: (evt: MouseEvent | TouchEvent) => void;
+    private touchEvt?: (evt: TouchEvent) => void;
+    private overEvt = () => this.onOver();
+    private dropEvt = () => this.onDrop();
+    private leaveEvt = () => this.onLeave();
+
     private makeMove: (ctx: Context) => void;
 
     constructor(
@@ -74,7 +80,7 @@ export class DragNDropSorting {
 
         this.ctx.cellInstances.push(this);
 
-        const start = (evt: MouseEvent | TouchEvent) => {
+        this.startEvt = (evt: MouseEvent | TouchEvent) => {
             /**
              * Prevent default behavior of the browser when clicked
              * sometimes touchstart is not cancellable (i.e. when scrolling)
@@ -121,10 +127,10 @@ export class DragNDropSorting {
             };
         };
 
-        cellEL.addEventListener("mousedown", start);
+        cellEL.addEventListener("mousedown", this.startEvt);
 
         if (HAS_TOUCH) {
-            cellEL.addEventListener("touchstart", (evt: TouchEvent) => {
+            this.touchEvt = (evt: TouchEvent) => {
                 /**
                  * Only start dragging if there's one touch
                  * two or more are for zoom/pinch or other actions
@@ -133,28 +139,14 @@ export class DragNDropSorting {
                 if (evt.touches.length !== 1) {
                     return;
                 }
-                start(evt);
-            });
+                this.startEvt(evt);
+            };
+            cellEL.addEventListener("touchstart", this.touchEvt);
         }
 
-        cellEL.addEventListener("mouseenter", () => this.onOver());
-        cellEL.addEventListener("mouseleave", () => this.onLeave());
-        cellEL.addEventListener("mouseup", () => this.onDrop());
-    }
-
-    private doesMatchBegin(other: DragNDropSorting): boolean {
-        return (
-            (this.ctx.type === "row" && this.row == other.row) ||
-            (this.ctx.type === "col" && this.col === other.col)
-        );
-    }
-    private doesMatchEnd(other: DragNDropSorting): boolean {
-        return (
-            (this.ctx.type === "row" &&
-                this.row + this.rowspan === other.row + other.rowspan) ||
-            (this.ctx.type === "col" &&
-                this.col + this.colspan === other.col + other.colspan)
-        );
+        cellEL.addEventListener("mouseenter", this.overEvt);
+        cellEL.addEventListener("mouseleave", this.leaveEvt);
+        cellEL.addEventListener("mouseup", this.dropEvt);
     }
 
     private mouseMove(evt: Event & Position) {
@@ -280,7 +272,13 @@ export class DragNDropSorting {
     }
 
     private onDrop() {
-        if (!this.ctx.isActive) {
+        if (
+            !this.ctx.isActive ||
+            (this.ctx.type === "row" &&
+                this.ctx.startInstance!.row === this.row) ||
+            (this.ctx.type === "col" &&
+                this.ctx.startInstance!.col === this.col)
+        ) {
             return;
         }
         this.makeMove(this.ctx);
@@ -316,5 +314,15 @@ export class DragNDropSorting {
         this.ctx.cellInstances = this.ctx.cellInstances.filter(
             (ins) => ins !== this,
         );
+        this.cellEl?.removeEventListener("mousedown", this.startEvt);
+
+        if (HAS_TOUCH) {
+            this.cellEl?.removeEventListener("touchstart", this.touchEvt!);
+        }
+
+        this.cellEl?.removeEventListener("mouseenter", this.overEvt);
+        this.cellEl?.removeEventListener("mouseleave", this.leaveEvt);
+        this.cellEl?.removeEventListener("mouseup", this.dropEvt);
+        
     }
 }
