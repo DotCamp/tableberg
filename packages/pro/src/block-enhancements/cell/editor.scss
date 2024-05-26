@@ -1,0 +1,49 @@
+.wp-block-tableberg-cell {
+    
+    &.tableberg-drag-left::before {
+        content: '';
+        position: absolute;
+        height: 100%;
+        width: 2px;
+        background: blue;
+        right: 100%;
+        top: 0;
+    }
+
+    &.tableberg-drag-right::before {
+        content: '';
+        position: absolute;
+        height: 100%;
+        width: 2px;
+        background: blue;
+        left: 100%;
+        top: 0;
+    }
+
+    &.tableberg-drag-top::before {
+        content: '';
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: blue;
+        left: 0;
+        bottom: 100%;
+    }
+
+    &.tableberg-drag-bottom::before {
+        content: '';
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: blue;
+        left: 0;
+        top: 100%;
+    }
+}
+
+
+.tableberg-drag-preview {
+    position: fixed;
+    pointer-events: none;
+    z-index: 2;
+}

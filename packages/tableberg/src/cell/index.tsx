@@ -651,7 +651,9 @@ const useMerging = (
     };
 };
 
-function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
+function edit(
+    props: BlockEditProps<TablebergCellBlockAttrs> & { DragNDropSorting?: any },
+) {
     const { clientId, attributes, setAttributes, isSelected } = props;
     const cellRef = useRef<HTMLTableCellElement>();
     useBlockEditingMode(attributes.isTmp ? "disabled" : "default");
@@ -782,6 +784,15 @@ function edit(props: BlockEditProps<TablebergCellBlockAttrs>) {
             { capture: true },
         );
         addMergingEvt(cellRef.current);
+        if (props.DragNDropSorting && cellRef.current) {
+            new props.DragNDropSorting(
+                cellRef.current,
+                attributes.row,
+                attributes.col,
+                attributes.rowspan,
+                attributes.colspan,
+            );
+        }
     }, [cellRef.current]);
 
     const tableControls: DropdownOption[] = [

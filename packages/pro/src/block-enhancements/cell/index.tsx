@@ -20,6 +20,7 @@ import {
 import { ProBlockProps } from "..";
 import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
 import StickyRowColControl from "../../shared/StickyRowColControl";
+import { DragNDropSorting } from "./drag-sort";
 
 const duplicateRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
@@ -221,7 +222,7 @@ export const CellBlockPro = ({
                     clientId={props.clientId}
                 />
             )}
-            <BlockEdit {...props} />
+            <BlockEdit {...props} DragNDropSorting={DragNDropSorting}/>
             {props.isSelected && (
                 <>
                     <InspectorControls group="color">
