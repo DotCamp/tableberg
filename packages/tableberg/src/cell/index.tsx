@@ -52,7 +52,6 @@ import {
     TablebergCellBlockAttrs,
     TablebergCellInstance,
 } from "@tableberg/shared/types";
-import { moveCol, moveRow } from "./move-row-cols";
 
 const ALLOWED_BLOCKS = [
     "core/paragraph",
@@ -653,7 +652,7 @@ const useMerging = (
 };
 
 function edit(
-    props: BlockEditProps<TablebergCellBlockAttrs> & { DragNDropSorting?: any },
+    props: BlockEditProps<TablebergCellBlockAttrs> & {proProps?: any },
 ) {
     const { clientId, attributes, setAttributes, isSelected } = props;
     const cellRef = useRef<HTMLTableCellElement>();
@@ -791,36 +790,15 @@ function edit(
     }, [cellRef.current]);
 
     useEffect(() => {
-        if (props.DragNDropSorting && cellRef.current) {
-            const dins = new props.DragNDropSorting(
+        const pro = props.proProps;
+        if (pro.DragNDropSorting && cellRef.current) {
+            const dins = new pro.DragNDropSorting(
                 cellRef.current,
                 attributes.row,
                 attributes.col,
                 attributes.rowspan,
                 attributes.colspan,
-                (ctx: any) => {
-                    const tableBlockFresh = storeSelect.getBlock(
-                        tableBlock.clientId,
-                    )! as any;
-                    const subject = ctx.startInstance;
-                    const target = ctx.overInstance;
-
-                    if (ctx.type === "row") {
-                        moveRow(
-                            storeActions,
-                            tableBlockFresh,
-                            subject.row,
-                            target.row,
-                        );
-                    } else {
-                        moveCol(
-                            storeActions,
-                            tableBlockFresh,
-                            subject.col,
-                            target.col,
-                        );
-                    }
-                },
+                pro.makeMove,
             );
             return () => dins.remove();
         }

@@ -20,7 +20,7 @@ import {
 import { ProBlockProps } from "..";
 import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
 import StickyRowColControl from "../../shared/StickyRowColControl";
-import { DragNDropSorting } from "./drag-sort";
+import { DragNDropSorting, moveCol, moveRow } from "./drag-sort";
 
 const duplicateRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
@@ -170,26 +170,47 @@ export const CellBlockPro = ({
         blockEditorStore,
     ) as any;
 
-    const { storeSelect, tableAttrs, setTableAttrs } = useSelect((select) => {
-        const storeSelect: BlockEditorStoreSelectors = select(
-            blockEditorStore,
-        ) as any;
+    const { storeSelect, tableAttrs, setTableAttrs, tableBlock } = useSelect(
+        (select) => {
+            const storeSelect: BlockEditorStoreSelectors = select(
+                blockEditorStore,
+            ) as any;
 
-        const tableBlockId = storeSelect.getBlockRootClientId(props.clientId)!;
-        const tableBlock = storeSelect.getBlock(tableBlockId)!;
+            const tableBlockId = storeSelect.getBlockRootClientId(
+                props.clientId,
+            )!;
+            const tableBlock = storeSelect.getBlock(tableBlockId)!;
 
-        const setTableAttrs = (attrs: Partial<TablebergBlockAttrs>) =>
-            storeActions.updateBlockAttributes(tableBlockId, attrs);
+            const setTableAttrs = (attrs: Partial<TablebergBlockAttrs>) =>
+                storeActions.updateBlockAttributes(tableBlockId, attrs);
 
-        return {
-            storeSelect,
-            tableBlock,
-            tableAttrs: tableBlock.attributes as TablebergBlockAttrs,
-            setTableAttrs,
-        };
-    }, []);
+            return {
+                storeSelect,
+                tableBlock,
+                tableAttrs: tableBlock.attributes as TablebergBlockAttrs,
+                setTableAttrs,
+            };
+        },
+        [],
+    );
 
     const attrs = props.attributes;
+
+    const makeMove = (ctx: any) => {
+        const tableBlockFresh = storeSelect.getBlock(
+            tableBlock.clientId,
+        )! as any;
+        const subject = ctx.startInstance;
+        const target = ctx.overInstance;
+
+        if (ctx.type === "row") {
+            moveRow(storeActions, tableBlockFresh, subject.row, target.row);
+        } else {
+            moveCol(storeActions, tableBlockFresh, subject.col, target.col);
+        }
+    };
+
+    const proProps = { DragNDropSorting, makeMove };
 
     const tableControls: DropdownOption[] = [
         {
@@ -222,7 +243,7 @@ export const CellBlockPro = ({
                     clientId={props.clientId}
                 />
             )}
-            <BlockEdit {...props} DragNDropSorting={DragNDropSorting}/>
+            <BlockEdit {...props} proProps={proProps} />
             {props.isSelected && (
                 <>
                     <InspectorControls group="color">
