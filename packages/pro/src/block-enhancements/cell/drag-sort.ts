@@ -178,12 +178,17 @@ export class DragNDropSorting {
             this.ctx.type = "col";
         }
 
+        const rootBox = this.ctx.rootEl.getBoundingClientRect();
+
         if (oldType !== this.ctx.type) {
             this.ctx.activeEls?.forEach((el) => {
                 el.classList.remove("tableberg-drag-active-" + oldType);
             });
             this.ctx.activeEls = [];
             if (this.ctx.type === "col") {
+                this.ctx.dragPreview!.style.height = `${rootBox.height}px`;
+                this.ctx.dragPreview!.style.width = `${this.ctx.startBox!.width}px`;
+
                 this.ctx.cellInstances.forEach((ins) => {
                     if (
                         ins.col === this.ctx.startInstance!.col &&
@@ -194,6 +199,10 @@ export class DragNDropSorting {
                     }
                 });
             } else {
+                
+                this.ctx.dragPreview!.style.width = `${rootBox.width}px`;
+                this.ctx.dragPreview!.style.height = `${this.ctx.startBox!.height}px`;
+
                 this.ctx.cellInstances.forEach((ins) => {
                     if (
                         ins.row === this.ctx.startInstance!.row &&
@@ -217,12 +226,16 @@ export class DragNDropSorting {
             } else {
                 side = "right";
             }
+            this.ctx.dragPreview!.style.left = `${ (evt.x - (this.ctx.startPos!.x - this.ctx.startBox!.left))}px`;
+            this.ctx.dragPreview!.style.top = `${rootBox.top}px`;
         } else {
             if (box.top + box.height / 2 > evt.y) {
                 side = "top";
             } else {
                 side = "bottom";
             }
+            this.ctx.dragPreview!.style.top = `${ (evt.y - (this.ctx.startPos!.y - this.ctx.startBox!.top))}px`;
+            this.ctx.dragPreview!.style.left = `${rootBox.left}px`;
         }
 
         if (side !== this.ctx.lastSide) {
@@ -248,6 +261,8 @@ export class DragNDropSorting {
             });
             this.ctx.lastSide = side;
         }
+
+        
     }
 
     private touchMove(evt: TouchEvent) {
