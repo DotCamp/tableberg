@@ -1,7 +1,6 @@
 .wp-block-tableberg-cell {
-    
     &.tableberg-drag-left::before {
-        content: '';
+        content: "";
         position: absolute;
         height: 100%;
         width: 2px;
@@ -11,7 +10,7 @@
     }
 
     &.tableberg-drag-right::before {
-        content: '';
+        content: "";
         position: absolute;
         height: 100%;
         width: 2px;
@@ -21,7 +20,7 @@
     }
 
     &.tableberg-drag-top::before {
-        content: '';
+        content: "";
         position: absolute;
         height: 2px;
         width: 100%;
@@ -31,7 +30,7 @@
     }
 
     &.tableberg-drag-bottom::before {
-        content: '';
+        content: "";
         position: absolute;
         height: 2px;
         width: 100%;
@@ -39,8 +38,37 @@
         left: 0;
         top: 100%;
     }
-}
 
+    &.tableberg-drag-active-row {
+        background: rgba(236, 213, 6, 0.055);
+        &::after {
+            border-top: 2px dashed yellow;
+            border-bottom: 2px dashed yellow;
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+        }
+    }
+
+    &.tableberg-drag-active-col {
+        background: rgba(236, 213, 6, 0.055);
+        &::after {
+            border-right: 2px dashed yellow;
+            border-left: 2px dashed yellow;
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+        }
+    }
+}
 
 .tableberg-drag-preview {
     position: fixed;

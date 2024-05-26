@@ -23,13 +23,13 @@ class Context {
     public type?: "row" | "col";
     public activeEls?: HTMLTableCellElement[];
     public overInstance?: DragNDropSorting;
-    
+
     public rootEl: HTMLDivElement;
-    
+
     public startInstance?: DragNDropSorting;
     public startPos?: Position;
+    public startBox?: DOMRect;
     public lastSide?: Sides;
-
 
     public dragPreview?: HTMLDivElement;
 
@@ -94,10 +94,10 @@ export class DragNDropSorting {
             this.ctx.isActive = true;
             this.ctx.overInstance = this;
             this.ctx.startInstance = this;
-            
 
             this.ctx.dragPreview = document.createElement("div");
             this.ctx.dragPreview.classList.add("tableberg-drag-preview");
+            this.ctx.startBox = this.cellEl.getBoundingClientRect();
 
             // TODO: Make the preview appear as selected
 
@@ -123,11 +123,8 @@ export class DragNDropSorting {
             }
             this.ctx.startPos = {
                 x: posX,
-                y: posY
+                y: posY,
             };
-
-            this.ctx.dragPreview.style.left = posX + "px";
-            this.ctx.dragPreview.style.top = posY + "px";
         };
 
         cellEL.addEventListener("mousedown", start);
@@ -169,6 +166,46 @@ export class DragNDropSorting {
     private mouseMove(evt: MouseEvent) {
         evt.preventDefault();
         evt.stopImmediatePropagation();
+
+        const oldType = this.ctx.type;
+
+        if (
+            Math.abs(evt.x - this.ctx.startPos!.x) <
+            Math.abs(evt.y - this.ctx.startPos!.y)
+        ) {
+            this.ctx.type = "row";
+        } else {
+            this.ctx.type = "col";
+        }
+
+        if (oldType !== this.ctx.type) {
+            this.ctx.activeEls?.forEach((el) => {
+                el.classList.remove("tableberg-drag-active-" + oldType);
+            });
+            this.ctx.activeEls = [];
+            if (this.ctx.type === "col") {
+                this.ctx.cellInstances.forEach((ins) => {
+                    if (
+                        ins.col === this.ctx.startInstance!.col &&
+                        ins.colspan === this.ctx.startInstance!.colspan
+                    ) {
+                        this.ctx.activeEls!.push(ins.cellEl);
+                        ins.cellEl.classList.add("tableberg-drag-active-col");
+                    }
+                });
+            } else {
+                this.ctx.cellInstances.forEach((ins) => {
+                    if (
+                        ins.row === this.ctx.startInstance!.row &&
+                        ins.rowspan === this.ctx.startInstance!.rowspan
+                    ) {
+                        this.ctx.activeEls!.push(ins.cellEl);
+                        ins.cellEl.classList.add("tableberg-drag-active-row");
+                    }
+                });
+            }
+        }
+
         const cellEl = this.ctx.overInstance?.cellEl!;
         const box = cellEl.getBoundingClientRect();
 
@@ -190,21 +227,20 @@ export class DragNDropSorting {
 
         if (side !== this.ctx.lastSide) {
             const oldClass = SIDE_CLASSES[this.ctx.lastSide!];
+
+            this.ctx.rootEl.querySelectorAll("." + oldClass).forEach((el) => {
+                el.classList.remove(oldClass);
+            });
+
             const newClass = SIDE_CLASSES[side];
             const over = this.ctx.overInstance!;
             const wasBegin = ["top", "left"].indexOf(this.ctx.lastSide!) > -1;
             this.ctx.cellInstances.forEach((ins) => {
                 if (wasBegin) {
-                    if (over.doesMatchBegin(ins)) {
-                        ins.cellEl.classList.remove(oldClass);
-                    }
                     if (over.doesMatchEnd(ins)) {
                         ins.cellEl.classList.add(newClass);
                     }
                 } else {
-                    if (over.doesMatchEnd(ins)) {
-                        ins.cellEl.classList.remove(oldClass);
-                    }
                     if (over.doesMatchBegin(ins)) {
                         ins.cellEl.classList.add(newClass);
                     }
@@ -222,60 +258,12 @@ export class DragNDropSorting {
         if (!this.ctx.isActive) {
             return;
         }
-        const old = this.ctx.overInstance!;
-
-        if (old.row !== this.row) {
-            if (old.col === this.col) {
-                this.ctx.type = "row";
-            } else {
-                this.ctx.type = "col";
-            }
-        } else {
-            this.ctx.type = "col";
-        }
-
-        if (this.ctx.type === "row") {
-            if (old.row < this.row) {
-                this.ctx.lastSide = "top";
-            } else {
-                this.ctx.lastSide = "bottom";
-            }
-        } else {
-            if (old.col > this.col) {
-                this.ctx.lastSide = "right";
-            } else {
-                this.ctx.lastSide = "left";
-            }
-        }
-
         this.ctx.overInstance = this;
-
-        const newClass = SIDE_CLASSES[this.ctx.lastSide!];
-        const isBegin = ["top", "left"].indexOf(this.ctx.lastSide!) > -1;
-        this.ctx.cellInstances.forEach((ins) => {
-            if (
-                (isBegin && this.doesMatchBegin(ins)) ||
-                (!isBegin && this.doesMatchEnd(ins))
-            ) {
-                ins.cellEl.classList.add(newClass);
-            }
-        });
     }
     private onLeave() {
         if (!this.ctx.isActive) {
             return;
         }
-
-        const wasBegin = ["top", "left"].indexOf(this.ctx.lastSide!) > -1;
-        const oldClass = SIDE_CLASSES[this.ctx.lastSide!];
-        this.ctx.cellInstances.forEach((ins) => {
-            if (
-                (wasBegin && this.doesMatchBegin(ins)) ||
-                (!wasBegin && this.doesMatchEnd(ins))
-            ) {
-                ins.cellEl.classList.remove(oldClass);
-            }
-        });
     }
 
     private onDrop() {
@@ -283,7 +271,6 @@ export class DragNDropSorting {
     }
 
     private cleanUp() {
-        console.log("CleanUp");
 
         this.ctx.dragPreview?.remove();
 
@@ -294,20 +281,20 @@ export class DragNDropSorting {
             document.removeEventListener("touchend", this.cleanUpEvt);
         }
 
-        const wasBegin = ["top", "left"].indexOf(this.ctx.lastSide!) > -1;
         const oldClass = SIDE_CLASSES[this.ctx.lastSide!];
-        const over = this.ctx.overInstance!;
-        this.ctx.cellInstances.forEach((ins) => {
-            if (
-                (wasBegin && over.doesMatchBegin(ins)) ||
-                (!wasBegin && over.doesMatchEnd(ins))
-            ) {
-                ins.cellEl.classList.remove(oldClass);
-            }
+
+        this.ctx.rootEl.querySelectorAll("." + oldClass).forEach((el) => {
+            el.classList.remove(oldClass);
         });
 
+        this.ctx.activeEls?.forEach((el) => {
+            el.classList.remove("tableberg-drag-active-" + this.ctx.type);
+        });
+
+        this.ctx.type = undefined;
         this.ctx.isActive = false;
         this.ctx.overInstance = undefined;
         this.ctx.lastSide = undefined;
+        this.ctx.activeEls = undefined;
     }
 }
