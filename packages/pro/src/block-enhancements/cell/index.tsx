@@ -8,7 +8,15 @@ import { ColorControl } from "@tableberg/components";
 
 import { useDispatch, useSelect } from "@wordpress/data";
 
-import { copy, columns, tableRowAfter } from "@wordpress/icons";
+import {
+    copy,
+    columns,
+    tableRowAfter,
+    arrowUp,
+    arrowDown,
+    arrowLeft,
+    arrowRight,
+} from "@wordpress/icons";
 
 import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
 import { BlockInstance, cloneBlock } from "@wordpress/blocks";
@@ -232,6 +240,70 @@ export const CellBlockPro = ({
                 )!;
                 duplicateCol(tableBlock, storeActions, props.attributes.col);
             },
+        },
+        {
+            icon: arrowRight,
+            title: "Move coulmn to right",
+            onClick: () => {
+                const tableBlock: any = storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(props.clientId)!,
+                )!;
+                moveCol(
+                    storeActions,
+                    tableBlock,
+                    props.attributes.col,
+                    props.attributes.col + 1,
+                );
+            },
+            isDisabled: props.attributes.col == tableAttrs.cols - 1,
+        },
+        {
+            icon: arrowLeft,
+            title: "Move coulmn to left",
+            onClick: () => {
+                const tableBlock: any = storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(props.clientId)!,
+                )!;
+                moveCol(
+                    storeActions,
+                    tableBlock,
+                    props.attributes.col,
+                    props.attributes.col - 1,
+                );
+            },
+            isDisabled: props.attributes.col == 0,
+        },
+        {
+            icon: arrowUp,
+            title: "Move row up",
+            onClick: () => {
+                const tableBlock: any = storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(props.clientId)!,
+                )!;
+                moveRow(
+                    storeActions,
+                    tableBlock,
+                    props.attributes.row,
+                    props.attributes.row - 1,
+                );
+            },
+            isDisabled: props.attributes.row == 0,
+        },
+        {
+            icon: arrowDown,
+            title: "Move row down",
+            onClick: () => {
+                const tableBlock: any = storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(props.clientId)!,
+                )!;
+                moveRow(
+                    storeActions,
+                    tableBlock,
+                    props.attributes.row,
+                    props.attributes.row + 1,
+                );
+            },
+            isDisabled: props.attributes.row == tableAttrs.rows - 1,
         },
     ];
     return (
