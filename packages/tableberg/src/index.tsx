@@ -32,7 +32,7 @@ import { FormEvent, useEffect, useRef, useState, createContext } from "react";
 import TablebergControls from "./controls";
 import { TablebergBlockAttrs, TablebergCellInstance } from "@tableberg/shared/types";
 import exampleImage from "./example.png";
-import blockIcon from "@tableberg/components/icon";
+import blockIcon from "@tableberg/shared/icons/tableberg";
 import { PrimaryTable } from "./table";
 import StackRowTable from "./table/StackRowTable";
 import StackColTable from "./table/StackColTable";

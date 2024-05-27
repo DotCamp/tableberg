@@ -28,3 +28,55 @@
         }
     }
 }
+
+
+.tableberg-locked-root {
+    margin-top: 0 !important;
+    grid-column: 1/-1;
+    position: relative;
+    
+
+    * {
+        color: gray;
+    }
+
+    .tableberg-lock-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        background: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+
+        display: flex;
+        z-index: 1;
+        justify-content: right;
+        align-items: center;
+
+        * {
+            color: #671feb;
+        }
+    }
+
+    &-toolbar {
+        .tableberg-lock-container {
+            padding-right: 10px;
+        }
+        > * {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+    }
+    
+    .components-form-toggle__track {
+        border-color: gray !important;
+    }
+    .components-form-toggle__thumb {
+        background: gray !important;
+    }
+}
