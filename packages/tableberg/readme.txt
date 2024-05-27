@@ -5,7 +5,7 @@ Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 0.5.1
+Stable tag: 0.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,18 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 2. Core Table Block vs Tableberg Block
 
 == Changelog ==
+
+= 0.5.2 =
+* NEW: Fixed width columns
+* PRO: NEW: Row-only/Column-only border option
+* PRO: NEW: Sticky row/column
+* PRO: NEW: Duplicate row and column
+* PRO: NEW: Individual cell background
+* PRO: IMPROVE: Change default star rating color
+* PRO: IMPROVE: Add font size changer for styled list item
+* FIX: Escape all strings that come from attributes
+* FIX: Issue with default border in frontend
+* FIX: Button font size in frontend
 
 = 0.5.1 =
 * NEW: Added table alignment option for full screen
