@@ -114,14 +114,15 @@ class StarRating
 	 */
 	public function star_rating_block_registration()
 	{
-		$defaults = new Defaults();
+		$jsonPath = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/star-rating/block.json';
+        $attrs = json_decode(file_get_contents($jsonPath), true)['attributes'];
 
-		register_block_type_from_metadata(
-			TABLEBERG_PRO_DIR_PATH . 'dist/blocks/star-rating/block.json',
-			array(
-				'attributes' => $defaults->get_default_attributes('tableberg/star-rating'),
-				'render_callback' => array($this, 'render_star_rating_block'),
-			)
-		);
+        register_block_type_from_metadata(
+            $jsonPath,
+            [
+                'attributes' => $attrs,
+                'render_callback' => array($this, 'render_star_rating_block'),
+            ]
+        );
 	}
 }
