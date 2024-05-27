@@ -1,38 +1,68 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
-import blocks from "@tableberg/shared/blocks";
+import blocks, { ENHANCED_FEATURES } from "@tableberg/shared/blocks";
 
 const proBlocks = blocks.filter((b: any) => b.isPro);
 
-const IMAGE_BASE = TABLEBERG_CFG.plugin_url + 'includes/Admin/images/upsell/';
+const IMAGE_BASE = TABLEBERG_CFG.plugin_url + "includes/Admin/images/upsell/";
 
-export default function UpsellModal({ onClose }: { onClose: () => void }) {
-    const [idx, setIdx] = useState(0);
-    const info = proBlocks[idx];
+interface Props {
+    onClose: () => void;
+    selected?: string;
+}
 
-    const prev = () =>
-        setIdx((idx) => {
-            if (idx > 0) {
-                return idx - 1;
-            }
-            return proBlocks.length - 1;
-        });
+export interface BlockUpsellInfo {
+    icon: any;
+    title: string;
+    name: string;
+    image?: string;
+    upsellText?: string;
+}
+interface ComponentProps {
+    onClose: () => void;
+    info: BlockUpsellInfo;
+    prev?: () => void;
+    next?: () => void;
+}
 
+export function UpsellModalComponent({
+    onClose,
+    info,
+    prev,
+    next,
+}: ComponentProps) {
     return (
         <div className="tableberg-upsell-modal">
             <div className="tableberg-upsell-modal-backdrop"></div>
             <div className="tableberg-upsell-modal-container">
-                <button className="tableberg-upsell-modal-prev" onClick={prev}>
-                    <FontAwesomeIcon icon={faCaretLeft} />
-                </button>
+                {!!prev && (
+                    <button
+                        className="tableberg-upsell-modal-prev"
+                        onClick={prev}
+                    >
+                        <FontAwesomeIcon icon={faCaretLeft} />
+                    </button>
+                )}
                 <div className="tableberg-upsell-modal-area" key={info.name}>
                     <h2>
                         {info.icon} {info.title}
                     </h2>
                     <div className="tableberg-upsell-modal-content">
-                        <img src={IMAGE_BASE + info.image} alt={info.title + " Demo"} />
-                        <p>{info.upsellText}</p>
+                        {info.image && (
+                            <img
+                                src={IMAGE_BASE + info.image}
+                                alt={info.title + " Demo"}
+                            />
+                        )}
+                        {info.upsellText && (
+                            <p
+                                className="tableberg-upsell-modal-text"
+                                dangerouslySetInnerHTML={{
+                                    __html: info.upsellText,
+                                }}
+                            />
+                        )}
                         <p>
                             Limited Time: Use code <b>TB10</b> to get a 10%
                             discount.
@@ -43,13 +73,83 @@ export default function UpsellModal({ onClose }: { onClose: () => void }) {
                         <a href="https://tableberg.com/pricing/">Buy PRO</a>
                     </div>
                 </div>
-                <button
-                    className="tableberg-upsell-modal-next"
-                    onClick={() => setIdx((idx + 1) % proBlocks.length)}
-                >
-                    <FontAwesomeIcon icon={faCaretRight} />
-                </button>
+                {!!next && (
+                    <button
+                        className="tableberg-upsell-modal-next"
+                        onClick={next}
+                    >
+                        <FontAwesomeIcon icon={faCaretRight} />
+                    </button>
+                )}
             </div>
         </div>
+    );
+}
+
+export function UpsellEnhancedModal({ onClose, selected }: Props) {
+    const [idx, setIdx] = useState(0);
+    const info = ENHANCED_FEATURES[idx];
+
+    useEffect(() => {
+        if (selected) {
+            selected = selected.replace("-dummy", "");
+            const idx = ENHANCED_FEATURES.findIndex((b) => b.name === selected);
+            if (idx > -1) {
+                setIdx(idx);
+            }
+        }
+    }, [selected]);
+
+    const prev = () =>
+        setIdx((idx) => {
+            if (idx > 0) {
+                return idx - 1;
+            }
+            return ENHANCED_FEATURES.length - 1;
+        });
+
+    const next = () => setIdx((idx + 1) % ENHANCED_FEATURES.length);
+
+    return (
+        <UpsellModalComponent
+            onClose={onClose}
+            info={info}
+            prev={prev}
+            next={next}
+        />
+    );
+}
+
+export default function UpsellModal({ onClose, selected }: Props) {
+    const [idx, setIdx] = useState(0);
+    const info = proBlocks[idx];
+
+    useEffect(() => {
+        if (selected) {
+            selected = selected.replace("-dummy", "");
+            const idx = proBlocks.findIndex((b) => b.name === selected);
+            if (idx > -1) {
+                setIdx(idx);
+            }
+        }
+    }, [selected]);
+
+    const prev = () =>
+        setIdx((idx) => {
+            if (idx > 0) {
+                return idx - 1;
+            }
+            return proBlocks.length - 1;
+        });
+
+    const next = () => setIdx((idx + 1) % proBlocks.length);
+
+    return (
+        <UpsellModalComponent
+            onClose={onClose}
+            info={info}
+            prev={prev}
+            next={next}
+        />
     );
 }

@@ -37,6 +37,14 @@
             "type": "string",
             "default": ""
         },
+        "background" : {
+            "type": "string",
+            "default": null
+        },
+        "bgGradient" : {
+            "type": "string",
+            "default": null
+        },
         "isTmp": {
             "type": "boolean",
             "default": false

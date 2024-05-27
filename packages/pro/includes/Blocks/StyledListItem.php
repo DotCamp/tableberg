@@ -45,6 +45,17 @@ class StyledListItem
 
 		return Utils::generate_css_string($styles);
 	}
+
+
+	private static function get_inner_style($attributes)
+	{
+		$styles = [
+			'font-size' => $attributes['fontSize'] ?? '',
+		];
+
+		return Utils::generate_css_string($styles);
+	}
+
 	/**
 	 * Renders the block on the server.
 	 *
@@ -66,9 +77,9 @@ class StyledListItem
 
 		return
 			'<li style="' . $styles . '">
-			    <div class="tableberg-list-item-inner">
+			    <div class="tableberg-list-item-inner" style="'.self::get_inner_style($attributes).'">
 				    <div class="tableberg-list-icon">' . $icon . '</div>
-					<div class="tableberg-list-text">' . $item_text . '</div>
+					<div class="tableberg-list-text">' . wp_kses_data($item_text) . '</div>
 				</div>
 				' . $contents . '
 			</li>';

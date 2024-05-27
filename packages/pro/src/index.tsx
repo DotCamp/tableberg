@@ -12,3 +12,4 @@ import "./blocks/html";
 import "./blocks/icon";
 import "./blocks/ribbon";
 
+import "./block-enhancements"

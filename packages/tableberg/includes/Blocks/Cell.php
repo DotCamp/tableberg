@@ -9,6 +9,7 @@ namespace Tableberg\Blocks;
 
 use Tableberg;
 use Tableberg\Utils\HtmlUtils;
+use Tableberg\Utils\Utils;
 
 /**
  * Handle the block registration on server side and rendering.
@@ -24,6 +25,15 @@ class Cell
 	public function __construct()
 	{
 		add_action('init', array($this, 'block_registration'));
+	}
+
+
+
+	private static function getStyles($attributes) {
+		$styles = [
+			'background' => Utils::get_any($attributes, 'bgGradient', 'background'),
+		];
+		return Utils::generate_css_string($styles);
 	}
 
 	/**
@@ -51,8 +61,8 @@ class Cell
 		$colspan = isset($attributes['colspan']) ? $attributes['colspan'] : 1;
 		$rowspan = isset($attributes['rowspan']) ? $attributes['rowspan'] : 1;
 
-		$attrs_str = 'data-tableberg-row="'.$attributes['row'].'" data-tableberg-col="'.$attributes['col'].'"';
-		$classes = 'tableberg-v-align-'.$attributes['vAlign'];
+		$attrs_str = 'data-tableberg-row="'.esc_attr($attributes['row']).'" data-tableberg-col="'.esc_attr($attributes['col']).'"';
+		$classes = 'tableberg-v-align-'.esc_attr($attributes['vAlign']);
 
 		// Add colspan attribute if it's greater than 1
 		if ($colspan > 1) {
@@ -64,7 +74,9 @@ class Cell
 			$attrs_str .= ' rowspan="' . esc_attr($rowspan) . '"';
 		}
 
-		$tagName = isset($attributes['tagName']) ? $attributes['tagName'] : 'td';
+		$tagName = isset($attributes['tagName']) ? esc_attr($attributes['tagName']) : 'td';
+
+		$content = HtmlUtils::append_attr_value($content, $tagName, self::getStyles($attributes), 'style');
 
 		$content = HtmlUtils::append_attr_value($content, $tagName, ' '.$classes, 'class');
 

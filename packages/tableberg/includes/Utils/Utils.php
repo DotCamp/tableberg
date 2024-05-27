@@ -197,6 +197,30 @@ class Utils
 		return $css;
 	}
 
+	public static function get_border_radius_var(array $object, string $prefix, &$hasValue = false): array
+	{
+		if (is_string($object)) {
+			$hasValue = $object != '0px';
+			return [
+				$prefix . '-top-left' => $object,
+				$prefix . '-top-right' => $object,
+				$prefix . '-bottom-left' => $object,
+				$prefix . '-bottom-right' => $object,
+			];
+		}
+
+		$css = [];
+
+		foreach ($object as $key => $value) {
+			$corner = strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $key));
+			$css[$prefix . '-' . $corner] = $value;
+			if ($value != '0px') {
+				$hasValue = true;
+			}
+		}
+		return $css;
+	}
+
 	/**
 	 * Get the CSS value for a single side of the border.
 	 *
@@ -370,7 +394,7 @@ class Utils
 			}
 		}
 
-		return $css_string;
+		return esc_attr($css_string);
 	}
 
 	/**

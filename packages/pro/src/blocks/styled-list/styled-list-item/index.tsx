@@ -14,10 +14,12 @@ import {
     InspectorControls,
     useInnerBlocksProps,
     BlockControls,
+    FontSizePicker,
 } from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { useCallback, useState } from "react";
 import {
+    BaseControl,
     Button,
     Modal,
     PanelBody,
@@ -26,7 +28,11 @@ import {
 } from "@wordpress/components";
 
 import { formatIndent, formatOutdent, trash } from "@wordpress/icons";
-import { ColorControl, SizeControl, SpacingControlSingle } from "@tableberg/components";
+import {
+    ColorControl,
+    SizeControl,
+    SpacingControlSingle,
+} from "@tableberg/components";
 import IconsLibrary from "@tableberg/components/icon-library";
 
 import { listItemIcon } from "@tableberg/shared/icons/styled-list";
@@ -315,6 +321,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                     className="tableberg-list-item-inner"
                     style={{
                         alignItems: listAttrs.alignItems,
+                        fontSize: attributes.fontSize,
                     }}
                 >
                     <div className="tableberg-list-icon">
@@ -430,8 +437,8 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                         }}
                         rangeConfig={{
                             px: {
-                                max: 200
-                            }
+                                max: 200,
+                            },
                         }}
                         initialPosition={listAttrs.iconSize}
                     />
@@ -443,6 +450,16 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                             setAttributes({ iconSpacing });
                         }}
                     />
+                </PanelBody>
+                <PanelBody title="Font Size" initialOpen={true}>
+                    <BaseControl __nextHasNoMarginBottom>
+                        <FontSizePicker
+                            value={attributes.fontSize as any}
+                            onChange={(val: any) =>
+                                setAttributes({ fontSize: val })
+                            }
+                        />
+                    </BaseControl>
                 </PanelBody>
                 {isLibraryOpen && (
                     <Modal

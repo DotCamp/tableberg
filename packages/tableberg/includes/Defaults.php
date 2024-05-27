@@ -116,6 +116,10 @@ class Defaults
 				'col' => [
 					'type' => 'number',
 					'default' => 0
+				],
+				'pro' => [
+					'type' => 'object',
+					'default' => []
 				]
 			),
 		),

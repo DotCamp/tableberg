@@ -37,6 +37,10 @@
         "textHoverColor": {
             "type": "string"
         },
+        "align": {
+            "type": "string",
+            "default": "left"
+        },
         "textAlign": {
             "type": "string"
         },

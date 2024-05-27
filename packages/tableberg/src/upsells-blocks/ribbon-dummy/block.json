@@ -1,0 +1,17 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "version": "0.1.0",
+    "name": "tableberg/ribbon-dummy",
+    "title": "Ribbon",
+    "category": "design",
+    "description": "This block lets you add ribbons in tableberg.",
+    "keywords": [
+        "Ribbon",
+        "Tableberg"
+    ],
+    "parent": [
+        "tableberg/cell"
+    ],
+    "textdomain": "tableberg-pro"
+}

@@ -59,40 +59,44 @@ div.wp-block-tableberg-wrapper {
     }
 
     table {
-        border-top: var(--tableberg-table-border-top, 1px solid black);
-        border-right: var(--tableberg-table-border-right, 1px solid black);
-        border-bottom: var(--tableberg-table-border-bottom, 1px solid black);
-        border-left: var(--tableberg-table-border-left, 1px solid black);
-        border-collapse: var(--tableberg-border-collapse, collapse);
-        border-spacing: var(--tableberg-cell-spacing-left, 0)
-            var(--tableberg-cell-spacing-top, 0);
         width: 100%;
-
-        color: var(--tableberg-global-text-color);
-        font-size: var(--tableberg-global-font-size);
 
         a {
             color: var(--tableberg-global-link-color);
         }
 
+        tr:first-of-type {
+            td,
+            th {
+                border-top: none !important;
+            }
+        }
+
+        tr:last-of-type {
+            td,
+            th {
+                border-bottom: none !important;
+            }
+        }
+
+        tr {
+            th:first-of-type,
+            td:first-of-type {
+                border-left: none !important;
+            }
+
+            th:last-of-type,
+            td:last-of-type {
+                border-right: none !important;
+            }
+        }
+
         &.has-inner-border {
             .wp-block-tableberg-cell {
-                border-top: var(
-                    --tableberg-inner-border-top,
-                    1px solid #000000
-                );
-                border-right: var(
-                    --tableberg-inner-border-right,
-                    1px solid #000000
-                );
-                border-bottom: var(
-                    --tableberg-inner-border-bottom,
-                    1px solid #000000
-                );
-                border-left: var(
-                    --tableberg-inner-border-left,
-                    1px solid #000000
-                );
+                border-top: var(--tableberg-inner-border-top);
+                border-right: var(--tableberg-inner-border-right);
+                border-bottom: var(--tableberg-inner-border-bottom);
+                border-left: var(--tableberg-inner-border-left);
             }
         }
     }
@@ -103,6 +107,53 @@ div.wp-block-tableberg-wrapper {
 
     .wp-block-paragraph:focus [data-rich-text-placeholder]::after {
         content: "Type / to choose a block";
+    }
+
+    &.tableberg-sticky-top-row {
+        position: relative;
+        tr:first-of-type {
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+    }
+
+    &.tableberg-sticky-first-col {
+        position: relative;
+        tr {
+            td:first-child,
+            th:first-child {
+                background: white;
+                position: sticky;
+                left: 0;
+                z-index: 1;
+            }
+        }
+    }
+
+    &.tableberg-border-row-only {
+        table {
+            td,
+            th {
+                border: none !important;
+            }
+            tr + tr {
+                border-top: var(--tableberg-inner-border-top);
+            }
+        }
+    }
+
+    &.tableberg-border-col-only {
+        table {
+            td,
+            th {
+                border: none !important;
+            }
+            td + td {
+                border-left: var(--tableberg-inner-border-top) !important;
+            }
+        }
     }
 }
 

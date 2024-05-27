@@ -74,29 +74,27 @@ class StarRating
 			}
 		}
 
-
-
 		$reviewText = '';
 		$textStyle = '';
 		if (isset($attributes['reviewText'])) {
-			$reviewText = $attributes['reviewText'];
+			$reviewText = wp_kses_data($attributes['reviewText']);
 		}
 
 		if (isset($attributes['reviewTextAlign'])) {
-			$textStyle .= 'text-align:' . $attributes['reviewTextAlign'] . ';';
+			$textStyle .= 'text-align:' . esc_attr($attributes['reviewTextAlign']) . ';';
 		}
 		if (isset($attributes['reviewTextColor'])) {
-			$textStyle .= 'color:' . $attributes['reviewTextColor'] . ';';
+			$textStyle .= 'color:' . esc_attr($attributes['reviewTextColor']) . ';';
 		}
 
 
 		$stars = Common::generate_star_display(
-			$attributes['selectedStars'],
-			$attributes['starCount'],
+			esc_attr($attributes['selectedStars']),
+			esc_attr($attributes['starCount']),
 			'none',
-			$attributes['starColor'],
-			$attributes['starColor'],
-			$attributes['starSize']
+			esc_attr($attributes['starColor']),
+			esc_attr($attributes['starColor']),
+			esc_attr($attributes['starSize'])
 		);
 		
 		
@@ -116,14 +114,15 @@ class StarRating
 	 */
 	public function star_rating_block_registration()
 	{
-		$defaults = new Defaults();
+		$jsonPath = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/star-rating/block.json';
+        $attrs = json_decode(file_get_contents($jsonPath), true)['attributes'];
 
-		register_block_type_from_metadata(
-			TABLEBERG_PRO_DIR_PATH . 'dist/blocks/star-rating/block.json',
-			array(
-				'attributes' => $defaults->get_default_attributes('tableberg/star-rating'),
-				'render_callback' => array($this, 'render_star_rating_block'),
-			)
-		);
+        register_block_type_from_metadata(
+            $jsonPath,
+            [
+                'attributes' => $attrs,
+                'render_callback' => array($this, 'render_star_rating_block'),
+            ]
+        );
 	}
 }

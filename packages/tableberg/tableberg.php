@@ -4,7 +4,7 @@
  * Plugin Name:       Tableberg
  * Plugin URI:        https://tableberg.com/
  * Description:       Table Block by Tableberg - Create Better Tables With Block Editor
- * Version:           0.5.1
+ * Version:           0.5.2
  * Requires at least: 6.1
  * Requires PHP:      7.0
  * Author:            Tableberg
@@ -88,6 +88,26 @@ if (!class_exists('Tableberg')) {
 			new Tableberg\Blocks\Image();
 			new Tableberg\Blocks\Table();
 			new Tableberg\Blocks\Cell();
+
+            $pro_activated = false;
+
+            global $tp_fs;
+
+            if (isset($tp_fs)) {
+                $pro_activated = $tp_fs->is__premium_only()
+                    && $tp_fs->can_use_premium_code();
+            }
+
+            if (!$pro_activated) {
+                add_action('init', function() {
+                    register_block_type(TABLEBERG_DIR_PATH . 'src/upsells-blocks/styled-list-dummy/block.json');
+                    register_block_type(TABLEBERG_DIR_PATH . 'src/upsells-blocks/html-dummy/block.json');
+                    register_block_type(TABLEBERG_DIR_PATH . 'src/upsells-blocks/icon-dummy/block.json');
+                    register_block_type(TABLEBERG_DIR_PATH . 'src/upsells-blocks/ribbon-dummy/block.json');
+                    register_block_type(TABLEBERG_DIR_PATH . 'src/upsells-blocks/star-rating-dummy/block.json');
+                });
+            }
+
 			register_activation_hook(__FILE__, array($this, 'activate_plugin'));
 			register_deactivation_hook(__FILE__, array($this, 'deactivate_plugin'));
 		}

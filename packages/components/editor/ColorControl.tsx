@@ -4,15 +4,13 @@
 import { useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 import {
-    // @ts-expect-error
     useBlockEditContext,
-    // @ts-expect-error
     __experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
-    // @ts-expect-error
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { Color, Gradient } from "@wordpress/components/build-types/palette-edit/types";
+import { useRef } from "react";
 
 interface ColorSettingsProps {
     label: string;
@@ -40,11 +38,13 @@ function ColorSetting({
     const { clientId } = useBlockEditContext();
     const colorGradientSettings = useMultipleOriginColorsAndGradients();
 
+    const lastColor = useRef(colorValue);
+    const lastGradient = useRef(gradientValue);
+
     const {
         defaultColors, themeColors, defaultGradients, themeGradients
     } = useSelect((select) => {
         const colorSettings = (
-            // @ts-expect-error
             select(blockEditorStore) as BlockEditorStoreSelectors
         ).getSettings()?.__experimentalFeatures?.color;
         return {
@@ -81,16 +81,26 @@ function ColorSetting({
         colorValue: colorValue,
         colors: colorPalette,
         label: label,
-        onColorChange: onColorChange,
+        onColorChange: (val) => {
+            if (lastColor.current !== val) {
+                lastColor.current = val;
+                onColorChange(val);
+            }
+        },
         onDeselect: onDeselect,
     };
-
+    
     if (allowGradient) {
         settings = {
             ...settings,
             gradientValue: gradientValue,
             gradients: gradientPalette,
-            onGradientChange: onGradientChange,
+            onGradientChange: (val) => {
+                if (onGradientChange && lastGradient.current !== val) {
+                    lastGradient.current = val;
+                    onGradientChange(val);
+                }
+            },
         }
     }
 
