@@ -49,7 +49,6 @@ class Table
 		$table_spacing = Utils::get_spacing_css($cellSpacing);
 
 
-		$table_border_css = Utils::get_border_style($attributes['tableBorder']);
 		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : [];
 		$cell_radius = Utils::get_border_radius_var($attributes['cellBorderRadius'], '--tableberg-cell', $separateBorder);
 
@@ -65,7 +64,6 @@ class Table
 			'--tableberg-footer-bg' => $footer_bg,
 			'border-spacing' => ($table_spacing['left'] ?? 0) . ' ' . ($table_spacing['top'] ?? 0),
 		]
-		    + $table_border_css
 			+ Utils::get_spacing_style($attributes['cellPadding'], '--tableberg-cell-padding')
 			+ $inner_border_variables
 			+ $cell_radius;
@@ -82,6 +80,13 @@ class Table
 			$styles['border-collapse'] = 'collapse';
 		}
 
+		return Utils::generate_css_string($styles);
+	}
+
+
+	private static function get_root_styles($attributes) {
+		$styles = Utils::get_border_style($attributes['tableBorder']);
+		$styles += Utils::get_border_radius_style($attributes['tableBorderRadius']);
 		return Utils::generate_css_string($styles);
 	}
 
@@ -275,6 +280,7 @@ class Table
 
 		$wrapper_attributes = get_block_wrapper_attributes([
 			'class' => trim(join(' ', $wrapper_classes)),
+			'style' => self::get_root_styles($attributes)
 		]);
 
 		return '<div ' . $wrapper_attributes . ' >' . $content . '</div>';
