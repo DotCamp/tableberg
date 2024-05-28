@@ -45,8 +45,11 @@ const register = (metadata: any, icon: any) => {
     });
 };
 
-register(StyledListMeta, StyledListIcon);
-register(HtmlMeta, HtmlIcon);
-register(IconMeta, IconIcon);
-register(RibbonMeta, RibbonIcon);
-register(StarRatingMeta, StarRatingIcon);
+if (!TABLEBERG_CFG.IS_PRO) {
+    register(StyledListMeta, StyledListIcon);
+    register(HtmlMeta, HtmlIcon);
+    register(IconMeta, IconIcon);
+    register(RibbonMeta, RibbonIcon);
+    register(StarRatingMeta, StarRatingIcon);
+}
+

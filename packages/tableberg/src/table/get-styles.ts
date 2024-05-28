@@ -50,20 +50,18 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         (cellSpacingCSS.left ?? "0") !== "0"
     ) {
         spacingDependantStyles = {
-            border: "none",
-            "border-spacing": `${cellSpacingCSS?.top || 0} ${
-                cellSpacingCSS?.left || 0
+            "border-spacing": `${cellSpacingCSS?.left || 0} ${
+                cellSpacingCSS?.top || 0
             }`,
         };
         borderCollapse = false;
-    } else {
-        spacingDependantStyles = getBorderCSS(tableBorder);
     }
 
     let styles: Record<string, any> = {
         color: fontColor,
         "font-size": fontSize,
         "border-collapse": borderCollapse ? "collapse" : "separate",
+        ...getBorderCSS(tableBorder),
         "--tableberg-global-link-color": linkColor,
         "--tableberg-header-bg":
             headerBackgroundGradient || headerBackgroundColor,

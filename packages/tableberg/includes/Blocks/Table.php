@@ -63,8 +63,9 @@ class Table
 			'--tableberg-odd-bg' => $odd_row_bg,
 			'--tableberg-header-bg' => $header_bg,
 			'--tableberg-footer-bg' => $footer_bg,
-			'border-spacing' => ($table_spacing['top'] ?? 0) . ' ' . ($table_spacing['left'] ?? 0),
+			'border-spacing' => ($table_spacing['left'] ?? 0) . ' ' . ($table_spacing['top'] ?? 0),
 		]
+		    + $table_border_css
 			+ Utils::get_spacing_style($attributes['cellPadding'], '--tableberg-cell-padding')
 			+ $inner_border_variables
 			+ $cell_radius;
@@ -78,7 +79,6 @@ class Table
 		if ($separateBorder) {
 			$styles['border-collapse'] = 'separate';
 		} else {
-			$styles += $table_border_css;
 			$styles['border-collapse'] = 'collapse';
 		}
 

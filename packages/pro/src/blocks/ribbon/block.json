@@ -16,7 +16,7 @@
     "attributes": {
         "type": {
             "type": "string",
-            "default": "corner"
+            "default": "side"
         },
         "text": {
             "type": "string",
@@ -26,7 +26,8 @@
             "type": "object",
             "default": {
                 "side": "left",
-                "distance": "50px"
+                "originY": "top",
+                "y": "-5px"
             }
         },
         "fontSize": {

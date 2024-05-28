@@ -23,7 +23,7 @@
         },
         "alignItems": {
             "type": "string",
-            "default": "center"
+            "default": "baseline"
         },
         "itemSpacing": {
             "type": "string",

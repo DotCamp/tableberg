@@ -1,6 +1,10 @@
 import classNames from "classnames";
-import { useState, type SVGProps } from "react";
-import UpsellModal from "./UpsellModal";
+import { CSSProperties, useState, type SVGProps } from "react";
+import UpsellModal, {
+    BlockUpsellInfo,
+    UpsellEnhancedModal,
+    UpsellModalComponent,
+} from "./UpsellModal";
 import { createPortal } from "react-dom";
 
 function LockFillIcon(props: SVGProps<SVGSVGElement>) {
@@ -25,23 +29,35 @@ function LockFillIcon(props: SVGProps<SVGSVGElement>) {
 
 interface LockedControlProps {
     children: any;
-    inPanelBody?: boolean;
+    inToolsPanel?: boolean;
+    info?: BlockUpsellInfo;
+    selected?: string;
+    isEnhanced?: boolean;
+    style?: CSSProperties;
 }
+
 export default function LockedControl({
     children,
-    inPanelBody,
+    inToolsPanel,
+    info,
+    selected,
+    isEnhanced,
+    style,
 }: LockedControlProps) {
     const [showUpsell, setVisibility] = useState(false);
 
     return (
         <>
-            <div className="tableberg-locked-root">
+            <div
+                className={classNames({
+                    "tableberg-locked-root": true,
+                    "tableberg-locked-root-toolbar": inToolsPanel,
+                })}
+                style={style}
+            >
                 {children}
                 <button
-                    className={classNames({
-                        "tableberg-lock-container": true,
-                        "tableberg-lock-container-toolbar": !inPanelBody,
-                    })}
+                    className="tableberg-lock-container"
                     onClick={() => setVisibility(true)}
                 >
                     <LockFillIcon height="25px" width="25px" />
@@ -49,7 +65,22 @@ export default function LockedControl({
             </div>
             {showUpsell &&
                 createPortal(
-                    <UpsellModal onClose={() => setVisibility(false)} />,
+                    info ? (
+                        <UpsellModalComponent
+                            onClose={() => setVisibility(false)}
+                            info={info}
+                        />
+                    ) : isEnhanced ? (
+                        <UpsellEnhancedModal
+                            onClose={() => setVisibility(false)}
+                            selected={selected}
+                        />
+                    ) : (
+                        <UpsellModal
+                            onClose={() => setVisibility(false)}
+                            selected={selected}
+                        />
+                    ),
                     document.body,
                 )}
         </>

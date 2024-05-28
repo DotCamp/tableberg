@@ -10,8 +10,6 @@ import { useDispatch, useSelect } from "@wordpress/data";
 
 import {
     copy,
-    columns,
-    tableRowAfter,
     arrowUp,
     arrowDown,
     arrowLeft,
@@ -25,6 +23,9 @@ import {
     TablebergCellBlockAttrs,
     TablebergCellInstance,
 } from "@tableberg/shared/types";
+
+import {DuplicateRowIcon, DuplicateColumnIcon} from "@tableberg/shared/icons/enhancements";
+
 import { ProBlockProps } from "..";
 import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
 import StickyRowColControl from "../../shared/StickyRowColControl";
@@ -222,7 +223,7 @@ export const CellBlockPro = ({
 
     const tableControls: DropdownOption[] = [
         {
-            icon: tableRowAfter,
+            icon: DuplicateRowIcon,
             title: "Duplicate this row",
             onClick: () => {
                 const tableBlock: any = storeSelect.getBlock(
@@ -232,8 +233,8 @@ export const CellBlockPro = ({
             },
         },
         {
-            icon: columns,
-            title: "Duplicate the column",
+            icon: DuplicateColumnIcon,
+            title: "Duplicate this column",
             onClick: () => {
                 const tableBlock: any = storeSelect.getBlock(
                     storeSelect.getBlockRootClientId(props.clientId)!,
