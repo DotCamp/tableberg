@@ -4,7 +4,6 @@ import {
 } from "@tableberg/shared/types";
 import { BlockInstance, cloneBlock } from "@wordpress/blocks";
 
-
 const CONTEXT_MAP = new Map<string, Context>();
 const HAS_TOUCH: boolean =
     "ontouchstart" in window || (navigator.maxTouchPoints as any);
@@ -46,11 +45,9 @@ export class DragNDropSorting {
     private rowspan: number;
     private colspan: number;
 
-    private onMouseMoveFn: (evt: MouseEvent) => void = (evt) =>
-        this.mouseMove(evt);
-    private onTouchMoveFn: (evt: TouchEvent) => void = (evt) =>
-        this.touchMove(evt);
-    private cleanUpEvt: () => void = () => this.cleanUp();
+    private onMouseMoveFn = (evt: MouseEvent) => this.mouseMove(evt);
+    private onTouchMoveFn = (evt: TouchEvent) => this.touchMove(evt);
+    private cleanUpEvt = () => this.cleanUp();
 
     private startEvt: (evt: MouseEvent | TouchEvent) => void;
     private touchEvt?: (evt: TouchEvent) => void;
@@ -330,11 +327,8 @@ export class DragNDropSorting {
         this.cellEl?.removeEventListener("mouseenter", this.overEvt);
         this.cellEl?.removeEventListener("mouseleave", this.leaveEvt);
         this.cellEl?.removeEventListener("mouseup", this.dropEvt);
-        
     }
 }
-
-
 
 export const moveCol = (
     storeActions: BlockEditorStoreActions,
