@@ -105,6 +105,10 @@
                 "width": "1px"
             }
         },
+        "tableBorderRadius": {
+            "type": "object",
+            "default": {}
+        },
         "innerBorder": {
             "type": "object",
             "default": {
