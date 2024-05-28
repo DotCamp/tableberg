@@ -34,7 +34,10 @@ export function UpsellModalComponent({
 }: ComponentProps) {
     return (
         <div className="tableberg-upsell-modal">
-            <div className="tableberg-upsell-modal-backdrop"></div>
+            <div
+                className="tableberg-upsell-modal-backdrop"
+                onClick={onClose}
+            ></div>
             <div className="tableberg-upsell-modal-container">
                 {!!prev && (
                     <button
