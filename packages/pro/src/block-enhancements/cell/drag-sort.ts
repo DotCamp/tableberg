@@ -99,21 +99,21 @@ export class DragNDropSorting {
             this.ctx.overInstance = this;
             this.ctx.startInstance = this;
 
-            this.ctx.dragPreview = document.createElement("div");
+            this.ctx.dragPreview = this.cellEl.ownerDocument.createElement("div");
             this.ctx.dragPreview.classList.add("tableberg-drag-preview");
             this.ctx.startBox = this.cellEl.getBoundingClientRect();
 
             // TODO: Make the preview appear as selected
 
-            document.body.appendChild(this.ctx.dragPreview);
+            this.cellEl.ownerDocument.body.appendChild(this.ctx.dragPreview);
 
             // TODO: set the active els & add their class
 
-            document.addEventListener("mousemove", this.onMouseMoveFn);
-            document.addEventListener("mouseup", this.cleanUpEvt);
+            this.cellEl.ownerDocument.addEventListener("mousemove", this.onMouseMoveFn);
+            this.cellEl.ownerDocument.addEventListener("mouseup", this.cleanUpEvt);
             if (HAS_TOUCH) {
-                document.addEventListener("touchmove", this.onTouchMoveFn);
-                document.addEventListener("touchend", this.cleanUpEvt);
+                this.cellEl.ownerDocument.addEventListener("touchmove", this.onTouchMoveFn);
+                this.cellEl.ownerDocument.addEventListener("touchend", this.cleanUpEvt);
             }
 
             let posX, posY;
@@ -291,11 +291,11 @@ export class DragNDropSorting {
     private cleanUp() {
         this.ctx.dragPreview?.remove();
 
-        document.removeEventListener("mousemove", this.onMouseMoveFn);
-        document.removeEventListener("mouseup", this.cleanUpEvt);
+        this.cellEl.ownerDocument.removeEventListener("mousemove", this.onMouseMoveFn);
+        this.cellEl.ownerDocument.removeEventListener("mouseup", this.cleanUpEvt);
         if (HAS_TOUCH) {
-            document.removeEventListener("touchmove", this.onTouchMoveFn);
-            document.removeEventListener("touchend", this.cleanUpEvt);
+            this.cellEl.ownerDocument.removeEventListener("touchmove", this.onTouchMoveFn);
+            this.cellEl.ownerDocument.removeEventListener("touchend", this.cleanUpEvt);
         }
 
         this.ctx.rootEl
