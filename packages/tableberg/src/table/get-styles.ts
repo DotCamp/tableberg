@@ -51,8 +51,8 @@ export function getStyles(attributes: TablebergBlockAttrs) {
     ) {
         spacingDependantStyles = {
             border: "none",
-            "border-spacing": `${cellSpacingCSS?.top || 0} ${
-                cellSpacingCSS?.left || 0
+            "border-spacing": `${cellSpacingCSS?.left || 0} ${
+                cellSpacingCSS?.top || 0
             }`,
         };
         borderCollapse = false;
