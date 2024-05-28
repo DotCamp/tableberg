@@ -1,8 +1,6 @@
 import { omitBy, isUndefined, trim, isEmpty } from "lodash";
 import { getBorderVariablesCss, getSpacingCss } from "../utils/styling-helpers";
 import {
-    getBorderCSS,
-    getBorderRadiusCSS,
     getBorderRadiusVar,
     getSpacingStyle,
 } from "@tableberg/shared/utils/styling-helpers";
@@ -14,7 +12,6 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         cellSpacing,
         enableInnerBorder,
         innerBorder,
-        tableBorder,
         cellBorderRadius,
         headerBackgroundColor,
         headerBackgroundGradient,
