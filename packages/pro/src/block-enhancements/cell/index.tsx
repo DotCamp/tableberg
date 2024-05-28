@@ -8,7 +8,13 @@ import { ColorControl } from "@tableberg/components";
 
 import { useDispatch, useSelect } from "@wordpress/data";
 
-import { copy } from "@wordpress/icons";
+import {
+    copy,
+    arrowUp,
+    arrowDown,
+    arrowLeft,
+    arrowRight,
+} from "@wordpress/icons";
 
 import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
 import { BlockInstance, cloneBlock } from "@wordpress/blocks";
@@ -23,6 +29,7 @@ import {DuplicateRowIcon, DuplicateColumnIcon} from "@tableberg/shared/icons/enh
 import { ProBlockProps } from "..";
 import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
 import StickyRowColControl from "../../shared/StickyRowColControl";
+import { DragNDropSorting, moveCol, moveRow } from "./drag-sort";
 
 const duplicateRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
@@ -172,26 +179,47 @@ export const CellBlockPro = ({
         blockEditorStore,
     ) as any;
 
-    const { storeSelect, tableAttrs, setTableAttrs } = useSelect((select) => {
-        const storeSelect: BlockEditorStoreSelectors = select(
-            blockEditorStore,
-        ) as any;
+    const { storeSelect, tableAttrs, setTableAttrs, tableBlock } = useSelect(
+        (select) => {
+            const storeSelect: BlockEditorStoreSelectors = select(
+                blockEditorStore,
+            ) as any;
 
-        const tableBlockId = storeSelect.getBlockRootClientId(props.clientId)!;
-        const tableBlock = storeSelect.getBlock(tableBlockId)!;
+            const tableBlockId = storeSelect.getBlockRootClientId(
+                props.clientId,
+            )!;
+            const tableBlock = storeSelect.getBlock(tableBlockId)!;
 
-        const setTableAttrs = (attrs: Partial<TablebergBlockAttrs>) =>
-            storeActions.updateBlockAttributes(tableBlockId, attrs);
+            const setTableAttrs = (attrs: Partial<TablebergBlockAttrs>) =>
+                storeActions.updateBlockAttributes(tableBlockId, attrs);
 
-        return {
-            storeSelect,
-            tableBlock,
-            tableAttrs: tableBlock.attributes as TablebergBlockAttrs,
-            setTableAttrs,
-        };
-    }, []);
+            return {
+                storeSelect,
+                tableBlock,
+                tableAttrs: tableBlock.attributes as TablebergBlockAttrs,
+                setTableAttrs,
+            };
+        },
+        [],
+    );
 
     const attrs = props.attributes;
+
+    const makeMove = (ctx: any) => {
+        const tableBlockFresh = storeSelect.getBlock(
+            tableBlock.clientId,
+        )! as any;
+        const subject = ctx.startInstance;
+        const target = ctx.overInstance;
+
+        if (ctx.type === "row") {
+            moveRow(storeActions, tableBlockFresh, subject.row, target.row);
+        } else {
+            moveCol(storeActions, tableBlockFresh, subject.col, target.col);
+        }
+    };
+
+    const proProps = { DragNDropSorting, makeMove };
 
     const tableControls: DropdownOption[] = [
         {
@@ -214,6 +242,70 @@ export const CellBlockPro = ({
                 duplicateCol(tableBlock, storeActions, props.attributes.col);
             },
         },
+        {
+            icon: arrowRight,
+            title: "Move coulmn to right",
+            onClick: () => {
+                const tableBlock: any = storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(props.clientId)!,
+                )!;
+                moveCol(
+                    storeActions,
+                    tableBlock,
+                    props.attributes.col,
+                    props.attributes.col + 1,
+                );
+            },
+            isDisabled: props.attributes.col == tableAttrs.cols - 1,
+        },
+        {
+            icon: arrowLeft,
+            title: "Move coulmn to left",
+            onClick: () => {
+                const tableBlock: any = storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(props.clientId)!,
+                )!;
+                moveCol(
+                    storeActions,
+                    tableBlock,
+                    props.attributes.col,
+                    props.attributes.col - 1,
+                );
+            },
+            isDisabled: props.attributes.col == 0,
+        },
+        {
+            icon: arrowUp,
+            title: "Move row up",
+            onClick: () => {
+                const tableBlock: any = storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(props.clientId)!,
+                )!;
+                moveRow(
+                    storeActions,
+                    tableBlock,
+                    props.attributes.row,
+                    props.attributes.row - 1,
+                );
+            },
+            isDisabled: props.attributes.row == 0,
+        },
+        {
+            icon: arrowDown,
+            title: "Move row down",
+            onClick: () => {
+                const tableBlock: any = storeSelect.getBlock(
+                    storeSelect.getBlockRootClientId(props.clientId)!,
+                )!;
+                moveRow(
+                    storeActions,
+                    tableBlock,
+                    props.attributes.row,
+                    props.attributes.row + 1,
+                );
+            },
+            isDisabled: props.attributes.row == tableAttrs.rows - 1,
+        },
     ];
     return (
         <>
@@ -224,7 +316,7 @@ export const CellBlockPro = ({
                     clientId={props.clientId}
                 />
             )}
-            <BlockEdit {...props} />
+            <BlockEdit {...props} proProps={proProps} />
             {props.isSelected && (
                 <>
                     <InspectorControls group="color">

@@ -1,0 +1,84 @@
+.wp-block-tableberg-cell {
+    &.tableberg-drag-over-row {
+        * {
+            opacity: 0.2;
+        }
+        &::before {
+            border-top: 2px dashed blue;
+            border-bottom: 2px dashed blue;
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+        }
+    }
+    &.tableberg-drag-over-col {
+        * {
+            opacity: 0.2;
+        }
+        ::before {
+            border-right: 2px dashed blue;
+            border-left: 2px dashed blue;
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+        }
+    }
+
+    &.tableberg-drag-active-row {
+        background: rgba(236, 213, 6, 0.055);
+        * {
+            opacity: 1;
+        }
+        &::after {
+            border-top: 2px dashed yellow;
+            border-bottom: 2px dashed yellow;
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+        }
+        &::before {
+            display: none !important;
+        }
+    }
+
+    &.tableberg-drag-active-col {
+        background: rgba(236, 213, 6, 0.055);
+        * {
+            opacity: 1;
+        }
+        &::after {
+            border-right: 2px dashed yellow;
+            border-left: 2px dashed yellow;
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+        }
+        &::before {
+            display: none !important;
+        }
+    }
+}
+
+.tableberg-drag-preview {
+    position: fixed;
+    pointer-events: none;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.541);
+    box-shadow: 0 0 3px black;
+}
