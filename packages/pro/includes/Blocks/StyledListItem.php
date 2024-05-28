@@ -79,7 +79,7 @@ class StyledListItem
 			'<li style="' . $styles . '">
 			    <div class="tableberg-list-item-inner" style="'.self::get_inner_style($attributes).'">
 				    <div class="tableberg-list-icon">' . $icon . '</div>
-					<div class="tableberg-list-text">' . wp_kses_data($item_text) . '</div>
+					<div class="tableberg-list-text">' . wp_kses_post($item_text) . '</div>
 				</div>
 				' . $contents . '
 			</li>';
