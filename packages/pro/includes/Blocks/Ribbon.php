@@ -79,6 +79,29 @@ class Ribbon
             '<div class="tableberg-ribbon-side-shadow"></div></div>';
     }
 
+
+    private static function render_badge(array $attributes): string
+    {
+        $ind = $attributes['individual'];
+        $style = Utils::generate_css_string([
+            "color" => $attributes["color"] ?? '',
+            "font-size" => $attributes["fontSize"] ?? '',
+        ]);
+
+        $contentStyle = Utils::generate_css_string(
+            Utils::get_spacing_style($ind['padding'] ?? [], 'padding') +
+            Utils::get_border_radius_style($ind['borderRadius'] ?? []) +
+            [
+                'background' => Utils::get_any($attributes, 'bgGradient', 'background')
+            ]
+        );
+
+        $content = '<div class="tableberg-ribbon-badge-content" style="' . $contentStyle . '">' . esc_html($attributes['text']) . '</div>';
+
+        return '<div class="tableberg-ribbon tableberg-ribbon-badge tableberg-ribbon-badge-' . esc_attr($ind['alignment']) . '" style="' . $style . '">' . $content .
+            '</div>';
+    }
+
     private static function render_icon(array $attributes): string
     {
         $ind = $attributes['individual'];
@@ -115,11 +138,14 @@ class Ribbon
             case 'side':
                 return self::render_side($attributes);
 
+            case 'badge':
+                return self::render_badge($attributes);
+
             case 'icon':
                 return self::render_icon($attributes);
 
         }
-        
+
         return 'Unsupported ribbon type';
     }
 
