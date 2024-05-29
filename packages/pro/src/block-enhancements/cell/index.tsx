@@ -9,7 +9,6 @@ import { ColorControl } from "@tableberg/components";
 import { useDispatch, useSelect } from "@wordpress/data";
 
 import {
-    copy,
     arrowUp,
     arrowDown,
     arrowLeft,
@@ -25,6 +24,7 @@ import {
 } from "@tableberg/shared/types";
 
 import {DuplicateRowIcon, DuplicateColumnIcon} from "@tableberg/shared/icons/enhancements";
+import TablebergProIcon from "@tableberg/shared/icons/tableberg-pro";
 
 import { ProBlockProps } from "..";
 import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
@@ -349,7 +349,7 @@ export const CellBlockPro = ({
             )}
             <BlockControls group="other" __experimentalShareWithChildBlocks>
                 <ToolbarDropdownMenu
-                    icon={copy}
+                    icon={TablebergProIcon}
                     label={"[Pro] Edit table"}
                     controls={tableControls}
                 />

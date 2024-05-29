@@ -32,7 +32,6 @@ import {
     tableColumnDelete,
     table,
     alignNone,
-    copy,
     arrowRight,
     arrowLeft,
     arrowUp,
@@ -62,6 +61,8 @@ import {
     DuplicateRowIcon,
     DuplicateColumnIcon,
 } from "@tableberg/shared/icons/enhancements";
+
+import TablebergProIcon from "@tableberg/shared/icons/tableberg-pro";
 import { UpsellEnhancedModal } from "../components/UpsellModal";
 
 const IS_PRO = TABLEBERG_CFG.IS_PRO;
@@ -804,7 +805,7 @@ function edit(
 
     useEffect(() => {
         const pro = props.proProps;
-        if (pro.DragNDropSorting && cellRef.current) {
+        if (pro?.DragNDropSorting && cellRef.current) {
             const dins = new pro.DragNDropSorting(
                 cellRef.current,
                 attributes.row,
@@ -1025,7 +1026,7 @@ function edit(
                         __experimentalShareWithChildBlocks
                     >
                         <ToolbarDropdownMenu
-                            icon={copy}
+                            icon={TablebergProIcon}
                             label={"[PRO] Edit table"}
                             controls={tableControlsPro}
                         />
