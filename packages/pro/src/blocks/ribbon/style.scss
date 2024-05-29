@@ -123,4 +123,22 @@
             margin-left: auto;
         }
     }
+
+    &-badge {
+        position: relative !important;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+        &-content {
+            width: max-content;
+        }
+
+        &-center &-content {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        &-right &-content {
+            margin-left: auto;
+        }
+    }
 }
