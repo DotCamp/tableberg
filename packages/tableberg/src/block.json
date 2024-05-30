@@ -66,6 +66,10 @@
             "type": "string",
             "default": "center"
         },
+        "blockSpacing": {
+            "type": "string",
+            "default": null
+        },
         "headerBackgroundColor": {
             "type": "string",
             "default": null

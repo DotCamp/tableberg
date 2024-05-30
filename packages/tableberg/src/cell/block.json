@@ -45,6 +45,10 @@
             "type": "string",
             "default": null
         },
+        "blockSpacing": {
+            "type": "string",
+            "default": null
+        },
         "isTmp": {
             "type": "boolean",
             "default": false
