@@ -63,6 +63,7 @@ class Table
 			'--tableberg-odd-bg' => $odd_row_bg,
 			'--tableberg-header-bg' => $header_bg,
 			'--tableberg-footer-bg' => $footer_bg,
+			'--tableberg-block-spacing' => Utils::get_spacing_css_single($attributes['blockSpacing']??''),
 			'border-spacing' => ($table_spacing['left'] ?? 0) . ' ' . ($table_spacing['top'] ?? 0),
 		]
 		    + $table_border_css
