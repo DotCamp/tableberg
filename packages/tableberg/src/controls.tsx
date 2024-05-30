@@ -29,6 +29,7 @@ import {
 import {
     ResponsiveOptions,
     TablebergBlockAttrs,
+    TablebergCellBlockAttrs,
 } from "@tableberg/shared/types";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ResponsiveControls } from "./responsiveControls";
@@ -40,6 +41,7 @@ import {
     ToolbarWithDropdown,
     BorderRadiusControl,
     SizeControl,
+    SpacingControlSingle,
 } from "@tableberg/components";
 import LockedControl from "./components/LockedControl";
 
@@ -63,53 +65,57 @@ const AVAILABLE_JUSTIFICATIONS = [
     },
 ];
 
+interface Props {
+    clientId: string;
+    preview?: keyof ResponsiveOptions["breakpoints"];
+    attributes: TablebergBlockAttrs | TablebergCellBlockAttrs;
+    setAttributes: (
+        attrs: Partial<TablebergBlockAttrs | TablebergCellBlockAttrs>,
+    ) => void;
+}
+
 function TablebergControls({
     clientId,
     preview,
-}: {
-    clientId: string;
-    preview?: keyof ResponsiveOptions["breakpoints"];
-}) {
-    const {
-        isTableControls,
-        tableAttributes,
-        tableBlockClientId,
-        cellBlock,
-        themeColors,
-    } = useSelect((select) => {
-        const storeSelect = select(
-            blockEditorStore,
-        ) as BlockEditorStoreSelectors;
-        const currentBlock = storeSelect.getBlock(clientId)!;
-        const isTableControls = currentBlock?.name === "tableberg/table";
+    attributes,
+    setAttributes,
+}: Props) {
+    const { tableAttributes, tableBlockClientId, cellBlock, themeColors } =
+        useSelect((select) => {
+            const storeSelect = select(
+                blockEditorStore,
+            ) as BlockEditorStoreSelectors;
+            const currentBlock = storeSelect.getBlock(clientId)!;
+            const isTableControls = currentBlock?.name === "tableberg/table";
 
-        let tableBlock = currentBlock;
-        let cellBlock = null;
+            let tableBlock = currentBlock;
+            let cellBlock = null;
 
-        if (!isTableControls) {
-            const parentBlocks = storeSelect.getBlockParents(clientId);
-            const tableBlockClientId = parentBlocks.find(
-                (blockClientId) =>
-                    storeSelect.getBlock(blockClientId)?.name ===
-                    "tableberg/table",
-            )!;
+            if (!isTableControls) {
+                const parentBlocks = storeSelect.getBlockParents(clientId);
+                const tableBlockClientId = parentBlocks.find(
+                    (blockClientId) =>
+                        storeSelect.getBlock(blockClientId)?.name ===
+                        "tableberg/table",
+                )!;
 
-            tableBlock = storeSelect.getBlock(tableBlockClientId)!;
-            cellBlock = currentBlock;
-        }
+                tableBlock = storeSelect.getBlock(tableBlockClientId)!;
+                cellBlock = currentBlock;
+            }
 
-        const tableAttributes = tableBlock.attributes as TablebergBlockAttrs;
+            const tableAttributes =
+                tableBlock.attributes as TablebergBlockAttrs;
 
-        return {
-            isTableControls,
-            tableAttributes,
-            tableBlockClientId: tableBlock.clientId,
-            cellBlock,
-            themeColors:
-                storeSelect.getSettings()?.__experimentalFeatures?.color.palette
-                    .theme,
-        };
-    }, []);
+            return {
+                isTableControls,
+                tableAttributes,
+                tableBlockClientId: tableBlock.clientId,
+                cellBlock,
+                themeColors:
+                    storeSelect.getSettings()?.__experimentalFeatures?.color
+                        .palette.theme,
+            };
+        }, []);
 
     const {
         enableInnerBorder,
@@ -463,6 +469,24 @@ function TablebergControls({
                     onChange={(val) => setTableAttributes({ cellSpacing: val })}
                     onDeselect={() => setTableAttributes({ cellSpacing: {} })}
                 />
+                <ToolsPanelItem
+                    panelId={clientId}
+                    isShownByDefault={true}
+                    resetAllFilter={() =>
+                        setAttributes({ blockSpacing: undefined })
+                    }
+                    className={"tools-panel-item-spacing"}
+                    label="Block SPacing"
+                    hasValue={() => !!attributes.blockSpacing}
+                >
+                    <SpacingControlSingle
+                        label="Block Spacing"
+                        value={attributes.blockSpacing}
+                        onChange={(blockSpacing) =>
+                            setAttributes({ blockSpacing })
+                        }
+                    />
+                </ToolsPanelItem>
             </InspectorControls>
 
             <InspectorControls group="border">
