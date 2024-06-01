@@ -157,6 +157,11 @@ div.wp-block-tableberg-wrapper {
             }
         }
     }
+
+    &::before,
+    &::after {
+        border-radius: inherit !important;
+    }
 }
 
 .add-margin-bottom {
