@@ -86,8 +86,8 @@ class Table
 
 
 	private static function get_root_styles($attributes) {
-		$styles = Utils::get_border_style($attributes['tableBorder']);
-		$styles += Utils::get_border_radius_style($attributes['tableBorderRadius']);
+		$styles = Utils::get_border_style($attributes['tableBorder']??[]);
+		$styles += Utils::get_border_radius_style($attributes['tableBorderRadius']??[]);
 		return Utils::generate_css_string($styles);
 	}
 
