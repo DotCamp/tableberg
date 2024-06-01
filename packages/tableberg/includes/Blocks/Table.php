@@ -106,6 +106,9 @@ class Table
 		if ($enable_inner_border) {
 			$classes[] = 'has-inner-border';
 		}
+		if ($attributes['hideCellOutsideBorders']??true) {
+			$classes[] = 'tablberg-cell-no-outside-border';
+		}
 		$is_value_empty = function ($value) {
 			return (
 				is_null($value) ||

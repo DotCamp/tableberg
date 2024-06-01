@@ -523,7 +523,7 @@ function TablebergControls({
                     </>
                 )}
                 <BorderControl
-                    label={__("Table Border Size", "tableberg")}
+                    label={__("Table Border", "tableberg")}
                     value={tableAttributes.tableBorder}
                     onChange={(newBorder) => {
                         setTableAttributes({ tableBorder: newBorder });
@@ -568,6 +568,31 @@ function TablebergControls({
                             setTableAttributes({
                                 enableInnerBorder:
                                     !tableAttributes.enableInnerBorder,
+                            })
+                        }
+                    />
+                </ToolsPanelItem>
+                <ToolsPanelItem
+                    panelId={clientId}
+                    isShownByDefault={true}
+                    resetAllFilter={() =>
+                        setTableAttributes({
+                            hideCellOutsideBorders: true,
+                        })
+                    }
+                    hasValue={() => !tableAttributes.hideCellOutsideBorders}
+                    label={__("Hide Cell Outside Borders", "tableberg")}
+                    onDeselect={() => {
+                        setTableAttributes({ hideCellOutsideBorders: true });
+                    }}
+                >
+                    <ToggleControl
+                        label={__("Hide Cell Outside Borders", "tableberg")}
+                        checked={tableAttributes.hideCellOutsideBorders}
+                        onChange={() =>
+                            setTableAttributes({
+                                hideCellOutsideBorders:
+                                    !tableAttributes.hideCellOutsideBorders,
                             })
                         }
                     />

@@ -49,6 +49,7 @@ export interface TablebergBlockAttrs {
     tableBorderRadius: any;
     cellBorderRadius: any;
     innerBorder: any;
+    hideCellOutsideBorders: boolean;
     enableInnerBorder: boolean;
     isExample: boolean;
     fontColor: string;
