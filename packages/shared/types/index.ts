@@ -31,6 +31,7 @@ export interface TablebergBlockAttrs {
     rowHeights: string[];
     hasTableCreated: boolean;
     tableWidth: string;
+    blockSpacing: string;
     enableTableHeader: "" | "converted" | "added";
     enableTableFooter: "" | "converted" | "added";
     tableAlignment: "center" | "full" | "left" | "right" | "wide";
@@ -72,6 +73,7 @@ export interface TablebergCellBlockAttrs {
     responsiveTarget: string;
     background?: string;
     bgGradient?: string;
+    blockSpacing: string;
     isTmp: boolean;
 }
 

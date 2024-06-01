@@ -64,6 +64,7 @@ import {
 
 import TablebergProIcon from "@tableberg/shared/icons/tableberg-pro";
 import { UpsellEnhancedModal } from "../components/UpsellModal";
+import { getSpacingCssSingle } from "@tableberg/shared/utils/styling-helpers";
 
 const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
@@ -666,7 +667,7 @@ const useMerging = (
 };
 
 function edit(
-    props: BlockEditProps<TablebergCellBlockAttrs> & {proProps?: any },
+    props: BlockEditProps<TablebergCellBlockAttrs> & { proProps?: any },
 ) {
     const { clientId, attributes, setAttributes, isSelected } = props;
     const cellRef = useRef<HTMLTableCellElement>();
@@ -756,6 +757,7 @@ function edit(
                 attributes.vAlign === "center" ? "middle" : attributes.vAlign,
             height: tableBlock.attributes.rowHeights[props.attributes.row],
             background: attributes.bgGradient || attributes.background,
+            "--tableberg-block-spacing": getSpacingCssSingle(attributes.blockSpacing),
         },
         ref: cellRef,
         className: classNames({
@@ -1041,7 +1043,11 @@ function edit(
                         )}
                 </>
             )}
-            <TablebergControls clientId={clientId} />
+            <TablebergControls
+                clientId={clientId}
+                attributes={attributes}
+                setAttributes={setAttributes}
+            />
         </>
     );
 }

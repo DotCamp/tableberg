@@ -2,6 +2,7 @@ import { omitBy, isUndefined, trim, isEmpty } from "lodash";
 import { getBorderVariablesCss, getSpacingCss } from "../utils/styling-helpers";
 import {
     getBorderRadiusVar,
+    getSpacingCssSingle,
     getSpacingStyle,
 } from "@tableberg/shared/utils/styling-helpers";
 import { TablebergBlockAttrs } from "@tableberg/shared/types";
@@ -33,7 +34,7 @@ export function getStyles(attributes: TablebergBlockAttrs) {
     let spacingDependantStyles: Record<string, any> = {};
 
     let borderCollapse = true;
-    
+
     if (cellBorderRadius) {
         for (const side in cellBorderRadius) {
             if (cellBorderRadius[side] !== "0px") {
@@ -70,6 +71,7 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         "--tableberg-odd-bg": oddRowBackgroundGradient || oddRowBackgroundColor,
         "--tableberg-even-bg":
             evenRowBackgroundGradient || evenRowBackgroundColor,
+        "--tableberg-block-spacing": getSpacingCssSingle(attributes.blockSpacing),
         ...spacingDependantStyles,
         ...tableInnerBorder,
         ...getSpacingStyle(cellPadding, "--tableberg-cell-padding"),
