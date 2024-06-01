@@ -513,6 +513,16 @@ function TablebergControls({
                         });
                     }}
                 />
+                <BorderRadiusControl
+                    label={__("Table Border Radius", "tableberg")}
+                    value={tableAttributes.tableBorderRadius}
+                    onChange={(tableBorderRadius: any) =>
+                        setTableAttributes({ tableBorderRadius })
+                    }
+                    onDeselect={() =>
+                        setTableAttributes({ tableBorderRadius: {} })
+                    }
+                />
                 <ToolsPanelItem
                     panelId={clientId}
                     isShownByDefault={true}

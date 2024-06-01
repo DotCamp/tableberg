@@ -39,6 +39,7 @@ import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
 import { createPortal } from "react-dom";
 import { SidebarUpsell } from "./components/SidebarUpsell";
+import { getBorderCSS, getBorderRadiusCSS } from "@tableberg/shared/utils/styling-helpers";
 
 export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
 interface TablebergCtx {
@@ -359,6 +360,10 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             "tableberg-border-col-only": attributes.innerBorderType === "col",
             "tableberg-border-row-only": attributes.innerBorderType === "row",
         }),
+        style: {
+            ...getBorderCSS(attributes.tableBorder),
+            ...getBorderRadiusCSS(attributes.tableBorderRadius),
+        }
     });
 
     const storeActions: BlockEditorStoreActions = useDispatch(

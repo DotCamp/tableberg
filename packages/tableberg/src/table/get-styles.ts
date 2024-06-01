@@ -1,7 +1,6 @@
 import { omitBy, isUndefined, trim, isEmpty } from "lodash";
 import { getBorderVariablesCss, getSpacingCss } from "../utils/styling-helpers";
 import {
-    getBorderCSS,
     getBorderRadiusVar,
     getSpacingStyle,
 } from "@tableberg/shared/utils/styling-helpers";
@@ -13,7 +12,6 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         cellSpacing,
         enableInnerBorder,
         innerBorder,
-        tableBorder,
         cellBorderRadius,
         headerBackgroundColor,
         headerBackgroundGradient,
@@ -57,11 +55,13 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         borderCollapse = false;
     }
 
+    
+    
+
     let styles: Record<string, any> = {
         color: fontColor,
         "font-size": fontSize,
         "border-collapse": borderCollapse ? "collapse" : "separate",
-        ...getBorderCSS(tableBorder),
         "--tableberg-global-link-color": linkColor,
         "--tableberg-header-bg":
             headerBackgroundGradient || headerBackgroundColor,
@@ -75,6 +75,7 @@ export function getStyles(attributes: TablebergBlockAttrs) {
         ...getSpacingStyle(cellPadding, "--tableberg-cell-padding"),
         ...getBorderRadiusVar(cellBorderRadius, "--tableberg-cell"),
     };
+    
 
     return omitBy(
         styles,

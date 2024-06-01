@@ -45,6 +45,7 @@ export interface TablebergBlockAttrs {
     footerBackgroundColor: string | null;
     footerBackgroundGradient: string | null;
     tableBorder: any;
+    tableBorderRadius: any;
     cellBorderRadius: any;
     innerBorder: any;
     enableInnerBorder: boolean;
