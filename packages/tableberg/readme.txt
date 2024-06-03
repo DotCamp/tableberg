@@ -69,6 +69,9 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 == Changelog ==
 
 = 0.5.2 =
+* FIX: A notice being shown about block registration if pro is not active.
+
+= 0.5.2 =
 * NEW: Fixed width columns
 * PRO: NEW: Row-only/Column-only border option
 * PRO: NEW: Sticky row/column
