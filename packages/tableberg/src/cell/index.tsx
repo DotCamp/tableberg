@@ -757,7 +757,10 @@ function edit(
                 attributes.vAlign === "center" ? "middle" : attributes.vAlign,
             height: tableBlock.attributes.rowHeights[props.attributes.row],
             background: attributes.bgGradient || attributes.background,
-            "--tableberg-block-spacing": getSpacingCssSingle(attributes.blockSpacing),
+            "--tableberg-block-spacing":
+                attributes.blockSpacing?.[0] !== "0"
+                    ? getSpacingCssSingle(attributes.blockSpacing)
+                    : undefined,
         },
         ref: cellRef,
         className: classNames({

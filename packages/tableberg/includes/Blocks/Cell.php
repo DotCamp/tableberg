@@ -32,8 +32,11 @@ class Cell
 	private static function getStyles($attributes) {
 		$styles = [
 			'background' => Utils::get_any($attributes, 'bgGradient', 'background'),
-			'--tableberg-block-spacing' => Utils::get_spacing_css_single($attributes['blockSpacing']??''),
 		];
+		$blockSpacing = Utils::get_spacing_css_single($attributes['blockSpacing']??'');
+		if ($blockSpacing && $blockSpacing[0] != '0') {
+			$styles['--tableberg-block-spacing'] = $blockSpacing;
+		}
 		return Utils::generate_css_string($styles);
 	}
 
