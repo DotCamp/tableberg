@@ -365,8 +365,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 !!attributes.tableAlignment,
             "tableberg-sticky-top-row": attributes.stickyTopRow,
             "tableberg-sticky-first-col": attributes.stickyFirstCol,
-            "tablberg-cell-no-outside-border":
-                attributes.hideCellOutsideBorders,
+            "tableberg-cell-no-outside-border": attributes.hideCellOutsideBorders,
             "tableberg-border-col-only": attributes.innerBorderType === "col",
             "tableberg-border-row-only": attributes.innerBorderType === "row",
         }),

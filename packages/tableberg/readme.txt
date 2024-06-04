@@ -68,6 +68,18 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 
 == Changelog ==
 
+= 0.5.3 =
+* FIX: A notice being shown about block registration if pro is not active.
+* FIX: Table border having problem when cell radius is set
+* FIX: Cell spacing in wrong axes
+* NEW: Table border radius control
+* NEW: Item spacing inside cells
+* PRO: NEW: Added badge ribbon
+* PRO: NEW: Sort rows & columns by drag & drop
+* IMPROVE: Control cell outside border
+* IMPROVE: Deactivate pro version when free version is deactivated
+* IMPROVE: Show Tableberg when searched for Row/Column in editor
+
 = 0.5.2 =
 * NEW: Fixed width columns
 * PRO: NEW: Row-only/Column-only border option
