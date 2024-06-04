@@ -121,6 +121,10 @@
                 "width": "1px"
             }
         },
+        "hideCellOutsideBorders" :{
+            "type": "boolean",
+            "default": true
+        },
         "enableInnerBorder": {
             "type": "boolean",
             "default": true

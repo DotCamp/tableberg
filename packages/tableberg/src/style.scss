@@ -65,6 +65,25 @@ div.wp-block-tableberg-wrapper {
             color: var(--tableberg-global-link-color);
         }
 
+        &.has-inner-border {
+            .wp-block-tableberg-cell {
+                border-top: var(--tableberg-inner-border-top);
+                border-right: var(--tableberg-inner-border-right);
+                border-bottom: var(--tableberg-inner-border-bottom);
+                border-left: var(--tableberg-inner-border-left);
+            }
+        }
+    }
+
+    .wp-block-paragraph [data-rich-text-placeholder]::after {
+        content: "Type here";
+    }
+
+    .wp-block-paragraph:focus [data-rich-text-placeholder]::after {
+        content: "Type / to choose a block";
+    }
+
+    &.tablberg-cell-no-outside-border table {
         tr:first-of-type {
             td,
             th {
@@ -90,23 +109,6 @@ div.wp-block-tableberg-wrapper {
                 border-right: none !important;
             }
         }
-
-        &.has-inner-border {
-            .wp-block-tableberg-cell {
-                border-top: var(--tableberg-inner-border-top);
-                border-right: var(--tableberg-inner-border-right);
-                border-bottom: var(--tableberg-inner-border-bottom);
-                border-left: var(--tableberg-inner-border-left);
-            }
-        }
-    }
-
-    .wp-block-paragraph [data-rich-text-placeholder]::after {
-        content: "Type here";
-    }
-
-    .wp-block-paragraph:focus [data-rich-text-placeholder]::after {
-        content: "Type / to choose a block";
     }
 
     &.tableberg-sticky-top-row {
@@ -154,6 +156,11 @@ div.wp-block-tableberg-wrapper {
                 border-left: var(--tableberg-inner-border-top) !important;
             }
         }
+    }
+
+    &::before,
+    &::after {
+        border-radius: inherit !important;
     }
 }
 
