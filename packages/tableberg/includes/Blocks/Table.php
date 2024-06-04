@@ -106,9 +106,6 @@ class Table
 		if ($enable_inner_border) {
 			$classes[] = 'has-inner-border';
 		}
-		if ($attributes['hideCellOutsideBorders']??true) {
-			$classes[] = 'tablberg-cell-no-outside-border';
-		}
 		$is_value_empty = function ($value) {
 			return (
 				is_null($value) ||
@@ -280,6 +277,10 @@ class Table
 			$wrapper_classes[] = 'tableberg-border-col-only';
 		} elseif ($attributes['innerBorderType'] === 'row') {
 			$wrapper_classes[] = 'tableberg-border-row-only';
+		}
+		
+		if ($attributes['hideCellOutsideBorders']??true) {
+			$wrapper_classes[] = 'tableberg-cell-no-outside-border';
 		}
 
 		$wrapper_attributes = get_block_wrapper_attributes([
