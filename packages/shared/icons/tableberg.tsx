@@ -1,4 +1,4 @@
-const icon = (
+const TablebergIcon = (
     <svg
         width="256"
         height="256"
@@ -56,4 +56,4 @@ const icon = (
     </svg>
 );
 
-export default icon;
+export default TablebergIcon;
