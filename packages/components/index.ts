@@ -8,5 +8,3 @@ export { default as SizeControl } from "./editor/SizeControl";
 export { default as ToolbarWithDropdown } from "./editor/ToolbarWithDropdown";
 
 
-export { default as PatternLibrary } from "./pattern-library";
-

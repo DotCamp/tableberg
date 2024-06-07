@@ -3,8 +3,8 @@
 @import "./image/style.scss";
 @import "./style.scss";
 @import "./upsell-editor.scss";
+@import "./table/creator/styles.scss";
 @import "@tableberg/components/editor/color-picker-dropdown-style.scss";
-@import "@tableberg/components/pattern-library/styles.scss";
 
 div.components-autocomplete__results
     button[id*="tableberg"][id$="dummy"]::after {
