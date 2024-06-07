@@ -5,7 +5,6 @@
 /**
  * WordPress Imports
  */
-import { Modal } from "@wordpress/components";
 import { useDispatch, useSelect } from "@wordpress/data";
 import {
     useBlockProps,
@@ -15,7 +14,6 @@ import {
 
 import {
     BlockEditProps,
-    InnerBlockTemplate,
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
     BlockInstance,
@@ -26,7 +24,7 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useEffect, useRef, useState, createContext } from "react";
+import { useEffect, useRef, useState, createContext } from "react";
 import TablebergControls from "./controls";
 import {
     TablebergBlockAttrs,
@@ -44,8 +42,8 @@ import {
     getBorderCSS,
     getBorderRadiusCSS,
 } from "@tableberg/shared/utils/styling-helpers";
-import { PatternLibrary } from "@tableberg/components";
 import { __ } from "@wordpress/i18n";
+import TableCreator from "./table/creator";
 
 export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
 interface TablebergCtx {
@@ -516,28 +514,9 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }
 
     if (!attributes.hasTableCreated) {
-        const onSelect = (
-            attrs: Partial<TablebergBlockAttrs>,
-            innerBlocks: TablebergCellInstance[],
-        ) => {
-            attrs.hasTableCreated = true;
-            attrs.version = metadata.version;
-            setAttributes(attrs);
-            storeActions.replaceInnerBlocks(clientId, innerBlocks);
-        };
         return (
             <div {...blockProps}>
-                <Modal
-                    isFullScreen
-                    className="tableberg-pattern-library"
-                    onRequestClose={() => storeActions.removeBlock(clientId)}
-                    __experimentalHideHeader
-                >
-                    <PatternLibrary
-                        onSelect={onSelect}
-                        onClose={() => storeActions.removeBlock(clientId)}
-                    />
-                </Modal>
+                <TableCreator clientId={clientId}/>
             </div>
         );
     }
