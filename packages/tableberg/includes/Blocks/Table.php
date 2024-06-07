@@ -180,7 +180,7 @@ class Table
 
 
 		for (; $i <= $end; $i++) {
-			$content = HtmlUtils::append_attr_value($content, 'tr', $i % 2 ? 'tableberg-even-row' : 'tableberg-odd-row', 'class', $cursor + 1, $cursor);
+			$content = HtmlUtils::append_attr_value($content, 'tr', $i % 2 ? 'tableberg-odd-row' : 'tableberg-even-row', 'class', $cursor + 1, $cursor);
 		}
 
 		return $content;
