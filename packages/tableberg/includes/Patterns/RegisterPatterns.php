@@ -14,7 +14,7 @@ class RegisterPatterns
                 continue;
             }
             $content = json_decode(file_get_contents(__DIR__ . '/data/' . $file), true);
-            register_block_pattern('tableberg/pattern-' . str_replace($file, '.json', ''), $content);
+            register_block_pattern('tableberg/pattern-' . str_replace('.json', '', $file), $content);
         }
     }
 
