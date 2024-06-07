@@ -130,4 +130,8 @@ if (!class_exists('Tableberg')) {
 	}
 
 	new Tableberg();
+
+	add_action('init', function() {
+		Tableberg\Patterns\RegisterPatterns::all();
+	});
 }
