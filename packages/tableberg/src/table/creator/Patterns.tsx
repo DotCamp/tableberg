@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     MenuGroup,
     MenuItem,
@@ -9,28 +9,59 @@ import {
 } from "@wordpress/components";
 
 import TablebergIcon from "@tableberg/shared/icons/tableberg";
+import { useSelect } from "@wordpress/data";
 interface PatternLibraryProps {
     onClose: () => void;
 }
 
-const PATTERNT_TYPES = [
-    {
-        title: "Primary",
-        count: 0,
-    },
-    {
-        title: "Stack Row",
-        count: 0,
-    },
-    {
-        title: "Stack Col",
-        count: 0,
-    },
-];
-
 function PatternsLibrary({ onClose }: PatternLibraryProps) {
     const [search, setSearch] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
+    const [pageItems, setPageItems] = useState<any[]>([]);
+
+    const { patterns, categories } = useSelect((select) => {
+        const { getBlockPatterns } = select("core") as any;
+        const categories: {
+            title: string;
+            count: number;
+        }[] = [];
+        const patterns: any[] = [];
+
+        getBlockPatterns()?.forEach((pattern: any) => {
+            if (!pattern.name.startsWith("tableberg/")) {
+                return;
+            }
+            patterns.push(pattern);
+
+            pattern.categories.forEach((p_cat: any) => {
+                const cat = categories.find((cat) => cat.title == p_cat);
+                if (!cat) {
+                    categories.push({
+                        title: p_cat,
+                        count: 1,
+                    });
+                } else {
+                    cat.count++;
+                }
+            });
+        });
+
+        return { patterns, categories };
+    }, []);
+
+    useEffect(() => {
+        if (!categoryFilter) {
+            setPageItems(patterns);
+            return;
+        }
+        const newPage: any = [];
+        patterns.forEach((pattern) => {
+            if (pattern.categories.indexOf(categoryFilter) > -1) {
+                newPage.push(pattern);
+            }
+        });
+        setPageItems(newPage);
+    }, [patterns, categoryFilter]);
 
     return (
         <Modal
@@ -56,7 +87,7 @@ function PatternsLibrary({ onClose }: PatternLibraryProps) {
                         >
                             <span>All</span>
                         </MenuItem>
-                        {PATTERNT_TYPES.map((cat) => {
+                        {categories.map((cat) => {
                             return (
                                 <MenuItem
                                     key={cat.title}
@@ -88,7 +119,13 @@ function PatternsLibrary({ onClose }: PatternLibraryProps) {
                         </button>
                     </div>
                     <div className="tableberg-pattern-library-body">
-                        
+                        {pageItems.map((pattern) => (
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: pattern.content,
+                                }}
+                            ></div>
+                        ))}
                     </div>
                 </div>
             </div>
