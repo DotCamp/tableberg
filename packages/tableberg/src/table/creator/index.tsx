@@ -1,4 +1,11 @@
 import TablebergIcon from "@tableberg/shared/icons/tableberg";
+import {
+    AITableIcon,
+    DataTableIcon,
+    PostsTableIcon,
+    PreBuiltTableIcon,
+    WooTableIcon,
+} from "@tableberg/shared/icons/table-creation";
 import { TablebergBlockAttrs } from "@tableberg/shared/types";
 import { BlockIcon, store } from "@wordpress/block-editor";
 import {
@@ -72,25 +79,25 @@ export default function TableCreator({ clientId }: Props) {
                 <div className="tableberg-table-creator-flex">
                     <button className="tableberg-table-creator-btn">
                         <div className="tableberg-table-creator-btn-icon">
-                            {TablebergIcon}
+                            {DataTableIcon}
                         </div>
                         <span>Data Table (CSV, XML)</span>
                     </button>
                     <button className="tableberg-table-creator-btn">
                         <div className="tableberg-table-creator-btn-icon">
-                            {TablebergIcon}
+                            {WooTableIcon}
                         </div>
                         <span>WooCommerce Table</span>
                     </button>
                     <button className="tableberg-table-creator-btn">
                         <div className="tableberg-table-creator-btn-icon">
-                            {TablebergIcon}
+                            {AITableIcon}
                         </div>
                         <span>AI Table</span>
                     </button>
                     <button className="tableberg-table-creator-btn">
                         <div className="tableberg-table-creator-btn-icon">
-                            {TablebergIcon}
+                            {PostsTableIcon}
                         </div>
                         <span>Posts Table</span>
                     </button>
@@ -99,7 +106,7 @@ export default function TableCreator({ clientId }: Props) {
                         onClick={() => setModal("patterns")}
                     >
                         <div className="tableberg-table-creator-btn-icon">
-                            {TablebergIcon}
+                            {PreBuiltTableIcon}
                         </div>
                         <span>Pre-Built Table</span>
                     </button>
