@@ -26,6 +26,9 @@ importers:
       '@wordpress/blob':
         specifier: ^3.37.0
         version: 3.54.0
+      '@wordpress/block-serialization-default-parser':
+        specifier: ^5.0.0
+        version: 5.0.0
       '@wordpress/components':
         specifier: ^25.3.0
         version: 25.16.0(@babel/helper-module-imports@7.24.3)(@babel/types@7.24.0)(@types/react@18.2.73)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(vite@5.2.7(@types/node@20.11.30)(sass@1.72.0))
@@ -2181,6 +2184,14 @@ packages:
   '@wordpress/block-serialization-default-parser@4.54.0':
     resolution: {integrity: sha512-v7ySAgVMzp2d4UZ/yKRrAhJWFQRVWLTia2McZQtZpsDNeTv/i9Jm7GoYzq1n/OmCrn+ZKPDYIBNae1ukLAHUsg==}
     engines: {node: '>=12'}
+
+  '@wordpress/block-serialization-default-parser@5.0.0':
+    resolution: {integrity: sha512-64knnMJfJKn+2sgSE7t4iOIcgfglPcm6iWo8V/EVUAGAY8W7i2SJb114e5AoRQZsKIKWDVr8GqFWP2Uz/hZbWA==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
+
+  '@wordpress/block-serialization-spec-parser@5.0.0':
+    resolution: {integrity: sha512-SPIyD3TUBqMOoFuATeUpm9shqzy5NfM87qNy45gw1YbqBWLMahC0Zq6C5C2oG9tyivmKz0VViRH+eL/VqngKOQ==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/blocks@11.21.0':
     resolution: {integrity: sha512-FlOrF0VMugW7wW9LAAF3ixUp2t1HsEGTBjqERYr7dYQIJI8yIII7/Zh2Opuzq0baWaA7kqexUQeD6sYSOcu8lA==}
@@ -5416,8 +5427,18 @@ packages:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
 
+  pegjs@0.10.0:
+    resolution: {integrity: sha512-qI5+oFNEGi3L5HAxDwN2LA4Gg7irF70Zs25edhjld9QemOgp0CbvMtbFcMvFtEo1OityPrcCzkQFB8JP/hxgow==}
+    engines: {node: '>=0.10'}
+    hasBin: true
+
   pend@1.2.0:
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
+
+  phpegjs@1.0.0-beta7:
+    resolution: {integrity: sha512-SO+NP5argMoJVCWcYiOofPUeEWDIM47FNCBJtp6uJ8PpjtBcudYJTzCbCMit5dzmfSLCoijzEwIXOqPqD45xQg==}
+    peerDependencies:
+      pegjs: ^0.10.0
 
   picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
@@ -9617,6 +9638,15 @@ snapshots:
   '@wordpress/block-serialization-default-parser@4.54.0':
     dependencies:
       '@babel/runtime': 7.24.1
+
+  '@wordpress/block-serialization-default-parser@5.0.0':
+    dependencies:
+      '@babel/runtime': 7.24.1
+
+  '@wordpress/block-serialization-spec-parser@5.0.0':
+    dependencies:
+      pegjs: 0.10.0
+      phpegjs: 1.0.0-beta7(pegjs@0.10.0)
 
   '@wordpress/blocks@11.21.0(react@18.2.0)':
     dependencies:
@@ -14045,7 +14075,13 @@ snapshots:
 
   path-type@4.0.0: {}
 
+  pegjs@0.10.0: {}
+
   pend@1.2.0: {}
+
+  phpegjs@1.0.0-beta7(pegjs@0.10.0):
+    dependencies:
+      pegjs: 0.10.0
 
   picocolors@1.0.0: {}
 
