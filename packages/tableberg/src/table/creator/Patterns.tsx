@@ -8,7 +8,10 @@ import {
     SearchControl,
 } from "@wordpress/components";
 
-import { ParsedBlock, parse } from "@wordpress/block-serialization-default-parser";
+import {
+    ParsedBlock,
+    parse,
+} from "@wordpress/block-serialization-default-parser";
 
 // @ts-ignore
 import { BlockPreview } from "@wordpress/block-editor";
@@ -22,12 +25,24 @@ interface PatternLibraryProps {
     onSelect: (block: BlockInstance) => void;
 }
 
+const theDiv = document.createElement("div");
+
 const parsedBlocks2Blocks = (pbs: ParsedBlock[]) => {
     const newBlocks: BlockInstance[] = [];
-    pbs.forEach((pb) => {
+    pbs.forEach((pb: any) => {
+        if (!pb.blockName) {
+            return;
+        }
+        if (pb.blockName === "core/paragraph") {
+            theDiv.innerHTML = pb.innerHTML;
+            pb.attrs.content = theDiv.querySelector("p")?.innerHTML;
+        } else if (pb.blockName === "core/list-item") {
+            theDiv.innerHTML = pb.innerHTML;
+            pb.attrs.content = theDiv.querySelector("li")?.innerHTML;
+        }
         newBlocks.push(
             createBlock(
-                pb.blockName!,
+                pb.blockName,
                 pb.attrs as any,
                 parsedBlocks2Blocks(pb.innerBlocks),
             ),
