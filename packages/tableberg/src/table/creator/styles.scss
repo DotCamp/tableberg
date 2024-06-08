@@ -3,7 +3,7 @@
         outline: none;
         box-shadow: none;
     }
-    
+
     &-flex {
         width: 100%;
         display: flex;
@@ -98,6 +98,10 @@
                 font-size: 1.4rem;
             }
         }
+
+        .components-menu-item__item  {
+            text-transform: capitalize;
+        }
     }
 
     &-types {
@@ -161,8 +165,26 @@
     &-body {
         padding: 10px;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        grid-template-rows: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        grid-template-rows: repeat(auto-fill, minmax(200px, 1fr));
         gap: 10px;
+    }
+
+    &-preview {
+        cursor: pointer;
+
+        &-item {
+            box-shadow: 0 15px 25px #00000012;
+            border-radius: 10px;
+            overflow: hidden;
+
+            &:hover {
+                outline: 1px solid black;
+            }
+        }
+
+        p {
+            font-size: 0.8rem;
+        }
     }
 }

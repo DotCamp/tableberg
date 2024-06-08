@@ -32,7 +32,6 @@ export default function TableCreator({ clientId }: Props) {
 
     const [modal, setModal] = useState<null | "patterns">(null);
 
-
     const onCreateNew = () => {
         const { rows, cols } = newTable;
         if (rows < 1 || cols < 1) return;
@@ -95,7 +94,10 @@ export default function TableCreator({ clientId }: Props) {
                         </div>
                         <span>Posts Table</span>
                     </button>
-                    <button className="tableberg-table-creator-btn" onClick={() => setModal("patterns")}>
+                    <button
+                        className="tableberg-table-creator-btn"
+                        onClick={() => setModal("patterns")}
+                    >
                         <div className="tableberg-table-creator-btn-icon">
                             {TablebergIcon}
                         </div>
@@ -144,7 +146,12 @@ export default function TableCreator({ clientId }: Props) {
                     </Button>
                 </Flex>
             </Placeholder>
-            {modal === "patterns" && <PatternsLibrary onClose={() => setModal(null)} />}
+            {modal === "patterns" && (
+                <PatternsLibrary
+                    onClose={() => setModal(null)}
+                    onSelect={(b) => storeActions.replaceBlock(clientId, b)}
+                />
+            )}
         </div>
     );
 }

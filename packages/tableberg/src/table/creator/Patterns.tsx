@@ -8,13 +8,35 @@ import {
     SearchControl,
 } from "@wordpress/components";
 
+import { ParsedBlock, parse } from "@wordpress/block-serialization-default-parser";
+
+// @ts-ignore
+import { BlockPreview } from "@wordpress/block-editor";
+
 import TablebergIcon from "@tableberg/shared/icons/tableberg";
 import { useSelect } from "@wordpress/data";
+import { __ } from "@wordpress/i18n";
+import { BlockInstance, createBlock } from "@wordpress/blocks";
 interface PatternLibraryProps {
     onClose: () => void;
+    onSelect: (block: BlockInstance) => void;
 }
 
-function PatternsLibrary({ onClose }: PatternLibraryProps) {
+const parsedBlocks2Blocks = (pbs: ParsedBlock[]) => {
+    const newBlocks: BlockInstance[] = [];
+    pbs.forEach((pb) => {
+        newBlocks.push(
+            createBlock(
+                pb.blockName!,
+                pb.attrs as any,
+                parsedBlocks2Blocks(pb.innerBlocks),
+            ),
+        );
+    });
+    return newBlocks;
+};
+
+function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
     const [search, setSearch] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
     const [pageItems, setPageItems] = useState<any[]>([]);
@@ -31,6 +53,8 @@ function PatternsLibrary({ onClose }: PatternLibraryProps) {
             if (!pattern.name.startsWith("tableberg/")) {
                 return;
             }
+            const parsed = parse(pattern.content);
+            pattern.blocks = parsedBlocks2Blocks(parsed);
             patterns.push(pattern);
 
             pattern.categories.forEach((p_cat: any) => {
@@ -121,10 +145,17 @@ function PatternsLibrary({ onClose }: PatternLibraryProps) {
                     <div className="tableberg-pattern-library-body">
                         {pageItems.map((pattern) => (
                             <div
-                                dangerouslySetInnerHTML={{
-                                    __html: pattern.content,
-                                }}
-                            ></div>
+                                className="tableberg-pattern-library-preview"
+                                onClick={() => onSelect(pattern.blocks[0])}
+                            >
+                                <div className="tableberg-pattern-library-preview-item">
+                                    <BlockPreview
+                                        blocks={pattern.blocks}
+                                        viewportWidth={pattern.viewportWidths}
+                                    />
+                                </div>
+                                <p>{pattern.title}</p>
+                            </div>
                         ))}
                     </div>
                 </div>
