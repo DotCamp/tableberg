@@ -136,24 +136,31 @@ div.wp-block-tableberg-wrapper {
 
     &.tableberg-border-row-only {
         table {
-            td,
-            th {
-                border: none !important;
+            th:not(:first-of-type),
+            td:not(:first-of-type) {
+                border-left: none !important;
             }
-            tr + tr {
-                border-top: var(--tableberg-inner-border-top);
+
+            th:not(:last-of-type),
+            td:not(:last-of-type) {
+                border-right: none !important;
             }
         }
     }
 
     &.tableberg-border-col-only {
         table {
-            td,
-            th {
-                border: none !important;
+            tr + tr {
+                th,
+                td {
+                    border-top: none !important;
+                }
             }
-            td + td {
-                border-left: var(--tableberg-inner-border-top) !important;
+            tr:not(:last-of-type) {
+                th,
+                td {
+                    border-bottom: none !important;
+                }
             }
         }
     }
