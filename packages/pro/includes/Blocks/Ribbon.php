@@ -86,6 +86,8 @@ class Ribbon
         $style = Utils::generate_css_string([
             "color" => $attributes["color"] ?? '',
             "font-size" => $attributes["fontSize"] ?? '',
+            $ind["originX"] => $ind["x"],
+            $ind["originY"] => $ind["y"],
         ]);
 
         $contentStyle = Utils::generate_css_string(
@@ -98,7 +100,7 @@ class Ribbon
 
         $content = '<div class="tableberg-ribbon-badge-content" style="' . $contentStyle . '">' . esc_html($attributes['text']) . '</div>';
 
-        return '<div class="tableberg-ribbon tableberg-ribbon-badge tableberg-ribbon-badge-' . esc_attr($ind['alignment']) . '" style="' . $style . '">' . $content .
+        return '<div class="tableberg-ribbon tableberg-ribbon-badge" style="' . $style . '">' . $content .
             '</div>';
     }
 
