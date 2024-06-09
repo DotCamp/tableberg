@@ -127,8 +127,10 @@ const DEFAULT_ATTRS: Record<string, Partial<RibbonAttrs>> = {
     badge: {
         type: "badge",
         individual: {
-            isPositioned: false,
-            alignment: "center"
+            x: "-1px",
+            y: "-3px",
+            originX: "left",
+            originY: "top",
         }
     }
 };

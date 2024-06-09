@@ -1,38 +1,45 @@
-import {
-    AlignmentControl,
-    BlockControls,
-    InspectorControls,
-    store,
-    useBlockProps,
-} from "@wordpress/block-editor";
+import { InspectorControls, useBlockProps } from "@wordpress/block-editor";
 import { __ } from "@wordpress/i18n";
-import { CSSProperties, useEffect } from "react";
+import { CSSProperties } from "react";
 
-import {
-    RibbonAttrs,
-    RibbonProps,
-} from "..";
+import { RANGE_CONFIG_POSITION, RibbonAttrs, RibbonProps } from "..";
 import {
     BorderRadiusControl,
+    SizeControl,
     SpacingControl,
 } from "@tableberg/components";
-import { getSpacingStyle, getBorderRadiusCSS } from "@tableberg/shared/utils/styling-helpers";
-import { useDispatch, useSelect } from "@wordpress/data";
+import {
+    getSpacingStyle,
+    getBorderRadiusCSS,
+} from "@tableberg/shared/utils/styling-helpers";
+import {
+    PanelBody,
+    __experimentalToggleGroupControl as ToggleGroupControl,
+    __experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from "@wordpress/components";
 
 interface BadgeAttrs {
-    alignment: "left" | "center" | "right";
-    isPositioned: boolean;
     padding: any;
     borderRadius: any;
+    originX: "left" | "right";
+    originY: "top" | "bottom";
+    x: string;
+    y: string;
 }
 
 const getBlockStyle = (attrs: RibbonAttrs): CSSProperties => {
     const style: CSSProperties = {
         color: attrs.color,
         fontSize: attrs.fontSize,
-        height: attrs.individual?.height,
-        width: attrs.individual?.width,
     };
+
+    const ind: BadgeAttrs = attrs.individual;
+
+    const xOrigin = ind?.originX || "left";
+    const yOrigin = ind?.originY || "top";
+
+    style[xOrigin] = ind?.x;
+    style[yOrigin] = ind?.y;
 
     return style;
 };
@@ -40,41 +47,10 @@ const getBlockStyle = (attrs: RibbonAttrs): CSSProperties => {
 export default function Badge({ attrs, setAttributes, clientId }: RibbonProps) {
     const blockProps = useBlockProps({
         style: getBlockStyle(attrs),
-        className:
-            "tableberg-ribbon tableberg-ribbon-badge tableberg-ribbon-badge-" +
-            (attrs.individual?.alignment || "center"),
+        className: "tableberg-ribbon tableberg-ribbon-badge",
     });
 
     const iAttrs: BadgeAttrs = attrs.individual || {};
-
-    const storeActions: BlockEditorStoreActions = useDispatch(store) as any;
-    const storeSelect: BlockEditorStoreSelectors = useSelect(
-        (select) => select(store) as any,
-        [],
-    );
-
-    useEffect(() => {
-        if (!iAttrs.isPositioned) {
-            const cellBlock = storeSelect.getBlock(
-                storeSelect.getBlockRootClientId(clientId)!,
-            )!;
-            let pos = 0;
-            while (pos < cellBlock.innerBlocks.length) {
-                if (cellBlock.innerBlocks[pos].name !== "tableberg/badge") {
-                    break;
-                }
-                pos++;
-            }
-            storeActions.moveBlockToPosition(
-                clientId,
-                cellBlock.clientId,
-                cellBlock.clientId,
-                pos,
-            );
-            setAttrs({ isPositioned: true });
-            setAttributes({background: "rgb(203 175 255)"})
-        }
-    }, []);
 
     const setAttrs = (attrs: Partial<BadgeAttrs>) =>
         setAttributes({
@@ -91,7 +67,9 @@ export default function Badge({ attrs, setAttributes, clientId }: RibbonProps) {
                     className="tableberg-ribbon-badge-content"
                     style={{
                         background:
-                            attrs.bgGradient ?? attrs.background ?? "rgb(203 175 255)",
+                            attrs.bgGradient ??
+                            attrs.background ??
+                            "rgb(203 175 255)",
                         ...getSpacingStyle(iAttrs.padding, "padding"),
                         ...getBorderRadiusCSS(iAttrs.borderRadius),
                     }}
@@ -115,14 +93,58 @@ export default function Badge({ attrs, setAttributes, clientId }: RibbonProps) {
                     onDeselect={() => setAttrs({ padding: {} })}
                 />
             </InspectorControls>
-            <BlockControls group="block">
-                <AlignmentControl
-                    value={iAttrs.alignment}
-                    onChange={(alignment: any) => {
-                        setAttrs({ alignment });
-                    }}
-                />
-            </BlockControls>
+            <InspectorControls>
+                <PanelBody initialOpen>
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: "5px",
+                            alignItems: "start",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <ToggleGroupControl
+                            label="Origin X"
+                            value={iAttrs.originX}
+                            isBlock
+                            onChange={(originX: any) => setAttrs({ originX })}
+                        >
+                            <ToggleGroupControlOption
+                                value="left"
+                                label="Left"
+                            />
+                            <ToggleGroupControlOption
+                                value="right"
+                                label="Right"
+                            />
+                        </ToggleGroupControl>
+                        <ToggleGroupControl
+                            label="origin Y"
+                            value={iAttrs.originY}
+                            isBlock
+                            onChange={(originY: any) => setAttrs({ originY })}
+                        >
+                            <ToggleGroupControlOption value="top" label="Top" />
+                            <ToggleGroupControlOption
+                                value="bottom"
+                                label="Bottom"
+                            />
+                        </ToggleGroupControl>
+                    </div>
+                    <SizeControl
+                        label="Position X"
+                        value={iAttrs.x}
+                        onChange={(x) => setAttrs({ x })}
+                        rangeConfig={RANGE_CONFIG_POSITION}
+                    />
+                    <SizeControl
+                        label="Position Y"
+                        value={iAttrs.y}
+                        onChange={(y) => setAttrs({ y })}
+                        rangeConfig={RANGE_CONFIG_POSITION}
+                    />
+                </PanelBody>
+            </InspectorControls>
         </>
     );
 }

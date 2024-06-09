@@ -125,20 +125,10 @@
     }
 
     &-badge {
-        position: relative !important;
-        margin-top: 10px;
-        margin-bottom: 10px;
-
+        position: absolute;
+        z-index: 9999;
         &-content {
             width: max-content;
-        }
-
-        &-center &-content {
-            margin-left: auto;
-            margin-right: auto;
-        }
-        &-right &-content {
-            margin-left: auto;
         }
     }
 }
