@@ -73,6 +73,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * FIX: Table border having problem when cell radius is set
 * FIX: Cell spacing in wrong axes
 * FIX: Even odd color getting swapped in frontend
+* FIX: Button text styling not getting rendered
 * PRO: FIX: Make row/col only border work with no outside border
 * NEW: Table border radius control
 * NEW: Item spacing inside cells
