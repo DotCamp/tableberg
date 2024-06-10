@@ -72,48 +72,8 @@ export default function TableCreator({ clientId }: Props) {
             <Placeholder
                 label={"Tableberg"}
                 icon={<BlockIcon icon={TablebergIcon} />}
-                instructions={
-                    "Please select which type of table you'd like to add"
-                }
             >
-                <div className="tableberg-table-creator-flex">
-                    <button
-                        className="tableberg-table-creator-btn"
-                        onClick={() => setModal("patterns")}
-                    >
-                        <div className="tableberg-table-creator-btn-icon">
-                            {PreBuiltTableIcon}
-                        </div>
-                        <span>Pre-Built Table</span>
-                    </button>
-                    <button className="tableberg-table-creator-btn tableberg-upcoming">
-                        <div className="tableberg-table-creator-btn-icon">
-                            {DataTableIcon}
-                        </div>
-                        <span>Data Table (CSV, XML)</span>
-                    </button>
-                    <button className="tableberg-table-creator-btn tableberg-upcoming">
-                        <div className="tableberg-table-creator-btn-icon">
-                            {WooTableIcon}
-                        </div>
-                        <span>WooCommerce Table</span>
-                    </button>
-                    <button className="tableberg-table-creator-btn tableberg-upcoming">
-                        <div className="tableberg-table-creator-btn-icon">
-                            {AITableIcon}
-                        </div>
-                        <span>AI Table</span>
-                    </button>
-                    <button className="tableberg-table-creator-btn tableberg-upcoming">
-                        <div className="tableberg-table-creator-btn-icon">
-                            {PostsTableIcon}
-                        </div>
-                        <span>Posts Table</span>
-                    </button>
-                </div>
-                <p className="tableberg-divider">
-                    <span>or</span>
-                </p>
+                
                 <div className="tableberg-table-creator-heading">Create Blank Table</div>
                 <Flex gap="10px" justify="center" align="end">
                     <TextControl
@@ -153,6 +113,44 @@ export default function TableCreator({ clientId }: Props) {
                         Create
                     </Button>
                 </Flex>
+                <p className="tableberg-divider">
+                    <span>or</span>
+                </p>
+                <div className="tableberg-table-creator-flex">
+                    <button
+                        className="tableberg-table-creator-btn"
+                        onClick={() => setModal("patterns")}
+                    >
+                        <div className="tableberg-table-creator-btn-icon">
+                            {PreBuiltTableIcon}
+                        </div>
+                        <span>Pre-Built Table</span>
+                    </button>
+                    <button className="tableberg-table-creator-btn tableberg-upcoming">
+                        <div className="tableberg-table-creator-btn-icon">
+                            {DataTableIcon}
+                        </div>
+                        <span>Data Table (CSV, XML)</span>
+                    </button>
+                    <button className="tableberg-table-creator-btn tableberg-upcoming">
+                        <div className="tableberg-table-creator-btn-icon">
+                            {WooTableIcon}
+                        </div>
+                        <span>WooCommerce Table</span>
+                    </button>
+                    <button className="tableberg-table-creator-btn tableberg-upcoming">
+                        <div className="tableberg-table-creator-btn-icon">
+                            {AITableIcon}
+                        </div>
+                        <span>AI Table</span>
+                    </button>
+                    <button className="tableberg-table-creator-btn tableberg-upcoming">
+                        <div className="tableberg-table-creator-btn-icon">
+                            {PostsTableIcon}
+                        </div>
+                        <span>Posts Table</span>
+                    </button>
+                </div>
             </Placeholder>
             {modal === "patterns" && (
                 <PatternsLibrary
