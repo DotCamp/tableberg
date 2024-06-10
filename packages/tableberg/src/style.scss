@@ -139,11 +139,15 @@ div.wp-block-tableberg-wrapper {
             th:not(:first-of-type),
             td:not(:first-of-type) {
                 border-left: none !important;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
             }
 
             th:not(:last-of-type),
             td:not(:last-of-type) {
                 border-right: none !important;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
             }
         }
     }
@@ -154,12 +158,16 @@ div.wp-block-tableberg-wrapper {
                 th,
                 td {
                     border-top: none !important;
+                    border-top-right-radius: 0;
+                    border-top-left-radius: 0;
                 }
             }
             tr:not(:last-of-type) {
                 th,
                 td {
                     border-bottom: none !important;
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
                 }
             }
         }
