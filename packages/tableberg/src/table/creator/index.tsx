@@ -73,7 +73,7 @@ export default function TableCreator({ clientId }: Props) {
                 label={"Tableberg"}
                 icon={<BlockIcon icon={TablebergIcon} />}
                 instructions={
-                    "Please select which type of table you'd like to add, or create your own."
+                    "Please select which type of table you'd like to add"
                 }
             >
                 <div className="tableberg-table-creator-flex">
@@ -114,6 +114,7 @@ export default function TableCreator({ clientId }: Props) {
                 <p className="tableberg-divider">
                     <span>or</span>
                 </p>
+                <div className="tableberg-table-creator-heading">Create a New One</div>
                 <Flex gap="10px" justify="center" align="end">
                     <TextControl
                         __nextHasNoMarginBottom

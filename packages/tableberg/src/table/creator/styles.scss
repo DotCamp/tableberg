@@ -42,6 +42,16 @@
             font-size: 13px;
         }
     }
+
+    &-heading {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 20px;
+        text-align: center;
+        width: 100%;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
 }
 
 .tableberg-divider {
@@ -99,7 +109,7 @@
             }
         }
 
-        .components-menu-item__item  {
+        .components-menu-item__item {
             text-transform: capitalize;
         }
     }
@@ -172,15 +182,40 @@
 
     &-preview {
         cursor: pointer;
+        position: relative;
 
         &-item {
             box-shadow: 0 15px 25px #00000012;
             border-radius: 10px;
             overflow: hidden;
+            position: relative;
 
             &:hover {
                 outline: 1px solid black;
             }
+        }
+
+        &:has(img[data-upsell])::before {
+            content: "PRO";
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: rgb(103 31 235);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 10px;
+            box-shadow: 1px 2px 6px #c1c1c1;
+            z-index: 2;
+        }
+
+        &-img {
+            width: 100%;
+            height: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            object-position: center;
         }
 
         p {

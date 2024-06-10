@@ -68,8 +68,10 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
             if (!pattern.name.startsWith("tableberg/")) {
                 return;
             }
-            const parsed = parse(pattern.content);
-            pattern.blocks = parsedBlocks2Blocks(parsed);
+            if (pattern.name.indexOf("-upsell-") == -1) {
+                const parsed = parse(pattern.content);
+                pattern.blocks = parsedBlocks2Blocks(parsed);
+            }
             patterns.push(pattern);
 
             pattern.categories.forEach((p_cat: any) => {
@@ -161,13 +163,26 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
                         {pageItems.map((pattern) => (
                             <div
                                 className="tableberg-pattern-library-preview"
-                                onClick={() => onSelect(pattern.blocks[0])}
+                                onClick={() =>
+                                    pattern.blocks &&
+                                    onSelect(pattern.blocks[0])
+                                }
                             >
                                 <div className="tableberg-pattern-library-preview-item">
-                                    <BlockPreview
-                                        blocks={pattern.blocks}
-                                        viewportWidth={pattern.viewportWidths}
-                                    />
+                                    {pattern.blocks ? (
+                                        <BlockPreview
+                                            blocks={pattern.blocks}
+                                            viewportWidth={
+                                                pattern.viewportWidth
+                                            }
+                                        />
+                                    ) : (
+                                        <img
+                                            data-upsell
+                                            src={pattern.content}
+                                            className="tableberg-pattern-library-preview-img"
+                                        />
+                                    )}
                                 </div>
                                 <p>{pattern.title}</p>
                             </div>
