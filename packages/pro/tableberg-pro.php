@@ -37,6 +37,7 @@ use Tableberg\Pro\Blocks;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+Tableberg\Pro\Freemeius::isActive();
 
 add_action('tab_fs_loaded', function () {
 	if (class_exists('Tableberg_Pro_Main')) {

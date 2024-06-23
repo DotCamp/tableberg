@@ -4,15 +4,11 @@ namespace Tableberg;
 
 class Freemius
 {
-    private static $isPro = -1;
     private static $tab_fs = null;
 
     public static function isPro()
     {
-        if (self::$isPro === -1) {
-            self::$isPro = class_exists('\Tableberg\Pro\Freemeius') && \Tableberg\Pro\Freemeius::isActive();
-        }
-        return self::$isPro;
+        return class_exists('\Tableberg\Pro\Freemeius') && \Tableberg\Pro\Freemeius::isActive();
     }
 
     public static function tab_fs()
