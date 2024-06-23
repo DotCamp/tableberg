@@ -124,15 +124,9 @@ class Assets
 	private static function pass_data_to_js(string $handle)
 	{
 		$data = [
-			'plugin_url' => TABLEBERG_URL
+			'plugin_url' => TABLEBERG_URL,
+			'IS_PRO' => \Tableberg\Freemius::isPro(),
 		];
-		global $tp_fs;
-		if (isset($tp_fs)) {
-			$data['IS_PRO'] = $tp_fs->is__premium_only()
-				&& $tp_fs->can_use_premium_code();
-		} else {
-			$data['IS_PRO'] = false;
-		}
 		wp_localize_script($handle, 'TABLEBERG_CFG', $data);
 	}
 }
