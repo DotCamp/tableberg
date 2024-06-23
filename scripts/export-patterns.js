@@ -9,6 +9,20 @@ require("dotenv").config({
 const BASE_URL = process.env.BLOCKS_LIBRARY_URL;
 const IMAGE_PADDING = 10;
 
+function waitForCaptcha() {
+    return new Promise((resolve) => {
+        const readline = require("node:readline");
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+        rl.question(`Please complete the CAPTCHA or bot verification manually`, (name) => {
+            rl.close();
+            resolve();
+        });
+    });
+}
+
 async function getDraftPosts() {
     const response = await fetch(
         `${BASE_URL}/wp-json/wp/v2/posts?context=edit&status=draft&_embed=wp:term&_fields=id,title,content,slug,excerpt,tags,categories,_links.wp:term`,
@@ -35,10 +49,7 @@ async function getDraftPosts() {
     try {
         await page.waitForSelector("#user_login", { timeout: 10000 });
     } catch (e) {
-        console.log(
-            "Please complete the CAPTCHA or bot verification manually.",
-        );
-        await page.waitForTimeout(30000);
+        await waitForCaptcha();
     }
 
     await page.type("#user_login", process.env.BLOCKS_LIBRARY_USERNAME);
@@ -50,11 +61,12 @@ async function getDraftPosts() {
     // Get draft posts
     const posts = await getDraftPosts();
 
-    const dir = "packages/tableberg/includes/Patterns/data/upsells";
+    const upsellDir = "packages/tableberg/includes/Patterns/upsells";
     const patternsDir = "packages/tableberg/includes/Patterns/data";
-    const proPatternsDir = "packages/pro/includes/Patterns/data";
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
+    const proPatternsDir = "packages/pro/includes/patterns";
+
+    if (!fs.existsSync(patternsDir)) {
+        fs.mkdirSync(patternsDir);
     }
     if (!fs.existsSync(proPatternsDir)) {
         fs.mkdirSync(proPatternsDir);
@@ -115,26 +127,43 @@ async function getDraftPosts() {
 
         const element = await page.$(".wp-block-tableberg-wrapper");
         const boundingBox = await getBoundingBoxWithChildren(element);
-        
+
         const pattern = {
             title: post.title.rendered,
             description: post.excerpt.rendered,
             categories: ["tableberg", "pro", ...categories],
             keywords: ["table", "tableberg", ...tags],
             content: post.content.raw,
-            viewportWidth: Math.ceil(boundingBox.width)
+            viewportWidth: Math.ceil(boundingBox.width),
         };
 
         if (!isPro) {
-            fs.writeFileSync(path.resolve(patternsDir, post.slug + '.json'), JSON.stringify(pattern), 'utf8');
+            fs.writeFileSync(
+                path.resolve(patternsDir, post.slug + ".json"),
+                JSON.stringify(pattern),
+                "utf8",
+            );
             continue;
         }
 
-        const screenshotPath = path.join(dir, `${post.slug}.png`);
-        fs.writeFileSync(path.resolve(proPatternsDir, post.slug + '.json'), JSON.stringify(pattern), 'utf8');
-        pattern.content = screenshotPath.replaceAll('\\', '/').replace('packages/tableberg/', '');
-        fs.writeFileSync(path.resolve(patternsDir, 'upsell-' + post.slug + '.json'), JSON.stringify(pattern), 'utf8');
-       
+        const screenshotPath = path.join(
+            upsellDir,
+            "images",
+            `${post.slug}.png`,
+        );
+        fs.writeFileSync(
+            path.resolve(proPatternsDir, post.slug + ".json"),
+            JSON.stringify(pattern),
+            "utf8",
+        );
+        pattern.content = screenshotPath
+            .replaceAll("\\", "/")
+            .replace("packages/tableberg/", "");
+        fs.writeFileSync(
+            path.resolve(upsellDir, "upsell-" + post.slug + ".json"),
+            JSON.stringify(pattern),
+            "utf8",
+        );
 
         await page.screenshot({
             path: screenshotPath,

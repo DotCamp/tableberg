@@ -5,15 +5,15 @@ namespace Tableberg\Patterns;
 class RegisterPatterns
 {
 
-    public static function all()
+    public static function from_dir($dir)
     {
 
-        $files = scandir(__DIR__ . '/data');
+        $files = scandir($dir);
         foreach ($files as $file) {
             if ($file == '.' || $file == '..') {
                 continue;
             }
-            $content = json_decode(file_get_contents(__DIR__ . '/data/' . $file), true);
+            $content = json_decode(file_get_contents($dir . '/' . $file), true);
             register_block_pattern('tableberg/pattern-' . str_replace('.json', '', $file), $content);
         }
     }
