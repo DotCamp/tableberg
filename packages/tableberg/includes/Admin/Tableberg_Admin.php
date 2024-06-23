@@ -55,9 +55,9 @@ class Tableberg_Admin
     {
 
         $this->plugin_name = 'tableberg';
-        $this->version     = TABLEBERG_VERSION;
+        $this->version = TABLEBERG_VERSION;
         $this->plugin_path = TABLEBERG_DIR_PATH;
-        $this->plugin_url  = TABLEBERG_URL;
+        $this->plugin_url = TABLEBERG_URL;
         $this->add_tableberg_admin_hook();
 
         // initialize version sync manager.
@@ -90,8 +90,8 @@ class Tableberg_Admin
         check_ajax_referer('block_properties');
 
         if (isset($_POST['value']) && isset($_POST['property_name'])) {
-            $value            = sanitize_text_field(wp_unslash($_POST['value']));
-            $property_name    = sanitize_text_field(wp_unslash($_POST['property_name']));
+            $value = sanitize_text_field(wp_unslash($_POST['value']));
+            $property_name = sanitize_text_field(wp_unslash($_POST['property_name']));
             $saved_properties = get_option('tableberg_block_properties', false);
             if ($saved_properties) {
                 foreach ($saved_properties as $key => $property) {
@@ -115,7 +115,7 @@ class Tableberg_Admin
         check_ajax_referer('toggle_control');
 
         if (isset($_POST['enable']) && isset($_POST['toggle_name'])) {
-            $enable      = sanitize_text_field(wp_unslash($_POST['enable']));
+            $enable = sanitize_text_field(wp_unslash($_POST['enable']));
             $toggle_name = sanitize_text_field(wp_unslash($_POST['toggle_name']));
             update_option($toggle_name, $enable);
         }
@@ -140,33 +140,37 @@ class Tableberg_Admin
             'data' => get_option('tableberg_individual_control', false),
             'ajax' => array(
                 'toggleControl' => array(
-                    'url'    => admin_url('admin-ajax.php'),
+                    'url' => admin_url('admin-ajax.php'),
                     'action' => 'toggle_control',
-                    'nonce'  => wp_create_nonce('toggle_control'),
+                    'nonce' => wp_create_nonce('toggle_control'),
                 ),
             ),
         );
-        $data['global_control']     = array(
+        $data['global_control'] = array(
             'data' => get_option('tableberg_global_control', false),
             'ajax' => array(
                 'toggleControl' => array(
-                    'url'    => admin_url('admin-ajax.php'),
+                    'url' => admin_url('admin-ajax.php'),
                     'action' => 'toggle_control',
-                    'nonce'  => wp_create_nonce('toggle_control'),
+                    'nonce' => wp_create_nonce('toggle_control'),
                 ),
             ),
         );
-        $data['block_properties']   = array(
+        $data['block_properties'] = array(
             'data' => get_option('tableberg_block_properties', false),
             'ajax' => array(
                 'blockProperties' => array(
-                    'url'    => admin_url('admin-ajax.php'),
+                    'url' => admin_url('admin-ajax.php'),
                     'action' => 'block_properties',
-                    'nonce'  => wp_create_nonce('block_properties'),
+                    'nonce' => wp_create_nonce('block_properties'),
                 ),
             ),
-            'pro_status' => Tableberg\Freemius::isPro(),
         );
+
+        $data['misc'] = [
+            'pro_status' => Tableberg\Freemius::isPro(),
+        ];
+        
         $data = array_merge($data, Tableberg\Utils\Utils::welcome_page());
         return $data;
     }
@@ -187,9 +191,9 @@ class Tableberg_Admin
      */
     public function main_menu_template_cb()
     {
-?>
-<div id="tableberg-admin-menu"></div>
-<?php
+        ?>
+        <div id="tableberg-admin-menu"></div>
+        <?php
     }
 
     /**
@@ -203,7 +207,7 @@ class Tableberg_Admin
         global $menu_page_slug;
 
         $menu_page_slug = 'tableberg-settings';
-        $menu_page      = add_menu_page(
+        $menu_page = add_menu_page(
             'Tableberg Settings',
             'Tableberg',
             'manage_options',
@@ -222,11 +226,11 @@ class Tableberg_Admin
     {
         $install_date = get_option('tableberg_installDate');
         $display_date = date('Y-m-d h:i:s');
-        $datetime1    = new \DateTime($install_date);
-        $datetime2    = new \DateTime($display_date);
+        $datetime1 = new \DateTime($install_date);
+        $datetime2 = new \DateTime($display_date);
         $diff_interval = round(($datetime2->format('U') - $datetime1->format('U')) / (60 * 60 * 24));
         if ($diff_interval >= 21 && get_option('tableberg_review_notify') == 'no') {
-        ?>
+            ?>
             <div class="tableberg-review-notice notice notice-info">
                 <p style="font-size: 14px;">
                     <?php
@@ -238,15 +242,18 @@ class Tableberg_Admin
                 </p>
                 <ul>
                     <li>
-                        <a style="margin-right: 5px; margin-bottom: 5px;" class="button-primary" href="https://wordpress.org/support/plugin/tableberg/reviews/?filter=5#new-post" target="_blank">Sure, you deserve it.</a>
-                        <a style="margin-right: 5px;" class="Tableberg_HideReview_Notice button" href="javascript:void(0);">I already did.</a>
+                        <a style="margin-right: 5px; margin-bottom: 5px;" class="button-primary"
+                            href="https://wordpress.org/support/plugin/tableberg/reviews/?filter=5#new-post" target="_blank">Sure,
+                            you deserve it.</a>
+                        <a style="margin-right: 5px;" class="Tableberg_HideReview_Notice button" href="javascript:void(0);">I
+                            already did.</a>
                         <a class="Tableberg_HideReview_Notice button" href="javascript:void(0);">No, not good enough.</a>
                     </li>
                 </ul>
             </div>
             <script>
-                jQuery(document).ready(function($) {
-                    jQuery('.Tableberg_HideReview_Notice').click(function() {
+                jQuery(document).ready(function ($) {
+                    jQuery('.Tableberg_HideReview_Notice').click(function () {
                         var data = {
                             'action': 'TablebergReviewNoticeHide'
                         };
@@ -256,7 +263,7 @@ class Tableberg_Admin
                             data: data,
                             dataType: "json",
                             async: !0,
-                            success: function(notice_hide) {
+                            success: function (notice_hide) {
                                 if (notice_hide == "success") {
                                     jQuery('.tableberg-review-notice').slideUp('fast');
                                 }
@@ -265,7 +272,7 @@ class Tableberg_Admin
                     });
                 });
             </script>
-<?php
+            <?php
         }
     }
 
