@@ -16,10 +16,13 @@ function waitForCaptcha() {
             input: process.stdin,
             output: process.stdout,
         });
-        rl.question(`Please complete the CAPTCHA or bot verification manually`, (name) => {
-            rl.close();
-            resolve();
-        });
+        rl.question(
+            `Please complete the CAPTCHA or bot verification manually`,
+            (name) => {
+                rl.close();
+                resolve();
+            },
+        );
     });
 }
 
@@ -62,6 +65,7 @@ async function getDraftPosts() {
     const posts = await getDraftPosts();
 
     const upsellDir = "packages/tableberg/includes/Patterns/upsells";
+    const imageDir = "packages/tableberg/includes/Patterns/images";
     const patternsDir = "packages/tableberg/includes/Patterns/data";
     const proPatternsDir = "packages/pro/includes/patterns";
 
@@ -70,6 +74,12 @@ async function getDraftPosts() {
     }
     if (!fs.existsSync(proPatternsDir)) {
         fs.mkdirSync(proPatternsDir);
+    }
+    if (!fs.existsSync(imageDir)) {
+        fs.mkdirSync(imageDir);
+    }
+    if (!fs.existsSync(upsellDir)) {
+        fs.mkdirSync(upsellDir);
     }
 
     const getBoundingBoxWithChildren = async (element) => {
@@ -146,19 +156,18 @@ async function getDraftPosts() {
             continue;
         }
 
-        const screenshotPath = path.join(
-            upsellDir,
-            "images",
-            `${post.slug}.png`,
-        );
+        const screenshotPath = path.join(imageDir, `${post.slug}.png`);
         fs.writeFileSync(
             path.resolve(proPatternsDir, post.slug + ".json"),
             JSON.stringify(pattern),
             "utf8",
         );
-        pattern.content = screenshotPath
+        const imageUrl = screenshotPath
             .replaceAll("\\", "/")
-            .replace("packages/tableberg/", "");
+            .replace("packages/tableberg", "");
+        pattern.content = `<!-- wp:image {"id":314,"sizeSlug":"full","linkDestination":"none","align":"center"} -->
+            <figure class="wp-block-image aligncenter size-full"><img src="::PLUGIN_URL::${imageUrl}" alt=""/></figure>
+            <!-- /wp:image -->`;
         fs.writeFileSync(
             path.resolve(upsellDir, "upsell-" + post.slug + ".json"),
             JSON.stringify(pattern),

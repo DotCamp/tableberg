@@ -143,7 +143,7 @@ if (!class_exists('Tableberg')) {
 		Tableberg\Patterns\RegisterPatterns::categories();
 		Tableberg\Patterns\RegisterPatterns::from_dir(__DIR__ . '/includes/Patterns/data');
 		if (!$pro_activated) {
-			Tableberg\Patterns\RegisterPatterns::from_dir(__DIR__ . '/includes/Patterns/upsells');
+			Tableberg\Patterns\RegisterPatterns::upsells();
 		}
 	});
 }

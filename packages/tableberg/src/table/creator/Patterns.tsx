@@ -20,6 +20,7 @@ import TablebergIcon from "@tableberg/shared/icons/tableberg";
 import { useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 import { BlockInstance, createBlock } from "@wordpress/blocks";
+import classNames from "classnames";
 interface PatternLibraryProps {
     onClose: () => void;
     onSelect: (block: BlockInstance) => void;
@@ -39,6 +40,9 @@ const parsedBlocks2Blocks = (pbs: ParsedBlock[]) => {
         } else if (pb.blockName === "core/list-item") {
             theDiv.innerHTML = pb.innerHTML;
             pb.attrs.content = theDiv.querySelector("li")?.innerHTML;
+        } else if (pb.blockName === "core/image") {
+            theDiv.innerHTML = pb.innerHTML;
+            pb.attrs.url = theDiv.querySelector("img")?.src;
         }
         newBlocks.push(
             createBlock(
@@ -68,10 +72,9 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
             if (!pattern.name.startsWith("tableberg/")) {
                 return;
             }
-            if (pattern.name.indexOf("-upsell-") == -1) {
-                const parsed = parse(pattern.content);
-                pattern.blocks = parsedBlocks2Blocks(parsed);
-            }
+            pattern.isUpsell = pattern.name.indexOf("-upsell-") > -1;
+            const parsed = parse(pattern.content);
+            pattern.blocks = parsedBlocks2Blocks(parsed);
             patterns.push(pattern);
 
             pattern.categories.forEach((p_cat: any) => {
@@ -162,27 +165,21 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
                     <div className="tableberg-pattern-library-body">
                         {pageItems.map((pattern) => (
                             <div
-                                className="tableberg-pattern-library-preview"
+                                className={classNames({
+                                    "tableberg-pattern-library-preview": true,
+                                    "tableberg-pattern-library-preview-upsell":
+                                        pattern.isUpsell,
+                                })}
                                 onClick={() =>
                                     pattern.blocks &&
                                     onSelect(pattern.blocks[0])
                                 }
                             >
                                 <div className="tableberg-pattern-library-preview-item">
-                                    {pattern.blocks ? (
-                                        <BlockPreview
-                                            blocks={pattern.blocks}
-                                            viewportWidth={
-                                                pattern.viewportWidth
-                                            }
-                                        />
-                                    ) : (
-                                        <img
-                                            data-upsell
-                                            src={pattern.content}
-                                            className="tableberg-pattern-library-preview-img"
-                                        />
-                                    )}
+                                    <BlockPreview
+                                        blocks={pattern.blocks}
+                                        viewportWidth={pattern.viewportWidth}
+                                    />
                                 </div>
                                 <p>{pattern.title}</p>
                             </div>
