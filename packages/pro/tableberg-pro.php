@@ -76,7 +76,8 @@ if (!function_exists('tp_fs')) {
 						'slug' => 'tableberg-settings',
 						'first-path' => 'admin.php?page=tableberg-settings&route=welcome',
 					),
-				));
+				)
+			);
 		}
 
 		return $tp_fs;
@@ -144,6 +145,8 @@ function tp_fs_init()
 					new Blocks\Icon();
 					new Blocks\Ribbon();
 					new Assets();
+
+					\Tableberg\Patterns\RegisterPatterns::from_dir(__DIR__ . '/includes/patterns');
 				}
 			}
 			if (tp_fs()->can_use_premium_code()) {
