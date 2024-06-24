@@ -1,6 +1,7 @@
 <?php
 
 namespace Tableberg\Pro;
+
 /**
  * Register block assets.
  *
@@ -10,20 +11,23 @@ namespace Tableberg\Pro;
 /**
  * Manage star rating block registration.
  */
-class Assets {
+class Assets
+{
 
 	/**
 	 * Constructor
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		add_action( 'init', array( $this, 'assets_registration' ) );
+	public function __construct()
+	{
+		add_action('init', array($this, 'assets_registration'));
 	}
 	/**
 	 * Register the block.
 	 */
-	public function assets_registration() {
+	public function assets_registration()
+	{
 		wp_register_style(
 			'tableberg-pro-editor-style',
 			TABLEBERG_PRO_URL . 'dist/tableberg-pro-editor.css',
@@ -53,6 +57,14 @@ class Assets {
 				'wp-primitives',
 				'wp-api',
 			),
+			TABLEBERG_PRO_VERSION,
+			false
+		);
+
+		wp_register_script(
+			'tableberg-pro-frontend',
+			TABLEBERG_PRO_URL . 'dist/tableberg-pro-frontend.js',
+			[],
 			TABLEBERG_PRO_VERSION,
 			false
 		);
