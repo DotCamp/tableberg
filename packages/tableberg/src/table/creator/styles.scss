@@ -159,6 +159,8 @@
     &-content {
         flex-grow: 1;
         height: 100%;
+        display: flex;
+        flex-flow: column;
 
         &-header {
             padding: 10px;
@@ -202,6 +204,11 @@
     }
 
     &-body {
+        overflow: auto;
+        flex-grow: 1;
+    }
+
+    &-grid {
         padding: 10px;
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));

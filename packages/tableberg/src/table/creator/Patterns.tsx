@@ -44,13 +44,15 @@ const parsedBlocks2Blocks = (pbs: ParsedBlock[]) => {
             theDiv.innerHTML = pb.innerHTML;
             pb.attrs.url = theDiv.querySelector("img")?.src;
         }
-        newBlocks.push(
-            createBlock(
-                pb.blockName,
-                pb.attrs as any,
-                parsedBlocks2Blocks(pb.innerBlocks),
-            ),
-        );
+        try {
+            newBlocks.push(
+                createBlock(
+                    pb.blockName,
+                    pb.attrs as any,
+                    parsedBlocks2Blocks(pb.innerBlocks),
+                ),
+            );
+        } catch (_) {}
     });
     return newBlocks;
 };
@@ -163,27 +165,32 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
                         </button>
                     </div>
                     <div className="tableberg-pattern-library-body">
-                        {pageItems.map((pattern) => (
-                            <div
-                                className={classNames({
-                                    "tableberg-pattern-library-preview": true,
-                                    "tableberg-pattern-library-preview-upsell":
-                                        pattern.isUpsell,
-                                })}
-                                onClick={() =>
-                                    pattern.blocks &&
-                                    onSelect(pattern.blocks[0])
-                                }
-                            >
-                                <div className="tableberg-pattern-library-preview-item">
-                                    <BlockPreview
-                                        blocks={pattern.blocks}
-                                        viewportWidth={pattern.viewportWidth}
-                                    />
+                        <div className="tableberg-pattern-library-grid">
+                            {pageItems.map((pattern) => (
+                                <div
+                                    className={classNames({
+                                        "tableberg-pattern-library-preview":
+                                            true,
+                                        "tableberg-pattern-library-preview-upsell":
+                                            pattern.isUpsell,
+                                    })}
+                                    onClick={() =>
+                                        pattern.blocks &&
+                                        onSelect(pattern.blocks[0])
+                                    }
+                                >
+                                    <div className="tableberg-pattern-library-preview-item">
+                                        <BlockPreview
+                                            blocks={pattern.blocks}
+                                            viewportWidth={
+                                                pattern.viewportWidth
+                                            }
+                                        />
+                                    </div>
+                                    <p>{pattern.title}</p>
                                 </div>
-                                <p>{pattern.title}</p>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
