@@ -80,6 +80,9 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
             patterns.push(pattern);
 
             pattern.categories.forEach((p_cat: any) => {
+                if (p_cat === 'tableberg') {
+                    return;
+                }
                 const cat = categories.find((cat) => cat.title == p_cat);
                 if (!cat) {
                     categories.push({
