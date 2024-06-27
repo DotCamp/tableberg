@@ -153,7 +153,7 @@ async function getDraftPosts(page) {
             const pattern = {
                 title: post.title.rendered,
                 description: post.excerpt.rendered,
-                categories: ["tableberg", "pro", ...categories],
+                categories,
                 keywords: ["table", "tableberg", ...tags],
                 content: post.content.raw,
                 viewportWidth: Math.ceil(boundingBox.width),
