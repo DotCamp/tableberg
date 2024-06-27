@@ -40,6 +40,12 @@ class RegisterPatterns
     public static function categories()
     {
         register_block_pattern_category('tableberg', array('label' => 'Tableberg'));
-        register_block_pattern_category('pricing', array('label' => 'Pricing'));
+        
+        register_block_pattern_category('comparison-table', array('label' => 'Comparison Table'));
+        register_block_pattern_category('featured-box', array('label' => 'Featured Box'));
+        register_block_pattern_category('pricing-table', array('label' => 'Pricing Table'));
+        register_block_pattern_category('pros-cons', array('label' => 'Pros & Cons'));
+
+        register_block_pattern_category('other', array('label' => 'Other'));
     }
 }
