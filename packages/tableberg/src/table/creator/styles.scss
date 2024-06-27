@@ -219,6 +219,9 @@
     &-preview {
         cursor: pointer;
         position: relative;
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
 
         &-item {
             box-shadow: 0 15px 25px #00000012;
