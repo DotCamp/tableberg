@@ -53,7 +53,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
                 if (p_cat === "tableberg") {
                     return;
                 }
-                const cat = categories.find((cat) => cat.title == p_cat);
+                const cat = categories.find((cat) => cat.slug == p_cat);
                 if (!cat) {
                     categories.push({
                         slug: p_cat,
