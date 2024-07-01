@@ -145,20 +145,24 @@ const addRow = (
         cellBlocks.push(cell);
     });
 
-    const rowHeights = tableBlock.attributes.rowHeights;
-    let toInsert = "";
-    for (let i = rowIndex; i < rowHeights.length; i++) {
-        const old = rowHeights[i];
-        rowHeights[i] = toInsert;
-        toInsert = old;
+    const rowStyles: TablebergBlockAttrs["rowStyles"] = {};
+
+    tableBlock.attributes.rowStyles ||= {};
+
+    for (const i in tableBlock.attributes.rowStyles) {
+        const numI = Number(i);
+        if (numI < rowIndex) {
+            rowStyles[numI] = tableBlock.attributes.rowStyles[i];
+        } else {
+            rowStyles[numI + 1] = tableBlock.attributes.rowStyles[i];
+        }
     }
-    rowHeights.push(toInsert);
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         rows: tableBlock.attributes.rows + 1,
         cells: cellBlocks.length,
-        rowHeights,
+        rowStyles,
     });
 };
 
@@ -247,20 +251,22 @@ const addCol = (
         );
     }
 
-    const colWidths = tableBlock.attributes.colWidths;
-    let toInsertRowHeight = "";
-    for (let i = colIndex; i < colWidths.length; i++) {
-        const old = colWidths[i];
-        colWidths[i] = toInsertRowHeight;
-        toInsertRowHeight = old;
+    const colStyles: TablebergBlockAttrs["colStyles"] = {};
+    tableBlock.attributes.colStyles ||= {};
+    for (const i in tableBlock.attributes.colStyles) {
+        const numI = Number(i);
+        if (numI < colIndex) {
+            colStyles[numI] = tableBlock.attributes.colStyles[i];
+        } else {
+            colStyles[numI + 1] = tableBlock.attributes.colStyles[i];
+        }
     }
-    colWidths.push(toInsertRowHeight);
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         cols: tableBlock.attributes.cols + 1,
         cells: cellBlocks.length,
-        colWidths,
+        colStyles,
     });
 };
 
@@ -294,14 +300,21 @@ const deleteCol = (
         cellBlocks.push(cell as any);
     });
 
-    const colWidths = tableBlock.attributes.colWidths;
-    colWidths.splice(colIndex, span);
+    const colStyles: TablebergBlockAttrs["colStyles"] = {};
+    tableBlock.attributes.colStyles ||= {};
+    let idx = 0;
+    for (const i in tableBlock.attributes.colStyles) {
+        const numI = Number(i);
+        if (numI < colIndex || numI >= endCol) {
+            colStyles[idx++] = tableBlock.attributes.colStyles[i];
+        }
+    }
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         cols: tableBlock.attributes.cols - span,
         cells: cellBlocks.length,
-        colWidths,
+        colStyles,
     });
 };
 
@@ -339,14 +352,22 @@ const deleteRow = (
         }
         cellBlocks.push(cell as any);
     });
-    const rowHeights = tableBlock.attributes.rowHeights;
-    rowHeights.splice(rowIndex, span);
+
+    const rowStyles: TablebergBlockAttrs["rowStyles"] = {};
+    tableBlock.attributes.rowStyles ||= {};
+    let idx = 0;
+    for (const i in tableBlock.attributes.rowStyles) {
+        const numI = Number(i);
+        if (numI < rowIndex || numI >= endRow) {
+            rowStyles[idx++] = tableBlock.attributes.rowStyles[i];
+        }
+    }
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         rows: tableBlock.attributes.rows - span,
         cells: cellBlocks.length,
-        rowHeights,
+        rowStyles,
     });
 };
 
@@ -468,7 +489,7 @@ const useMerging = (
             return;
         }
 
-        let { rowHeights, colWidths, rows, cols } = tableBlock.attributes;
+        let { rowStyles, colStyles, rows, cols } = tableBlock.attributes;
 
         storeActions.updateBlockAttributes(tableBlock.clientId, {
             cells: tableBlock.attributes.cells - cells.length,
@@ -497,12 +518,40 @@ const useMerging = (
             removeCols = 0;
         if (oldSpans.col == tableBlock.attributes.cols && oldSpans.row > 1) {
             removeRows = oldSpans.row - 1;
-            rowHeights.splice(destination.attributes.row, removeRows);
+            const endRow = destination.attributes.row + removeRows;
+            const newStyles: TablebergBlockAttrs["rowStyles"] = {};
+            for (const key in rowStyles) {
+                // @ts-ignore
+                if (key < destination.attributes.row) {
+                    newStyles[key] = rowStyles[key];
+                    continue;
+                }
+                // @ts-ignore
+                if (key <= endRow) {
+                    continue;
+                }
+                newStyles[Number(key) - removeRows] = rowStyles[key];
+            }
+            rowStyles = newStyles;
             newSpans.row = 1;
         }
         if (oldSpans.row == tableBlock.attributes.rows && oldSpans.col > 1) {
             removeCols = oldSpans.col - 1;
-            colWidths.splice(destination.attributes.col, removeCols);
+            const endCol = destination.attributes.col + removeCols;
+            const newStyles: TablebergBlockAttrs["colStyles"] = {};
+            for (const key in colStyles) {
+                // @ts-ignore
+                if (key < destination.attributes.col) {
+                    newStyles[key] = colStyles[key];
+                    continue;
+                }
+                // @ts-ignore
+                if (key <= endCol) {
+                    continue;
+                }
+                newStyles[Number(key) - removeCols] = colStyles[key];
+            }
+            colStyles = newStyles;
             newSpans.col = 1;
         }
 
@@ -537,8 +586,8 @@ const useMerging = (
             rowspan: newSpans.row,
         });
         storeActions.updateBlockAttributes(tableBlock.clientId, {
-            colWidths,
-            rowHeights,
+            rowStyles,
+            colStyles,
             rows,
             cols,
         });
@@ -751,11 +800,13 @@ function edit(
         [isSelected],
     );
 
+    const rowStyle = tableBlock.attributes.rowStyles[attributes.row] || {};
+
     const blockProps = useBlockProps({
         style: {
             verticalAlign:
                 attributes.vAlign === "center" ? "middle" : attributes.vAlign,
-            height: tableBlock.attributes.rowHeights[props.attributes.row],
+            height: rowStyle.height,
             background: attributes.bgGradient || attributes.background,
             "--tableberg-block-spacing":
                 attributes.blockSpacing?.[0] !== "0"

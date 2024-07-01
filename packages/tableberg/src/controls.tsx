@@ -138,18 +138,24 @@ function TablebergControls({
             return;
         }
 
-        const rowHeights = [...tableAttributes.rowHeights];
-        rowHeights[cellBlock.attributes.row] = val;
-        setTableAttributes({ rowHeights });
+        const rowStyles = { ...tableAttributes.rowStyles };
+        rowStyles[cellBlock.attributes.row] = {
+            ...rowStyles[cellBlock.attributes.row],
+            height: val,
+        };
+        setTableAttributes({ rowStyles });
     };
     const setWidth = (val: string) => {
         if (!cellBlock) {
             return;
         }
 
-        const colWidths = [...tableAttributes.colWidths];
-        colWidths[cellBlock.attributes.col] = val;
-        setTableAttributes({ colWidths });
+        const colStyles = { ...tableAttributes.colStyles };
+        colStyles[cellBlock.attributes.col] = {
+            ...colStyles[cellBlock.attributes.col],
+            width: val,
+        };
+        setTableAttributes({ colStyles });
     };
 
     return (
@@ -178,9 +184,9 @@ function TablebergControls({
                             >
                                 <SizeControl
                                     value={
-                                        tableAttributes.colWidths[
+                                        tableAttributes.colStyles[
                                             cellBlock.attributes.col
-                                        ] as any
+                                        ]?.width as any
                                     }
                                     label={__("Column Width", "tableberg")}
                                     onChange={setWidth as any}
@@ -193,9 +199,9 @@ function TablebergControls({
                             >
                                 <HeightControl
                                     value={
-                                        tableAttributes.rowHeights[
+                                        tableAttributes.rowStyles[
                                             cellBlock.attributes.row
-                                        ] as any
+                                        ]?.height as any
                                     }
                                     label={__("Row Height", "tableberg")}
                                     onChange={setHeight}

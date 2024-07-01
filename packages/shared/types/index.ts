@@ -27,8 +27,18 @@ export interface TablebergBlockAttrs {
     cols: number;
     cells: number;
     fixedColWidth: boolean;
-    colWidths: string[];
-    rowHeights: string[];
+    colStyles: Record<number, {
+        width?: string;
+        background?: string;
+        border?: any;
+        borderRadius?: any;
+    }>;
+    rowStyles: Record<number, {
+        height?: string;
+        background?: string;
+        border?: any;
+        borderRadius?: any;
+    }>;
     hasTableCreated: boolean;
     tableWidth: string;
     blockSpacing: string;
