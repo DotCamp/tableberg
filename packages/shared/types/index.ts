@@ -30,12 +30,14 @@ export interface TablebergBlockAttrs {
     colStyles: Record<number, {
         width?: string;
         background?: string;
+        bgGradient?: string;
         border?: any;
         borderRadius?: any;
     }>;
     rowStyles: Record<number, {
         height?: string;
         background?: string;
+        bgGradient?: string;
         border?: any;
         borderRadius?: any;
     }>;

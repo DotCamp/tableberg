@@ -87,6 +87,7 @@ export const PrimaryTable = (
             <tr
                 style={{
                     height: rowStyle?.height,
+                    background: rowStyle?.bgGradient || rowStyle?.background,
                 }}
                 className={className}
             ></tr>
@@ -114,15 +115,20 @@ export const PrimaryTable = (
                               ))
                         : Array(attributes.cols)
                               .fill("")
-                              .map((_, i) => (
-                                  <col
-                                      width={attributes.colStyles[i]?.width}
-                                      style={{
-                                          minWidth:
-                                              attributes.colStyles[i]?.width,
-                                      }}
-                                  />
-                              ))}
+                              .map((_, i) => {
+                                  const colStyle = attributes.colStyles[i];
+                                  return (
+                                      <col
+                                          width={colStyle?.width}
+                                          style={{
+                                              minWidth: colStyle?.width,
+                                              background:
+                                                  colStyle?.bgGradient ||
+                                                  colStyle?.background,
+                                          }}
+                                      />
+                                  );
+                              })}
                 </colgroup>
                 {rowTemplate}
             </table>

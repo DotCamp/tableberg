@@ -80,42 +80,53 @@ function TablebergControls({
     attributes,
     setAttributes,
 }: Props) {
-    const { tableAttributes, tableBlockClientId, cellBlock, themeColors } =
-        useSelect((select) => {
-            const storeSelect = select(
-                blockEditorStore,
-            ) as BlockEditorStoreSelectors;
-            const currentBlock = storeSelect.getBlock(clientId)!;
-            const isTableControls = currentBlock?.name === "tableberg/table";
+    const {
+        tableAttributes,
+        tableBlockClientId,
+        cellBlock,
+        themeColors,
+        rowStyle,
+        colStyle,
+    } = useSelect((select) => {
+        const storeSelect = select(
+            blockEditorStore,
+        ) as BlockEditorStoreSelectors;
+        const currentBlock = storeSelect.getBlock(clientId)!;
+        const isTableControls = currentBlock?.name === "tableberg/table";
 
-            let tableBlock = currentBlock;
-            let cellBlock = null;
+        let tableBlock = currentBlock;
+        let cellBlock = null;
 
-            if (!isTableControls) {
-                const parentBlocks = storeSelect.getBlockParents(clientId);
-                const tableBlockClientId = parentBlocks.find(
-                    (blockClientId) =>
-                        storeSelect.getBlock(blockClientId)?.name ===
-                        "tableberg/table",
-                )!;
+        if (!isTableControls) {
+            const parentBlocks = storeSelect.getBlockParents(clientId);
+            const tableBlockClientId = parentBlocks.find(
+                (blockClientId) =>
+                    storeSelect.getBlock(blockClientId)?.name ===
+                    "tableberg/table",
+            )!;
 
-                tableBlock = storeSelect.getBlock(tableBlockClientId)!;
-                cellBlock = currentBlock;
-            }
+            tableBlock = storeSelect.getBlock(tableBlockClientId)!;
+            cellBlock = currentBlock;
+        }
 
-            const tableAttributes =
-                tableBlock.attributes as TablebergBlockAttrs;
+        const tableAttributes = tableBlock.attributes as TablebergBlockAttrs;
 
-            return {
-                isTableControls,
-                tableAttributes,
-                tableBlockClientId: tableBlock.clientId,
-                cellBlock,
-                themeColors:
-                    storeSelect.getSettings()?.__experimentalFeatures?.color
-                        .palette.theme,
-            };
-        }, []);
+        return {
+            isTableControls,
+            tableAttributes,
+            tableBlockClientId: tableBlock.clientId,
+            cellBlock,
+            themeColors:
+                storeSelect.getSettings()?.__experimentalFeatures?.color.palette
+                    .theme,
+            rowStyle:
+                cellBlock &&
+                tableAttributes.rowStyles[cellBlock.attributes.row],
+            colStyle:
+                cellBlock &&
+                tableAttributes.colStyles[cellBlock.attributes.col],
+        };
+    }, []);
 
     const {
         enableInnerBorder,
@@ -133,7 +144,7 @@ function TablebergControls({
         updateBlockAttributes(tableBlockClientId, attributes);
     };
 
-    const setHeight = (val: string) => {
+    const setRowStyle = (styles: TablebergBlockAttrs["rowStyles"][number]) => {
         if (!cellBlock) {
             return;
         }
@@ -141,11 +152,11 @@ function TablebergControls({
         const rowStyles = { ...tableAttributes.rowStyles };
         rowStyles[cellBlock.attributes.row] = {
             ...rowStyles[cellBlock.attributes.row],
-            height: val,
+            ...styles,
         };
         setTableAttributes({ rowStyles });
     };
-    const setWidth = (val: string) => {
+    const setColStyle = (styles: TablebergBlockAttrs["colStyles"][number]) => {
         if (!cellBlock) {
             return;
         }
@@ -153,7 +164,7 @@ function TablebergControls({
         const colStyles = { ...tableAttributes.colStyles };
         colStyles[cellBlock.attributes.col] = {
             ...colStyles[cellBlock.attributes.col],
-            width: val,
+            ...styles,
         };
         setTableAttributes({ colStyles });
     };
@@ -189,7 +200,9 @@ function TablebergControls({
                                         ]?.width as any
                                     }
                                     label={__("Column Width", "tableberg")}
-                                    onChange={setWidth as any}
+                                    onChange={(width: any) =>
+                                        setColStyle({ width })
+                                    }
                                     disabled={tableAttributes.fixedColWidth}
                                 />
                             </ToolsPanelItem>
@@ -204,7 +217,9 @@ function TablebergControls({
                                         ]?.height as any
                                     }
                                     label={__("Row Height", "tableberg")}
-                                    onChange={setHeight}
+                                    onChange={(height: any) =>
+                                        setRowStyle({ height })
+                                    }
                                 />
                             </ToolsPanelItem>
                         </>
@@ -450,6 +465,50 @@ function TablebergControls({
                         })
                     }
                 />
+                {cellBlock && (
+                    <>
+                        <ColorControl
+                            label={__("Row Background Color", "tableberg")}
+                            colorValue={rowStyle?.background}
+                            gradientValue={rowStyle?.bgGradient}
+                            onColorChange={(background: any) =>
+                                setRowStyle({ background })
+                            }
+                            allowGradient
+                            onGradientChange={(bgGradient: any) =>
+                                setRowStyle({
+                                    bgGradient,
+                                })
+                            }
+                            onDeselect={() =>
+                                setRowStyle({
+                                    background: undefined,
+                                    bgGradient: undefined,
+                                })
+                            }
+                        />
+                        <ColorControl
+                            label={__("Col Background Color", "tableberg")}
+                            colorValue={colStyle?.background}
+                            gradientValue={colStyle?.bgGradient}
+                            onColorChange={(background: any) =>
+                                setColStyle({ background })
+                            }
+                            allowGradient
+                            onGradientChange={(bgGradient: any) =>
+                                setColStyle({
+                                    bgGradient,
+                                })
+                            }
+                            onDeselect={() =>
+                                setColStyle({
+                                    background: undefined,
+                                    bgGradient: undefined,
+                                })
+                            }
+                        />
+                    </>
+                )}
                 {!IS_PRO && (
                     <LockedControl inToolsPanel isEnhanced selected="cell-bg">
                         <ColorControl
