@@ -202,12 +202,13 @@ class Table
 		$colGroup = '<colgroup>';
 
 		for ($i = 0; $i < $attributes['cols']; $i++) {
-			$colStyles = $attributes['colStyles'][$i] ?? [];
-			$width = Utils::get_spacing_css_single($colStyles['width'] ?? '');
+			$colStyle = $attributes['colStyles'][$i] ?? [];
+			$width = Utils::get_spacing_css_single($colStyle['width'] ?? '');
 
 			$colCss = Utils::generate_css_string([
 				'width' => $width,
 				'min-width' => $width,
+				'background' => Utils::get_background_color($colStyle, 'background', 'bgGradient'),
 			]);
 
 			$colGroup .= '<col style="' . $colCss . '"/>';
@@ -245,7 +246,14 @@ class Table
 				$trClasses = 'tableberg-odd-row';
 			}
 
-			$content .= '<tr class="' . $trClasses . '">';
+			$rowBg = Utils::get_background_color($rowStyles, 'background', 'bgGradient');
+			if ($rowBg) {
+				$rowStyle .= 'background:' . esc_attr($rowBg) . ';';
+			} else {
+				$rowStyle = '';
+			}
+
+			$content .= '<tr class="' . $trClasses . '" style="' . $rowStyle . '">';
 			for ($j = 0; $j < $attributes['cols']; $j++) {
 				$cell = self::$rows[$i][$j] ?? '';
 				$cell = HtmlUtils::append_attr_value($cell, $tagName, $rowCss, 'style');
