@@ -4,7 +4,7 @@ import {
     store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { ToolbarDropdownMenu } from "@wordpress/components";
-import { ColorControl } from "@tableberg/components";
+import { BorderWithRadiusControl, ColorControl } from "@tableberg/components";
 
 import { useDispatch, useSelect } from "@wordpress/data";
 
@@ -410,6 +410,34 @@ export const CellBlockPro = ({
                         <StickyRowColControl
                             attrs={tableAttrs}
                             setAttrs={setTableAttrs}
+                        />
+                    </InspectorControls>
+                    <InspectorControls group="border">
+                        <BorderWithRadiusControl
+                            isShownByDefault={false}
+                            label="[PRO] Row Border"
+                            value={rowStyle?.border}
+                            onChange={(border) => {
+                                setRowStyle({ border });
+                            }}
+                            radiusValue={rowStyle?.borderRadius}
+                            onRadiusChange={(borderRadius) => {
+                                setRowStyle({ borderRadius });
+                            }}
+                            onDeselect={() => null}
+                        />
+                        <BorderWithRadiusControl
+                            isShownByDefault={false}
+                            label="[PRO] Col Border"
+                            value={colStyle?.border}
+                            onChange={(border) => {
+                                setColStyle({ border });
+                            }}
+                            radiusValue={colStyle?.borderRadius}
+                            onRadiusChange={(borderRadius) => {
+                                setColStyle({ borderRadius });
+                            }}
+                            onDeselect={() => null}
                         />
                     </InspectorControls>
                 </>

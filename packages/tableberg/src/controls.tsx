@@ -42,8 +42,10 @@ import {
     BorderRadiusControl,
     SizeControl,
     SpacingControlSingle,
+    BorderWithRadiusControl,
 } from "@tableberg/components";
 import LockedControl from "./components/LockedControl";
+import LockedBorderWithRadiusControl from "./components/LockedBorderWithRadiusControl";
 
 const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
@@ -570,56 +572,7 @@ function TablebergControls({
                         </LockedControl>
                     </>
                 )}
-                <BorderControl
-                    label={__("Table Border", "tableberg")}
-                    value={tableAttributes.tableBorder}
-                    onChange={(newBorder) => {
-                        setTableAttributes({ tableBorder: newBorder });
-                    }}
-                    onDeselect={() => {
-                        setTableAttributes({
-                            tableBorder: {
-                                color: "#000000",
-                                width: "1px",
-                            },
-                        });
-                    }}
-                />
-                <BorderRadiusControl
-                    label={__("Table Border Radius", "tableberg")}
-                    value={tableAttributes.tableBorderRadius}
-                    onChange={(tableBorderRadius: any) =>
-                        setTableAttributes({ tableBorderRadius })
-                    }
-                    onDeselect={() =>
-                        setTableAttributes({ tableBorderRadius: {} })
-                    }
-                />
-                <ToolsPanelItem
-                    panelId={clientId}
-                    isShownByDefault={true}
-                    resetAllFilter={() =>
-                        setTableAttributes({
-                            enableInnerBorder: true,
-                        })
-                    }
-                    hasValue={() => !enableInnerBorder}
-                    label={__("Enable Inner Border", "tableberg")}
-                    onDeselect={() => {
-                        setTableAttributes({ enableInnerBorder: true });
-                    }}
-                >
-                    <ToggleControl
-                        label={__("Enable Inner Border", "tableberg")}
-                        checked={enableInnerBorder}
-                        onChange={() =>
-                            setTableAttributes({
-                                enableInnerBorder:
-                                    !tableAttributes.enableInnerBorder,
-                            })
-                        }
-                    />
-                </ToolsPanelItem>
+
                 <ToolsPanelItem
                     panelId={clientId}
                     isShownByDefault={true}
@@ -634,6 +587,7 @@ function TablebergControls({
                         setTableAttributes({ hideCellOutsideBorders: true });
                     }}
                 >
+                    <div className="tableberg-tools-panel-item-margin"></div>
                     <ToggleControl
                         label={__("Hide Cell Outside Borders", "tableberg")}
                         checked={tableAttributes.hideCellOutsideBorders}
@@ -645,33 +599,73 @@ function TablebergControls({
                         }
                     />
                 </ToolsPanelItem>
-                {tableAttributes.enableInnerBorder && (
-                    <BorderControl
-                        label={__("Inner Border Size", "tableberg")}
-                        value={tableAttributes.innerBorder}
-                        onChange={(newBorder) => {
-                            setTableAttributes({ innerBorder: newBorder });
-                        }}
-                        onDeselect={() => {
-                            setTableAttributes({
-                                innerBorder: {
-                                    color: "#000000",
-                                    width: "1px",
-                                },
-                            });
-                        }}
-                    />
-                )}
-                <BorderRadiusControl
-                    label={__("Cell Border Radius", "tableberg")}
-                    value={tableAttributes.cellBorderRadius}
-                    onChange={(cellBorderRadius: any) =>
+                <BorderWithRadiusControl
+                    isShownByDefault={false}
+                    label={__("Table Border", "tableberg")}
+                    value={tableAttributes.tableBorder}
+                    onChange={(tableBorder: any) =>
+                        setTableAttributes({ tableBorder })
+                    }
+                    radiusValue={tableAttributes.tableBorderRadius}
+                    onRadiusChange={(tableBorderRadius: any) =>
+                        setTableAttributes({ tableBorderRadius })
+                    }
+                    onDeselect={() =>
+                        setTableAttributes({
+                            tableBorder: {
+                                color: "#000000",
+                                width: "1px",
+                            },
+                        })
+                    }
+                />
+                <BorderWithRadiusControl
+                    isShownByDefault={false}
+                    label="Inner Border"
+                    value={tableAttributes.innerBorder}
+                    onChange={(innerBorder: any) =>
+                        setTableAttributes({ innerBorder })
+                    }
+                    radiusValue={tableAttributes.cellBorderRadius}
+                    onRadiusChange={(cellBorderRadius: any) =>
                         setTableAttributes({ cellBorderRadius })
                     }
                     onDeselect={() =>
-                        setTableAttributes({ cellBorderRadius: {} })
+                        setTableAttributes({
+                            innerBorder: {
+                                color: "#000000",
+                                width: "1px",
+                            },
+                        })
                     }
-                />
+                >
+                    <ToggleControl
+                        label={__("Enable Inner Border", "tableberg")}
+                        checked={enableInnerBorder}
+                        onChange={() =>
+                            setTableAttributes({
+                                enableInnerBorder:
+                                    !tableAttributes.enableInnerBorder,
+                            })
+                        }
+                    />
+                </BorderWithRadiusControl>
+                {!IS_PRO && (
+                    <>
+                        <LockedBorderWithRadiusControl
+                            label="[PRO] Row Border"
+                            clientId={clientId}
+                            selected="row-border"
+                            selectedRadius="row-border-radius"
+                        />
+                        <LockedBorderWithRadiusControl
+                            label="[PRO] Column Border"
+                            clientId={clientId}
+                            selected="col-border"
+                            selectedRadius="col-border-radius"
+                        />
+                    </>
+                )}
             </InspectorControls>
             {!!preview && (
                 <ResponsiveControls

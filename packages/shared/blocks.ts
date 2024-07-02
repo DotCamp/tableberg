@@ -115,6 +115,34 @@ export const ENHANCED_FEATURES = [
             "<strong>Individual Column Background</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
     {
+        name: "col-border",
+        title: "Individual Column Border",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Individual Column Border</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "col-border-radius",
+        title: "Individual Column Border Radius",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Individual Column Border Radius</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "row-border",
+        title: "Individual Row Border",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Individual Row Border</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "row-border-radius",
+        title: "Individual Row Border Radius",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Individual Row Border Radius</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
         name: "duplicate-row-col",
         title: "Duplicate Rows and Columns",
         icon: blockIcon,

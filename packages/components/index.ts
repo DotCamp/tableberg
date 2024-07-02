@@ -1,5 +1,6 @@
 export { default as BorderControl } from "./editor/BorderControl";
 export { default as BorderRadiusControl } from "./editor/BorderRadiusControl";
+export { default as BorderWithRadiusControl } from "./editor/BorderWithRadiusControl";
 export { default as ColorControl } from "./editor/ColorControl";
 export { default as ColorPickerDropdown } from "./editor/ColorPickerDropdown";
 export { default as SpacingControl } from "./editor/SpacingControl";
