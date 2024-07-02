@@ -64,7 +64,14 @@ import {
 
 import TablebergProIcon from "@tableberg/shared/icons/tableberg-pro";
 import { UpsellEnhancedModal } from "../components/UpsellModal";
-import { getSpacingCssSingle } from "@tableberg/shared/utils/styling-helpers";
+import {
+    getBorderCSS,
+    getSpacingCssSingle,
+} from "@tableberg/shared/utils/styling-helpers";
+import {
+    getBorderVariablesCss,
+    getSingleSideBorderValue,
+} from "../utils/styling-helpers";
 
 const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
@@ -733,6 +740,9 @@ function edit(
         isOddRow,
         isHeaderRow,
         isFooterRow,
+        rowStyle,
+        colBorders,
+        rowBorders,
     } = useSelect(
         (select) => {
             const storeSelect = select(
@@ -753,6 +763,14 @@ function edit(
 
             const headerEnabled = tableBlock.attributes.enableTableHeader;
 
+            const rowStyle =
+                tableBlock.attributes.rowStyles[attributes.row] || {};
+            const colStyle =
+                tableBlock.attributes.colStyles[attributes.col] || {};
+
+            const colBorders = getBorderVariablesCss(colStyle?.border, "col");
+            const rowBorders = getBorderVariablesCss(rowStyle?.border, "row");
+
             return {
                 storeSelect,
                 tableBlock,
@@ -763,6 +781,9 @@ function edit(
                 isFooterRow:
                     tableBlock.attributes.enableTableFooter &&
                     attributes.row + 1 === tableBlock.attributes.rows,
+                rowStyle,
+                colBorders,
+                rowBorders,
             };
         },
         [clientId],
@@ -800,8 +821,6 @@ function edit(
         [isSelected],
     );
 
-    const rowStyle = tableBlock.attributes.rowStyles[attributes.row] || {};
-
     const blockProps = useBlockProps({
         style: {
             verticalAlign:
@@ -812,6 +831,8 @@ function edit(
                 attributes.blockSpacing?.[0] !== "0"
                     ? getSpacingCssSingle(attributes.blockSpacing)
                     : undefined,
+            ...colBorders,
+            ...rowBorders,
         },
         ref: cellRef,
         className: classNames({

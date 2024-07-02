@@ -5,7 +5,7 @@
  * Replace them with your own styles or remove the file completely.
  */
 
- div.wp-block-tableberg-wrapper {
+div.wp-block-tableberg-wrapper {
     --wp--preset--spacing--5: 5px;
 
     box-sizing: border-box;
@@ -67,19 +67,71 @@
 
         &.has-inner-border {
             .wp-block-tableberg-cell {
-                border-top: var(--tableberg-inner-border-top);
-                border-right: var(--tableberg-inner-border-right);
-                border-bottom: var(--tableberg-inner-border-bottom);
-                border-left: var(--tableberg-inner-border-left);
+                border-top: var(
+                    --tableberg-row-border-top,
+                    var(--tableberg-inner-border-top)
+                );
+                border-right: var(
+                    --tableberg-col-border-right,
+                    var(--tableberg-inner-border-right)
+                );
+                border-bottom: var(
+                    --tableberg-row-border-bottom,
+                    var(--tableberg-inner-border-bottom)
+                );
+                border-left: var(
+                    --tableberg-col-border-left,
+                    var(--tableberg-inner-border-left)
+                );
 
                 &:first-of-type {
-                    border-left: var(--tableberg-inner-border-left-first, var(--tableberg-inner-border-left));
+                    border-left: var(
+                        --tableberg-row-border-left,
+                        var(
+                            --tableberg-col-border-left,
+                            var(
+                                --tableberg-inner-border-left-first,
+                                var(--tableberg-inner-border-left)
+                            )
+                        )
+                    );
+                }
+
+                &:last-of-type {
+                    border-right: var(
+                        --tableberg-row-border-right,
+                        var(
+                            --tableberg-col-border-right,
+                            var(--tableberg-inner-border-right)
+                        )
+                    );
                 }
             }
 
             tr:first-of-type {
                 .wp-block-tableberg-cell {
-                    border-top: var(--tableberg-inner-border-top-first, var(--tableberg-inner-border-top));
+                    border-top: var(
+                        --tableberg-row-border-top,
+                        var(
+                            --tableberg-col-border-top,
+                            var(
+                                --tableberg-inner-border-top-first,
+                                var(--tableberg-inner-border-top)
+                            )
+                        )
+                    );
+                }
+            }
+
+            tr:last-of-type {
+                .wp-block-tableberg-cell {
+                    border-bottom: var(
+                        --tableberg-row-border-bottom,
+                        var(
+                            --tableberg-col-border-bottom,
+                            var(--tableberg-inner-border-bottom)
+                        )
+                    );
                 }
             }
         }
