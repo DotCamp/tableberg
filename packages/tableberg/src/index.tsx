@@ -53,57 +53,6 @@ interface TablebergCtx {
 
 export const TablebergCtx = createContext<TablebergCtx>({});
 
-const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
-    const newCells: TablebergCellInstance[] = [];
-    const { cols } = tableBlock.attributes;
-    let lastRow = 0;
-    let lastCol = 0;
-    tableBlock.innerBlocks.forEach((row) => {
-        if (row.name !== "tableberg/row" && row.name !== "core/missing") {
-            console.log(
-                "[TableBerg] Invalid block encountered while recovering rows: ",
-                row.name,
-            );
-            return;
-        }
-        row.innerBlocks.forEach((cell) => {
-            if (cell.name !== "tableberg/cell") {
-                console.log(
-                    "[TableBerg] Invalid block encountered while recovering rows: ",
-                    cell.name,
-                );
-                return;
-            }
-            cell.attributes.row = lastRow;
-            cell.attributes.col = lastCol;
-            cell.attributes.tagName = "td";
-            cell.attributes.colspan = 1;
-            cell.attributes.rowspan = 1;
-
-            newCells.push(cell as TablebergCellInstance);
-            lastCol++;
-            if (lastCol % cols !== lastCol) {
-                lastRow++;
-                lastCol = 0;
-            }
-        });
-    });
-    if (lastCol !== 0) {
-        for (let col = lastCol; col < cols; col++) {
-            newCells.push(
-                createBlocksFromInnerBlocksTemplate([
-                    ["tableberg/cell"],
-                    {
-                        // @ts-ignore
-                        row: lastRow,
-                        col,
-                    },
-                ])[0] as TablebergCellInstance,
-            );
-        }
-    }
-    return [newCells, cols];
-};
 
 const removeFirstRow = (
     innrBlocks: TablebergCellInstance[],
@@ -397,16 +346,33 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     >(tablebergGetLastDevice() || "desktop");
 
     useEffect(() => {
-        if (!tableBlock.attributes.version) {
-            const [newCells, cols] = getCellsOfRows(tableBlock);
-            const rows = newCells.length / cols;
-            storeActions.replaceInnerBlocks(clientId, newCells);
+        if (tableBlock.attributes.version && tableBlock.attributes.version < "0.5.2") {
+            const rowStyles: TablebergBlockAttrs['rowStyles'] = {};
+            // @ts-ignore
+            const heights = tableBlock.attributes.rowHeights || [];
+            for (let i = 0; i < heights.length; i++) {
+                if (heights[i]) {
+                    rowStyles[i] = {
+                        height: heights[i],
+                    };
+                }
+            }
+
+            const colStyles: TablebergBlockAttrs['colStyles'] = {};
+            // @ts-ignore
+            const widths = tableBlock.attributes.colWidths || [];
+            for (let i = 0; i < widths.length; i++) {
+                if (widths[i]) {
+                    colStyles[i] = {
+                        width: widths[i],
+                    };
+                }
+            }
+
             setAttributes({
+                rowStyles,
+                colStyles,
                 version: metadata.version,
-                cells: newCells.length,
-                rows,
-                rowHeights: Array(rows).fill(""),
-                colWidths: Array(cols).fill(""),
             });
         }
         const localUpdater = (evt: any) => {
@@ -736,9 +702,6 @@ registerBlockType(metadata.name, {
                     if (attrs.cells === 0) {
                         return createBlock("tableberg/table");
                     }
-                    attrs.colWidths = Array(attrs.cols).fill("");
-                    attrs.rowHeights = Array(attrs.rows).fill("");
-
                     return createBlock("tableberg/table", attrs, innerBlocks);
                 },
             },

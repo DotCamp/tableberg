@@ -1,4 +1,4 @@
-import { isEmpty, has } from "lodash";
+import { isEmpty } from "lodash";
 import { __experimentalHasSplitBorders as hasSplitBorders } from "@wordpress/components";
 import { BorderTypes } from "./common-types";
 

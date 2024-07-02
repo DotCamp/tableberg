@@ -5,6 +5,7 @@
 @import "./upsell-editor.scss";
 @import "./table/creator/styles.scss";
 @import "@tableberg/components/editor/color-picker-dropdown-style.scss";
+@import "@tableberg/components/editor/border-with-radius-control.scss";
 
 div.components-autocomplete__results
     button[id*="tableberg"][id$="dummy"]::after {

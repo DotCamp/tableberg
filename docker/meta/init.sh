@@ -29,3 +29,5 @@ if ! wp plugin is-active tableberg --allow-root; then
     echo "Activating plugin...";
     wp plugin activate tableberg tableberg-pro --allow-root
 fi
+
+apache2-foreground

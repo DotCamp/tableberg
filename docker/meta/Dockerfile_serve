@@ -34,5 +34,6 @@ RUN unzip /var/www/html/latest.zip \
 ADD init.sh /usr/local/bin/entry.sh
 
 RUN chmod +x /usr/local/bin/entry.sh
+RUN chmod -R 777 /var/www/html
 
 ENTRYPOINT [ "entry.sh" ]

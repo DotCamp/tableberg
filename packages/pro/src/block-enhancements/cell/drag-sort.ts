@@ -99,7 +99,8 @@ export class DragNDropSorting {
             this.ctx.overInstance = this;
             this.ctx.startInstance = this;
 
-            this.ctx.dragPreview = this.cellEl.ownerDocument.createElement("div");
+            this.ctx.dragPreview =
+                this.cellEl.ownerDocument.createElement("div");
             this.ctx.dragPreview.classList.add("tableberg-drag-preview");
             this.ctx.startBox = this.cellEl.getBoundingClientRect();
 
@@ -109,11 +110,23 @@ export class DragNDropSorting {
 
             // TODO: set the active els & add their class
 
-            this.cellEl.ownerDocument.addEventListener("mousemove", this.onMouseMoveFn);
-            this.cellEl.ownerDocument.addEventListener("mouseup", this.cleanUpEvt);
+            this.cellEl.ownerDocument.addEventListener(
+                "mousemove",
+                this.onMouseMoveFn,
+            );
+            this.cellEl.ownerDocument.addEventListener(
+                "mouseup",
+                this.cleanUpEvt,
+            );
             if (HAS_TOUCH) {
-                this.cellEl.ownerDocument.addEventListener("touchmove", this.onTouchMoveFn);
-                this.cellEl.ownerDocument.addEventListener("touchend", this.cleanUpEvt);
+                this.cellEl.ownerDocument.addEventListener(
+                    "touchmove",
+                    this.onTouchMoveFn,
+                );
+                this.cellEl.ownerDocument.addEventListener(
+                    "touchend",
+                    this.cleanUpEvt,
+                );
             }
 
             let posX, posY;
@@ -291,11 +304,23 @@ export class DragNDropSorting {
     private cleanUp() {
         this.ctx.dragPreview?.remove();
 
-        this.cellEl.ownerDocument.removeEventListener("mousemove", this.onMouseMoveFn);
-        this.cellEl.ownerDocument.removeEventListener("mouseup", this.cleanUpEvt);
+        this.cellEl.ownerDocument.removeEventListener(
+            "mousemove",
+            this.onMouseMoveFn,
+        );
+        this.cellEl.ownerDocument.removeEventListener(
+            "mouseup",
+            this.cleanUpEvt,
+        );
         if (HAS_TOUCH) {
-            this.cellEl.ownerDocument.removeEventListener("touchmove", this.onTouchMoveFn);
-            this.cellEl.ownerDocument.removeEventListener("touchend", this.cleanUpEvt);
+            this.cellEl.ownerDocument.removeEventListener(
+                "touchmove",
+                this.onTouchMoveFn,
+            );
+            this.cellEl.ownerDocument.removeEventListener(
+                "touchend",
+                this.cleanUpEvt,
+            );
         }
 
         this.ctx.rootEl
@@ -457,6 +482,22 @@ export const moveCol = (
     }
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, newCells);
+    const colStyles = { ...tableBlock.attributes.colStyles };
+    const colStyle = colStyles[subject];
+    if (Math.abs(target - subject) === 1) {
+        colStyles[subject] = colStyles[target];
+        colStyles[target] = colStyle;
+    } else if (toRight) {
+        for (let i = subject; i < target - 1; i++) {
+            colStyles[i] = colStyles[i + 1];
+        }
+    } else {
+        for (let i = subject; i > target; i--) {
+            colStyles[i] = colStyles[i - 1];
+        }
+    }
+    colStyles[target] = colStyle;
+    storeActions.updateBlockAttributes(tableBlock.clientId, { colStyles });
 };
 
 export const moveRow = (
@@ -551,4 +592,21 @@ export const moveRow = (
         return;
     }
     storeActions.replaceInnerBlocks(tableBlock.clientId, newCells);
+
+    const rowStyles = { ...tableBlock.attributes.rowStyles };
+    const rowStyle = rowStyles[subject];
+    if (Math.abs(subject - target) === 1) {
+        rowStyles[subject] = rowStyles[target];
+        rowStyles[target] = rowStyle;
+    } else if (toDown) {
+        for (let i = subject; i < target - 1; i++) {
+            rowStyles[i] = rowStyles[i + 1];
+        }
+    } else {
+        for (let i = subject; i > target; i--) {
+            rowStyles[i] = rowStyles[i - 1];
+        }
+    }
+    rowStyles[target] = rowStyle;
+    storeActions.updateBlockAttributes(tableBlock.clientId, { rowStyles });
 };

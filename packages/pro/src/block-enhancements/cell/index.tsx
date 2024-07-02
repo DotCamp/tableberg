@@ -4,16 +4,11 @@ import {
     store as blockEditorStore,
 } from "@wordpress/block-editor";
 import { ToolbarDropdownMenu } from "@wordpress/components";
-import { ColorControl } from "@tableberg/components";
+import { BorderWithRadiusControl, ColorControl } from "@tableberg/components";
 
 import { useDispatch, useSelect } from "@wordpress/data";
 
-import {
-    arrowUp,
-    arrowDown,
-    arrowLeft,
-    arrowRight,
-} from "@wordpress/icons";
+import { arrowUp, arrowDown, arrowLeft, arrowRight } from "@wordpress/icons";
 
 import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
 import { BlockInstance, cloneBlock } from "@wordpress/blocks";
@@ -23,7 +18,10 @@ import {
     TablebergCellInstance,
 } from "@tableberg/shared/types";
 
-import {DuplicateRowIcon, DuplicateColumnIcon} from "@tableberg/shared/icons/enhancements";
+import {
+    DuplicateRowIcon,
+    DuplicateColumnIcon,
+} from "@tableberg/shared/icons/enhancements";
 import TablebergProIcon from "@tableberg/shared/icons/tableberg-pro";
 
 import { ProBlockProps } from "..";
@@ -86,15 +84,19 @@ const duplicateRow = (
         cellBlocks.push(...clonedCells);
     }
 
-    const rowHeights = tableBlock.attributes.rowHeights;
-    const copyHeights = rowHeights.slice(startRow, endRow);
-    rowHeights.splice(endRow, 0, ...copyHeights);
+    const rowStyles = { ...tableBlock.attributes.rowStyles };
+
+    for (let i = 0; i < count; i++) {
+        rowStyles[endRow + i] = {
+            ...rowStyles[startRow + i],
+        };
+    }
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         rows: tableBlock.attributes.rows + count,
         cells: cellBlocks.length,
-        rowHeights,
+        rowStyles,
     });
 };
 
@@ -159,15 +161,19 @@ const duplicateCol = (
         pendingCells = [];
     }
 
-    const colWidths = tableBlock.attributes.colWidths;
-    const copyWidths = colWidths.slice(startCol, endCol);
-    colWidths.splice(endCol, 0, ...copyWidths);
+    const colStyles = { ...tableBlock.attributes.colStyles };
+
+    for (let i = 0; i < count; i++) {
+        colStyles[endCol + i] = {
+            ...colStyles[startCol + i],
+        };
+    }
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         cols: tableBlock.attributes.cols + count,
         cells: cellBlocks.length,
-        colWidths,
+        colStyles,
     });
 };
 
@@ -179,29 +185,34 @@ export const CellBlockPro = ({
         blockEditorStore,
     ) as any;
 
-    const { storeSelect, tableAttrs, setTableAttrs, tableBlock } = useSelect(
-        (select) => {
-            const storeSelect: BlockEditorStoreSelectors = select(
-                blockEditorStore,
-            ) as any;
+    const {
+        storeSelect,
+        tableAttrs,
+        setTableAttrs,
+        tableBlock,
+        rowStyle,
+        colStyle,
+    } = useSelect((select) => {
+        const storeSelect: BlockEditorStoreSelectors = select(
+            blockEditorStore,
+        ) as any;
 
-            const tableBlockId = storeSelect.getBlockRootClientId(
-                props.clientId,
-            )!;
-            const tableBlock = storeSelect.getBlock(tableBlockId)!;
+        const tableBlockId = storeSelect.getBlockRootClientId(props.clientId)!;
+        const tableBlock = storeSelect.getBlock(tableBlockId)!;
 
-            const setTableAttrs = (attrs: Partial<TablebergBlockAttrs>) =>
-                storeActions.updateBlockAttributes(tableBlockId, attrs);
+        const setTableAttrs = (attrs: Partial<TablebergBlockAttrs>) =>
+            storeActions.updateBlockAttributes(tableBlockId, attrs);
+        const tableAttrs = tableBlock.attributes as TablebergBlockAttrs;
 
-            return {
-                storeSelect,
-                tableBlock,
-                tableAttrs: tableBlock.attributes as TablebergBlockAttrs,
-                setTableAttrs,
-            };
-        },
-        [],
-    );
+        return {
+            storeSelect,
+            tableBlock,
+            tableAttrs,
+            setTableAttrs,
+            rowStyle: tableAttrs.rowStyles[props.attributes.row],
+            colStyle: tableAttrs.colStyles[props.attributes.col],
+        };
+    }, []);
 
     const attrs = props.attributes;
 
@@ -217,6 +228,22 @@ export const CellBlockPro = ({
         } else {
             moveCol(storeActions, tableBlockFresh, subject.col, target.col);
         }
+    };
+    const setRowStyle = (styles: TablebergBlockAttrs["rowStyles"][number]) => {
+        const rowStyles = { ...tableAttrs.rowStyles };
+        rowStyles[attrs.row] = {
+            ...rowStyles[attrs.row],
+            ...styles,
+        };
+        setTableAttrs({ rowStyles });
+    };
+    const setColStyle = (styles: TablebergBlockAttrs["colStyles"][number]) => {
+        const colStyles = { ...tableAttrs.colStyles };
+        colStyles[attrs.col] = {
+            ...colStyles[attrs.col],
+            ...styles,
+        };
+        setTableAttrs({ colStyles });
     };
 
     const proProps = { DragNDropSorting, makeMove };
@@ -338,11 +365,79 @@ export const CellBlockPro = ({
                                 })
                             }
                         />
+                        <ColorControl
+                            label="[PRO] Row Background Color"
+                            colorValue={rowStyle?.background}
+                            gradientValue={rowStyle?.bgGradient}
+                            onColorChange={(background: any) =>
+                                setRowStyle({ background })
+                            }
+                            allowGradient
+                            onGradientChange={(bgGradient: any) =>
+                                setRowStyle({
+                                    bgGradient,
+                                })
+                            }
+                            onDeselect={() =>
+                                setRowStyle({
+                                    background: undefined,
+                                    bgGradient: undefined,
+                                })
+                            }
+                        />
+                        <ColorControl
+                            label="[PRO] Col Background Color"
+                            colorValue={colStyle?.background}
+                            gradientValue={colStyle?.bgGradient}
+                            onColorChange={(background: any) =>
+                                setColStyle({ background })
+                            }
+                            allowGradient
+                            onGradientChange={(bgGradient: any) =>
+                                setColStyle({
+                                    bgGradient,
+                                })
+                            }
+                            onDeselect={() =>
+                                setColStyle({
+                                    background: undefined,
+                                    bgGradient: undefined,
+                                })
+                            }
+                        />
                     </InspectorControls>
                     <InspectorControls>
                         <StickyRowColControl
                             attrs={tableAttrs}
                             setAttrs={setTableAttrs}
+                        />
+                    </InspectorControls>
+                    <InspectorControls group="border">
+                        <BorderWithRadiusControl
+                            isShownByDefault={false}
+                            label="[PRO] Row Border"
+                            value={rowStyle?.border}
+                            onChange={(border) => {
+                                setRowStyle({ border });
+                            }}
+                            radiusValue={rowStyle?.borderRadius}
+                            onRadiusChange={(borderRadius) => {
+                                setRowStyle({ borderRadius });
+                            }}
+                            onDeselect={() => null}
+                        />
+                        <BorderWithRadiusControl
+                            isShownByDefault={false}
+                            label="[PRO] Col Border"
+                            value={colStyle?.border}
+                            onChange={(border) => {
+                                setColStyle({ border });
+                            }}
+                            radiusValue={colStyle?.borderRadius}
+                            onRadiusChange={(borderRadius) => {
+                                setColStyle({ borderRadius });
+                            }}
+                            onDeselect={() => null}
                         />
                     </InspectorControls>
                 </>
