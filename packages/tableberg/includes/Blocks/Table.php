@@ -248,7 +248,7 @@ class Table
 
 			$rowBg = Utils::get_background_color($rowStyles, 'background', 'bgGradient');
 			if ($rowBg) {
-				$rowStyle .= 'background:' . esc_attr($rowBg) . ';';
+				$rowStyle = 'background:' . esc_attr($rowBg) . ';';
 			} else {
 				$rowStyle = '';
 			}
