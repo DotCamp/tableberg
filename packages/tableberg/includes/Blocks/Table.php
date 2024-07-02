@@ -201,6 +201,7 @@ class Table
 			'style' => self::get_root_styles($attributes)
 		]);
 
+		$colBorders = [];
 		$colGroup = '<colgroup>';
 
 		for ($i = 0; $i < $attributes['cols']; $i++) {
@@ -214,17 +215,17 @@ class Table
 			]);
 
 			$colGroup .= '<col style="' . $colCss . '"/>';
+			$colBorders[$i] = Utils::generate_css_string(Utils::get_border_variables_css($colStyle['border'] ?? [], 'col'));
 		}
 
 		$colGroup .= '</colgroup>';
 
 		$content = '<tbody>';
-		//die(htmlspecialchars(json_encode(self::$rows)));
 
 		for ($i = 0; $i < $attributes['rows']; $i++) {
-			$rowStyles = $attributes['rowStyles'][$i] ?? [];
+			$rowStyle = $attributes['rowStyles'][$i] ?? [];
 			$rowCss = Utils::generate_css_string([
-				'height' => Utils::get_spacing_css_single($rowStyles['height'] ?? ''),
+				'height' => Utils::get_spacing_css_single($rowStyle['height'] ?? ''),
 			]);
 			$tagName = 'td';
 			$trClasses = '';
@@ -248,17 +249,19 @@ class Table
 				$trClasses = 'tableberg-odd-row';
 			}
 
-			$rowBg = Utils::get_background_color($rowStyles, 'background', 'bgGradient');
+			$rowStyleCss = Utils::generate_css_string(Utils::get_border_variables_css($rowStyle['border'] ?? [], 'row'));
+
+			$rowBg = Utils::get_background_color($rowStyle, 'background', 'bgGradient');
 			if ($rowBg) {
-				$rowStyle = 'background:' . esc_attr($rowBg) . ';';
+				$rowStyleCss .= 'background:' . esc_attr($rowBg) . ';';
 			} else {
-				$rowStyle = '';
+				$rowStyleCss .= '';
 			}
 
-			$content .= '<tr class="' . $trClasses . '" style="' . $rowStyle . '">';
+			$content .= '<tr class="' . $trClasses . '" style="' . $rowStyleCss . '">';
 			for ($j = 0; $j < $attributes['cols']; $j++) {
 				$cell = self::$rows[$i][$j] ?? '';
-				$cell = HtmlUtils::append_attr_value($cell, $tagName, $rowCss, 'style');
+				$cell = HtmlUtils::append_attr_value($cell, $tagName, $rowCss.$colBorders[$j], 'style');
 				$content .= $cell;
 			}
 			$content .= '</tr>';
