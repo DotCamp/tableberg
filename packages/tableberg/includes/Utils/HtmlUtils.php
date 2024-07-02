@@ -133,7 +133,7 @@ class HtmlUtils
         $cursor = $lidx;
         $tagDes = substr($content, $idx, $lidx - $idx);
         $count = 0;
-        $tagDes = preg_replace("/$attr=\"(.*)\"/", "$attr=\"$1" . $value . "\"", $tagDes, -1, $count);
+        $tagDes = preg_replace("/$attr=\"(.*?)\"/", "$attr=\"$1" . $value . "\"", $tagDes, -1, $count);
         if ($count == 0) {
             $tagDes = substr_replace($tagDes, " $attr=\"$value\"", strlen($tag) + 1, 0);
         }

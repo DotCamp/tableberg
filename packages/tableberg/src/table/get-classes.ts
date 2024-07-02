@@ -1,5 +1,5 @@
+import { TablebergBlockAttrs } from "@tableberg/shared/types";
 import { isUndefined, trim, isEmpty } from "lodash";
-import { TablebergBlockAttrs } from "../types";
 
 export function getStyleClass(attributes: TablebergBlockAttrs) {
     const { tableWidth, enableInnerBorder } = attributes;
