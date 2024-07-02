@@ -65,125 +65,147 @@ div.wp-block-tableberg-wrapper {
             color: var(--tableberg-global-link-color);
         }
 
-        &.has-inner-border {
+        .wp-block-tableberg-cell {
+            border-top: var(
+                --tableberg-row-border-top,
+                var(--tableberg-inner-border-top)
+            );
+            border-right: var(
+                --tableberg-col-border-right,
+                var(--tableberg-inner-border-right)
+            );
+            border-bottom: var(
+                --tableberg-row-border-bottom,
+                var(--tableberg-inner-border-bottom)
+            );
+            border-left: var(
+                --tableberg-col-border-left,
+                var(--tableberg-inner-border-left)
+            );
+
+            &:first-of-type {
+                border-left: var(
+                    --tableberg-row-border-left,
+                    var(
+                        --tableberg-col-border-left,
+                        var(
+                            --tableberg-inner-border-left-first,
+                            var(--tableberg-inner-border-left)
+                        )
+                    )
+                );
+
+                border-top-left-radius: var(
+                    --tableberg-row-top-left,
+                    var(--tableberg-cell-top-left)
+                );
+                border-bottom-left-radius: var(
+                    --tableberg-row-bottom-left,
+                    var(--tableberg-cell-bottom-left)
+                );
+            }
+
+            &:last-of-type {
+                border-right: var(
+                    --tableberg-row-border-right,
+                    var(
+                        --tableberg-col-border-right,
+                        var(--tableberg-inner-border-right)
+                    )
+                );
+
+                border-top-right-radius: var(
+                    --tableberg-row-top-right,
+                    var(--tableberg-cell-top-right)
+                );
+                border-bottom-right-radius: var(
+                    --tableberg-row-bottom-right,
+                    var(--tableberg-cell-bottom-right)
+                );
+            }
+        }
+
+        tr:first-of-type {
             .wp-block-tableberg-cell {
                 border-top: var(
                     --tableberg-row-border-top,
-                    var(--tableberg-inner-border-top)
+                    var(
+                        --tableberg-col-border-top,
+                        var(
+                            --tableberg-inner-border-top-first,
+                            var(--tableberg-inner-border-top)
+                        )
+                    )
                 );
-                border-right: var(
-                    --tableberg-col-border-right,
-                    var(--tableberg-inner-border-right)
+
+                border-top-left-radius: var(
+                    --tableberg-col-top-left,
+                    var(--tableberg-cell-top-left)
                 );
-                border-bottom: var(
-                    --tableberg-row-border-bottom,
-                    var(--tableberg-inner-border-bottom)
-                );
-                border-left: var(
-                    --tableberg-col-border-left,
-                    var(--tableberg-inner-border-left)
+                border-top-right-radius: var(
+                    --tableberg-col-top-right,
+                    var(--tableberg-cell-top-right)
                 );
 
                 &:first-of-type {
-                    border-left: var(
-                        --tableberg-row-border-left,
-                        var(
-                            --tableberg-col-border-left,
-                            var(
-                                --tableberg-inner-border-left-first,
-                                var(--tableberg-inner-border-left)
-                            )
-                        )
-                    );
-
                     border-top-left-radius: var(
                         --tableberg-row-top-left,
-                        var(--tableberg-cell-top-left)
-                    );
-                    border-bottom-left-radius: var(
-                        --tableberg-row-bottom-left,
-                        var(--tableberg-cell-bottom-left)
+                        var(
+                            --tableberg-col-top-left,
+                            var(--tableberg-cell-top-left)
+                        )
                     );
                 }
 
                 &:last-of-type {
-                    border-right: var(
-                        --tableberg-row-border-right,
-                        var(
-                            --tableberg-col-border-right,
-                            var(--tableberg-inner-border-right)
-                        )
-                    );
-
                     border-top-right-radius: var(
                         --tableberg-row-top-right,
-                        var(--tableberg-cell-top-right)
+                        var(
+                            --tableberg-col-top-right,
+                            var(--tableberg-cell-top-right)
+                        )
                     );
+                }
+            }
+        }
+
+        tr:last-of-type {
+            .wp-block-tableberg-cell {
+                border-bottom: var(
+                    --tableberg-row-border-bottom,
+                    var(
+                        --tableberg-col-border-bottom,
+                        var(--tableberg-inner-border-bottom)
+                    )
+                );
+
+                border-bottom-left-radius: var(
+                    --tableberg-col-bottom-left,
+                    var(--tableberg-cell-bottom-left)
+                );
+                border-bottom-right-radius: var(
+                    --tableberg-col-bottom-right,
+                    var(--tableberg-cell-bottom-right)
+                );
+
+                &:first-of-type {
+                    border-bottom-left-radius: var(
+                        --tableberg-row-bottom-left,
+                        var(
+                            --tableberg-col-bottom-left,
+                            var(--tableberg-cell-bottom-left)
+                        )
+                    );
+                }
+
+                &:last-of-type {
                     border-bottom-right-radius: var(
                         --tableberg-row-bottom-right,
-                        var(--tableberg-cell-bottom-right)
-                    );
-                }
-            }
-
-            tr:first-of-type {
-                .wp-block-tableberg-cell {
-                    border-top: var(
-                        --tableberg-row-border-top,
                         var(
-                            --tableberg-col-border-top,
-                            var(
-                                --tableberg-inner-border-top-first,
-                                var(--tableberg-inner-border-top)
-                            )
+                            --tableberg-col-bottom-right,
+                            var(--tableberg-cell-bottom-right)
                         )
                     );
-
-                    border-top-left-radius: var(
-                        --tableberg-col-top-left,
-                        var(--tableberg-cell-top-left)
-                    );
-                    border-top-right-radius: var(
-                        --tableberg-col-top-right,
-                        var(--tableberg-cell-top-right)
-                    );
-
-                    &:first-of-type {
-                        border-top-left-radius: var(--tableberg-row-top-left, var(--tableberg-col-top-left, var(--tableberg-cell-top-left)));
-                    }
-
-                    &:last-of-type {
-                        border-top-right-radius: var(--tableberg-row-top-right, var(--tableberg-col-top-right, var(--tableberg-cell-top-right)));
-                    }
-                }
-            }
-
-            tr:last-of-type {
-                .wp-block-tableberg-cell {
-                    border-bottom: var(
-                        --tableberg-row-border-bottom,
-                        var(
-                            --tableberg-col-border-bottom,
-                            var(--tableberg-inner-border-bottom)
-                        )
-                    );
-
-                    border-bottom-left-radius: var(
-                        --tableberg-col-bottom-left,
-                        var(--tableberg-cell-bottom-left)
-                    );
-                    border-bottom-right-radius: var(
-                        --tableberg-col-bottom-right,
-                        var(--tableberg-cell-bottom-right)
-                    );
-
-                    &:first-of-type {
-                        border-bottom-left-radius: var(--tableberg-row-bottom-left, var(--tableberg-col-bottom-left, var(--tableberg-cell-bottom-left)));
-                    }
-
-                    &:last-of-type {
-                        border-bottom-right-radius: var(--tableberg-row-bottom-right, var(--tableberg-col-bottom-right, var(--tableberg-cell-bottom-right)));
-                    }
                 }
             }
         }
