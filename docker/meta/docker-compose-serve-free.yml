@@ -29,6 +29,8 @@ services:
       - PHP_VERSION=__PHP_VERSION__
       - WP_VERSION=__WP_VERSION__
     volumes:
+      - public_html:/var/www/html
       - ../../../packages/tableberg:/var/www/html/wp-content/plugins/tableberg
 volumes:
   db_data:
+  public_html:

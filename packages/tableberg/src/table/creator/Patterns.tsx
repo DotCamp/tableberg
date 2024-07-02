@@ -8,18 +8,14 @@ import {
     SearchControl,
 } from "@wordpress/components";
 
-import {
-    ParsedBlock,
-    parse,
-} from "@wordpress/block-serialization-default-parser";
-
 // @ts-ignore
-import { BlockPreview } from "@wordpress/block-editor";
+import { BlockPreview, store } from "@wordpress/block-editor";
 
 import TablebergIcon from "@tableberg/shared/icons/tableberg";
 import { useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
-import { BlockInstance, createBlock } from "@wordpress/blocks";
+import { BlockInstance } from "@wordpress/blocks";
+import classNames from "classnames";
 interface PatternLibraryProps {
     onClose: () => void;
     onSelect: (block: BlockInstance) => void;
@@ -27,58 +23,41 @@ interface PatternLibraryProps {
 
 const theDiv = document.createElement("div");
 
-const parsedBlocks2Blocks = (pbs: ParsedBlock[]) => {
-    const newBlocks: BlockInstance[] = [];
-    pbs.forEach((pb: any) => {
-        if (!pb.blockName) {
-            return;
-        }
-        if (pb.blockName === "core/paragraph") {
-            theDiv.innerHTML = pb.innerHTML;
-            pb.attrs.content = theDiv.querySelector("p")?.innerHTML;
-        } else if (pb.blockName === "core/list-item") {
-            theDiv.innerHTML = pb.innerHTML;
-            pb.attrs.content = theDiv.querySelector("li")?.innerHTML;
-        }
-        newBlocks.push(
-            createBlock(
-                pb.blockName,
-                pb.attrs as any,
-                parsedBlocks2Blocks(pb.innerBlocks),
-            ),
-        );
-    });
-    return newBlocks;
-};
-
 function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
     const [search, setSearch] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
     const [pageItems, setPageItems] = useState<any[]>([]);
 
-    const { patterns, categories } = useSelect((select) => {
-        const { getBlockPatterns } = select("core") as any;
-        const categories: {
-            title: string;
-            count: number;
-        }[] = [];
+    const { categories, patterns } = useSelect((select) => {
+        // @ts-ignore
+        const { __experimentalGetAllowedPatterns, getSettings } = select(store);
+        const { __experimentalBlockPatternCategories } = getSettings();
+
+        const catTitleMap = new Map<string, string>();
+        __experimentalBlockPatternCategories.forEach((cat: any) => {
+            catTitleMap.set(cat.name, cat.label);
+        });
+
+        const categories: { slug: string; title: string; count: number }[] = [];
         const patterns: any[] = [];
 
-        getBlockPatterns()?.forEach((pattern: any) => {
+        __experimentalGetAllowedPatterns().forEach((pattern: any) => {
             if (!pattern.name.startsWith("tableberg/")) {
                 return;
             }
-            if (pattern.name.indexOf("-upsell-") == -1) {
-                const parsed = parse(pattern.content);
-                pattern.blocks = parsedBlocks2Blocks(parsed);
-            }
+            pattern.isUpsell = pattern.name.indexOf("-upsell-") > -1;
+
             patterns.push(pattern);
 
             pattern.categories.forEach((p_cat: any) => {
-                const cat = categories.find((cat) => cat.title == p_cat);
+                if (p_cat === "tableberg") {
+                    return;
+                }
+                const cat = categories.find((cat) => cat.slug == p_cat);
                 if (!cat) {
                     categories.push({
-                        title: p_cat,
+                        slug: p_cat,
+                        title: catTitleMap.get(p_cat) || p_cat,
                         count: 1,
                     });
                 } else {
@@ -87,7 +66,10 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
             });
         });
 
-        return { patterns, categories };
+        return {
+            patterns,
+            categories,
+        };
     }, []);
 
     useEffect(() => {
@@ -96,7 +78,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
             return;
         }
         const newPage: any = [];
-        patterns.forEach((pattern) => {
+        patterns.forEach((pattern: any) => {
             if (pattern.categories.indexOf(categoryFilter) > -1) {
                 newPage.push(pattern);
             }
@@ -131,12 +113,12 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
                         {categories.map((cat) => {
                             return (
                                 <MenuItem
-                                    key={cat.title}
+                                    key={cat.slug}
                                     className="tableberg_icons_library_sidebar_item"
                                     // @ts-ignore
-                                    isPressed={categoryFilter === cat.title}
+                                    isPressed={categoryFilter === cat.slug}
                                     onClick={() => {
-                                        setCategoryFilter(cat.title);
+                                        setCategoryFilter(cat.slug);
                                     }}
                                 >
                                     <span>{cat?.title}</span>
@@ -160,33 +142,32 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
                         </button>
                     </div>
                     <div className="tableberg-pattern-library-body">
-                        {pageItems.map((pattern) => (
-                            <div
-                                className="tableberg-pattern-library-preview"
-                                onClick={() =>
-                                    pattern.blocks &&
-                                    onSelect(pattern.blocks[0])
-                                }
-                            >
-                                <div className="tableberg-pattern-library-preview-item">
-                                    {pattern.blocks ? (
+                        <div className="tableberg-pattern-library-grid">
+                            {pageItems.map((pattern) => (
+                                <div
+                                    className={classNames({
+                                        "tableberg-pattern-library-preview":
+                                            true,
+                                        "tableberg-pattern-library-preview-upsell":
+                                            pattern.isUpsell,
+                                    })}
+                                    onClick={() =>
+                                        pattern.blocks &&
+                                        onSelect(pattern.blocks[0])
+                                    }
+                                >
+                                    <div className="tableberg-pattern-library-preview-item">
                                         <BlockPreview
                                             blocks={pattern.blocks}
                                             viewportWidth={
                                                 pattern.viewportWidth
                                             }
                                         />
-                                    ) : (
-                                        <img
-                                            data-upsell
-                                            src={pattern.content}
-                                            className="tableberg-pattern-library-preview-img"
-                                        />
-                                    )}
+                                    </div>
+                                    <p>{pattern.title}</p>
                                 </div>
-                                <p>{pattern.title}</p>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -115,11 +115,6 @@ function edit({
     }
 
     useEffect(renderIframeContent, [styles, isPreview, attributes.content]);
-    useEffect(() => {
-        if (attributes.previewOnDeselect === undefined) {
-            setAttributes({ previewOnDeselect: true });
-        }
-    }, []);
 
     if (!isSelected && attributes.previewOnDeselect) {
         return <div {...blockProps}>

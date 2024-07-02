@@ -61,6 +61,7 @@ add_action('tab_fs_loaded', function () {
 	}
 });
 
+
 add_action('admin_init', function () {
 	if (!is_plugin_active('tableberg/tableberg.php')) {
 		if (is_plugin_active('tableberg-pro/tableberg-pro.php')) {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if ! wp core is-installed; then
+if ! wp core is-installed --allow-root; then
     echo "Installing core..."
     wp config create \
         --dbhost=db:3306 \
@@ -15,6 +15,7 @@ if ! wp core is-installed; then
         --admin_user="admin" \
         --admin_email="admin@dotcamp.com" \
         --admin_password="admin"  \
+        --url="http://localhost:$TABLEBERG_PORT" \
         --allow-root
 fi
 
@@ -24,7 +25,7 @@ wp option update home "http://localhost:$TABLEBERG_PORT" --allow-root
 wp option update siteurl "http://localhost:$TABLEBERG_PORT" --allow-root
 
 
-if ! wp plugin is-active tableberg; then
+if ! wp plugin is-active tableberg --allow-root; then
     echo "Activating plugin...";
     wp plugin activate tableberg --allow-root
 fi

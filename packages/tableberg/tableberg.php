@@ -51,6 +51,7 @@ if (!class_exists('Tableberg')) {
 
 
 			if (!\Tableberg\Freemius::isPro()) {
+
 				add_action('init', function () {
 					register_block_type(TABLEBERG_DIR_PATH . 'build/upsells-blocks/styled-list-dummy/block.json');
 					register_block_type(TABLEBERG_DIR_PATH . 'build/upsells-blocks/html-dummy/block.json');
@@ -68,17 +69,19 @@ if (!class_exists('Tableberg')) {
 		{
 			Tableberg\Activator::activate();
 		}
-		
+
 		public function deactivate_plugin()
 		{
 			Tableberg\Deactivator::deactivate();
 		}
 	}
-
 	new Tableberg();
 
 	add_action('init', function () {
 		Tableberg\Patterns\RegisterPatterns::categories();
-		Tableberg\Patterns\RegisterPatterns::all();
+		Tableberg\Patterns\RegisterPatterns::from_dir(__DIR__ . '/includes/Patterns/data');
+		if (!\Tableberg\Freemius::isPro()) {
+			Tableberg\Patterns\RegisterPatterns::upsells();
+		}
 	});
 }

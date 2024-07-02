@@ -180,7 +180,7 @@ class Utils
 		}
 		return $css;
 	}
-	public static function get_border_radius_style(array $object): array
+	public static function get_border_radius_style($object): array
 	{
 		if (is_string($object)) {
 			return [
@@ -197,7 +197,7 @@ class Utils
 		return $css;
 	}
 
-	public static function get_border_radius_var(array $object, string $prefix, &$hasValue = false): array
+	public static function get_border_radius_var($object, string $prefix, &$hasValue = false): array
 	{
 		if (is_string($object)) {
 			$hasValue = $object != '0px';

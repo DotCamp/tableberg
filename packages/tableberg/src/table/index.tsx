@@ -10,6 +10,7 @@ import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
 import { useDispatch } from "@wordpress/data";
+import { styles } from "@wordpress/icons";
 
 export const ALLOWED_BLOCKS = ["tableberg/cell"];
 
@@ -80,10 +81,13 @@ export const PrimaryTable = (
             className = row % 2 ? "tableberg-even-row" : "tableberg-odd-row";
         }
 
+        const rowStyle = attributes.rowStyles[i];
+
         return (
             <tr
                 style={{
-                    height: attributes.rowHeights[i],
+                    height: rowStyle?.height,
+                    background: rowStyle?.bgGradient || rowStyle?.background,
                 }}
                 className={className}
             ></tr>
@@ -101,15 +105,30 @@ export const PrimaryTable = (
             <table {...blockProps}>
                 <colgroup>
                     {fixedWidth
-                        ? attributes.colWidths.map(() => (
-                              <col
-                                  width={fixedWidth}
-                                  style={{ minWidth: fixedWidth }}
-                              />
-                          ))
-                        : attributes.colWidths.map((w: any) => (
-                              <col width={w} style={{ minWidth: w }} />
-                          ))}
+                        ? Array(attributes.cols)
+                              .fill("")
+                              .map(() => (
+                                  <col
+                                      width={fixedWidth}
+                                      style={{ minWidth: fixedWidth }}
+                                  />
+                              ))
+                        : Array(attributes.cols)
+                              .fill("")
+                              .map((_, i) => {
+                                  const colStyle = attributes.colStyles[i];
+                                  return (
+                                      <col
+                                          width={colStyle?.width}
+                                          style={{
+                                              minWidth: colStyle?.width,
+                                              background:
+                                                  colStyle?.bgGradient ||
+                                                  colStyle?.background,
+                                          }}
+                                      />
+                                  );
+                              })}
                 </colgroup>
                 {rowTemplate}
             </table>

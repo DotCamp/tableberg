@@ -1,0 +1,13 @@
+.components-tools-panel-item:has(.tableberg-border-with-radius-control-handle) {
+    margin-bottom: -15px !important;
+}
+.components-tools-panel-item:has(.tableberg-border-with-radius-control-handle.is-opened) {
+    border: 1px solid #ccc;
+}
+
+.tableberg-border-with-radius-control-handle {
+    .components-border-box-control {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}

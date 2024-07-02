@@ -9,9 +9,26 @@ require("dotenv").config({
 const BASE_URL = process.env.BLOCKS_LIBRARY_URL;
 const IMAGE_PADDING = 10;
 
-async function getDraftPosts() {
+function waitForCaptcha() {
+    return new Promise((resolve) => {
+        const readline = require("node:readline");
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+        rl.question(
+            `Please complete the CAPTCHA or bot verification manually`,
+            (name) => {
+                rl.close();
+                resolve();
+            },
+        );
+    });
+}
+
+async function getDraftPosts(page) {
     const response = await fetch(
-        `${BASE_URL}/wp-json/wp/v2/posts?context=edit&status=draft&_embed=wp:term&_fields=id,title,content,slug,excerpt,tags,categories,_links.wp:term`,
+        `${BASE_URL}/wp-json/wp/v2/posts?page=${page}&categories=7&context=edit&status=draft&_embed=wp:term&_fields=id,title,content,slug,excerpt,tags,categories,_links.wp:term`,
         {
             headers: {
                 Authorization: `Basic ${Buffer.from(
@@ -20,7 +37,11 @@ async function getDraftPosts() {
             },
         },
     );
-    return await response.json();
+    const res = await response.json();
+    if (res?.code === "rest_post_invalid_page_number") {
+        return [];
+    }
+    return res;
 }
 
 (async () => {
@@ -35,29 +56,34 @@ async function getDraftPosts() {
     try {
         await page.waitForSelector("#user_login", { timeout: 10000 });
     } catch (e) {
-        console.log(
-            "Please complete the CAPTCHA or bot verification manually.",
-        );
-        await page.waitForTimeout(30000);
+        await waitForCaptcha();
     }
 
     await page.type("#user_login", process.env.BLOCKS_LIBRARY_USERNAME);
     await page.type("#user_pass", process.env.BLOCKS_LIBRARY_PASSWORD);
     await page.click("#wp-submit");
 
-    await page.waitForNavigation({ waitUntil: "networkidle2" });
+    await page.waitForNavigation({
+        waitUntil: "networkidle2",
+        timeout: 120000,
+    });
 
-    // Get draft posts
-    const posts = await getDraftPosts();
-
-    const dir = "packages/tableberg/includes/Patterns/data/upsells";
+    const upsellDir = "packages/tableberg/includes/Patterns/upsells";
+    const imageDir = "packages/tableberg/includes/Patterns/images";
     const patternsDir = "packages/tableberg/includes/Patterns/data";
-    const proPatternsDir = "packages/pro/includes/Patterns/data";
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
+    const proPatternsDir = "packages/pro/includes/patterns";
+
+    if (!fs.existsSync(patternsDir)) {
+        fs.mkdirSync(patternsDir);
     }
     if (!fs.existsSync(proPatternsDir)) {
         fs.mkdirSync(proPatternsDir);
+    }
+    if (!fs.existsSync(imageDir)) {
+        fs.mkdirSync(imageDir);
+    }
+    if (!fs.existsSync(upsellDir)) {
+        fs.mkdirSync(upsellDir);
     }
 
     const getBoundingBoxWithChildren = async (element) => {
@@ -87,65 +113,103 @@ async function getDraftPosts() {
         };
     };
 
-    for (let i = 0; i < posts.length; i++) {
-        const post = posts[i];
-        if (!post.slug) {
-            continue;
-        }
-        const categories = post._embedded["wp:term"][0].map(
-            (term) => term.slug,
-        );
-        const tags = [];
-        let isPro = false;
-        post._embedded["wp:term"][1].forEach((tag) => {
-            if (tag.slug === "pro") {
-                isPro = true;
-                return;
+    const getPage = async (pageNum, after) => {
+        // Get draft posts
+        console.log(`Loading page: ${pageNum}`);
+        const posts = await getDraftPosts(pageNum);
+        console.log(`    Found ${posts.length} items.`);
+
+        for (let i = 0; i < posts.length; i++) {
+            const post = posts[i];
+            console.log('    Adding: ', post.slug);
+            if (!post.slug) {
+                continue;
             }
-            tags.push(tag.slug);
-        });
+            const categories = post._embedded["wp:term"][0].map(
+                (term) => term.slug,
+            );
+            const tags = [];
+            let isPro = false;
+            post._embedded["wp:term"][1].forEach((tag) => {
+                if (tag.slug === "pro") {
+                    isPro = true;
+                    return;
+                }
+                tags.push(tag.slug);
+            });
 
-        await page.goto(`${BASE_URL}/?p=${post.id}&preview=true`, {
-            waitUntil: "networkidle0",
-        });
+            await page.goto(`${BASE_URL}/?p=${post.id}&preview=true`, {
+                waitUntil: "networkidle0",
+                timeout: 120000,
+            });
 
-        await page.waitForSelector(".wp-block-tableberg-wrapper", {
-            visible: true,
-        });
+            await page.waitForSelector(".wp-block-tableberg-wrapper", {
+                visible: true,
+            });
 
-        const element = await page.$(".wp-block-tableberg-wrapper");
-        const boundingBox = await getBoundingBoxWithChildren(element);
-        
-        const pattern = {
-            title: post.title.rendered,
-            description: post.excerpt.rendered,
-            categories: ["tableberg", "pro", ...categories],
-            keywords: ["table", "tableberg", ...tags],
-            content: post.content.raw,
-            viewportWidth: Math.ceil(boundingBox.width)
-        };
+            const element = await page.$(".wp-block-tableberg-wrapper");
+            const boundingBox = await getBoundingBoxWithChildren(element);
 
-        if (!isPro) {
-            fs.writeFileSync(path.resolve(patternsDir, post.slug + '.json'), JSON.stringify(pattern), 'utf8');
-            continue;
+            const pattern = {
+                title: post.title.rendered,
+                description: post.excerpt.rendered,
+                categories,
+                keywords: ["table", "tableberg", ...tags],
+                content: post.content.raw,
+                viewportWidth: Math.ceil(boundingBox.width),
+            };
+
+            if (!isPro) {
+                fs.writeFileSync(
+                    path.resolve(patternsDir, post.slug + ".json"),
+                    JSON.stringify(pattern),
+                    "utf8",
+                );
+                continue;
+            }
+
+            const screenshotPath = path.join(imageDir, `${post.slug}.png`);
+            fs.writeFileSync(
+                path.resolve(proPatternsDir, post.slug + ".json"),
+                JSON.stringify(pattern),
+                "utf8",
+            );
+            const imageUrl = screenshotPath
+                .replaceAll("\\", "/")
+                .replace("packages/tableberg", "");
+            pattern.content = `<!-- wp:image {"id":314,"sizeSlug":"full","linkDestination":"none","align":"center"} -->
+            <figure class="wp-block-image aligncenter size-full"><img src="::PLUGIN_URL::${imageUrl}" alt=""/></figure>
+            <!-- /wp:image -->`;
+            fs.writeFileSync(
+                path.resolve(upsellDir, "upsell-" + post.slug + ".json"),
+                JSON.stringify(pattern),
+                "utf8",
+            );
+
+            await page.screenshot({
+                path: screenshotPath,
+                clip: {
+                    x: Math.max(0, boundingBox.x - IMAGE_PADDING),
+                    y: Math.max(0, boundingBox.y - IMAGE_PADDING),
+                    width: boundingBox.width + 4 * IMAGE_PADDING,
+                    height: boundingBox.height + 2 * IMAGE_PADDING,
+                },
+            });
         }
 
-        const screenshotPath = path.join(dir, `${post.slug}.png`);
-        fs.writeFileSync(path.resolve(proPatternsDir, post.slug + '.json'), JSON.stringify(pattern), 'utf8');
-        pattern.content = screenshotPath.replaceAll('\\', '/').replace('packages/tableberg/', '');
-        fs.writeFileSync(path.resolve(patternsDir, 'upsell-' + post.slug + '.json'), JSON.stringify(pattern), 'utf8');
-       
+        await after(posts);
+    };
 
-        await page.screenshot({
-            path: screenshotPath,
-            clip: {
-                x: Math.max(0, boundingBox.x - IMAGE_PADDING),
-                y: Math.max(0, boundingBox.y - IMAGE_PADDING),
-                width: boundingBox.width + 4 * IMAGE_PADDING,
-                height: boundingBox.height + 2 * IMAGE_PADDING,
-            },
-        });
-    }
+    let pageNum = 1;
 
-    await browser.close();
+    const afterLoaded = async (posts) => {
+        if (posts.length > 0) {
+            pageNum++;
+            await getPage(pageNum, afterLoaded);
+        } else {
+            await browser.close();
+        }
+    };
+
+    await getPage(pageNum, afterLoaded);
 })();

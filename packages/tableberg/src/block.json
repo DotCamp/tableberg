@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "version": "0.3.1",
+    "version": "0.5.2",
     "name": "tableberg/table",
     "title": "Tableberg",
     "category": "design",
@@ -11,7 +11,7 @@
         "html": false
     },
     "attributes": {
-        "version" :{
+        "version": {
             "type": "string",
             "default": ""
         },
@@ -23,7 +23,7 @@
             "type": "number",
             "default": 2
         },
-        "cells" : {
+        "cells": {
             "type": "number",
             "default": 0
         },
@@ -31,13 +31,25 @@
             "type": "boolean",
             "default": false
         },
+
         "colWidths": {
             "type": "array",
-            "default": []
+            "default": [],
+            "_comment": "REMOVE THIS IN FUTURE"
         },
         "rowHeights": {
             "type": "array",
-            "default": []
+            "default": [],
+            "_comment": "REMOVE THIS IN FUTURE"
+        },
+
+        "colStyles": {
+            "type": "object",
+            "default": {}
+        },
+        "rowStyles": {
+            "type": "object",
+            "default": {}
         },
         "hasTableCreated": {
             "type": "boolean",
@@ -121,7 +133,7 @@
                 "width": "1px"
             }
         },
-        "hideCellOutsideBorders" :{
+        "hideCellOutsideBorders": {
             "type": "boolean",
             "default": true
         },
@@ -149,7 +161,7 @@
             "type": "string",
             "default": ""
         },
-        "responsive" : {
+        "responsive": {
             "type": "object",
             "default": {
                 "last": "primary",
@@ -157,7 +169,6 @@
             }
         },
 
-        
         "stickyTopRow": {
             "type": "boolean",
             "default": false

@@ -18,7 +18,6 @@ import {
     Flex,
     Placeholder,
     TextControl,
-    __experimentalGrid as Grid,
 } from "@wordpress/components";
 import { useDispatch } from "@wordpress/data";
 import { useState } from "react";
