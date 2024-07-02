@@ -8,12 +8,7 @@ import { ColorControl } from "@tableberg/components";
 
 import { useDispatch, useSelect } from "@wordpress/data";
 
-import {
-    arrowUp,
-    arrowDown,
-    arrowLeft,
-    arrowRight,
-} from "@wordpress/icons";
+import { arrowUp, arrowDown, arrowLeft, arrowRight } from "@wordpress/icons";
 
 import { DropdownOption } from "@wordpress/components/build-types/dropdown-menu/types";
 import { BlockInstance, cloneBlock } from "@wordpress/blocks";
@@ -23,7 +18,10 @@ import {
     TablebergCellInstance,
 } from "@tableberg/shared/types";
 
-import {DuplicateRowIcon, DuplicateColumnIcon} from "@tableberg/shared/icons/enhancements";
+import {
+    DuplicateRowIcon,
+    DuplicateColumnIcon,
+} from "@tableberg/shared/icons/enhancements";
 import TablebergProIcon from "@tableberg/shared/icons/tableberg-pro";
 
 import { ProBlockProps } from "..";
@@ -86,15 +84,19 @@ const duplicateRow = (
         cellBlocks.push(...clonedCells);
     }
 
-    const rowHeights = tableBlock.attributes.rowHeights;
-    const copyHeights = rowHeights.slice(startRow, endRow);
-    rowHeights.splice(endRow, 0, ...copyHeights);
+    const rowStyles = { ...tableBlock.attributes.rowStyles };
+
+    for (let i = 0; i < count; i++) {
+        rowStyles[endRow + i] = {
+            ...rowStyles[startRow + i],
+        };
+    }
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         rows: tableBlock.attributes.rows + count,
         cells: cellBlocks.length,
-        rowHeights,
+        rowStyles,
     });
 };
 
@@ -159,15 +161,19 @@ const duplicateCol = (
         pendingCells = [];
     }
 
-    const colWidths = tableBlock.attributes.colWidths;
-    const copyWidths = colWidths.slice(startCol, endCol);
-    colWidths.splice(endCol, 0, ...copyWidths);
+    const colStyles = { ...tableBlock.attributes.colStyles };
+
+    for (let i = 0; i < count; i++) {
+        colStyles[endCol + i] = {
+            ...colStyles[startCol + i],
+        };
+    }
 
     storeActions.replaceInnerBlocks(tableBlock.clientId, cellBlocks, false);
     storeActions.updateBlockAttributes(tableBlock.clientId, {
         cols: tableBlock.attributes.cols + count,
         cells: cellBlocks.length,
-        colWidths,
+        colStyles,
     });
 };
 
