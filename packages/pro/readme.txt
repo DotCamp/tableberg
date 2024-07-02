@@ -77,6 +77,8 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * NEW: Item spacing inside cells
 * PRO: NEW: Added badge ribbon
 * PRO: NEW: Sort rows & columns by drag & drop
+* PRO: NEW: Individual Row/Col background
+* PRO: NEW: Individual Row/Col border with radius
 * IMPROVE: Control cell outside border
 * IMPROVE: Deactivate pro version when free version is deactivated
 * IMPROVE: Show Tableberg when searched for Row/Column in editor
