@@ -465,7 +465,7 @@ function TablebergControls({
                         })
                     }
                 />
-                {cellBlock && (
+                {cellBlock && IS_PRO && (
                     <>
                         <ColorControl
                             label={__("Row Background Color", "tableberg")}
@@ -508,6 +508,32 @@ function TablebergControls({
                             }
                         />
                     </>
+                )}
+                {!IS_PRO && (
+                    <LockedControl inToolsPanel isEnhanced selected="row-bg">
+                        <ColorControl
+                            label={__(
+                                "[PRO] Row Background Color",
+                                "tableberg",
+                            )}
+                            colorValue={null}
+                            onColorChange={() => {}}
+                            onDeselect={() => {}}
+                        />
+                    </LockedControl>
+                )}
+                {!IS_PRO && (
+                    <LockedControl inToolsPanel isEnhanced selected="col-bg">
+                        <ColorControl
+                            label={__(
+                                "[PRO] Col Background Color",
+                                "tableberg",
+                            )}
+                            colorValue={null}
+                            onColorChange={() => {}}
+                            onDeselect={() => {}}
+                        />
+                    </LockedControl>
                 )}
                 {!IS_PRO && (
                     <LockedControl inToolsPanel isEnhanced selected="cell-bg">

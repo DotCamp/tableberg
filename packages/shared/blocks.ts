@@ -83,42 +83,63 @@ export const ENHANCED_FEATURES = [
         name: "sticky-top-row",
         title: "Sticky Top Row",
         icon: blockIcon,
-        upsellText: "<strong>Sticky Top Row</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+        upsellText:
+            "<strong>Sticky Top Row</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
     {
         name: "sticky-first-col",
         title: "Sticky First Column",
         icon: blockIcon,
-        upsellText: "<strong>Sticky First Column</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+        upsellText:
+            "<strong>Sticky First Column</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
     {
         name: "cell-bg",
         title: "Individual Cell Background",
         icon: blockIcon,
-        upsellText: "<strong>Individual Cell Background</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+        upsellText:
+            "<strong>Individual Cell Background</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "row-bg",
+        title: "Individual Row Background",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Individual Row Background</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "col-bg",
+        title: "Individual Column Background",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Individual Column Background</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
     {
         name: "duplicate-row-col",
         title: "Duplicate Rows and Columns",
         icon: blockIcon,
-        upsellText: "<strong>Duplicate Rows and Columns</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+        upsellText:
+            "<strong>Duplicate Rows and Columns</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
     {
         name: "move-row-col",
         title: "Move Rows and Columns",
         icon: blockIcon,
-        upsellText: "<strong>Move Rows and Columns</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+        upsellText:
+            "<strong>Move Rows and Columns</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
     {
         name: "row-only-border",
         title: "Row Only Border",
         icon: blockIcon,
-        upsellText: "<strong>Row Only Border</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+        upsellText:
+            "<strong>Row Only Border</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
     {
         name: "col-only-border",
         title: "Column Only Border",
         icon: blockIcon,
-        upsellText: "<strong>Column Only Border</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+        upsellText:
+            "<strong>Column Only Border</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
 ] as const;
