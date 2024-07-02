@@ -71,6 +71,16 @@
                 border-right: var(--tableberg-inner-border-right);
                 border-bottom: var(--tableberg-inner-border-bottom);
                 border-left: var(--tableberg-inner-border-left);
+
+                &:first-of-type {
+                    border-left: var(--tableberg-inner-border-left-first, var(--tableberg-inner-border-left));
+                }
+            }
+
+            tr:first-of-type {
+                .wp-block-tableberg-cell {
+                    border-top: var(--tableberg-inner-border-top-first, var(--tableberg-inner-border-top));
+                }
             }
         }
     }

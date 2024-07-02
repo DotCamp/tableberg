@@ -48,8 +48,22 @@ class Table
 		$table_spacing = Utils::get_spacing_css($cellSpacing);
 
 
-		$inner_border_variables = $attributes['enableInnerBorder'] ? Utils::get_border_variables_css($attributes['innerBorder'], 'inner') : [];
-		$cell_radius = Utils::get_border_radius_var($attributes['cellBorderRadius'], '--tableberg-cell', $separateBorder);
+		$inner_border_variables = [];
+		if ($attributes['enableInnerBorder']) {
+			$inner_border_variables = Utils::get_border_variables_css($attributes['innerBorder'], 'inner');
+		}
+		if (!isset($table_spacing['top']) || $table_spacing['top'] == '0') {
+			$inner_border_variables["--tableberg-inner-border-top"] = "none";
+			$inner_border_variables["--tableberg-inner-border-top-first"] = $inner_border_variables["--tableberg-inner-border-bottom"];
+		}
+
+		if (!isset($table_spacing['left']) || $table_spacing['left'] == '0') {
+			$inner_border_variables["--tableberg-inner-border-left"] = "none";
+			$inner_border_variables["--tableberg-inner-border-left-first"] = $inner_border_variables["--tableberg-inner-border-right"];
+		}
+
+
+		$cell_radius = Utils::get_border_radius_var($attributes['cellBorderRadius'], '--tableberg-cell');
 
 		$styles = [
 			'width' => $attributes['tableWidth'],
@@ -67,18 +81,6 @@ class Table
 			+ Utils::get_spacing_style($attributes['cellPadding'], '--tableberg-cell-padding')
 			+ $inner_border_variables
 			+ $cell_radius;
-
-		foreach (['top', 'left'] as $k) {
-			if (isset($cellSpacing[$k]) && $cellSpacing[$k] !== '0') {
-				$separateBorder = true;
-			}
-		}
-
-		if ($separateBorder) {
-			$styles['border-collapse'] = 'separate';
-		} else {
-			$styles['border-collapse'] = 'collapse';
-		}
 
 		return Utils::generate_css_string($styles);
 	}
@@ -266,7 +268,7 @@ class Table
 
 		$table = '<table ' . $table_attrs . ' >' . $colGroup . $content . '</table>';
 
-		
+
 		self::$rows = [];
 		// exit();
 
