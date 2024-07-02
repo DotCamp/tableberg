@@ -185,29 +185,34 @@ export const CellBlockPro = ({
         blockEditorStore,
     ) as any;
 
-    const { storeSelect, tableAttrs, setTableAttrs, tableBlock } = useSelect(
-        (select) => {
-            const storeSelect: BlockEditorStoreSelectors = select(
-                blockEditorStore,
-            ) as any;
+    const {
+        storeSelect,
+        tableAttrs,
+        setTableAttrs,
+        tableBlock,
+        rowStyle,
+        colStyle,
+    } = useSelect((select) => {
+        const storeSelect: BlockEditorStoreSelectors = select(
+            blockEditorStore,
+        ) as any;
 
-            const tableBlockId = storeSelect.getBlockRootClientId(
-                props.clientId,
-            )!;
-            const tableBlock = storeSelect.getBlock(tableBlockId)!;
+        const tableBlockId = storeSelect.getBlockRootClientId(props.clientId)!;
+        const tableBlock = storeSelect.getBlock(tableBlockId)!;
 
-            const setTableAttrs = (attrs: Partial<TablebergBlockAttrs>) =>
-                storeActions.updateBlockAttributes(tableBlockId, attrs);
+        const setTableAttrs = (attrs: Partial<TablebergBlockAttrs>) =>
+            storeActions.updateBlockAttributes(tableBlockId, attrs);
+        const tableAttrs = tableBlock.attributes as TablebergBlockAttrs;
 
-            return {
-                storeSelect,
-                tableBlock,
-                tableAttrs: tableBlock.attributes as TablebergBlockAttrs,
-                setTableAttrs,
-            };
-        },
-        [],
-    );
+        return {
+            storeSelect,
+            tableBlock,
+            tableAttrs,
+            setTableAttrs,
+            rowStyle: tableAttrs.rowStyles[props.attributes.row],
+            colStyle: tableAttrs.colStyles[props.attributes.col],
+        };
+    }, []);
 
     const attrs = props.attributes;
 
@@ -223,6 +228,22 @@ export const CellBlockPro = ({
         } else {
             moveCol(storeActions, tableBlockFresh, subject.col, target.col);
         }
+    };
+    const setRowStyle = (styles: TablebergBlockAttrs["rowStyles"][number]) => {
+        const rowStyles = { ...tableAttrs.rowStyles };
+        rowStyles[attrs.row] = {
+            ...rowStyles[attrs.row],
+            ...styles,
+        };
+        setTableAttrs({ rowStyles });
+    };
+    const setColStyle = (styles: TablebergBlockAttrs["colStyles"][number]) => {
+        const colStyles = { ...tableAttrs.colStyles };
+        colStyles[attrs.col] = {
+            ...colStyles[attrs.col],
+            ...styles,
+        };
+        setTableAttrs({ colStyles });
     };
 
     const proProps = { DragNDropSorting, makeMove };
@@ -339,6 +360,46 @@ export const CellBlockPro = ({
                             }
                             onDeselect={() =>
                                 props.setAttributes({
+                                    background: undefined,
+                                    bgGradient: undefined,
+                                })
+                            }
+                        />
+                        <ColorControl
+                            label="[PRO] Row Background Color"
+                            colorValue={rowStyle?.background}
+                            gradientValue={rowStyle?.bgGradient}
+                            onColorChange={(background: any) =>
+                                setRowStyle({ background })
+                            }
+                            allowGradient
+                            onGradientChange={(bgGradient: any) =>
+                                setRowStyle({
+                                    bgGradient,
+                                })
+                            }
+                            onDeselect={() =>
+                                setRowStyle({
+                                    background: undefined,
+                                    bgGradient: undefined,
+                                })
+                            }
+                        />
+                        <ColorControl
+                            label="[PRO] Col Background Color"
+                            colorValue={colStyle?.background}
+                            gradientValue={colStyle?.bgGradient}
+                            onColorChange={(background: any) =>
+                                setColStyle({ background })
+                            }
+                            allowGradient
+                            onGradientChange={(bgGradient: any) =>
+                                setColStyle({
+                                    bgGradient,
+                                })
+                            }
+                            onDeselect={() =>
+                                setColStyle({
                                     background: undefined,
                                     bgGradient: undefined,
                                 })

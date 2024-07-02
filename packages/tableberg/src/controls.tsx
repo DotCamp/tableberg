@@ -465,49 +465,16 @@ function TablebergControls({
                         })
                     }
                 />
-                {cellBlock && IS_PRO && (
-                    <>
+
+                {!IS_PRO && (
+                    <LockedControl inToolsPanel isEnhanced selected="cell-bg">
                         <ColorControl
-                            label={__("Row Background Color", "tableberg")}
-                            colorValue={rowStyle?.background}
-                            gradientValue={rowStyle?.bgGradient}
-                            onColorChange={(background: any) =>
-                                setRowStyle({ background })
-                            }
-                            allowGradient
-                            onGradientChange={(bgGradient: any) =>
-                                setRowStyle({
-                                    bgGradient,
-                                })
-                            }
-                            onDeselect={() =>
-                                setRowStyle({
-                                    background: undefined,
-                                    bgGradient: undefined,
-                                })
-                            }
+                            label={__("[PRO] Cell Background", "tableberg")}
+                            colorValue={null}
+                            onColorChange={() => {}}
+                            onDeselect={() => {}}
                         />
-                        <ColorControl
-                            label={__("Col Background Color", "tableberg")}
-                            colorValue={colStyle?.background}
-                            gradientValue={colStyle?.bgGradient}
-                            onColorChange={(background: any) =>
-                                setColStyle({ background })
-                            }
-                            allowGradient
-                            onGradientChange={(bgGradient: any) =>
-                                setColStyle({
-                                    bgGradient,
-                                })
-                            }
-                            onDeselect={() =>
-                                setColStyle({
-                                    background: undefined,
-                                    bgGradient: undefined,
-                                })
-                            }
-                        />
-                    </>
+                    </LockedControl>
                 )}
                 {!IS_PRO && (
                     <LockedControl inToolsPanel isEnhanced selected="row-bg">
@@ -529,16 +496,6 @@ function TablebergControls({
                                 "[PRO] Col Background Color",
                                 "tableberg",
                             )}
-                            colorValue={null}
-                            onColorChange={() => {}}
-                            onDeselect={() => {}}
-                        />
-                    </LockedControl>
-                )}
-                {!IS_PRO && (
-                    <LockedControl inToolsPanel isEnhanced selected="cell-bg">
-                        <ColorControl
-                            label={__("[PRO] Cell Background", "tableberg")}
                             colorValue={null}
                             onColorChange={() => {}}
                             onDeselect={() => {}}
