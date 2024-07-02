@@ -66,6 +66,7 @@ import TablebergProIcon from "@tableberg/shared/icons/tableberg-pro";
 import { UpsellEnhancedModal } from "../components/UpsellModal";
 import {
     getBorderCSS,
+    getBorderRadiusVar,
     getSpacingCssSingle,
 } from "@tableberg/shared/utils/styling-helpers";
 import {
@@ -743,6 +744,8 @@ function edit(
         rowStyle,
         colBorders,
         rowBorders,
+        colRadius,
+        rowRadius,
     } = useSelect(
         (select) => {
             const storeSelect = select(
@@ -771,6 +774,16 @@ function edit(
             const colBorders = getBorderVariablesCss(colStyle?.border, "col");
             const rowBorders = getBorderVariablesCss(rowStyle?.border, "row");
 
+            const colRadius = getBorderRadiusVar(
+                colStyle?.borderRadius,
+                "--tableberg-col",
+            );
+            
+            const rowRadius = getBorderRadiusVar(
+                rowStyle?.borderRadius,
+                "--tableberg-row",
+            );
+
             return {
                 storeSelect,
                 tableBlock,
@@ -784,6 +797,8 @@ function edit(
                 rowStyle,
                 colBorders,
                 rowBorders,
+                colRadius,
+                rowRadius,
             };
         },
         [clientId],
@@ -833,6 +848,8 @@ function edit(
                     : undefined,
             ...colBorders,
             ...rowBorders,
+            ...colRadius,
+            ...rowRadius,
         },
         ref: cellRef,
         className: classNames({

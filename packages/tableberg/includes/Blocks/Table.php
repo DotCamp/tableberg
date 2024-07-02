@@ -215,7 +215,10 @@ class Table
 			]);
 
 			$colGroup .= '<col style="' . $colCss . '"/>';
-			$colBorders[$i] = Utils::generate_css_string(Utils::get_border_variables_css($colStyle['border'] ?? [], 'col'));
+			$colBorders[$i] = Utils::generate_css_string(
+				Utils::get_border_variables_css($colStyle['border'] ?? [], 'col')
+				+ Utils::get_border_radius_var($colStyle['borderRadius'] ?? [], '--tableberg-col')
+			);
 		}
 
 		$colGroup .= '</colgroup>';
@@ -226,7 +229,7 @@ class Table
 			$rowStyle = $attributes['rowStyles'][$i] ?? [];
 			$rowCss = Utils::generate_css_string([
 				'height' => Utils::get_spacing_css_single($rowStyle['height'] ?? ''),
-			]);
+			] + Utils::get_border_radius_var($rowStyle['borderRadius'] ?? [], '--tableberg-row'));
 			$tagName = 'td';
 			$trClasses = '';
 			$isEven = $i % 2 === 0;
@@ -261,7 +264,7 @@ class Table
 			$content .= '<tr class="' . $trClasses . '" style="' . $rowStyleCss . '">';
 			for ($j = 0; $j < $attributes['cols']; $j++) {
 				$cell = self::$rows[$i][$j] ?? '';
-				$cell = HtmlUtils::append_attr_value($cell, $tagName, $rowCss.$colBorders[$j], 'style');
+				$cell = HtmlUtils::append_attr_value($cell, $tagName, $rowCss . $colBorders[$j], 'style');
 				$content .= $cell;
 			}
 			$content .= '</tr>';
