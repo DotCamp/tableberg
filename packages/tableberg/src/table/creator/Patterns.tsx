@@ -16,17 +16,21 @@ import { useSelect } from "@wordpress/data";
 import { __ } from "@wordpress/i18n";
 import { BlockInstance } from "@wordpress/blocks";
 import classNames from "classnames";
+
+import { UpsellPatternsModal } from "../../components/UpsellModal";
+import { createPortal } from "react-dom";
+
 interface PatternLibraryProps {
     onClose: () => void;
     onSelect: (block: BlockInstance) => void;
 }
 
-const theDiv = document.createElement("div");
-
 function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
     const [search, setSearch] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
     const [pageItems, setPageItems] = useState<any[]>([]);
+
+    const [upsell, setUpsell] = useState<string | null>(null);
 
     const { categories, patterns } = useSelect((select) => {
         // @ts-ignore
@@ -45,7 +49,8 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
             if (!pattern.name.startsWith("tableberg/")) {
                 return;
             }
-            pattern.isUpsell = pattern.name.indexOf("-upsell-") > -1;
+            
+            pattern.isUpsell = pattern.name.indexOf("/upsell-") > -1;
 
             patterns.push(pattern);
 
@@ -152,8 +157,9 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
                                             pattern.isUpsell,
                                     })}
                                     onClick={() =>
-                                        pattern.blocks &&
-                                        onSelect(pattern.blocks[0])
+                                        pattern.isUpsell
+                                            ? setUpsell(pattern.name.substring(17))
+                                            : onSelect(pattern.blocks[0])
                                     }
                                 >
                                     <div className="tableberg-pattern-library-preview-item">
@@ -171,6 +177,14 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
                     </div>
                 </div>
             </div>
+            {upsell &&
+                createPortal(
+                    <UpsellPatternsModal
+                        onClose={() => setUpsell(null)}
+                        selected={upsell}
+                    />,
+                    document.body,
+                )}
         </Modal>
     );
 }

@@ -113,7 +113,7 @@ async function getDraftPosts(page) {
         };
     };
 
-    const getPage = async (pageNum, after) => {
+    const getPage = async (pageNum, after, upsellJson) => {
         // Get draft posts
         console.log(`Loading page: ${pageNum}`);
         const posts = await getDraftPosts(pageNum);
@@ -121,7 +121,7 @@ async function getDraftPosts(page) {
 
         for (let i = 0; i < posts.length; i++) {
             const post = posts[i];
-            console.log('    Adding: ', post.slug);
+            console.log(`    Adding: [${post.id}] ${post.slug}`);
             if (!post.slug) {
                 continue;
             }
@@ -186,6 +186,13 @@ async function getDraftPosts(page) {
                 "utf8",
             );
 
+            upsellJson.push({
+                name: post.slug,
+                title: post.title.rendered,
+                upsellText: post.excerpt.rendered,
+                image: imageUrl,
+            });
+
             await page.screenshot({
                 path: screenshotPath,
                 clip: {
@@ -202,14 +209,22 @@ async function getDraftPosts(page) {
 
     let pageNum = 1;
 
+    const upsellJson = [];
+
     const afterLoaded = async (posts) => {
         if (posts.length > 0) {
             pageNum++;
-            await getPage(pageNum, afterLoaded);
+            await getPage(pageNum, afterLoaded, upsellJson);
         } else {
             await browser.close();
+
+            fs.writeFileSync(
+                path.resolve("packages/tableberg/src/components", "patterns.ts"),
+                'export const PATTERN_UPSELLS = ' + JSON.stringify(upsellJson) + ';',
+                "utf8",
+            );
         }
     };
 
-    await getPage(pageNum, afterLoaded);
+    await getPage(pageNum, afterLoaded, upsellJson);
 })();
