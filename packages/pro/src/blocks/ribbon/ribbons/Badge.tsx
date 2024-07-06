@@ -25,6 +25,7 @@ interface BadgeAttrs {
     originY: "top" | "bottom" | "center";
     x: string;
     y: string;
+    rotate: number;
 }
 
 const getBlockStyle = (attrs: RibbonAttrs): CSSProperties => {
@@ -37,19 +38,19 @@ const getBlockStyle = (attrs: RibbonAttrs): CSSProperties => {
 
     const xOrigin = ind?.originX || "left";
     const yOrigin = ind?.originY || "top";
-    let translateX = '0px';
-    let translateY = '0px';
+    let translateX = "0px";
+    let translateY = "0px";
 
     if (xOrigin === "center") {
         style.left = `calc(50% + (${ind?.x || "0px"}))`;
-        translateX = '-50%';
+        translateX = "-50%";
     } else {
         style[xOrigin] = ind?.x;
     }
 
     if (yOrigin === "center") {
-        style.top = `calc(50% + (${ind?.x || "0px"}))`;
-        translateY = '-50%';
+        style.top = `calc(50% + (${ind?.y || "0px"}))`;
+        translateY = "-50%";
     } else {
         style[yOrigin] = ind?.y;
     }
