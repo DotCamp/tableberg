@@ -112,7 +112,7 @@ class Ribbon
         $style = Utils::generate_css_string([
             "color" => $attributes["color"] ?? '',
             "font-size" => $attributes["fontSize"] ?? '',
-            "transform" => "translate(" . $translateX . ", " . $translateY . ")",
+            "transform" => "translate(" . $translateX . ", " . $translateY . ")" . (isset($ind['rotate']) ? ' rotate(' . $ind['rotate'] . 'deg)' : ''),
         ] + $position);
 
         $contentStyle = Utils::generate_css_string(

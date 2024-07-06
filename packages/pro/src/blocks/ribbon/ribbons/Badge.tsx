@@ -14,6 +14,7 @@ import {
 } from "@tableberg/shared/utils/styling-helpers";
 import {
     PanelBody,
+    RangeControl,
     __experimentalToggleGroupControl as ToggleGroupControl,
     __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from "@wordpress/components";
@@ -56,6 +57,10 @@ const getBlockStyle = (attrs: RibbonAttrs): CSSProperties => {
     }
 
     style.transform = `translate(${translateX}, ${translateY})`;
+
+    if (ind?.rotate) {
+        style.transform += ` rotate(${ind?.rotate}deg)`;
+    }
 
     return style;
 };
@@ -153,6 +158,16 @@ export default function Badge({ attrs, setAttributes, clientId }: RibbonProps) {
                         value={iAttrs.y}
                         onChange={(y) => setAttrs({ y })}
                         rangeConfig={RANGE_CONFIG_POSITION}
+                    />
+                    <div style={{ marginTop: "30px" }} />
+                    <RangeControl
+                        label="Rotation"
+                        value={iAttrs.rotate}
+                        onChange={(rotate) => setAttrs({ rotate })}
+                        min={-360}
+                        max={360}
+                        step={1}
+                        initialPosition={0}
                     />
                 </PanelBody>
             </InspectorControls>
