@@ -21,8 +21,8 @@ import {
 interface BadgeAttrs {
     padding: any;
     borderRadius: any;
-    originX: "left" | "right";
-    originY: "top" | "bottom";
+    originX: "left" | "right" | "center";
+    originY: "top" | "bottom" | "center";
     x: string;
     y: string;
 }
@@ -37,9 +37,24 @@ const getBlockStyle = (attrs: RibbonAttrs): CSSProperties => {
 
     const xOrigin = ind?.originX || "left";
     const yOrigin = ind?.originY || "top";
+    let translateX = '0px';
+    let translateY = '0px';
 
-    style[xOrigin] = ind?.x;
-    style[yOrigin] = ind?.y;
+    if (xOrigin === "center") {
+        style.left = `calc(50% + (${ind?.x || "0px"}))`;
+        translateX = '-50%';
+    } else {
+        style[xOrigin] = ind?.x;
+    }
+
+    if (yOrigin === "center") {
+        style.top = `calc(50% + (${ind?.x || "0px"}))`;
+        translateY = '-50%';
+    } else {
+        style[yOrigin] = ind?.y;
+    }
+
+    style.transform = `translate(${translateX}, ${translateY})`;
 
     return style;
 };
@@ -95,50 +110,45 @@ export default function Badge({ attrs, setAttributes, clientId }: RibbonProps) {
             </InspectorControls>
             <InspectorControls>
                 <PanelBody initialOpen>
-                    <div
-                        style={{
-                            display: "flex",
-                            gap: "5px",
-                            alignItems: "start",
-                            justifyContent: "space-between",
-                        }}
+                    <ToggleGroupControl
+                        label="Horizontal Position"
+                        value={iAttrs.originX}
+                        isBlock
+                        onChange={(originX: any) => setAttrs({ originX })}
                     >
-                        <ToggleGroupControl
-                            label="Origin X"
-                            value={iAttrs.originX}
-                            isBlock
-                            onChange={(originX: any) => setAttrs({ originX })}
-                        >
-                            <ToggleGroupControlOption
-                                value="left"
-                                label="Left"
-                            />
-                            <ToggleGroupControlOption
-                                value="right"
-                                label="Right"
-                            />
-                        </ToggleGroupControl>
-                        <ToggleGroupControl
-                            label="origin Y"
-                            value={iAttrs.originY}
-                            isBlock
-                            onChange={(originY: any) => setAttrs({ originY })}
-                        >
-                            <ToggleGroupControlOption value="top" label="Top" />
-                            <ToggleGroupControlOption
-                                value="bottom"
-                                label="Bottom"
-                            />
-                        </ToggleGroupControl>
-                    </div>
+                        <ToggleGroupControlOption value="left" label="Left" />
+                        <ToggleGroupControlOption
+                            value="center"
+                            label="Center"
+                        />
+                        <ToggleGroupControlOption value="right" label="Right" />
+                    </ToggleGroupControl>
+
                     <SizeControl
-                        label="Position X"
+                        label="Horizontal Position Offset"
                         value={iAttrs.x}
                         onChange={(x) => setAttrs({ x })}
                         rangeConfig={RANGE_CONFIG_POSITION}
                     />
+                    <div style={{ marginTop: "20px" }} />
+                    <ToggleGroupControl
+                        label="Vertical Position"
+                        value={iAttrs.originY}
+                        isBlock
+                        onChange={(originY: any) => setAttrs({ originY })}
+                    >
+                        <ToggleGroupControlOption value="top" label="Top" />
+                        <ToggleGroupControlOption
+                            value="center"
+                            label="Center"
+                        />
+                        <ToggleGroupControlOption
+                            value="bottom"
+                            label="Bottom"
+                        />
+                    </ToggleGroupControl>
                     <SizeControl
-                        label="Position Y"
+                        label="Vertical Position Offset"
                         value={iAttrs.y}
                         onChange={(y) => setAttrs({ y })}
                         rangeConfig={RANGE_CONFIG_POSITION}

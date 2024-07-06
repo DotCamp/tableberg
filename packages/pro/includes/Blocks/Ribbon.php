@@ -83,12 +83,37 @@ class Ribbon
     private static function render_badge(array $attributes): string
     {
         $ind = $attributes['individual'];
+
+        $position = [];
+
+        $translateX = '0px';
+        $translateY = '0px';
+
+        if ($ind['originX'] == 'center') {
+            if (!$ind["x"]) {
+                $ind["x"] = '0px';
+            }
+            $position['left'] = 'calc(50% + (' . $ind['x'] . '))';
+            $translateX = '-50%';
+        } else {
+            $position[$ind["originX"]] = $ind["x"];
+        }
+
+        if ($ind['originY'] == 'center') {
+            if (!$ind["y"]) {
+                $ind["y"] = '0px';
+            }
+            $position['top'] = 'calc(50% + (' . $ind['y'] . '))';
+            $translateY = '-50%';
+        } else {
+            $position[$ind["originY"]] = $ind["y"];
+        }
+
         $style = Utils::generate_css_string([
             "color" => $attributes["color"] ?? '',
             "font-size" => $attributes["fontSize"] ?? '',
-            $ind["originX"] => $ind["x"],
-            $ind["originY"] => $ind["y"],
-        ]);
+            "transform" => "translate(" . $translateX . ", " . $translateY . ")",
+        ] + $position);
 
         $contentStyle = Utils::generate_css_string(
             Utils::get_spacing_style($ind['padding'] ?? [], 'padding') +

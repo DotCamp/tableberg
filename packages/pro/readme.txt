@@ -83,6 +83,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * IMPROVE: Control cell outside border
 * IMPROVE: Deactivate pro version when free version is deactivated
 * IMPROVE: Show Tableberg when searched for Row/Column in editor
+* PRO: IMPOVE: Add center position in badge ribbon
 
 = 0.5.2 =
 * NEW: Fixed width columns
