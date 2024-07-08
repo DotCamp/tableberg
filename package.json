@@ -5,7 +5,8 @@
     "scripts": {
         "start": "pnpm --recursive --parallel run start",
         "build": "pnpm --recursive --parallel run build",
-        "export": "pnpm --recursive --parallel run export"
+        "export": "pnpm --recursive --parallel run export",
+        "patterns:get": "node ./scripts/export-patterns.js"
     },
     "keywords": [],
     "author": "Dotcamp",
@@ -20,7 +21,8 @@
         "@types/wordpress__editor": "^13.6.7",
         "@wordpress/base-styles": "^4.39.0",
         "@wordpress/hooks": "^3.57.0",
-        "@wordpress/scripts": "^26.6.0"
+        "@wordpress/scripts": "^26.6.0",
+        "dotenv": "^16.4.1"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.5.1",
@@ -37,6 +39,7 @@
         "@wordpress/icons": "^9.28.0",
         "@wordpress/url": "^3.42.0",
         "classnames": "^2.3.2",
+        "puppeteer": "^22.12.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
     }

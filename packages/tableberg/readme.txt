@@ -72,10 +72,13 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * FIX: A notice being shown about block registration if pro is not active.
 * FIX: Table border having problem when cell radius is set
 * FIX: Cell spacing in wrong axes
+* FIX: Even odd color getting swapped in frontend
+* FIX: Button text styling not getting rendered
 * PRO: FIX: Use iframe to display custom html
 * PRO: FIX: Make row/col only border work with no outside border
 * NEW: Table border radius control
 * NEW: Item spacing inside cells
+* NEW: Tableberg patterns
 * PRO: NEW: Added badge ribbon
 * PRO: NEW: Sort rows & columns by drag & drop
 * PRO: NEW: Individual Row/Col background

@@ -612,10 +612,7 @@ function TablebergControls({
                     }
                     onDeselect={() =>
                         setTableAttributes({
-                            tableBorder: {
-                                color: "#000000",
-                                width: "1px",
-                            },
+                            tableBorder: {},
                         })
                     }
                 />

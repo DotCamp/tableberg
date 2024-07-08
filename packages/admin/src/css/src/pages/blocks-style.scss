@@ -9,7 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 999;
+    z-index: 100000;
 
     &-backdrop {
         position: absolute;
@@ -59,6 +59,8 @@
             min-height: 100px;
             border-radius: 5px;
             border: 1px solid #ebebeb;
+            max-height: 70vh;
+            object-fit: contain;
         }
         p {
             text-align: center;

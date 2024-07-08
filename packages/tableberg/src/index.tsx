@@ -5,19 +5,15 @@
 /**
  * WordPress Imports
  */
-import { Placeholder, TextControl, Button } from "@wordpress/components";
-import { blockTable } from "@wordpress/icons";
 import { useDispatch, useSelect } from "@wordpress/data";
 import {
     useBlockProps,
     useInnerBlocksProps,
     store as blockEditorStore,
-    BlockIcon,
 } from "@wordpress/block-editor";
 
 import {
     BlockEditProps,
-    InnerBlockTemplate,
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
     BlockInstance,
@@ -28,7 +24,7 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useEffect, useRef, useState, createContext } from "react";
+import { useEffect, useRef, useState, createContext } from "react";
 import TablebergControls from "./controls";
 import {
     TablebergBlockAttrs,
@@ -42,7 +38,12 @@ import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
 import { createPortal } from "react-dom";
 import { SidebarUpsell } from "./components/SidebarUpsell";
-import { getBorderCSS, getBorderRadiusCSS } from "@tableberg/shared/utils/styling-helpers";
+import {
+    getBorderCSS,
+    getBorderRadiusCSS,
+} from "@tableberg/shared/utils/styling-helpers";
+import { __ } from "@wordpress/i18n";
+import TableCreator from "./table/creator";
 
 export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
 interface TablebergCtx {
@@ -318,7 +319,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         style: {
             ...getBorderCSS(attributes.tableBorder),
             ...getBorderRadiusCSS(attributes.tableBorderRadius),
-        }
+        },
     });
 
     const storeActions: BlockEditorStoreActions = useDispatch(
@@ -474,95 +475,14 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         currentBlockIsTablebergCellChild &&
         !tablebergAdminMenuData.misc.pro_status;
 
-    function onCreateTable(event: FormEvent) {
-        event.preventDefault();
-        const { rows, cols } = attributes;
-        if (rows < 1 || cols < 1) return;
-
-        let initialInnerBlocks: InnerBlockTemplate[] = [];
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-                initialInnerBlocks.push(["tableberg/cell", { row: i, col: j }]);
-            }
-        }
-
-        setAttributes({
-            version: metadata.version,
-            hasTableCreated: true,
-            cells: initialInnerBlocks.length,
-        });
-        storeActions.replaceInnerBlocks(
-            clientId,
-            createBlocksFromInnerBlocksTemplate(initialInnerBlocks),
-        );
-    }
-
     if (attributes.isExample) {
         return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
     }
 
     if (!attributes.hasTableCreated) {
-        /**
-         * This shouln't be needed
-         * Problem: default value of row is not set correctly
-         * TODO: Figure out if it's WP bug or us thing
-         * Added check for cols as cols maybe 0 too
-         */
-        if (attributes.rows < 1) {
-            setAttributes({
-                rows: metadata.attributes.rows.default,
-            });
-        }
-
-        if (attributes.cols < 1) {
-            setAttributes({
-                cols: metadata.attributes.cols.default,
-            });
-        }
         return (
             <div {...blockProps}>
-                <Placeholder
-                    label={"Create Tableberg Table"}
-                    icon={<BlockIcon icon={blockTable} showColors />}
-                    instructions={
-                        "Create a complex table with all types of element"
-                    }
-                >
-                    <form
-                        className="blocks-table__placeholder-form"
-                        onSubmit={onCreateTable}
-                    >
-                        <TextControl
-                            __nextHasNoMarginBottom
-                            type="number"
-                            label={"Column count"}
-                            value={attributes.cols}
-                            onChange={(count) => {
-                                setAttributes({ cols: Number(count) });
-                            }}
-                            min="1"
-                            className="blocks-table__placeholder-input"
-                        />
-                        <TextControl
-                            __nextHasNoMarginBottom
-                            type="number"
-                            label={"Row count"}
-                            value={attributes.rows}
-                            onChange={(count) => {
-                                setAttributes({ rows: Number(count) });
-                            }}
-                            min="1"
-                            className="blocks-table__placeholder-input"
-                        />
-                        <Button
-                            className="blocks-table__placeholder-button"
-                            variant="primary"
-                            type="submit"
-                        >
-                            {"Create Table"}
-                        </Button>
-                    </form>
-                </Placeholder>
+                <TableCreator clientId={clientId}/>
             </div>
         );
     }
