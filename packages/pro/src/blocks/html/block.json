@@ -29,6 +29,7 @@
         "className": false,
         "html": false
     },
+    "viewScript": "tableberg-pro-frontend",
     "editorScript": "tableberg-pro-block-script",
     "editorStyle": "tableberg-pro-editor-style",
     "style": "tableberg-pro-frontend-style"

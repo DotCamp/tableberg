@@ -5,7 +5,7 @@ Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 0.5.2
+Stable tag: 0.5.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,27 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 2. Core Table Block vs Tableberg Block
 
 == Changelog ==
+
+= 0.5.3 =
+* FIX: A notice being shown about block registration if pro is not active.
+* FIX: Table border having problem when cell radius is set
+* FIX: Cell spacing in wrong axes
+* FIX: Even odd color getting swapped in frontend
+* FIX: Button text styling not getting rendered
+* PRO: FIX: Use iframe to display custom html
+* PRO: FIX: Make row/col only border work with no outside border
+* NEW: Table border radius control
+* NEW: Item spacing inside cells
+* NEW: Tableberg patterns
+* PRO: NEW: Added badge ribbon
+* PRO: NEW: Sort rows & columns by drag & drop
+* PRO: NEW: Individual Row/Col background
+* PRO: NEW: Individual Row/Col border with radius
+* IMPROVE: Control cell outside border
+* IMPROVE: Deactivate pro version when free version is deactivated
+* IMPROVE: Show Tableberg when searched for Row/Column in editor
+* PRO: IMPOVE: Added center position in badge ribbon
+* PRO: IMPOVE: Added rotation option in badge ribbon
 
 = 0.5.2 =
 * NEW: Fixed width columns

@@ -29,10 +29,15 @@ class Cell
 
 
 
-	private static function getStyles($attributes) {
+	private static function getStyles($attributes)
+	{
 		$styles = [
 			'background' => Utils::get_any($attributes, 'bgGradient', 'background'),
 		];
+		$blockSpacing = Utils::get_spacing_css_single($attributes['blockSpacing'] ?? '');
+		if ($blockSpacing && $blockSpacing[0] != '0') {
+			$styles['--tableberg-block-spacing'] = $blockSpacing;
+		}
 		return Utils::generate_css_string($styles);
 	}
 
@@ -49,20 +54,12 @@ class Cell
 		if (isset($attributes['isTmp']) && $attributes['isTmp']) {
 			return '';
 		}
-		$pre = '';
-		$post = '';
-		if (is_null(Table::$lastRow)) {
-			Table::$lastRow = $attributes['row'];
-			$pre = '<tr>';
-		} else if (Table::$lastRow != $attributes['row']) {
-			$pre = '</tr><tr>';
-			Table::$lastRow = $attributes['row'];
-		}
+
 		$colspan = isset($attributes['colspan']) ? $attributes['colspan'] : 1;
 		$rowspan = isset($attributes['rowspan']) ? $attributes['rowspan'] : 1;
 
-		$attrs_str = 'data-tableberg-row="'.esc_attr($attributes['row']).'" data-tableberg-col="'.esc_attr($attributes['col']).'"';
-		$classes = 'tableberg-v-align-'.esc_attr($attributes['vAlign']);
+		$attrs_str = 'data-tableberg-row="' . esc_attr($attributes['row']) . '" data-tableberg-col="' . esc_attr($attributes['col']) . '"';
+		$classes = 'tableberg-v-align-' . esc_attr($attributes['vAlign']);
 
 		// Add colspan attribute if it's greater than 1
 		if ($colspan > 1) {
@@ -78,11 +75,14 @@ class Cell
 
 		$content = HtmlUtils::append_attr_value($content, $tagName, self::getStyles($attributes), 'style');
 
-		$content = HtmlUtils::append_attr_value($content, $tagName, ' '.$classes, 'class');
+		$content = HtmlUtils::append_attr_value($content, $tagName, ' ' . $classes, 'class');
 
 		$content = HtmlUtils::add_attrs_to_tag($content, $tagName, $attrs_str);
 
-		return $pre . $content . $post;
+
+		Table::$rows[$attributes['row']][$attributes['col']] = $content;
+
+		return '';
 	}
 
 	/**

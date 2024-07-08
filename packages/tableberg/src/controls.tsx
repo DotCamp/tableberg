@@ -29,6 +29,7 @@ import {
 import {
     ResponsiveOptions,
     TablebergBlockAttrs,
+    TablebergCellBlockAttrs,
 } from "@tableberg/shared/types";
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ResponsiveControls } from "./responsiveControls";
@@ -40,8 +41,11 @@ import {
     ToolbarWithDropdown,
     BorderRadiusControl,
     SizeControl,
+    SpacingControlSingle,
+    BorderWithRadiusControl,
 } from "@tableberg/components";
 import LockedControl from "./components/LockedControl";
+import LockedBorderWithRadiusControl from "./components/LockedBorderWithRadiusControl";
 
 const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
@@ -63,19 +67,28 @@ const AVAILABLE_JUSTIFICATIONS = [
     },
 ];
 
+interface Props {
+    clientId: string;
+    preview?: keyof ResponsiveOptions["breakpoints"];
+    attributes: TablebergBlockAttrs | TablebergCellBlockAttrs;
+    setAttributes: (
+        attrs: Partial<TablebergBlockAttrs | TablebergCellBlockAttrs>,
+    ) => void;
+}
+
 function TablebergControls({
     clientId,
     preview,
-}: {
-    clientId: string;
-    preview?: keyof ResponsiveOptions["breakpoints"];
-}) {
+    attributes,
+    setAttributes,
+}: Props) {
     const {
-        isTableControls,
         tableAttributes,
         tableBlockClientId,
         cellBlock,
         themeColors,
+        rowStyle,
+        colStyle,
     } = useSelect((select) => {
         const storeSelect = select(
             blockEditorStore,
@@ -108,6 +121,12 @@ function TablebergControls({
             themeColors:
                 storeSelect.getSettings()?.__experimentalFeatures?.color.palette
                     .theme,
+            rowStyle:
+                cellBlock &&
+                tableAttributes.rowStyles[cellBlock.attributes.row],
+            colStyle:
+                cellBlock &&
+                tableAttributes.colStyles[cellBlock.attributes.col],
         };
     }, []);
 
@@ -127,23 +146,29 @@ function TablebergControls({
         updateBlockAttributes(tableBlockClientId, attributes);
     };
 
-    const setHeight = (val: string) => {
+    const setRowStyle = (styles: TablebergBlockAttrs["rowStyles"][number]) => {
         if (!cellBlock) {
             return;
         }
 
-        const rowHeights = [...tableAttributes.rowHeights];
-        rowHeights[cellBlock.attributes.row] = val;
-        setTableAttributes({ rowHeights });
+        const rowStyles = { ...tableAttributes.rowStyles };
+        rowStyles[cellBlock.attributes.row] = {
+            ...rowStyles[cellBlock.attributes.row],
+            ...styles,
+        };
+        setTableAttributes({ rowStyles });
     };
-    const setWidth = (val: string) => {
+    const setColStyle = (styles: TablebergBlockAttrs["colStyles"][number]) => {
         if (!cellBlock) {
             return;
         }
 
-        const colWidths = [...tableAttributes.colWidths];
-        colWidths[cellBlock.attributes.col] = val;
-        setTableAttributes({ colWidths });
+        const colStyles = { ...tableAttributes.colStyles };
+        colStyles[cellBlock.attributes.col] = {
+            ...colStyles[cellBlock.attributes.col],
+            ...styles,
+        };
+        setTableAttributes({ colStyles });
     };
 
     return (
@@ -172,12 +197,14 @@ function TablebergControls({
                             >
                                 <SizeControl
                                     value={
-                                        tableAttributes.colWidths[
+                                        tableAttributes.colStyles[
                                             cellBlock.attributes.col
-                                        ] as any
+                                        ]?.width as any
                                     }
                                     label={__("Column Width", "tableberg")}
-                                    onChange={setWidth as any}
+                                    onChange={(width: any) =>
+                                        setColStyle({ width })
+                                    }
                                     disabled={tableAttributes.fixedColWidth}
                                 />
                             </ToolsPanelItem>
@@ -187,12 +214,14 @@ function TablebergControls({
                             >
                                 <HeightControl
                                     value={
-                                        tableAttributes.rowHeights[
+                                        tableAttributes.rowStyles[
                                             cellBlock.attributes.row
-                                        ] as any
+                                        ]?.height as any
                                     }
                                     label={__("Row Height", "tableberg")}
-                                    onChange={setHeight}
+                                    onChange={(height: any) =>
+                                        setRowStyle({ height })
+                                    }
                                 />
                             </ToolsPanelItem>
                         </>
@@ -438,10 +467,37 @@ function TablebergControls({
                         })
                     }
                 />
+
                 {!IS_PRO && (
                     <LockedControl inToolsPanel isEnhanced selected="cell-bg">
                         <ColorControl
                             label={__("[PRO] Cell Background", "tableberg")}
+                            colorValue={null}
+                            onColorChange={() => {}}
+                            onDeselect={() => {}}
+                        />
+                    </LockedControl>
+                )}
+                {!IS_PRO && (
+                    <LockedControl inToolsPanel isEnhanced selected="row-bg">
+                        <ColorControl
+                            label={__(
+                                "[PRO] Row Background Color",
+                                "tableberg",
+                            )}
+                            colorValue={null}
+                            onColorChange={() => {}}
+                            onDeselect={() => {}}
+                        />
+                    </LockedControl>
+                )}
+                {!IS_PRO && (
+                    <LockedControl inToolsPanel isEnhanced selected="col-bg">
+                        <ColorControl
+                            label={__(
+                                "[PRO] Col Background Color",
+                                "tableberg",
+                            )}
                             colorValue={null}
                             onColorChange={() => {}}
                             onDeselect={() => {}}
@@ -463,6 +519,24 @@ function TablebergControls({
                     onChange={(val) => setTableAttributes({ cellSpacing: val })}
                     onDeselect={() => setTableAttributes({ cellSpacing: {} })}
                 />
+                <ToolsPanelItem
+                    panelId={clientId}
+                    isShownByDefault={true}
+                    resetAllFilter={() =>
+                        setAttributes({ blockSpacing: undefined })
+                    }
+                    className={"tools-panel-item-spacing"}
+                    label="Block SPacing"
+                    hasValue={() => !!attributes.blockSpacing}
+                >
+                    <SpacingControlSingle
+                        label="Block Spacing"
+                        value={attributes.blockSpacing}
+                        onChange={(blockSpacing) =>
+                            setAttributes({ blockSpacing })
+                        }
+                    />
+                </ToolsPanelItem>
             </InspectorControls>
 
             <InspectorControls group="border">
@@ -498,34 +572,69 @@ function TablebergControls({
                         </LockedControl>
                     </>
                 )}
-                <BorderControl
-                    label={__("Table Border Size", "tableberg")}
-                    value={tableAttributes.tableBorder}
-                    onChange={(newBorder) => {
-                        setTableAttributes({ tableBorder: newBorder });
-                    }}
-                    onDeselect={() => {
-                        setTableAttributes({
-                            tableBorder: {
-                                color: "#000000",
-                                width: "1px",
-                            },
-                        });
-                    }}
-                />
+
                 <ToolsPanelItem
                     panelId={clientId}
                     isShownByDefault={true}
                     resetAllFilter={() =>
                         setTableAttributes({
-                            enableInnerBorder: true,
+                            hideCellOutsideBorders: true,
                         })
                     }
-                    hasValue={() => !enableInnerBorder}
-                    label={__("Enable Inner Border", "tableberg")}
+                    hasValue={() => !tableAttributes.hideCellOutsideBorders}
+                    label={__("Hide Cell Outside Borders", "tableberg")}
                     onDeselect={() => {
-                        setTableAttributes({ enableInnerBorder: true });
+                        setTableAttributes({ hideCellOutsideBorders: true });
                     }}
+                >
+                    <div className="tableberg-tools-panel-item-margin"></div>
+                    <ToggleControl
+                        label={__("Hide Cell Outside Borders", "tableberg")}
+                        checked={tableAttributes.hideCellOutsideBorders}
+                        onChange={() =>
+                            setTableAttributes({
+                                hideCellOutsideBorders:
+                                    !tableAttributes.hideCellOutsideBorders,
+                            })
+                        }
+                    />
+                </ToolsPanelItem>
+                <BorderWithRadiusControl
+                    isShownByDefault={false}
+                    label={__("Table Border", "tableberg")}
+                    value={tableAttributes.tableBorder}
+                    onChange={(tableBorder: any) =>
+                        setTableAttributes({ tableBorder })
+                    }
+                    radiusValue={tableAttributes.tableBorderRadius}
+                    onRadiusChange={(tableBorderRadius: any) =>
+                        setTableAttributes({ tableBorderRadius })
+                    }
+                    onDeselect={() =>
+                        setTableAttributes({
+                            tableBorder: {},
+                        })
+                    }
+                />
+                <BorderWithRadiusControl
+                    isShownByDefault={false}
+                    label="Inner Border"
+                    value={tableAttributes.innerBorder}
+                    onChange={(innerBorder: any) =>
+                        setTableAttributes({ innerBorder })
+                    }
+                    radiusValue={tableAttributes.cellBorderRadius}
+                    onRadiusChange={(cellBorderRadius: any) =>
+                        setTableAttributes({ cellBorderRadius })
+                    }
+                    onDeselect={() =>
+                        setTableAttributes({
+                            innerBorder: {
+                                color: "#000000",
+                                width: "1px",
+                            },
+                        })
+                    }
                 >
                     <ToggleControl
                         label={__("Enable Inner Border", "tableberg")}
@@ -537,34 +646,23 @@ function TablebergControls({
                             })
                         }
                     />
-                </ToolsPanelItem>
-                {tableAttributes.enableInnerBorder && (
-                    <BorderControl
-                        label={__("Inner Border Size", "tableberg")}
-                        value={tableAttributes.innerBorder}
-                        onChange={(newBorder) => {
-                            setTableAttributes({ innerBorder: newBorder });
-                        }}
-                        onDeselect={() => {
-                            setTableAttributes({
-                                innerBorder: {
-                                    color: "#000000",
-                                    width: "1px",
-                                },
-                            });
-                        }}
-                    />
+                </BorderWithRadiusControl>
+                {!IS_PRO && (
+                    <>
+                        <LockedBorderWithRadiusControl
+                            label="[PRO] Row Border"
+                            clientId={clientId}
+                            selected="row-border"
+                            selectedRadius="row-border-radius"
+                        />
+                        <LockedBorderWithRadiusControl
+                            label="[PRO] Column Border"
+                            clientId={clientId}
+                            selected="col-border"
+                            selectedRadius="col-border-radius"
+                        />
+                    </>
                 )}
-                <BorderRadiusControl
-                    label={__("Cell Border Radius", "tableberg")}
-                    value={tableAttributes.cellBorderRadius}
-                    onChange={(cellBorderRadius: any) =>
-                        setTableAttributes({ cellBorderRadius })
-                    }
-                    onDeselect={() =>
-                        setTableAttributes({ cellBorderRadius: {} })
-                    }
-                />
             </InspectorControls>
             {!!preview && (
                 <ResponsiveControls

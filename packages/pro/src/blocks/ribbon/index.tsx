@@ -15,11 +15,13 @@ import Bookmark from "./ribbons/Bookmark";
 import Corner from "./ribbons/Corner";
 import Icon from "./ribbons/Icon";
 import Side from "./ribbons/Side";
-import { SizeControlProps } from "@tableberg/components/SizeControl";
+import Badge from "./ribbons/Badge";
+
+import { SizeControlProps } from "@tableberg/components/editor/SizeControl";
 import RibbonBlockIcon from "@tableberg/shared/icons/ribbon";
 
 export interface RibbonAttrs {
-    type: "bookmark" | "corner" | "side" | "icon";
+    type: "bookmark" | "corner" | "side" | "icon" | "badge";
     text: string;
     fontSize?: string;
     color?: string;
@@ -49,6 +51,7 @@ const RIBBONS_MAP = {
     corner: Corner,
     icon: Icon,
     side: Side,
+    badge: Badge,
 };
 
 const DEFAULT_ATTRS: Record<string, Partial<RibbonAttrs>> = {
@@ -121,6 +124,15 @@ const DEFAULT_ATTRS: Record<string, Partial<RibbonAttrs>> = {
             },
         },
     },
+    badge: {
+        type: "badge",
+        individual: {
+            x: "-1px",
+            y: "-3px",
+            originX: "left",
+            originY: "top",
+        }
+    }
 };
 
 function edit({
@@ -145,6 +157,7 @@ function edit({
                             { label: "Corner", value: "corner" },
                             { label: "Side", value: "side" },
                             { label: "Icon", value: "icon" },
+                            { label: "Badge", value: "badge" },
                         ]}
                         onChange={(type: string) =>
                             setAttributes(DEFAULT_ATTRS[type] || {})

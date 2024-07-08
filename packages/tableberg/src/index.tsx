@@ -5,19 +5,15 @@
 /**
  * WordPress Imports
  */
-import { Placeholder, TextControl, Button } from "@wordpress/components";
-import { blockTable } from "@wordpress/icons";
 import { useDispatch, useSelect } from "@wordpress/data";
 import {
     useBlockProps,
     useInnerBlocksProps,
     store as blockEditorStore,
-    BlockIcon,
 } from "@wordpress/block-editor";
 
 import {
     BlockEditProps,
-    InnerBlockTemplate,
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
     BlockInstance,
@@ -28,9 +24,12 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { FormEvent, useEffect, useRef, useState, createContext } from "react";
+import { useEffect, useRef, useState, createContext } from "react";
 import TablebergControls from "./controls";
-import { TablebergBlockAttrs, TablebergCellInstance } from "@tableberg/shared/types";
+import {
+    TablebergBlockAttrs,
+    TablebergCellInstance,
+} from "@tableberg/shared/types";
 import exampleImage from "./example.png";
 import blockIcon from "@tableberg/shared/icons/tableberg";
 import { PrimaryTable } from "./table";
@@ -39,6 +38,12 @@ import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
 import { createPortal } from "react-dom";
 import { SidebarUpsell } from "./components/SidebarUpsell";
+import {
+    getBorderCSS,
+    getBorderRadiusCSS,
+} from "@tableberg/shared/utils/styling-helpers";
+import { __ } from "@wordpress/i18n";
+import TableCreator from "./table/creator";
 
 export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
 interface TablebergCtx {
@@ -48,60 +53,9 @@ interface TablebergCtx {
 
 export const TablebergCtx = createContext<TablebergCtx>({});
 
-const getCellsOfRows = (tableBlock: BlockInstance<any>) => {
-    const newCells: TablebergCellInstance[] = [];
-    const { cols } = tableBlock.attributes;
-    let lastRow = 0;
-    let lastCol = 0;
-    tableBlock.innerBlocks.forEach((row) => {
-        if (row.name !== "tableberg/row" && row.name !== "core/missing") {
-            console.log(
-                "[TableBerg] Invalid block encountered while recovering rows: ",
-                row.name
-            );
-            return;
-        }
-        row.innerBlocks.forEach((cell) => {
-            if (cell.name !== "tableberg/cell") {
-                console.log(
-                    "[TableBerg] Invalid block encountered while recovering rows: ",
-                    cell.name
-                );
-                return;
-            }
-            cell.attributes.row = lastRow;
-            cell.attributes.col = lastCol;
-            cell.attributes.tagName = "td";
-            cell.attributes.colspan = 1;
-            cell.attributes.rowspan = 1;
-
-            newCells.push(cell as TablebergCellInstance);
-            lastCol++;
-            if (lastCol % cols !== lastCol) {
-                lastRow++;
-                lastCol = 0;
-            }
-        });
-    });
-    if (lastCol !== 0) {
-        for (let col = lastCol; col < cols; col++) {
-            newCells.push(
-                createBlocksFromInnerBlocksTemplate([
-                    ["tableberg/cell"],
-                    {
-                        // @ts-ignore
-                        row: lastRow,
-                        col,
-                    },
-                ])[0] as TablebergCellInstance
-            );
-        }
-    }
-    return [newCells, cols];
-};
 
 const removeFirstRow = (
-    innrBlocks: TablebergCellInstance[]
+    innrBlocks: TablebergCellInstance[],
 ): TablebergCellInstance[] => {
     const newCells: TablebergCellInstance[] = [];
     for (let i = 0; i < innrBlocks.length; i++) {
@@ -117,7 +71,7 @@ const removeFirstRow = (
 
 const changeFirstRowTagName = (
     innrBlocks: TablebergCellInstance[],
-    tagName: "td" | "th"
+    tagName: "td" | "th",
 ) => {
     for (let i = 0; i < innrBlocks.length; i++) {
         const cell = innrBlocks[i];
@@ -130,7 +84,7 @@ const changeFirstRowTagName = (
 
 const removeLastRow = (
     innrBlocks: TablebergCellInstance[],
-    lastRow: number
+    lastRow: number,
 ): TablebergCellInstance[] => {
     const clientIds: string[] = [];
     let lastRowFirstColIdx = innrBlocks.length - 1;
@@ -150,7 +104,7 @@ const removeLastRow = (
 const changeLastRowTagName = (
     innrBlocks: TablebergCellInstance[],
     tagName: "td" | "th",
-    lastRow: number
+    lastRow: number,
 ) => {
     for (let i = innrBlocks.length - 1; i > -1; i--) {
         const cell = innrBlocks[i];
@@ -162,7 +116,7 @@ const changeLastRowTagName = (
 };
 const useTableHeaderFooter = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
-    actions: BlockEditorStoreActions
+    actions: BlockEditorStoreActions,
 ) => {
     const attrs = tableBlock.attributes;
 
@@ -194,7 +148,7 @@ const useTableHeaderFooter = (
                                 tagName: "th",
                             },
                         ],
-                    ])[0] as TablebergCellInstance
+                    ])[0] as TablebergCellInstance,
                 );
             }
             tableBlock.innerBlocks.forEach((cell) => {
@@ -249,7 +203,7 @@ const useTableHeaderFooter = (
                 changeLastRowTagName(
                     tableBlock.innerBlocks as any,
                     "td",
-                    lastRow
+                    lastRow,
                 );
             }
 
@@ -265,14 +219,14 @@ const useTableHeaderFooter = (
                                 tagName: "th",
                             },
                         ],
-                    ])[0] as TablebergCellInstance
+                    ])[0] as TablebergCellInstance,
                 );
             }
             actions.insertBlocks(
                 newCells,
                 tableBlock.innerBlocks.length,
                 tableBlock.clientId,
-                false
+                false,
             );
 
             rowCount++;
@@ -282,7 +236,7 @@ const useTableHeaderFooter = (
             if (from === "added") {
                 newCells = removeLastRow(
                     tableBlock.innerBlocks as any,
-                    lastRow
+                    lastRow,
                 );
                 cellCount = newCells.length;
                 rowCount--;
@@ -311,7 +265,11 @@ const useTableHeaderFooter = (
     }, [attrs.enableTableFooter]);
 };
 
-const useUndoRedo = (attrs: TablebergBlockAttrs, blockCount: number, setAttrs: (attrs: Partial<TablebergBlockAttrs>) => void) => {
+const useUndoRedo = (
+    attrs: TablebergBlockAttrs,
+    blockCount: number,
+    setAttrs: (attrs: Partial<TablebergBlockAttrs>) => void,
+) => {
     const editorActions = useDispatch("core/editor");
     const { shouldSomethingBeDone, hasUndo } = useSelect(
         (select) => {
@@ -321,10 +279,10 @@ const useUndoRedo = (attrs: TablebergBlockAttrs, blockCount: number, setAttrs: (
                     // @ts-ignore
                     sel.hasEditorRedo() && attrs.cells !== blockCount,
                 // @ts-ignore
-                hasUndo: sel.hasEditorUndo()
+                hasUndo: sel.hasEditorUndo(),
             };
         },
-        [attrs.cells, blockCount]
+        [attrs.cells, blockCount],
     );
 
     if (shouldSomethingBeDone) {
@@ -332,12 +290,10 @@ const useUndoRedo = (attrs: TablebergBlockAttrs, blockCount: number, setAttrs: (
             editorActions.undo();
         } else {
             setAttrs({
-                cells: blockCount
+                cells: blockCount,
             });
         }
-
     }
-
 };
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
@@ -356,21 +312,26 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 !!attributes.tableAlignment,
             "tableberg-sticky-top-row": attributes.stickyTopRow,
             "tableberg-sticky-first-col": attributes.stickyFirstCol,
+            "tableberg-cell-no-outside-border": attributes.hideCellOutsideBorders,
             "tableberg-border-col-only": attributes.innerBorderType === "col",
             "tableberg-border-row-only": attributes.innerBorderType === "row",
         }),
+        style: {
+            ...getBorderCSS(attributes.tableBorder),
+            ...getBorderRadiusCSS(attributes.tableBorderRadius),
+        },
     });
 
     const storeActions: BlockEditorStoreActions = useDispatch(
-        blockEditorStore
+        blockEditorStore,
     ) as any;
 
     const { tableBlock } = useSelect((select) => {
         const storeSelect = select(
-            blockEditorStore
+            blockEditorStore,
         ) as BlockEditorStoreSelectors;
         const tableBlock = storeSelect.getBlock(
-            clientId
+            clientId,
         )! as BlockInstance<TablebergBlockAttrs>;
 
         return {
@@ -381,20 +342,38 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const [previewDevice, updatePreview] = useState<
         keyof TablebergBlockAttrs["responsive"]["breakpoints"]
-    // @ts-ignore
+        // @ts-ignore
     >(tablebergGetLastDevice() || "desktop");
 
     useEffect(() => {
-        if (!tableBlock.attributes.version) {
-            const [newCells, cols] = getCellsOfRows(tableBlock);
-            const rows = newCells.length / cols;
-            storeActions.replaceInnerBlocks(clientId, newCells);
+        if (tableBlock.attributes.version && tableBlock.attributes.version < "0.5.3") {
+            // REMOVE IN 0.5.4
+            const rowStyles: TablebergBlockAttrs['rowStyles'] = {};
+            // @ts-ignore
+            const heights = tableBlock.attributes.rowHeights || [];
+            for (let i = 0; i < heights.length; i++) {
+                if (heights[i]) {
+                    rowStyles[i] = {
+                        height: heights[i],
+                    };
+                }
+            }
+
+            const colStyles: TablebergBlockAttrs['colStyles'] = {};
+            // @ts-ignore
+            const widths = tableBlock.attributes.colWidths || [];
+            for (let i = 0; i < widths.length; i++) {
+                if (widths[i]) {
+                    colStyles[i] = {
+                        width: widths[i],
+                    };
+                }
+            }
+
             setAttributes({
+                rowStyles,
+                colStyles,
                 version: metadata.version,
-                cells: newCells.length,
-                rows,
-                rowHeights: Array(rows).fill(""),
-                colWidths: Array(cols).fill(""),
             });
         }
         const localUpdater = (evt: any) => {
@@ -404,7 +383,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         return () =>
             document.removeEventListener(
                 "TablebergPreviewDeviceChange",
-                localUpdater
+                localUpdater,
             );
     }, []);
 
@@ -469,16 +448,18 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 },
                 {
                     capture: true,
-                }
+                },
             );
         },
-        [rootRef.current]
+        [rootRef.current],
     );
 
     const targetEl = document.querySelector(".interface-complementary-area");
 
     const { currentBlockIsTablebergCellChild } = useSelect((select) => {
-        const storeSelect = select(blockEditorStore) as BlockEditorStoreSelectors;
+        const storeSelect = select(
+            blockEditorStore,
+        ) as BlockEditorStoreSelectors;
         const currentBlockId = storeSelect.getSelectedBlockClientId()!;
         const currentBlockParents = storeSelect.getBlockParents(currentBlockId);
         let currentBlockIsTablebergCellChild = false;
@@ -488,101 +469,21 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         }
 
         return { currentBlockIsTablebergCellChild };
-    }, [])
-    
-    const showUpsell = targetEl && currentBlockIsTablebergCellChild && !tablebergAdminMenuData.misc.pro_status;
+    }, []);
 
-    function onCreateTable(event: FormEvent) {
-        event.preventDefault();
-        const { rows, cols } = attributes;
-        if (rows < 1 || cols < 1) return;
-
-        let initialInnerBlocks: InnerBlockTemplate[] = [];
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-                initialInnerBlocks.push(["tableberg/cell", { row: i, col: j }]);
-            }
-        }
-
-        setAttributes({
-            version: metadata.version,
-            hasTableCreated: true,
-            colWidths: Array(cols).fill(""),
-            rowHeights: Array(rows).fill(""),
-            cells: initialInnerBlocks.length,
-        });
-        storeActions.replaceInnerBlocks(
-            clientId,
-            createBlocksFromInnerBlocksTemplate(initialInnerBlocks)
-        );
-    }
+    const showUpsell =
+        targetEl &&
+        currentBlockIsTablebergCellChild &&
+        !tablebergAdminMenuData.misc.pro_status;
 
     if (attributes.isExample) {
         return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
     }
 
     if (!attributes.hasTableCreated) {
-        /**
-         * This shouln't be needed
-         * Problem: default value of row is not set correctly
-         * TODO: Figure out if it's WP bug or us thing
-         * Added check for cols as cols maybe 0 too
-         */
-        if (attributes.rows < 1) {
-            setAttributes({
-                rows: metadata.attributes.rows.default,
-            });
-        }
-
-        if (attributes.cols < 1) {
-            setAttributes({
-                cols: metadata.attributes.cols.default,
-            });
-        }
         return (
             <div {...blockProps}>
-                <Placeholder
-                    label={"Create Tableberg Table"}
-                    icon={<BlockIcon icon={blockTable} showColors />}
-                    instructions={
-                        "Create a complex table with all types of element"
-                    }
-                >
-                    <form
-                        className="blocks-table__placeholder-form"
-                        onSubmit={onCreateTable}
-                    >
-                        <TextControl
-                            __nextHasNoMarginBottom
-                            type="number"
-                            label={"Column count"}
-                            value={attributes.cols}
-                            onChange={(count) => {
-                                setAttributes({ cols: Number(count) });
-                            }}
-                            min="1"
-                            className="blocks-table__placeholder-input"
-                        />
-                        <TextControl
-                            __nextHasNoMarginBottom
-                            type="number"
-                            label={"Row count"}
-                            value={attributes.rows}
-                            onChange={(count) => {
-                                setAttributes({ rows: Number(count) });
-                            }}
-                            min="1"
-                            className="blocks-table__placeholder-input"
-                        />
-                        <Button
-                            className="blocks-table__placeholder-button"
-                            variant="primary"
-                            type="submit"
-                        >
-                            {"Create Table"}
-                        </Button>
-                    </form>
-                </Placeholder>
+                <TableCreator clientId={clientId}/>
             </div>
         );
     }
@@ -615,7 +516,12 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                         ))}
                 </TablebergCtx.Provider>
             </div>
-            <TablebergControls clientId={clientId} preview={previewDevice} />
+            <TablebergControls
+                clientId={clientId}
+                preview={previewDevice}
+                attributes={attributes}
+                setAttributes={setAttributes}
+            />
             {showUpsell && createPortal(<SidebarUpsell />, targetEl)}
         </>
     );
@@ -665,7 +571,7 @@ registerBlockType(metadata.name, {
                         const textColor = window
                             .getComputedStyle(document.body)
                             .getPropertyValue(
-                                "--wp--preset--color--" + data.textColor
+                                "--wp--preset--color--" + data.textColor,
                             );
                         attrs.fontColor = textColor;
                     }
@@ -674,7 +580,7 @@ registerBlockType(metadata.name, {
                         const backgroundColor = window
                             .getComputedStyle(document.body)
                             .getPropertyValue(
-                                "--wp--preset--color--" + data.backgroundColor
+                                "--wp--preset--color--" + data.backgroundColor,
                             );
                         attrs.headerBackgroundColor = backgroundColor;
                         attrs.oddRowBackgroundColor = backgroundColor;
@@ -686,7 +592,7 @@ registerBlockType(metadata.name, {
                         const borderColor = window
                             .getComputedStyle(document.body)
                             .getPropertyValue(
-                                "--wp--preset--color--" + data.borderColor
+                                "--wp--preset--color--" + data.borderColor,
                             );
                         attrs.innerBorder = {
                             color: borderColor,
@@ -738,8 +644,8 @@ registerBlockType(metadata.name, {
                                         createBlock("core/paragraph", {
                                             content: cell.content,
                                         }),
-                                    ]
-                                ) as any
+                                    ],
+                                ) as any,
                             );
                         });
                         attrs.rows++;
@@ -762,8 +668,8 @@ registerBlockType(metadata.name, {
                                         createBlock("core/paragraph", {
                                             content: cell.content,
                                         }),
-                                    ]
-                                ) as any
+                                    ],
+                                ) as any,
                             );
                         });
                         attrs.rows++;
@@ -787,8 +693,8 @@ registerBlockType(metadata.name, {
                                         createBlock("core/paragraph", {
                                             content: cell.content,
                                         }),
-                                    ]
-                                ) as any
+                                    ],
+                                ) as any,
                             );
                         });
                         attrs.rows++;
@@ -797,9 +703,6 @@ registerBlockType(metadata.name, {
                     if (attrs.cells === 0) {
                         return createBlock("tableberg/table");
                     }
-                    attrs.colWidths = Array(attrs.cols).fill("");
-                    attrs.rowHeights = Array(attrs.rows).fill("");
-
                     return createBlock("tableberg/table", attrs, innerBlocks);
                 },
             },

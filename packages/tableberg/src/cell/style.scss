@@ -1,6 +1,6 @@
 .wp-block-tableberg-cell {
     position: relative;
-    border-collapse: collapse;
+    border-collapse: separate;
     padding-top: var(--tableberg-cell-padding-top, 8px);
     padding-right: var(--tableberg-cell-padding-right, 8px);
     padding-bottom: var(--tableberg-cell-padding-bottom, 8px);
@@ -22,6 +22,14 @@
     .tableberg-footer & {
         font-weight: bold;
     }
+
+    > *:not(.tableberg-ribbon) {
+        margin-top: var(--tableberg-block-spacing, 0) !important;
+        margin-bottom: 0 !important;
+    }
+    > *:not(.tableberg-ribbon):first-child {
+        margin-top: 0 !important;
+    }
 }
 
 .tableberg-rowstack-table {
@@ -39,7 +47,6 @@
             background: var(--tableberg-footer-bg);
         }
     }
-
 
     :not(&) {
         .tableberg-even-row {

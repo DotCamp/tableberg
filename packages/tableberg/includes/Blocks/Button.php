@@ -191,9 +191,9 @@ class Button
 			$button_attrs,
 			esc_attr($rel),
 			esc_attr($link_target),
-			esc_html($text)
+			wp_kses_post($text)
 		) :
-			sprintf('<div %1$s>%2$s</div>', $button_attrs, esc_html($text));
+			sprintf('<div %1$s>%2$s</div>', $button_attrs, wp_kses_post($text));
 
 		return sprintf('<div class="%1$s" id="%2$s">%3$s</div>', $classes, esc_attr($id), $button);
 	}

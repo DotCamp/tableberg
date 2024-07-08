@@ -28,7 +28,8 @@ RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh
 RUN curl -o /var/www/html/latest.zip https://wordpress.org/wordpress-__WP_VERSION__.zip
 
 RUN unzip /var/www/html/latest.zip \
-    && mv -f /var/www/html/wordpress/* /var/www/html/
+    && mv -f /var/www/html/wordpress/* /var/www/html/ \
+    && rm -rf /var/www/html/latest.zip
 
 WORKDIR /var/www/html/wp-content/plugins
 

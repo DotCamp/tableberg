@@ -27,10 +27,23 @@ export interface TablebergBlockAttrs {
     cols: number;
     cells: number;
     fixedColWidth: boolean;
-    colWidths: string[];
-    rowHeights: string[];
+    colStyles: Record<number, {
+        width?: string;
+        background?: string;
+        bgGradient?: string;
+        border?: any;
+        borderRadius?: any;
+    }>;
+    rowStyles: Record<number, {
+        height?: string;
+        background?: string;
+        bgGradient?: string;
+        border?: any;
+        borderRadius?: any;
+    }>;
     hasTableCreated: boolean;
     tableWidth: string;
+    blockSpacing: string;
     enableTableHeader: "" | "converted" | "added";
     enableTableFooter: "" | "converted" | "added";
     tableAlignment: "center" | "full" | "left" | "right" | "wide";
@@ -45,8 +58,10 @@ export interface TablebergBlockAttrs {
     footerBackgroundColor: string | null;
     footerBackgroundGradient: string | null;
     tableBorder: any;
+    tableBorderRadius: any;
     cellBorderRadius: any;
     innerBorder: any;
+    hideCellOutsideBorders: boolean;
     enableInnerBorder: boolean;
     isExample: boolean;
     fontColor: string;
@@ -71,6 +86,7 @@ export interface TablebergCellBlockAttrs {
     responsiveTarget: string;
     background?: string;
     bgGradient?: string;
+    blockSpacing: string;
     isTmp: boolean;
 }
 

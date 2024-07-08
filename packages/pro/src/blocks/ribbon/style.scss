@@ -123,4 +123,12 @@
             margin-left: auto;
         }
     }
+
+    &-badge {
+        position: absolute;
+        z-index: 9999;
+        &-content {
+            width: max-content;
+        }
+    }
 }

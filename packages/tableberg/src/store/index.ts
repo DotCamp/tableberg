@@ -131,22 +131,20 @@ export const store = createReduxStore("tableberg-store", {
     },
 
     selectors: {
-        getClassName(
+        isCellSelected(
             state: ITBStoreState,
             tableId: string,
             row: number,
             col: number
-        ): string | undefined {
+        ): boolean {
             
-            if (
+            return (
                 state.tableId === tableId &&
                 state.minCol <= col &&
                 state.maxCol > col &&
                 state.minRow <= row &&
                 state.maxRow > row
-            ) {
-                return "is-multi-selected";
-            }
+            );
         },
         getSpans(
             state: ITBStoreState,

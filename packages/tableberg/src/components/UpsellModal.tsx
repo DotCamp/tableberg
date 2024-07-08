@@ -2,10 +2,18 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import blocks, { ENHANCED_FEATURES } from "@tableberg/shared/blocks";
+import blockIcon from "@tableberg/shared/icons/tableberg";
+import { PATTERN_UPSELLS } from "./patterns";
+
+const IMAGE_BASE = TABLEBERG_CFG.plugin_url + "includes/Admin/images/upsell/";
 
 const proBlocks = blocks.filter((b: any) => b.isPro);
 
-const IMAGE_BASE = TABLEBERG_CFG.plugin_url + "includes/Admin/images/upsell/";
+PATTERN_UPSELLS.forEach((p) => {
+    p.image = `${TABLEBERG_CFG.plugin_url}${p.image.substring(1)}`;
+    // @ts-ignore
+    proBlocks.push(p);
+});
 
 interface Props {
     onClose: () => void;
@@ -34,7 +42,10 @@ export function UpsellModalComponent({
 }: ComponentProps) {
     return (
         <div className="tableberg-upsell-modal">
-            <div className="tableberg-upsell-modal-backdrop"></div>
+            <div
+                className="tableberg-upsell-modal-backdrop"
+                onClick={onClose}
+            ></div>
             <div className="tableberg-upsell-modal-container">
                 {!!prev && (
                     <button
@@ -46,12 +57,16 @@ export function UpsellModalComponent({
                 )}
                 <div className="tableberg-upsell-modal-area" key={info.name}>
                     <h2>
-                        {info.icon} {info.title}
+                        {info.icon || blockIcon} {info.title}
                     </h2>
                     <div className="tableberg-upsell-modal-content">
                         {info.image && (
                             <img
-                                src={IMAGE_BASE + info.image}
+                                src={
+                                    info.image.startsWith("http")
+                                        ? info.image
+                                        : IMAGE_BASE + info.image
+                                }
                                 alt={info.title + " Demo"}
                             />
                         )}
@@ -114,6 +129,39 @@ export function UpsellEnhancedModal({ onClose, selected }: Props) {
         <UpsellModalComponent
             onClose={onClose}
             info={info}
+            prev={prev}
+            next={next}
+        />
+    );
+}
+
+export function UpsellPatternsModal({ onClose, selected }: Props) {
+    const [idx, setIdx] = useState(0);
+    const info = PATTERN_UPSELLS[idx];
+
+    useEffect(() => {
+        if (selected) {
+            const idx = PATTERN_UPSELLS.findIndex((b) => b.name === selected);
+            if (idx > -1) {
+                setIdx(idx);
+            }
+        }
+    }, [selected]);
+
+    const prev = () =>
+        setIdx((idx) => {
+            if (idx > 0) {
+                return idx - 1;
+            }
+            return PATTERN_UPSELLS.length - 1;
+        });
+
+    const next = () => setIdx((idx + 1) % PATTERN_UPSELLS.length);
+
+    return (
+        <UpsellModalComponent
+            onClose={onClose}
+            info={info as any}
             prev={prev}
             next={next}
         />
