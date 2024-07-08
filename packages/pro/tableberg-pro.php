@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Tableberg Pro
  * Description:       Tableberg Pro: table builder Gutenberg block
- * Version:           0.5.2
+ * Version:           0.5.3
  * Requires at least: 6.1
  * Requires PHP:      7.0
  * Author:            Dotcamp

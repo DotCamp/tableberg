@@ -346,7 +346,8 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     >(tablebergGetLastDevice() || "desktop");
 
     useEffect(() => {
-        if (tableBlock.attributes.version && tableBlock.attributes.version < "0.5.2") {
+        if (tableBlock.attributes.version && tableBlock.attributes.version < "0.5.3") {
+            // REMOVE IN 0.5.4
             const rowStyles: TablebergBlockAttrs['rowStyles'] = {};
             // @ts-ignore
             const heights = tableBlock.attributes.rowHeights || [];
