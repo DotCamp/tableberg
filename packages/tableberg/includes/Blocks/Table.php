@@ -232,7 +232,7 @@ class Table
 			] + Utils::get_border_radius_var($rowStyle['borderRadius'] ?? [], '--tableberg-row'));
 			$tagName = 'td';
 			$trClasses = '';
-			$isEven = $i % 2 === 0;
+			$isEven = $i % 2 === 1;
 			$isHeader = $i === 0 && $attributes['enableTableHeader'];
 			$isFooter = $attributes['enableTableFooter'] && $i === $attributes['rows'] - 1;
 

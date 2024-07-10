@@ -69,6 +69,9 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 == Changelog ==
 
 = 0.5.3 =
+* FIX: Odd Even row incorrect style
+
+= 0.5.3 =
 * FIX: A notice being shown about block registration if pro is not active.
 * FIX: Table border having problem when cell radius is set
 * FIX: Cell spacing in wrong axes
