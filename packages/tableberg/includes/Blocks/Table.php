@@ -204,9 +204,13 @@ class Table
 		$colBorders = [];
 		$colGroup = '<colgroup>';
 
+		if ($attributes['fixedColWidth']) {
+			$fwidth = 100 / (int) $attributes['cols'] . '%';
+		}
+
 		for ($i = 0; $i < $attributes['cols']; $i++) {
 			$colStyle = $attributes['colStyles'][$i] ?? [];
-			$width = Utils::get_spacing_css_single($colStyle['width'] ?? '');
+			$width = $fwidth ?? Utils::get_spacing_css_single($colStyle['width'] ?? '');
 
 			$colCss = Utils::generate_css_string([
 				'width' => $width,

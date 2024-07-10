@@ -109,8 +109,10 @@ export const PrimaryTable = (
                               .fill("")
                               .map(() => (
                                   <col
-                                      width={fixedWidth}
-                                      style={{ minWidth: fixedWidth }}
+                                      style={{
+                                          width: fixedWidth,
+                                          minWidth: fixedWidth,
+                                      }}
                                   />
                               ))
                         : Array(attributes.cols)
@@ -119,8 +121,8 @@ export const PrimaryTable = (
                                   const colStyle = attributes.colStyles[i];
                                   return (
                                       <col
-                                          width={colStyle?.width}
                                           style={{
+                                              width: colStyle?.width,
                                               minWidth: colStyle?.width,
                                               background:
                                                   colStyle?.bgGradient ||

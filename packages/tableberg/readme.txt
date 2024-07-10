@@ -70,6 +70,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 
 = 0.5.3 =
 * FIX: Odd Even row incorrect style
+* FIX: Fixed width table in frontend
 
 = 0.5.3 =
 * FIX: A notice being shown about block registration if pro is not active.
