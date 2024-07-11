@@ -12,6 +12,7 @@ import {
 } from "@wordpress/components";
 import { Border } from "@wordpress/components/build-types/border-control/types";
 import { Borders } from "@wordpress/components/build-types/border-box-control/types";
+import { CSSProperties } from "react";
 
 interface BorderWithRadiusControlPropTypes {
     label: string;
@@ -24,6 +25,19 @@ interface BorderWithRadiusControlPropTypes {
     isShownByDefault?: boolean;
     children?: any;
 }
+
+const objectifyRadius = (radius: CSSProperties["borderRadius"] | string) => {
+    if (typeof radius === "string") {
+        return {
+            topLeft: radius,
+            topRight: radius,
+            bottomRight: radius,
+            bottomLeft: radius,
+        };
+    }
+
+    return radius;
+};
 
 function BorderControl({
     label,
@@ -73,7 +87,12 @@ function BorderControl({
                     onChange={onChange}
                     value={value}
                 />
-                <RadiusControl onChange={onRadiusChange} values={radiusValue} />
+                <RadiusControl
+                    onChange={(val: any) =>
+                        onRadiusChange(objectifyRadius(val))
+                    }
+                    values={radiusValue}
+                />
             </PanelBody>
         </ToolsPanelItem>
     );
