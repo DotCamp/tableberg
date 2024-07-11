@@ -28,7 +28,7 @@ function waitForCaptcha() {
 
 async function getDraftPosts(page) {
     const response = await fetch(
-        `${BASE_URL}/wp-json/wp/v2/posts?page=${page}&categories=7&context=edit&status=draft&_embed=wp:term&_fields=id,title,content,slug,excerpt,tags,categories,_links.wp:term`,
+        `${BASE_URL}/wp-json/wp/v2/posts?page=${page}&categories=7&context=edit&status=draft&_embed=wp:term&_fields=id,title,content,slug,excerpt,tags,categories,modified,_links.wp:term`,
         {
             headers: {
                 Authorization: `Basic ${Buffer.from(
@@ -113,8 +113,20 @@ async function getDraftPosts(page) {
         };
     };
 
+    const TO_REMOVES = new Set();
+    fs.readdirSync(patternsDir).forEach((file) => TO_REMOVES.add(file.replace(".json", "")));
+    fs.readdirSync(proPatternsDir).forEach((file) => TO_REMOVES.add(file.replace(".json", "")));
+
+    let LAST_REFRESH = "",
+        LATEST_MODIFIED = "";
+    if (fs.existsSync(path.resolve(__dirname, ".patterns-date"))) {
+        LAST_REFRESH = fs.readFileSync(
+            path.resolve(__dirname, ".patterns-date"),
+            "utf8",
+        );
+    }
+
     const getPage = async (pageNum, after, upsellJson) => {
-        // Get draft posts
         console.log(`Loading page: ${pageNum}`);
         const posts = await getDraftPosts(pageNum);
         console.log(`    Found ${posts.length} items.`);
@@ -125,6 +137,17 @@ async function getDraftPosts(page) {
             if (!post.slug) {
                 continue;
             }
+
+            TO_REMOVES.delete(post.slug);
+            if (LATEST_MODIFIED < post.modified) {
+                LATEST_MODIFIED = post.modified;
+            }
+
+            if (post.modified < LAST_REFRESH) {
+                console.log(`        Already updated`);
+                continue;
+            }
+
             const categories = post._embedded["wp:term"][0].map(
                 (term) => term.slug,
             );
@@ -219,10 +242,35 @@ async function getDraftPosts(page) {
             await browser.close();
 
             fs.writeFileSync(
-                path.resolve("packages/tableberg/src/components", "patterns.ts"),
-                'export const PATTERN_UPSELLS = ' + JSON.stringify(upsellJson) + ';',
+                path.resolve(
+                    "packages/tableberg/src/components",
+                    "patterns.ts",
+                ),
+                "export const PATTERN_UPSELLS = " +
+                    JSON.stringify(upsellJson) +
+                    ";",
                 "utf8",
             );
+            fs.writeFileSync(
+                path.resolve(__dirname, ".patterns-date"),
+                LATEST_MODIFIED,
+                "utf8",
+            );
+            console.log('Removing');
+            TO_REMOVES.forEach((file) => {
+                console.log(`    ${file}`);
+                file = `${file}.json`;
+                const freePath = path.resolve(patternsDir, file);
+                if (fs.existsSync(freePath)) {
+                    fs.unlinkSync(freePath);
+                    return;
+                }
+                fs.unlinkSync(path.resolve(proPatternsDir, file));
+                fs.unlinkSync(
+                    path.resolve(imageDir, file.replace(".json", ".png")),
+                );
+                fs.unlinkSync(path.resolve(upsellDir, `upsell-${file}`));
+            });
         }
     };
 
