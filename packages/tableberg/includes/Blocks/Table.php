@@ -54,12 +54,12 @@ class Table
 		}
 		if (!isset($table_spacing['top']) || $table_spacing['top'] == '0') {
 			$inner_border_variables["--tableberg-inner-border-top"] = "none";
-			$inner_border_variables["--tableberg-inner-border-top-first"] = $inner_border_variables["--tableberg-inner-border-bottom"];
+			$inner_border_variables["--tableberg-inner-border-top-first"] = $inner_border_variables["--tableberg-inner-border-bottom"] ?? '';
 		}
 
 		if (!isset($table_spacing['left']) || $table_spacing['left'] == '0') {
 			$inner_border_variables["--tableberg-inner-border-left"] = "none";
-			$inner_border_variables["--tableberg-inner-border-left-first"] = $inner_border_variables["--tableberg-inner-border-right"];
+			$inner_border_variables["--tableberg-inner-border-left-first"] = $inner_border_variables["--tableberg-inner-border-right"] ?? '';
 		}
 
 
@@ -278,9 +278,7 @@ class Table
 
 		$table = '<table ' . $table_attrs . ' >' . $colGroup . $content . '</table>';
 
-
 		self::$rows = [];
-		// exit();
 
 		return '<div ' . $wrapper_attributes . ' >' . $table . '</div>';
 	}
