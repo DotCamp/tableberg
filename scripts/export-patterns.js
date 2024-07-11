@@ -114,8 +114,12 @@ async function getDraftPosts(page) {
     };
 
     const TO_REMOVES = new Set();
-    fs.readdirSync(patternsDir).forEach((file) => TO_REMOVES.add(file.replace(".json", "")));
-    fs.readdirSync(proPatternsDir).forEach((file) => TO_REMOVES.add(file.replace(".json", "")));
+    fs.readdirSync(patternsDir).forEach((file) =>
+        TO_REMOVES.add(file.replace(".json", "")),
+    );
+    fs.readdirSync(proPatternsDir).forEach((file) =>
+        TO_REMOVES.add(file.replace(".json", "")),
+    );
 
     let LAST_REFRESH = "",
         LATEST_MODIFIED = "";
@@ -143,8 +147,20 @@ async function getDraftPosts(page) {
                 LATEST_MODIFIED = post.modified;
             }
 
+            const screenshotPath = path.join(imageDir, `${post.slug}.png`);
+
+            const imageUrl = screenshotPath
+                .replaceAll("\\", "/")
+                .replace("packages/tableberg", "");
+
             if (post.modified < LAST_REFRESH) {
                 console.log(`        Already updated`);
+                upsellJson.push({
+                    name: post.slug,
+                    title: post.title.rendered,
+                    upsellText: post.excerpt.rendered,
+                    image: imageUrl,
+                });
                 continue;
             }
 
@@ -191,15 +207,11 @@ async function getDraftPosts(page) {
                 continue;
             }
 
-            const screenshotPath = path.join(imageDir, `${post.slug}.png`);
             fs.writeFileSync(
                 path.resolve(proPatternsDir, post.slug + ".json"),
                 JSON.stringify(pattern),
                 "utf8",
             );
-            const imageUrl = screenshotPath
-                .replaceAll("\\", "/")
-                .replace("packages/tableberg", "");
             pattern.content = `<!-- wp:image {"id":314,"sizeSlug":"full","linkDestination":"none","align":"center"} -->
             <figure class="wp-block-image aligncenter size-full"><img src="::PLUGIN_URL::${imageUrl}" alt=""/></figure>
             <!-- /wp:image -->`;
@@ -246,7 +258,7 @@ async function getDraftPosts(page) {
                     "packages/tableberg/src/components",
                     "patterns.ts",
                 ),
-                "export const PATTERN_UPSELLS = " +
+                "export const PATTERN_UPSELLS: any[] = " +
                     JSON.stringify(upsellJson) +
                     ";",
                 "utf8",
@@ -256,7 +268,9 @@ async function getDraftPosts(page) {
                 LATEST_MODIFIED,
                 "utf8",
             );
-            console.log('Removing');
+            if (TO_REMOVES.size > 0) {
+                console.log("Removing:");
+            }
             TO_REMOVES.forEach((file) => {
                 console.log(`    ${file}`);
                 file = `${file}.json`;
