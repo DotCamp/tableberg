@@ -153,7 +153,7 @@ async function getDraftPosts(page) {
                 .replaceAll("\\", "/")
                 .replace("packages/tableberg", "");
 
-            if (post.modified < LAST_REFRESH) {
+            if (post.modified <= LAST_REFRESH) {
                 console.log(`        Already updated`);
                 upsellJson.push({
                     name: post.slug,
