@@ -54,12 +54,12 @@ class Table
 		}
 		if (!isset($table_spacing['top']) || $table_spacing['top'] == '0') {
 			$inner_border_variables["--tableberg-inner-border-top"] = "none";
-			$inner_border_variables["--tableberg-inner-border-top-first"] = $inner_border_variables["--tableberg-inner-border-bottom"];
+			$inner_border_variables["--tableberg-inner-border-top-first"] = $inner_border_variables["--tableberg-inner-border-bottom"] ?? '';
 		}
 
 		if (!isset($table_spacing['left']) || $table_spacing['left'] == '0') {
 			$inner_border_variables["--tableberg-inner-border-left"] = "none";
-			$inner_border_variables["--tableberg-inner-border-left-first"] = $inner_border_variables["--tableberg-inner-border-right"];
+			$inner_border_variables["--tableberg-inner-border-left-first"] = $inner_border_variables["--tableberg-inner-border-right"] ?? '';
 		}
 
 
@@ -204,9 +204,13 @@ class Table
 		$colBorders = [];
 		$colGroup = '<colgroup>';
 
+		if ($attributes['fixedColWidth']) {
+			$fwidth = 100 / (int) $attributes['cols'] . '%';
+		}
+
 		for ($i = 0; $i < $attributes['cols']; $i++) {
 			$colStyle = $attributes['colStyles'][$i] ?? [];
-			$width = Utils::get_spacing_css_single($colStyle['width'] ?? '');
+			$width = $fwidth ?? Utils::get_spacing_css_single($colStyle['width'] ?? '');
 
 			$colCss = Utils::generate_css_string([
 				'width' => $width,
@@ -232,7 +236,7 @@ class Table
 			] + Utils::get_border_radius_var($rowStyle['borderRadius'] ?? [], '--tableberg-row'));
 			$tagName = 'td';
 			$trClasses = '';
-			$isEven = $i % 2 === 0;
+			$isEven = $i % 2 === 1;
 			$isHeader = $i === 0 && $attributes['enableTableHeader'];
 			$isFooter = $attributes['enableTableFooter'] && $i === $attributes['rows'] - 1;
 
@@ -274,9 +278,7 @@ class Table
 
 		$table = '<table ' . $table_attrs . ' >' . $colGroup . $content . '</table>';
 
-
 		self::$rows = [];
-		// exit();
 
 		return '<div ' . $wrapper_attributes . ' >' . $table . '</div>';
 	}

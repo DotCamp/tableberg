@@ -5,7 +5,7 @@ Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 0.5.3
+Stable tag: 0.5.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,12 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 2. Core Table Block vs Tableberg Block
 
 == Changelog ==
+
+= 0.5.4 =
+* FIX: Odd Even row incorrect style
+* FIX: Fixed width table in frontend
+* FIX: Inner Border Radius problem
+* FIX: Table Border Radius problem
 
 = 0.5.3 =
 * FIX: A notice being shown about block registration if pro is not active.

@@ -85,7 +85,7 @@ export function UpsellModalComponent({
                     </div>
                     <div className="tableberg-upsell-modal-footer">
                         <button onClick={onClose}>Cancel</button>
-                        <a href="https://tableberg.com/pricing/">Buy PRO</a>
+                        <a href="https://tableberg.com/pricing/" target="_blank">Buy PRO</a>
                     </div>
                 </div>
                 {!!next && (
