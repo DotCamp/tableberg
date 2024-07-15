@@ -68,6 +68,9 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 
 == Changelog ==
 
+= 0.5.5 =
+* FIX: Set default image width 150px
+
 = 0.5.4 =
 * FIX: Odd Even row incorrect style
 * FIX: Fixed width table in frontend
