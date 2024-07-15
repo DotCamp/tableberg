@@ -49,6 +49,10 @@
             "type": "string",
             "default": null
         },
+        "isEmpty": {
+            "type": "boolean",
+            "default": false
+        },
         "isTmp": {
             "type": "boolean",
             "default": false

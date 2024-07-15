@@ -180,6 +180,37 @@ function TablebergControls({
                     </ToolsPanelItem>
                     {cellBlock && (
                         <>
+                            {IS_PRO ? (
+                                <ToolsPanelItem
+                                    label={__("")}
+                                    hasValue={() => true}
+                                >
+                                    <ToggleControl
+                                        checked={cellBlock.attributes.isEmpty}
+                                        label="[PRO] Empty Cell"
+                                        onChange={(isEmpty) => {
+                                            setAttributes({
+                                                isEmpty,
+                                            });
+                                        }}
+                                    />
+                                </ToolsPanelItem>
+                            ) : (
+                                <LockedControl
+                                    isEnhanced
+                                    inToolsPanel
+                                    selected="empty-cell"
+                                >
+                                    <ToggleControl
+                                        label={__(
+                                            "[PRO] Empty Cell",
+                                            "tableberg",
+                                        )}
+                                        checked={cellBlock.attributes.isEmpty}
+                                        onChange={() => {}}
+                                    />
+                                </LockedControl>
+                            )}
                             <ToolsPanelItem
                                 label={__("Column Width", "tableberg")}
                                 hasValue={() => true}

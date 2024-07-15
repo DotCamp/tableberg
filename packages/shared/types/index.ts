@@ -87,6 +87,7 @@ export interface TablebergCellBlockAttrs {
     background?: string;
     bgGradient?: string;
     blockSpacing: string;
+    isEmpty: boolean;
     isTmp: boolean;
 }
 
