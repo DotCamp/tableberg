@@ -8,12 +8,10 @@ import {
     ToolbarButton,
     PanelBody,
     RangeControl,
+    ToggleControl,
 } from "@wordpress/components";
 import { BlockEditProps } from "@wordpress/blocks";
-import {
-    ColorControl,
-    SpacingControl,
-} from "@tableberg/components";
+import { ColorControl, SpacingControl } from "@tableberg/components";
 import { StarRatingProps } from ".";
 
 function StarBlockControls(props: BlockEditProps<StarRatingProps>) {
@@ -67,6 +65,11 @@ function StarBlockControls(props: BlockEditProps<StarRatingProps>) {
             </WPBlockControls>
             <InspectorControls group="settings">
                 <PanelBody title={__("General")} initialOpen={true}>
+                    <ToggleControl
+                        label={__("Enable text")}
+                        checked={attributes.enableText}
+                        onChange={(enableText) => setAttributes({enableText})}
+                    />
                     <RangeControl
                         label={__("Number of stars")}
                         value={starCount}
