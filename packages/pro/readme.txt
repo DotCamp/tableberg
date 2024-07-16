@@ -69,6 +69,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 == Changelog ==
 
 = 0.5.5 =
+* PRO: NEW: Empty Cell option
 * FIX: Set default image width 150px
 * FIX: Button hover color in the editor
 

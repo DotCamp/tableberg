@@ -778,7 +778,7 @@ function edit(
                 colStyle?.borderRadius,
                 "--tableberg-col",
             );
-            
+
             const rowRadius = getBorderRadiusVar(
                 rowStyle?.borderRadius,
                 "--tableberg-row",
@@ -1065,7 +1065,9 @@ function edit(
                     return targetEl ? (
                         createPortal(
                             <TagName
-                                {...innerBlocksProps}
+                                {...(attributes.isEmpty
+                                    ? blockProps
+                                    : innerBlocksProps)}
                                 rowSpan={attributes.rowspan}
                                 colSpan={attributes.colspan}
                             />,
@@ -1073,7 +1075,9 @@ function edit(
                         )
                     ) : (
                         <TagName
-                            {...innerBlocksProps}
+                            {...(attributes.isEmpty
+                                ? blockProps
+                                : innerBlocksProps)}
                             rowSpan={attributes.rowspan}
                             colSpan={attributes.colspan}
                         />
@@ -1149,7 +1153,7 @@ function save(props: BlockSaveProps<TablebergCellBlockAttrs>) {
     const blockProps = useBlockProps.save();
     const innerBlocksProps = useInnerBlocksProps.save(blockProps);
     const TagName = attributes.tagName ?? "td";
-    return <TagName {...innerBlocksProps} />;
+    return <TagName {...(attributes.isEmpty ? blockProps : innerBlocksProps)} />;
 }
 
 // @ts-ignore This is a weird case.
