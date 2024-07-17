@@ -73,6 +73,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * FIX: Set default image width 150px
 * FIX: Button hover color in the editor
 * IMPROVE: Added checked & close circle outline icons
+* FIX: Responsiveness in the frontend
 
 = 0.5.4 =
 * FIX: Odd Even row incorrect style
