@@ -12,6 +12,10 @@ th.wp-block-tableberg-cell {
         position: absolute;
         right: 0;
         bottom: 0;
+
+        > *:not(.tablberg-block-appender) {
+            display: none !important;
+        }
     }
 
     .tablberg-block-appender {
