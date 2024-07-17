@@ -73,6 +73,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * FIX: Set default image width 150px
 * FIX: Button hover color in the editor
 * IMPROVE: Added checked & close circle outline icons
+* PRO: IMPROVE: Added option for enabling/disabling star rating review text
 * FIX: Responsiveness in the frontend
 
 = 0.5.4 =
@@ -99,8 +100,8 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * IMPROVE: Control cell outside border
 * IMPROVE: Deactivate pro version when free version is deactivated
 * IMPROVE: Show Tableberg when searched for Row/Column in editor
-* PRO: IMPOVE: Added center position in badge ribbon
-* PRO: IMPOVE: Added rotation option in badge ribbon
+* PRO: IMPROVE: Added center position in badge ribbon
+* PRO: IMPROVE: Added rotation option in badge ribbon
 
 = 0.5.2 =
 * NEW: Fixed width columns
@@ -175,7 +176,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 
 * NEW: Add cell spacing functionality.
 * IMPROVE: Row block removed. Cell blocks are added directly to tableberg table block.
-* IMPOVE: Multiple cells can be merged now.
+* IMPROVE: Multiple cells can be merged now.
 * FIX: Adding non-cell blocks to table block breaks the layout.
 
 = 0.2.1 =

@@ -20,6 +20,7 @@ export interface StarRatingProps {
     starSize: string;
     starColor: string | null;
     selectedStars: number;
+    enableText: boolean;
     reviewText: string;
     reviewTextAlign: string;
     reviewTextColor: string | null;
@@ -99,23 +100,25 @@ function Edit(props: BlockEditProps<StarRatingProps>) {
                             </div>
                         ))}
                 </div>
-                <RichText
-                    tagName="div"
-                    placeholder={__("Review text")}
-                    value={reviewText}
-                    style={{
-                        textAlign: reviewTextAlign as any,
-                        color: reviewTextColor || "inherit",
-                    }}
-                    onChange={(text) => setAttributes({ reviewText: text })}
-                    keepPlaceholderOnFocus={true}
-                    allowedFormats={[
-                        "core/bold",
-                        "core/italic",
-                        "core/strikethrough",
-                        "core/link",
-                    ]}
-                />
+                {attributes.enableText && (
+                    <RichText
+                        tagName="div"
+                        placeholder={__("Review text")}
+                        value={reviewText}
+                        style={{
+                            textAlign: reviewTextAlign as any,
+                            color: reviewTextColor || "inherit",
+                        }}
+                        onChange={(text) => setAttributes({ reviewText: text })}
+                        keepPlaceholderOnFocus={true}
+                        allowedFormats={[
+                            "core/bold",
+                            "core/italic",
+                            "core/strikethrough",
+                            "core/link",
+                        ]}
+                    />
+                )}
             </div>
             <StarBlockControls {...props} />
         </>
