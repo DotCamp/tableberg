@@ -74,6 +74,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * FIX: Button hover color in the editor
 * PRO: IMPROVE: Added option for enabling/disabling star rating review text
 * FIX: Responsiveness in the frontend
+* PRO: FIX: Split styled list on enter key
 
 = 0.5.4 =
 * FIX: Odd Even row incorrect style
