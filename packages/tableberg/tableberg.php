@@ -62,8 +62,26 @@ if (!class_exists('Tableberg')) {
 				});
 			}
 
-			register_activation_hook(__FILE__, array($this, 'activate_plugin'));
-			register_deactivation_hook(__FILE__, array($this, 'deactivate_plugin'));
+			register_activation_hook(__FILE__, [$this, 'activate_plugin']);
+			register_deactivation_hook(__FILE__, [$this, 'deactivate_plugin']);
+		}
+
+		/**
+		 * The code that runs during plugin activation.
+		 * This action is documented in includes/Activator.php
+		 */
+		public function activate_plugin()
+		{
+			Tableberg\Activator::activate();
+		}
+
+		/**
+		 * The code that runs during plugin deactivation.
+		 * This action is documented in includes/Deactivator.php
+		 */
+		public function deactivate_plugin()
+		{
+			Tableberg\Deactivator::deactivate();
 		}
 
 	}
