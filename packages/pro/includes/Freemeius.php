@@ -10,6 +10,10 @@ class Freemeius
     public static function isActive()
     {
         if (self::$isActive === -1) {
+            if (!class_exists('\\Tableberg\\Freemius')) {
+                return 0;
+            }
+            \Tableberg\Freemius::tab_fs();
             self::check();
         }
         return self::$isActive;
@@ -50,7 +54,7 @@ class Freemeius
                     'first-path' => 'admin.php?page=tableberg-settings&route=welcome',
                 ],
             ]);
-		    do_action('tp_fs_loaded');
+            do_action('tp_fs_loaded');
         }
 
         self::$isActive = self::$tp_fs->can_use_premium_code();
