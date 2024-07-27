@@ -4,7 +4,6 @@ namespace Tableberg\Pro\Blocks;
 
 
 use Tableberg\Pro\Common;
-use Tableberg\Pro\Defaults;
 use Tableberg\Utils\Utils;
 
 /**
@@ -75,18 +74,22 @@ class StarRating
 		}
 
 		$reviewText = '';
-		$textStyle = '';
-		if (isset($attributes['reviewText'])) {
-			$reviewText = wp_kses_data($attributes['reviewText']);
-		}
 
-		if (isset($attributes['reviewTextAlign'])) {
-			$textStyle .= 'text-align:' . esc_attr($attributes['reviewTextAlign']) . ';';
-		}
-		if (isset($attributes['reviewTextColor'])) {
-			$textStyle .= 'color:' . esc_attr($attributes['reviewTextColor']) . ';';
-		}
+		if ($attributes['reviewText']) {
+			$textStyle = '';
+			if (isset($attributes['reviewText'])) {
+				$reviewText = wp_kses_data($attributes['reviewText']);
+			}
 
+			if (isset($attributes['reviewTextAlign'])) {
+				$textStyle .= 'text-align:' . esc_attr($attributes['reviewTextAlign']) . ';';
+			}
+			if (isset($attributes['reviewTextColor'])) {
+				$textStyle .= 'color:' . esc_attr($attributes['reviewTextColor']) . ';';
+			}
+			$reviewText = '<div style="' . $textStyle . '">' . $reviewText . '</div>';
+
+		}
 
 		$stars = Common::generate_star_display(
 			esc_attr($attributes['selectedStars']),
@@ -96,14 +99,14 @@ class StarRating
 			esc_attr($attributes['starColor']),
 			esc_attr($attributes['starSize'])
 		);
-		
-		
+
+
 		$content = '
 		<div class="tableberg-star-rating" style="' . $style . '">
             <div class="' . $starsClassName . '">
                 ' . $stars . '
             </div>
-            <div style="' . $textStyle . '">' . $reviewText . '</div>
+            ' . $reviewText . '
         </div>
 		';
 		return $content;
@@ -115,14 +118,14 @@ class StarRating
 	public function star_rating_block_registration()
 	{
 		$jsonPath = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/star-rating/block.json';
-        $attrs = json_decode(file_get_contents($jsonPath), true)['attributes'];
+		$attrs = json_decode(file_get_contents($jsonPath), true)['attributes'];
 
-        register_block_type_from_metadata(
-            $jsonPath,
-            [
-                'attributes' => $attrs,
-                'render_callback' => array($this, 'render_star_rating_block'),
-            ]
-        );
+		register_block_type_from_metadata(
+			$jsonPath,
+			[
+				'attributes' => $attrs,
+				'render_callback' => array($this, 'render_star_rating_block'),
+			]
+		);
 	}
 }

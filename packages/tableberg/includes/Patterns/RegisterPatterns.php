@@ -16,7 +16,7 @@ class RegisterPatterns
                 continue;
             }
             $content = json_decode(file_get_contents($dir . '/' . $file), true);
-            register_block_pattern('tableberg/pattern-' . str_replace('.json', '', $file), $content);
+            register_block_pattern('tableberg/' . str_replace('.json', '', $file), $content);
         }
     }
 
@@ -33,7 +33,7 @@ class RegisterPatterns
             }
             $content = json_decode(file_get_contents($dir . '/' . $file), true);
             $content['content'] = str_replace('::PLUGIN_URL::', TABLEBERG_URL, $content['content']);
-            register_block_pattern('tableberg/pattern-' . str_replace('.json', '', $file), $content);
+            register_block_pattern('tableberg/' . str_replace('.json', '', $file), $content);
         }
     }
 

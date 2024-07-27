@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Tableberg Pro
  * Description:       Tableberg Pro: table builder Gutenberg block
- * Version:           0.5.2
+ * Version:           0.5.4
  * Requires at least: 6.1
  * Requires PHP:      7.0
  * Author:            Dotcamp
@@ -37,6 +37,7 @@ use Tableberg\Pro\Blocks;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+
 Tableberg\Pro\Freemeius::isActive();
 
 add_action('tab_fs_loaded', function () {
@@ -56,6 +57,7 @@ add_action('tab_fs_loaded', function () {
 			new Assets();
 		}
 	}
+
 	if (Tableberg\Pro\Freemeius::isActive()) {
 		new Tableberg_Pro_Main();
 	}

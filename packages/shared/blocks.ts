@@ -80,6 +80,13 @@ export default [
 
 export const ENHANCED_FEATURES = [
     {
+        name: "empty-cell",
+        title: "Empty Cell",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Empty Cell</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
         name: "sticky-top-row",
         title: "Sticky Top Row",
         icon: blockIcon,

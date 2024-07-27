@@ -28,7 +28,7 @@ function waitForCaptcha() {
 
 async function getDraftPosts(page) {
     const response = await fetch(
-        `${BASE_URL}/wp-json/wp/v2/posts?page=${page}&categories=7&context=edit&status=draft&_embed=wp:term&_fields=id,title,content,slug,excerpt,tags,categories,_links.wp:term`,
+        `${BASE_URL}/wp-json/wp/v2/posts?page=${page}&categories=7&context=edit&status=draft&_embed=wp:term&_fields=id,title,content,slug,excerpt,tags,categories,modified,_links.wp:term`,
         {
             headers: {
                 Authorization: `Basic ${Buffer.from(
@@ -113,18 +113,57 @@ async function getDraftPosts(page) {
         };
     };
 
-    const getPage = async (pageNum, after) => {
-        // Get draft posts
+    const TO_REMOVES = new Set();
+    fs.readdirSync(patternsDir).forEach((file) =>
+        TO_REMOVES.add(file.replace(".json", "")),
+    );
+    fs.readdirSync(proPatternsDir).forEach((file) =>
+        TO_REMOVES.add(file.replace(".json", "")),
+    );
+
+    let LAST_REFRESH = "",
+        LATEST_MODIFIED = "";
+    if (fs.existsSync(path.resolve(__dirname, ".patterns-date"))) {
+        LAST_REFRESH = fs.readFileSync(
+            path.resolve(__dirname, ".patterns-date"),
+            "utf8",
+        );
+    }
+
+    const getPage = async (pageNum, after, upsellJson) => {
         console.log(`Loading page: ${pageNum}`);
         const posts = await getDraftPosts(pageNum);
         console.log(`    Found ${posts.length} items.`);
 
         for (let i = 0; i < posts.length; i++) {
             const post = posts[i];
-            console.log('    Adding: ', post.slug);
+            console.log(`    Adding: [${post.id}] ${post.slug}`);
             if (!post.slug) {
                 continue;
             }
+
+            TO_REMOVES.delete(post.slug);
+            if (LATEST_MODIFIED < post.modified) {
+                LATEST_MODIFIED = post.modified;
+            }
+
+            const screenshotPath = path.join(imageDir, `${post.slug}.png`);
+
+            const imageUrl = screenshotPath
+                .replaceAll("\\", "/")
+                .replace("packages/tableberg", "");
+
+            if (post.modified <= LAST_REFRESH) {
+                console.log(`        Already updated`);
+                upsellJson.push({
+                    name: post.slug,
+                    title: post.title.rendered,
+                    upsellText: post.excerpt.rendered,
+                    image: imageUrl,
+                });
+                continue;
+            }
+
             const categories = post._embedded["wp:term"][0].map(
                 (term) => term.slug,
             );
@@ -168,15 +207,11 @@ async function getDraftPosts(page) {
                 continue;
             }
 
-            const screenshotPath = path.join(imageDir, `${post.slug}.png`);
             fs.writeFileSync(
                 path.resolve(proPatternsDir, post.slug + ".json"),
                 JSON.stringify(pattern),
                 "utf8",
             );
-            const imageUrl = screenshotPath
-                .replaceAll("\\", "/")
-                .replace("packages/tableberg", "");
             pattern.content = `<!-- wp:image {"id":314,"sizeSlug":"full","linkDestination":"none","align":"center"} -->
             <figure class="wp-block-image aligncenter size-full"><img src="::PLUGIN_URL::${imageUrl}" alt=""/></figure>
             <!-- /wp:image -->`;
@@ -185,6 +220,13 @@ async function getDraftPosts(page) {
                 JSON.stringify(pattern),
                 "utf8",
             );
+
+            upsellJson.push({
+                name: post.slug,
+                title: post.title.rendered,
+                upsellText: post.excerpt.rendered,
+                image: imageUrl,
+            });
 
             await page.screenshot({
                 path: screenshotPath,
@@ -202,14 +244,49 @@ async function getDraftPosts(page) {
 
     let pageNum = 1;
 
+    const upsellJson = [];
+
     const afterLoaded = async (posts) => {
         if (posts.length > 0) {
             pageNum++;
-            await getPage(pageNum, afterLoaded);
+            await getPage(pageNum, afterLoaded, upsellJson);
         } else {
             await browser.close();
+
+            fs.writeFileSync(
+                path.resolve(
+                    "packages/tableberg/src/components",
+                    "patterns.ts",
+                ),
+                "export const PATTERN_UPSELLS: any[] = " +
+                    JSON.stringify(upsellJson) +
+                    ";",
+                "utf8",
+            );
+            fs.writeFileSync(
+                path.resolve(__dirname, ".patterns-date"),
+                LATEST_MODIFIED,
+                "utf8",
+            );
+            if (TO_REMOVES.size > 0) {
+                console.log("Removing:");
+            }
+            TO_REMOVES.forEach((file) => {
+                console.log(`    ${file}`);
+                file = `${file}.json`;
+                const freePath = path.resolve(patternsDir, file);
+                if (fs.existsSync(freePath)) {
+                    fs.unlinkSync(freePath);
+                    return;
+                }
+                fs.unlinkSync(path.resolve(proPatternsDir, file));
+                fs.unlinkSync(
+                    path.resolve(imageDir, file.replace(".json", ".png")),
+                );
+                fs.unlinkSync(path.resolve(upsellDir, `upsell-${file}`));
+            });
         }
     };
 
-    await getPage(pageNum, afterLoaded);
+    await getPage(pageNum, afterLoaded, upsellJson);
 })();

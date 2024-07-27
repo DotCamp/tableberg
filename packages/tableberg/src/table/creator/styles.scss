@@ -1,4 +1,7 @@
 .tableberg-table-creator {
+
+    border: 1px solid black;
+
     .components-placeholder {
         outline: none;
         box-shadow: none;
@@ -124,6 +127,8 @@
             padding: 10px;
             border-bottom: 1px solid #ccc;
             height: 60px;
+            min-height: 60px;
+            max-height: 60px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -166,6 +171,8 @@
             padding: 10px;
             border-bottom: 1px solid #ccc;
             height: 60px;
+            min-height: 60px;
+            max-height: 60px;
             display: flex;
             align-items: center;
             gap: 10px;

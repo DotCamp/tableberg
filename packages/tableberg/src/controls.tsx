@@ -82,53 +82,42 @@ function TablebergControls({
     attributes,
     setAttributes,
 }: Props) {
-    const {
-        tableAttributes,
-        tableBlockClientId,
-        cellBlock,
-        themeColors,
-        rowStyle,
-        colStyle,
-    } = useSelect((select) => {
-        const storeSelect = select(
-            blockEditorStore,
-        ) as BlockEditorStoreSelectors;
-        const currentBlock = storeSelect.getBlock(clientId)!;
-        const isTableControls = currentBlock?.name === "tableberg/table";
+    const { tableAttributes, tableBlockClientId, cellBlock, themeColors } =
+        useSelect((select) => {
+            const storeSelect = select(
+                blockEditorStore,
+            ) as BlockEditorStoreSelectors;
+            const currentBlock = storeSelect.getBlock(clientId)!;
+            const isTableControls = currentBlock?.name === "tableberg/table";
 
-        let tableBlock = currentBlock;
-        let cellBlock = null;
+            let tableBlock = currentBlock;
+            let cellBlock = null;
 
-        if (!isTableControls) {
-            const parentBlocks = storeSelect.getBlockParents(clientId);
-            const tableBlockClientId = parentBlocks.find(
-                (blockClientId) =>
-                    storeSelect.getBlock(blockClientId)?.name ===
-                    "tableberg/table",
-            )!;
+            if (!isTableControls) {
+                const parentBlocks = storeSelect.getBlockParents(clientId);
+                const tableBlockClientId = parentBlocks.find(
+                    (blockClientId) =>
+                        storeSelect.getBlock(blockClientId)?.name ===
+                        "tableberg/table",
+                )!;
 
-            tableBlock = storeSelect.getBlock(tableBlockClientId)!;
-            cellBlock = currentBlock;
-        }
+                tableBlock = storeSelect.getBlock(tableBlockClientId)!;
+                cellBlock = currentBlock;
+            }
 
-        const tableAttributes = tableBlock.attributes as TablebergBlockAttrs;
+            const tableAttributes =
+                tableBlock.attributes as TablebergBlockAttrs;
 
-        return {
-            isTableControls,
-            tableAttributes,
-            tableBlockClientId: tableBlock.clientId,
-            cellBlock,
-            themeColors:
-                storeSelect.getSettings()?.__experimentalFeatures?.color.palette
-                    .theme,
-            rowStyle:
-                cellBlock &&
-                tableAttributes.rowStyles[cellBlock.attributes.row],
-            colStyle:
-                cellBlock &&
-                tableAttributes.colStyles[cellBlock.attributes.col],
-        };
-    }, []);
+            return {
+                isTableControls,
+                tableAttributes,
+                tableBlockClientId: tableBlock.clientId,
+                cellBlock,
+                themeColors:
+                    storeSelect.getSettings()?.__experimentalFeatures?.color
+                        .palette.theme,
+            };
+        }, []);
 
     const {
         enableInnerBorder,
@@ -191,6 +180,37 @@ function TablebergControls({
                     </ToolsPanelItem>
                     {cellBlock && (
                         <>
+                            {IS_PRO ? (
+                                <ToolsPanelItem
+                                    label={__("")}
+                                    hasValue={() => true}
+                                >
+                                    <ToggleControl
+                                        checked={cellBlock.attributes.isEmpty}
+                                        label="[PRO] Empty Cell"
+                                        onChange={(isEmpty) => {
+                                            setAttributes({
+                                                isEmpty,
+                                            });
+                                        }}
+                                    />
+                                </ToolsPanelItem>
+                            ) : (
+                                <LockedControl
+                                    isEnhanced
+                                    inToolsPanel
+                                    selected="empty-cell"
+                                >
+                                    <ToggleControl
+                                        label={__(
+                                            "[PRO] Empty Cell",
+                                            "tableberg",
+                                        )}
+                                        checked={cellBlock.attributes.isEmpty}
+                                        onChange={() => {}}
+                                    />
+                                </LockedControl>
+                            )}
                             <ToolsPanelItem
                                 label={__("Column Width", "tableberg")}
                                 hasValue={() => true}
@@ -612,10 +632,7 @@ function TablebergControls({
                     }
                     onDeselect={() =>
                         setTableAttributes({
-                            tableBorder: {
-                                color: "#000000",
-                                width: "1px",
-                            },
+                            tableBorder: {},
                         })
                     }
                 />
@@ -627,8 +644,8 @@ function TablebergControls({
                         setTableAttributes({ innerBorder })
                     }
                     radiusValue={tableAttributes.cellBorderRadius}
-                    onRadiusChange={(cellBorderRadius: any) =>
-                        setTableAttributes({ cellBorderRadius })
+                    onRadiusChange={(val: any) =>
+                        setTableAttributes({ cellBorderRadius: val })
                     }
                     onDeselect={() =>
                         setTableAttributes({
