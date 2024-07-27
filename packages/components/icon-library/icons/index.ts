@@ -293,6 +293,8 @@ import { fontAwesomeCategories, fontAwesomeIcons } from "./font-awesome";
 // Temporary icon specifications that are not yet in the NPM package.
 import { commentEditLink, sparkles } from "./wordpress/temp";
 
+import * as custom from "./custom";
+
 const wordpressSocialIcons = [
     {
         isDefault: true,
@@ -800,6 +802,12 @@ const wordpressIcons = [
         icon: check,
     },
     {
+        name: "checkCirleOutline",
+        title: __("Check Cirle Outline", "tableberg"),
+        type: "wordpress",
+        icon: custom.checkCircleOutlined,
+    },
+    {
         name: "chevronDown",
         title: __("Chevron Down", "tableberg"),
         type: "wordpress",
@@ -846,6 +854,12 @@ const wordpressIcons = [
         title: __("Close", "tableberg"),
         type: "wordpress",
         icon: close,
+    },
+    {
+        name: "closeCirleOutline",
+        title: __("Close Cirle Outline", "tableberg"),
+        type: "wordpress",
+        icon: custom.closeCircleOutlined,
     },
     {
         name: "closeSmall",
