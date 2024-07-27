@@ -9,6 +9,9 @@
             "Tableberg\\": [
                 "./",
                 "includes/"
+            ],
+            "Tableberg\\Pro\\": [
+                "../tableberg-pro/includes/"
             ]
         }
     },

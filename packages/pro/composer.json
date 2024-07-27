@@ -8,6 +8,9 @@
         "psr-4": {
             "Tableberg\\Pro\\": [
                 "includes/"
+            ],
+            "Tableberg\\": [
+                "../tableberg/includes"
             ]
         }
     }

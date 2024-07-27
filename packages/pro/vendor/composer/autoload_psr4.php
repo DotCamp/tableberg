@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Tableberg\\Pro\\' => array($baseDir . '/includes'),
+    'Tableberg\\' => array($baseDir . '/../tableberg/includes'),
 );

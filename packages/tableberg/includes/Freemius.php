@@ -18,7 +18,7 @@ class Freemius
             require_once __DIR__ . '/freemius/start.php';
 
             self::$tab_fs = fs_dynamic_init(
-                array(
+                [
                     'id' => '14649',
                     'slug' => 'tableberg',
                     'type' => 'plugin',
@@ -26,11 +26,11 @@ class Freemius
                     'is_premium' => false,
                     'has_addons' => true,
                     'has_paid_plans' => false,
-                    'menu' => array(
+                    'menu' => [
                         'slug' => 'tableberg-settings',
                         'first-path' => 'admin.php?page=tableberg-settings&route=welcome',
-                    ),
-                )
+                    ]
+                ]
             );
 
             do_action('tab_fs_loaded');

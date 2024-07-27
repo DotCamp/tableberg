@@ -10,6 +10,7 @@ class ComposerStaticInita048bd17e495a8314fc80bfd0f78e45a
         'T' => 
         array (
             'Tableberg\\Pro\\' => 14,
+            'Tableberg\\' => 10,
         ),
     );
 
@@ -17,6 +18,10 @@ class ComposerStaticInita048bd17e495a8314fc80bfd0f78e45a
         'Tableberg\\Pro\\' => 
         array (
             0 => __DIR__ . '/../..' . '/includes',
+        ),
+        'Tableberg\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/../tableberg/includes',
         ),
     );
 
