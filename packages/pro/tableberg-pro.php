@@ -144,6 +144,7 @@ function tp_fs_init()
 					new Blocks\Html();
 					new Blocks\Icon();
 					new Blocks\Ribbon();
+					new Blocks\Group();
 					new Assets();
 
 					\Tableberg\Patterns\RegisterPatterns::from_dir(__DIR__ . '/includes/patterns');

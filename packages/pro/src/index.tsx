@@ -11,5 +11,6 @@ import "./blocks/styled-list/styled-list-item";
 import "./blocks/html";
 import "./blocks/icon";
 import "./blocks/ribbon";
+import "./blocks/group";
 
 import "./block-enhancements"
