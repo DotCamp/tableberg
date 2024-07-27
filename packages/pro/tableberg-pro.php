@@ -38,8 +38,6 @@ use Tableberg\Pro\Blocks;
 require_once __DIR__ . '/vendor/autoload.php';
 
 
-Tableberg\Pro\Freemeius::isActive();
-
 add_action('tab_fs_loaded', function () {
 	if (class_exists('Tableberg_Pro_Main')) {
 		return;
@@ -70,9 +68,11 @@ add_action('admin_init', function () {
 			deactivate_plugins('tableberg-pro/tableberg-pro.php');
 			add_action('admin_notices', function () {
 				echo '<div class="notice notice-warning is-dismissible">
-                        <p>Tableberg Pro has been deactivated because Tableberg is not active.</p>
-                      </div>';
+				<p>Tableberg Pro has been deactivated because Tableberg is not active.</p>
+				</div>';
 			});
 		}
 	}
 });
+
+Tableberg\Pro\Freemeius::isActive();
