@@ -5,7 +5,7 @@
     "name": "tableberg/group",
     "title": "Group",
     "category": "design",
-    "description": "This block lets you add icons in tableberg.",
+    "description": "This block lets you add group block in tableberg.",
     "keywords": ["Group", "Horozontal", "X"],
     "parent": ["tableberg/cell"],
     "attributes": {},
