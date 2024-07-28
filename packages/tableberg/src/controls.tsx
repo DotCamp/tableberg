@@ -225,7 +225,7 @@ function TablebergControls({
                                     <LockedControl
                                         isEnhanced
                                         inToolsPanel
-                                        selected="cell-padding"
+                                        selected="cell-orientation"
                                     >
                                         <ToggleGroupControl
                                             __nextHasNoMarginBottom
