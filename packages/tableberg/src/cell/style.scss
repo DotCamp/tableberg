@@ -23,12 +23,24 @@
         font-weight: bold;
     }
 
-    > *:not(.tableberg-ribbon) {
-        margin-top: var(--tableberg-block-spacing, 0) !important;
-        margin-bottom: 0 !important;
-    }
-    > *:not(.tableberg-ribbon):first-child {
-        margin-top: 0 !important;
+    .tableberg-cell-inner {
+        &:not(.tableberg-cell-horizontal) {
+            > *:not(.tableberg-ribbon) {
+                margin-top: var(--tableberg-block-spacing, 0) !important;
+                margin-bottom: 0 !important;
+            }
+            > *:not(.tableberg-ribbon):first-child {
+                margin-top: 0 !important;
+            }
+        }
+
+        &.tableberg-cell-horizontal {
+            display: flex;
+            gap: var(--tableberg-block-spacing);
+            > p {
+                margin: 0;
+            }
+        }
     }
 }
 

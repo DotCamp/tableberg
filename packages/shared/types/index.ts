@@ -87,6 +87,9 @@ export interface TablebergCellBlockAttrs {
     background?: string;
     bgGradient?: string;
     blockSpacing: string;
+    isHorizontal: boolean;
+    justifyContent: "left" | "center" | "right" | "space-between";
+    wrapItems: boolean;
     isEmpty: boolean;
     isTmp: boolean;
 }

@@ -65,14 +65,10 @@ import {
 import TablebergProIcon from "@tableberg/shared/icons/tableberg-pro";
 import { UpsellEnhancedModal } from "../components/UpsellModal";
 import {
-    getBorderCSS,
     getBorderRadiusVar,
     getSpacingCssSingle,
 } from "@tableberg/shared/utils/styling-helpers";
-import {
-    getBorderVariablesCss,
-    getSingleSideBorderValue,
-} from "../utils/styling-helpers";
+import { getBorderVariablesCss } from "../utils/styling-helpers";
 
 const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
@@ -866,9 +862,17 @@ function edit(
         }),
     });
 
-    const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
+    const innerBlocksProps = useInnerBlocksProps({
         allowedBlocks: ALLOWED_BLOCKS,
         template: CELL_TEMPLATE,
+        className: classNames({
+            "tableberg-cell-inner": true,
+            "tableberg-cell-horizontal": attributes.isHorizontal,
+        }),
+        style: {
+            justifyContent: attributes.justifyContent,
+            flexWrap: (attributes.wrapItems ? "wrap" : "nowrap") as any,
+        },
     });
 
     useEffect(() => {
@@ -1065,19 +1069,17 @@ function edit(
                     return targetEl ? (
                         createPortal(
                             <TagName
-                                {...(attributes.isEmpty
-                                    ? blockProps
-                                    : innerBlocksProps)}
+                                {...blockProps}
                                 rowSpan={attributes.rowspan}
                                 colSpan={attributes.colspan}
-                            />,
+                            >
+                                <div {...innerBlocksProps} />
+                            </TagName>,
                             targetEl,
                         )
                     ) : (
                         <TagName
-                            {...(attributes.isEmpty
-                                ? blockProps
-                                : innerBlocksProps)}
+                            {...blockProps}
                             rowSpan={attributes.rowspan}
                             colSpan={attributes.colspan}
                         />
@@ -1153,7 +1155,9 @@ function save(props: BlockSaveProps<TablebergCellBlockAttrs>) {
     const blockProps = useBlockProps.save();
     const innerBlocksProps = useInnerBlocksProps.save(blockProps);
     const TagName = attributes.tagName ?? "td";
-    return <TagName {...(attributes.isEmpty ? blockProps : innerBlocksProps)} />;
+    return (
+        <TagName {...(attributes.isEmpty ? blockProps : innerBlocksProps)} />
+    );
 }
 
 // @ts-ignore This is a weird case.

@@ -7,6 +7,8 @@ import {
     justifyCenter,
     justifyRight,
     alignNone,
+    arrowRight,
+    arrowDown,
 } from "@wordpress/icons";
 import {
     InspectorControls,
@@ -34,18 +36,17 @@ import {
 import { useDispatch, useSelect } from "@wordpress/data";
 import { ResponsiveControls } from "./responsiveControls";
 import {
-    BorderControl,
     SpacingControl,
     ColorControl,
     ColorPickerDropdown,
     ToolbarWithDropdown,
-    BorderRadiusControl,
     SizeControl,
     SpacingControlSingle,
     BorderWithRadiusControl,
 } from "@tableberg/components";
 import LockedControl from "./components/LockedControl";
 import LockedBorderWithRadiusControl from "./components/LockedBorderWithRadiusControl";
+import CellOrientationControl from "./components/CellOrientationControl";
 
 const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
@@ -181,35 +182,70 @@ function TablebergControls({
                     {cellBlock && (
                         <>
                             {IS_PRO ? (
-                                <ToolsPanelItem
-                                    label={__("")}
-                                    hasValue={() => true}
-                                >
-                                    <ToggleControl
-                                        checked={cellBlock.attributes.isEmpty}
-                                        label="[PRO] Empty Cell"
-                                        onChange={(isEmpty) => {
-                                            setAttributes({
-                                                isEmpty,
-                                            });
-                                        }}
+                                <>
+                                    <ToolsPanelItem
+                                        label={__("")}
+                                        hasValue={() => true}
+                                    >
+                                        <ToggleControl
+                                            checked={
+                                                cellBlock.attributes.isEmpty
+                                            }
+                                            label="[PRO] Empty Cell"
+                                            onChange={(isEmpty) => {
+                                                setAttributes({
+                                                    isEmpty,
+                                                });
+                                            }}
+                                        />
+                                    </ToolsPanelItem>
+                                    <CellOrientationControl
+                                        attrs={cellBlock.attributes as any}
+                                        setAttrs={setAttributes as any}
                                     />
-                                </ToolsPanelItem>
+                                </>
                             ) : (
-                                <LockedControl
-                                    isEnhanced
-                                    inToolsPanel
-                                    selected="empty-cell"
-                                >
-                                    <ToggleControl
-                                        label={__(
-                                            "[PRO] Empty Cell",
-                                            "tableberg",
-                                        )}
-                                        checked={cellBlock.attributes.isEmpty}
-                                        onChange={() => {}}
-                                    />
-                                </LockedControl>
+                                <>
+                                    <LockedControl
+                                        isEnhanced
+                                        inToolsPanel
+                                        selected="empty-cell"
+                                    >
+                                        <ToggleControl
+                                            label={__(
+                                                "[PRO] Empty Cell",
+                                                "tableberg",
+                                            )}
+                                            checked={
+                                                cellBlock.attributes.isEmpty
+                                            }
+                                            onChange={() => {}}
+                                        />
+                                    </LockedControl>
+                                    <LockedControl
+                                        isEnhanced
+                                        inToolsPanel
+                                        selected="cell-orientation"
+                                    >
+                                        <ToggleGroupControl
+                                            __nextHasNoMarginBottom
+                                            className="block-editor-hooks__flex-layout-orientation-controls"
+                                            label={__("Orientation")}
+                                            value={"vertical"}
+                                        >
+                                            <ToggleGroupControlOptionIcon
+                                                icon={arrowRight}
+                                                value="horizontal"
+                                                label={__("Horizontal")}
+                                            />
+                                            <ToggleGroupControlOptionIcon
+                                                icon={arrowDown}
+                                                value="vertical"
+                                                label={__("Vertical")}
+                                            />
+                                        </ToggleGroupControl>
+                                    </LockedControl>
+                                </>
                             )}
                             <ToolsPanelItem
                                 label={__("Column Width", "tableberg")}

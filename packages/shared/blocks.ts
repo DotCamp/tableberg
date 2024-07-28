@@ -87,6 +87,13 @@ export const ENHANCED_FEATURES = [
             "<strong>Empty Cell</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
     {
+        name: "cell-orientation",
+        title: "Cell Orientation",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Cell Orientation</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
         name: "sticky-top-row",
         title: "Sticky Top Row",
         icon: blockIcon,

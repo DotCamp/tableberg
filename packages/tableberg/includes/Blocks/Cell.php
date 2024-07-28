@@ -24,7 +24,7 @@ class Cell
 	 */
 	public function __construct()
 	{
-		add_action('init', array($this, 'block_registration'));
+		add_action('init', [$this, 'block_registration']);
 	}
 
 
@@ -41,22 +41,26 @@ class Cell
 		return Utils::generate_css_string($styles);
 	}
 
-	/**
-	 * Renders the custom cell block on the server.
-	 *
-	 * @param array    $attributes The block attributes.
-	 * @param string   $content    The block content.
-	 * @param \WP_Block $block      The block object.
-	 * @return string Returns the HTML content for the custom cell block.
-	 */
+	private static function getInnerStyles($attributes){
+
+		$styles = [
+			'display' => $attributes['isHorizontal'] ? 'flex': 'block',
+			'justify-content' => $attributes['justifyContent'],
+			'flex-wrap' => $attributes['wrapItems'] ? 'wrap': 'nowrap',
+		];
+
+		return Utils::generate_css_string($styles);
+	}
+
+	
 	public function render_tableberg_cell_block($attributes, $content, $block)
 	{
-		if (isset($attributes['isTmp']) && $attributes['isTmp']) {
+		if ($attributes['isTmp']) {
 			return '';
 		}
 
-		$colspan = isset($attributes['colspan']) ? $attributes['colspan'] : 1;
-		$rowspan = isset($attributes['rowspan']) ? $attributes['rowspan'] : 1;
+		$colspan = $attributes['colspan'] ?? 1;
+		$rowspan = $attributes['rowspan'] ?? 1;
 
 		$attrs_str = 'data-tableberg-row="' . esc_attr($attributes['row']) . '" data-tableberg-col="' . esc_attr($attributes['col']) . '"';
 		$classes = 'tableberg-v-align-' . esc_attr($attributes['vAlign']);
@@ -79,6 +83,16 @@ class Cell
 
 		$content = HtmlUtils::add_attrs_to_tag($content, $tagName, $attrs_str);
 
+		$innerClass = 'tableberg-cell-inner';
+		if ($attributes['isHorizontal']) {
+			$innerClass .= ' tableberg-cell-horizontal';
+		}
+
+		$innerDiv = '<div class="'.$innerClass.'" style="' . self::getInnerStyles($attributes) . '">';
+
+		$content = HtmlUtils::insert_inside_tag($content, $tagName, $innerDiv);
+		$content = HtmlUtils::replace_closing_tag($content, $tagName, '</div></'.$tagName.'>');
+
 
 		Table::$rows[$attributes['row']][$attributes['col']] = $content;
 
@@ -90,13 +104,13 @@ class Cell
 	 */
 	public function block_registration()
 	{
-		$defaults = new \Tableberg\Defaults();
+		$json = TABLEBERG_DIR_PATH . 'build/cell/block.json';
 		register_block_type(
-			TABLEBERG_DIR_PATH . 'build/cell/block.json',
-			array(
-				'attributes' => $defaults->get_default_attributes('tableberg/cell'),
-				'render_callback' => array($this, 'render_tableberg_cell_block'),
-			)
+			$json,
+			[
+				'attributes' => json_decode(file_get_contents($json), true)['attributes'],
+				'render_callback' => [$this, 'render_tableberg_cell_block'],
+			]
 		);
 	}
 }
