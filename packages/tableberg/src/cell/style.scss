@@ -36,15 +36,9 @@
 
         &.tableberg-cell-horizontal {
             display: flex;
+            gap: var(--tableberg-block-spacing);
             > p {
                 margin: 0;
-            }
-
-            > *:not(.tableberg-ribbon) {
-                margin-left: var(--tableberg-block-spacing, 0) !important;
-            }
-            > *:not(.tableberg-ribbon):first-child {
-                margin-left: 0 !important;
             }
         }
     }
