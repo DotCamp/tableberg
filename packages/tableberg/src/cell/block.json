@@ -49,6 +49,18 @@
             "type": "string",
             "default": null
         },
+        "isHorizontal": {
+            "type": "boolean",
+            "default": false
+        },
+        "justifyContent": {
+            "type": "string",
+            "default": "center"
+        },
+        "wrapItems": {
+            "type": "boolean",
+            "default": true
+        },
         "isEmpty": {
             "type": "boolean",
             "default": false
