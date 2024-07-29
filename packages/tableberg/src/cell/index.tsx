@@ -793,7 +793,7 @@ function edit(
         unMergeCells,
     } = useMerging(clientId, tableBlock, storeActions);
 
-    const { hasSelected } = useSelect(
+    const { hasSelected, isParagraphSelected } = useSelect(
         (select) => {
             let hasSelected = false;
 
@@ -804,16 +804,19 @@ function edit(
             }
 
             const sel = select(blockEditorStore) as BlockEditorStoreSelectors;
-            const selectedBlock = sel.getSelectedBlockClientId();
+            const selectedBlock = sel.getSelectedBlock();
             if (!selectedBlock) {
                 return { hasSelected };
             }
 
-            const selParents = sel.getBlockParents(selectedBlock);
+            const selParents = sel.getBlockParents(selectedBlock.clientId);
 
             hasSelected = selParents.findIndex((val) => val === clientId) > -1;
 
-            return { hasSelected };
+            return {
+                hasSelected,
+                isParagraphSelected: selectedBlock.name === "core/paragraph",
+            };
         },
         [isSelected],
     );
@@ -1075,7 +1078,7 @@ function edit(
                 }}
             </TablebergCtx.Consumer>
             {cellRef.current &&
-                (isSelected || hasSelected) &&
+                (isSelected || (hasSelected && !isParagraphSelected)) &&
                 createPortal(
                     <div className="tableberg-appender-wrapper">
                         <ButtonBlockAppender
