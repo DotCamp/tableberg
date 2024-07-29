@@ -271,7 +271,7 @@ export const CellBlockPro = ({
         },
         {
             icon: arrowRight,
-            title: "Move coulmn to right",
+            title: "Move column to right",
             onClick: () => {
                 const tableBlock: any = storeSelect.getBlock(
                     storeSelect.getBlockRootClientId(props.clientId)!,
@@ -287,7 +287,7 @@ export const CellBlockPro = ({
         },
         {
             icon: arrowLeft,
-            title: "Move coulmn to left",
+            title: "Move column to left",
             onClick: () => {
                 const tableBlock: any = storeSelect.getBlock(
                     storeSelect.getBlockRootClientId(props.clientId)!,
