@@ -77,6 +77,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * PRO: IMPROVE: Added option for enabling/disabling star rating review text
 * FIX: Responsiveness in the frontend
 * PRO: FIX: Split styled list on enter key
+* PRO: FIX: Remove default background color when sticky row/col is enabled
 
 = 0.5.4 =
 * FIX: Odd Even row incorrect style
