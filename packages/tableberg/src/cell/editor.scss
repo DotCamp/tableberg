@@ -28,5 +28,11 @@ th.wp-block-tableberg-cell {
         padding: 0 !important;
         width: 24px;
     }
+
+    .tableberg-cell-inner {
+        .block-list-appender {
+            display: none !important;
+        }
+    }
     
 }

@@ -851,6 +851,7 @@ function edit(
     const innerBlocksProps = useInnerBlocksProps({
         allowedBlocks: ALLOWED_BLOCKS,
         template: CELL_TEMPLATE,
+        renderAppender: false,
         className: classNames({
             "tableberg-cell-inner": true,
             "tableberg-cell-horizontal": attributes.isHorizontal,
@@ -1074,8 +1075,7 @@ function edit(
                 }}
             </TablebergCtx.Consumer>
             {cellRef.current &&
-                !isSelected &&
-                hasSelected &&
+                (isSelected || hasSelected) &&
                 createPortal(
                     <div className="tableberg-appender-wrapper">
                         <ButtonBlockAppender
