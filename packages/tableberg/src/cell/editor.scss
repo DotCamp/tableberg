@@ -12,6 +12,10 @@ th.wp-block-tableberg-cell {
         position: absolute;
         right: 0;
         bottom: 0;
+
+        > *:not(.tablberg-block-appender) {
+            display: none !important;
+        }
     }
 
     .tablberg-block-appender {
@@ -23,6 +27,12 @@ th.wp-block-tableberg-cell {
         min-width: 24px;
         padding: 0 !important;
         width: 24px;
+    }
+
+    .tableberg-cell-inner {
+        .block-list-appender {
+            display: none !important;
+        }
     }
     
 }

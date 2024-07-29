@@ -1,10 +1,11 @@
 $blocks-block__margin: 0.5em;
 
 .wp-block-tableberg-button {
+    --tableberg-button-text-hover-color: white;
+    
     .wp-block-button__link {
         display: inline-block;
         color: white;
-        --tableberg-button-text-hover-color: white;
     }
     margin-block: 10px;
     &.has-background-color {

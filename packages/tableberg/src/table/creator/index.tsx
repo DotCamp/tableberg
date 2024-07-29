@@ -45,25 +45,19 @@ export default function TableCreator({ clientId }: Props) {
         let initialInnerBlocks: InnerBlockTemplate[] = [];
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
-                initialInnerBlocks.push(["tableberg/cell", { row: i, col: j }]);
+                initialInnerBlocks.push(["tableberg/cell", { row: i, col: j }, [["core/paragraph"]]]);
             }
         }
+        
+        storeActions.replaceInnerBlocks(clientId, createBlocksFromInnerBlocksTemplate(initialInnerBlocks));
 
-        storeActions.replaceBlock(
-            clientId,
-            createBlock<TablebergBlockAttrs>(
-                "tableberg/table",
-                {
-                    version: metadata.version,
-                    hasTableCreated: true,
-                    colWidths: Array(cols).fill(""),
-                    rowHeights: Array(rows).fill(""),
-                    cells: initialInnerBlocks.length,
-                    ...newTable,
-                },
-                createBlocksFromInnerBlocksTemplate(initialInnerBlocks),
-            ),
-        );
+        storeActions.updateBlockAttributes(clientId, {
+            version: metadata.version,
+            hasTableCreated: true,
+            cells: initialInnerBlocks.length,
+            ...newTable,
+        });
+
     };
 
     return (

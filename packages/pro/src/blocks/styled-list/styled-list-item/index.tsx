@@ -5,6 +5,7 @@ import {
     BlockInstance,
     cloneBlock,
     createBlock,
+    getDefaultBlockName,
     registerBlockType,
 } from "@wordpress/blocks";
 import {
@@ -33,6 +34,8 @@ import {
     SizeControl,
     SpacingControlSingle,
 } from "@tableberg/components";
+import { useRefEffect } from "@wordpress/compose";
+
 import IconsLibrary from "@tableberg/components/icon-library";
 
 import { listItemIcon } from "@tableberg/shared/icons/styled-list";
@@ -229,23 +232,41 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         blockEditorStore,
     ) as any;
 
-    const { listItemBlock, listBlock, listAttrs, currentIndex } = useSelect(
+    const {
+        listItemBlock,
+        listBlock,
+        listAttrs,
+        currentIndex,
+        getBlock,
+        getBlockRootClientId,
+        getBlockIndex,
+    } = useSelect(
         (select) => {
-            const storeSelect = select(
-                blockEditorStore,
-            ) as BlockEditorStoreSelectors;
-            const listItemBlock = storeSelect.getBlock(clientId)!;
-            const listBlock: BlockInstance<StyledListProps> =
-                storeSelect.getBlock(
-                    storeSelect.getBlockRootClientId(clientId)!,
-                )! as any;
+            const {
+                getBlock,
+                getBlockRootClientId,
+                getBlockIndex,
+                getBlockName,
+                getSelectionStart,
+                getSelectionEnd,
+            } = select(blockEditorStore) as BlockEditorStoreSelectors;
+            const listItemBlock = getBlock(clientId)!;
+            const listBlock: BlockInstance<StyledListProps> = getBlock(
+                getBlockRootClientId(clientId)!,
+            )! as any;
             const listAttrs = listBlock.attributes;
-            const currentIndex = storeSelect.getBlockIndex(clientId);
+            const currentIndex = getBlockIndex(clientId);
             return {
                 listItemBlock,
                 listBlock,
                 listAttrs,
                 currentIndex,
+                getBlock,
+                getBlockRootClientId,
+                getBlockIndex,
+                getBlockName,
+                getSelectionStart,
+                getSelectionEnd,
             };
         },
         [clientId],
@@ -262,6 +283,53 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
     const [isLibraryOpen, setLibraryOpen] = useState(false);
 
     const { indentItem, outdentItem } = useIndentOutdent(clientId);
+
+    const elRef = useRefEffect((el) => {
+        if (!el) {
+            return;
+        }
+        function onKeyDown(this: HTMLDivElement, event: any) {
+            if (event.defaultPrevented || event.shiftKey || event.keyCode !== 13) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const selection = window.getSelection();
+            if (!selection?.rangeCount) return;
+
+            const range = selection.getRangeAt(0);
+
+            const newRange = document.createRange();
+            newRange.setStart(range.endContainer, range.endOffset);
+            newRange.setEndAfter(this.lastChild!);
+            const secondPart = newRange.extractContents();
+
+            const div = document.createElement("div");
+            div.appendChild(secondPart);
+
+            const topParentListBlock = getBlock(
+                getBlockRootClientId(clientId)!,
+            )!;
+            const blockIndex = getBlockIndex(clientId)!;
+
+            const newBlock = createBlock("tableberg/styled-list-item", {
+                ...attributes,
+                text: div.innerHTML,
+            });
+            div.remove();
+            
+            storeActions.insertBlock(newBlock, blockIndex + 1, topParentListBlock.clientId);
+            // @ts-ignore
+            storeActions.selectionChange(newBlock.clientId);
+            setAttributes({ text: this.innerHTML });
+        }
+
+        el.addEventListener("keydown", onKeyDown);
+        return () => {
+            el.removeEventListener("keydown", onKeyDown);
+        };
+    }, []);
 
     const handleItemDeletion = (forward: boolean) => {
         if (forward) {
@@ -328,21 +396,13 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                         <SVGComponent icon={itemIcon} />
                     </div>
                     <RichText
+                        ref={elRef as any}
                         tagName="div"
                         className="tableberg-list-text"
                         value={text}
                         placeholder="List item"
                         keepPlaceholderOnFocus={true}
                         onChange={(text) => setAttributes({ text })}
-                        onSplit={(itemFragment) => {
-                            const newAttrs = Object.create(attributes);
-                            newAttrs.text = itemFragment;
-                            const newBlock = createBlock<StyledListItemProps>(
-                                "tableberg/styled-list-item",
-                                newAttrs,
-                            );
-                            return newBlock;
-                        }}
                         onMerge={handleItemDeletion}
                         onReplace={(blocks) => {
                             if (hasInnerList) {

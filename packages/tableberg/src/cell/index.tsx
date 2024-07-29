@@ -65,14 +65,10 @@ import {
 import TablebergProIcon from "@tableberg/shared/icons/tableberg-pro";
 import { UpsellEnhancedModal } from "../components/UpsellModal";
 import {
-    getBorderCSS,
     getBorderRadiusVar,
     getSpacingCssSingle,
 } from "@tableberg/shared/utils/styling-helpers";
-import {
-    getBorderVariablesCss,
-    getSingleSideBorderValue,
-} from "../utils/styling-helpers";
+import { getBorderVariablesCss } from "../utils/styling-helpers";
 
 const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
@@ -83,21 +79,7 @@ const ALLOWED_BLOCKS = [
     "core/list",
 ];
 
-const CELL_TEMPLATE: InnerBlockTemplate[] = [
-    [
-        "core/paragraph",
-        {
-            style: {
-                spacing: {
-                    margin: {
-                        top: "0",
-                        bottom: "0",
-                    },
-                },
-            },
-        },
-    ],
-];
+const CELL_TEMPLATE: InnerBlockTemplate[] = [["core/paragraph"]];
 
 const createSingleCell = (
     row: number,
@@ -778,7 +760,7 @@ function edit(
                 colStyle?.borderRadius,
                 "--tableberg-col",
             );
-            
+
             const rowRadius = getBorderRadiusVar(
                 rowStyle?.borderRadius,
                 "--tableberg-row",
@@ -811,7 +793,7 @@ function edit(
         unMergeCells,
     } = useMerging(clientId, tableBlock, storeActions);
 
-    const { hasSelected } = useSelect(
+    const { hasSelected, isParagraphSelected } = useSelect(
         (select) => {
             let hasSelected = false;
 
@@ -822,16 +804,19 @@ function edit(
             }
 
             const sel = select(blockEditorStore) as BlockEditorStoreSelectors;
-            const selectedBlock = sel.getSelectedBlockClientId();
+            const selectedBlock = sel.getSelectedBlock();
             if (!selectedBlock) {
                 return { hasSelected };
             }
 
-            const selParents = sel.getBlockParents(selectedBlock);
+            const selParents = sel.getBlockParents(selectedBlock.clientId);
 
             hasSelected = selParents.findIndex((val) => val === clientId) > -1;
 
-            return { hasSelected };
+            return {
+                hasSelected,
+                isParagraphSelected: selectedBlock.name === "core/paragraph",
+            };
         },
         [isSelected],
     );
@@ -866,9 +851,18 @@ function edit(
         }),
     });
 
-    const innerBlocksProps = useInnerBlocksProps(blockProps as any, {
+    const innerBlocksProps = useInnerBlocksProps({
         allowedBlocks: ALLOWED_BLOCKS,
         template: CELL_TEMPLATE,
+        renderAppender: false,
+        className: classNames({
+            "tableberg-cell-inner": true,
+            "tableberg-cell-horizontal": attributes.isHorizontal,
+        }),
+        style: {
+            justifyContent: attributes.justifyContent,
+            flexWrap: (attributes.wrapItems ? "wrap" : "nowrap") as any,
+        },
     });
 
     useEffect(() => {
@@ -886,7 +880,8 @@ function edit(
                 const block = innerBlocks[0];
                 if (
                     block.name === "core/paragraph" &&
-                    !block.attributes.content
+                    (!block.attributes.content ||
+                        !block.attributes.content.length)
                 ) {
                     evt.preventDefault();
                     evt.stopImmediatePropagation();
@@ -1065,15 +1060,17 @@ function edit(
                     return targetEl ? (
                         createPortal(
                             <TagName
-                                {...innerBlocksProps}
+                                {...blockProps}
                                 rowSpan={attributes.rowspan}
                                 colSpan={attributes.colspan}
-                            />,
+                            >
+                                <div {...innerBlocksProps} />
+                            </TagName>,
                             targetEl,
                         )
                     ) : (
                         <TagName
-                            {...innerBlocksProps}
+                            {...blockProps}
                             rowSpan={attributes.rowspan}
                             colSpan={attributes.colspan}
                         />
@@ -1081,8 +1078,7 @@ function edit(
                 }}
             </TablebergCtx.Consumer>
             {cellRef.current &&
-                !isSelected &&
-                hasSelected &&
+                (isSelected || (hasSelected && !isParagraphSelected)) &&
                 createPortal(
                     <div className="tableberg-appender-wrapper">
                         <ButtonBlockAppender
@@ -1149,7 +1145,9 @@ function save(props: BlockSaveProps<TablebergCellBlockAttrs>) {
     const blockProps = useBlockProps.save();
     const innerBlocksProps = useInnerBlocksProps.save(blockProps);
     const TagName = attributes.tagName ?? "td";
-    return <TagName {...innerBlocksProps} />;
+    return (
+        <TagName {...(attributes.isEmpty ? blockProps : innerBlocksProps)} />
+    );
 }
 
 // @ts-ignore This is a weird case.

@@ -171,7 +171,7 @@ class Table
 			$str = 'data-tableberg-header="' . $attributes['enableTableHeader'] . '" ';
 			$str .= 'data-tableberg-footer="' . $attributes['enableTableFooter'] . '" ';
 			$responsive = 'data-tableberg-responsive ' . $str . ' data-tableberg-rows="' . $attributes['rows'] . '" data-tableberg-cols="' . $attributes['cols'] . '" ' . $responsive;
-			$content = HtmlUtils::add_attrs_to_tag($content, 'table', $responsive);
+			$table_attrs .= ' ' . $responsive;
 		}
 
 		$wrapper_classes = ['wp-block-tableberg-wrapper'];

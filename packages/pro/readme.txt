@@ -5,7 +5,7 @@ Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 0.5.4
+Stable tag: 0.5.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +68,17 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 
 == Changelog ==
 
+= 0.5.5 =
+* PRO: NEW: Empty Cell option
+* PRO: NEW: Added orientation option in cell
+* FIX: Set default image width 150px
+* FIX: Button hover color in the editor
+* IMPROVE: Added checked & close circle outline icons
+* PRO: IMPROVE: Added option for enabling/disabling star rating review text
+* FIX: Responsiveness in the frontend
+* PRO: FIX: Split styled list on enter key
+* PRO: FIX: Remove default background color when sticky row/col is enabled
+
 = 0.5.4 =
 * FIX: Odd Even row incorrect style
 * FIX: Fixed width table in frontend
@@ -92,8 +103,8 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * IMPROVE: Control cell outside border
 * IMPROVE: Deactivate pro version when free version is deactivated
 * IMPROVE: Show Tableberg when searched for Row/Column in editor
-* PRO: IMPOVE: Added center position in badge ribbon
-* PRO: IMPOVE: Added rotation option in badge ribbon
+* PRO: IMPROVE: Added center position in badge ribbon
+* PRO: IMPROVE: Added rotation option in badge ribbon
 
 = 0.5.2 =
 * NEW: Fixed width columns
@@ -168,7 +179,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 
 * NEW: Add cell spacing functionality.
 * IMPROVE: Row block removed. Cell blocks are added directly to tableberg table block.
-* IMPOVE: Multiple cells can be merged now.
+* IMPROVE: Multiple cells can be merged now.
 * FIX: Adding non-cell blocks to table block breaks the layout.
 
 = 0.2.1 =

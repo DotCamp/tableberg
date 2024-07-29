@@ -6,15 +6,9 @@
     "title": "Styled List",
     "category": "design",
     "description": "This block lets you add a styled list in your post or pages. Instead of bullets you can use various icons as your list style type. ",
-    "keywords": [
-        "List",
-        "Styled List",
-        "tableberg"
-    ],
-    "parent": [
-        "tableberg/cell",
-        "tableberg/styled-list-item"
-    ],
+    "keywords": ["List", "Styled List", "tableberg"],
+    "parent": ["tableberg/cell", "tableberg/styled-list-item"],
+    "allowedBlocks": ["tableberg/styled-list-item"],
     "textdomain": "tableberg-pro",
     "attributes": {
         "alignment": {

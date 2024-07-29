@@ -5,6 +5,17 @@
     "title": "Cell",
     "name": "tableberg/cell",
     "parent": ["tableberg/table"],
+    "allowedBlocks": [
+        "core/list",
+        "core/paragraph",
+        "tableberg/image",
+        "tableberg/button",
+        "tableberg/icon",
+        "tableberg/html",
+        "tableberg/styled-list",
+        "tableberg/star-rating",
+        "tableberg/ribbon"
+    ],
     "category": "design",
     "icon": "table-row-after",
     "description": "Tableberg Cell: Individual cell of a tableberg table",
@@ -37,17 +48,33 @@
             "type": "string",
             "default": ""
         },
-        "background" : {
+        "background": {
             "type": "string",
             "default": null
         },
-        "bgGradient" : {
+        "bgGradient": {
             "type": "string",
             "default": null
         },
         "blockSpacing": {
             "type": "string",
             "default": null
+        },
+        "isHorizontal": {
+            "type": "boolean",
+            "default": false
+        },
+        "justifyContent": {
+            "type": "string",
+            "default": "center"
+        },
+        "wrapItems": {
+            "type": "boolean",
+            "default": true
+        },
+        "isEmpty": {
+            "type": "boolean",
+            "default": false
         },
         "isTmp": {
             "type": "boolean",

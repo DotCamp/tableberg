@@ -1,12 +1,13 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "version": "0.5.4",
+    "version": "0.5.5",
     "name": "tableberg/table",
     "title": "Tableberg",
     "category": "design",
     "description": "Table Block By Tableberg - Advanced Table Block for Block Editor",
     "keywords": ["table", "tableberg", "cell", "row", "column"],
+    "allowedBlocks": ["tableberg/cell"],
     "supports": {
         "html": false
     },
@@ -29,9 +30,8 @@
         },
         "fixedColWidth": {
             "type": "boolean",
-            "default": false
+            "default": true
         },
-
         "colWidths": {
             "type": "array",
             "default": [],
@@ -42,7 +42,6 @@
             "default": [],
             "_comment": "REMOVE THIS IN FUTURE"
         },
-
         "colStyles": {
             "type": "object",
             "default": {}
@@ -165,7 +164,6 @@
                 "breakpoints": {}
             }
         },
-
         "stickyTopRow": {
             "type": "boolean",
             "default": false
