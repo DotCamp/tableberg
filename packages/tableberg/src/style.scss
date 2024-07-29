@@ -250,7 +250,6 @@ div.wp-block-tableberg-wrapper {
     &.tableberg-sticky-top-row {
         position: relative;
         tr:first-of-type {
-            background: white;
             position: sticky;
             top: 0;
             z-index: 1;
@@ -262,7 +261,6 @@ div.wp-block-tableberg-wrapper {
         tr {
             td:first-child,
             th:first-child {
-                background: white;
                 position: sticky;
                 left: 0;
                 z-index: 1;
