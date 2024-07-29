@@ -29,9 +29,8 @@
         },
         "fixedColWidth": {
             "type": "boolean",
-            "default": false
+            "default": true
         },
-
         "colWidths": {
             "type": "array",
             "default": [],
@@ -42,7 +41,6 @@
             "default": [],
             "_comment": "REMOVE THIS IN FUTURE"
         },
-
         "colStyles": {
             "type": "object",
             "default": {}
@@ -165,7 +163,6 @@
                 "breakpoints": {}
             }
         },
-
         "stickyTopRow": {
             "type": "boolean",
             "default": false
