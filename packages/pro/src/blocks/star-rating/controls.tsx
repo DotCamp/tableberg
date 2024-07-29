@@ -41,34 +41,36 @@ function StarBlockControls(props: BlockEditProps<StarRatingProps>) {
                         />
                     ))}
                 </ToolbarGroup>
-                <ToolbarGroup>
-                    {["left", "center", "right", "justify"].map((a) => (
-                        // @ts-ignore
-                        <ToolbarButton
-                            icon={
-                                `editor-${
-                                    a === "justify" ? a : "align" + a
-                                }` as any
-                            }
-                            label={__(
-                                (a !== "justify" ? "Align " : "") +
-                                    a[0].toUpperCase() +
-                                    a.slice(1),
-                            )}
-                            isActive={reviewTextAlign === a}
-                            onClick={() =>
-                                setAttributes({ reviewTextAlign: a })
-                            }
-                        />
-                    ))}
-                </ToolbarGroup>
+                {attributes.enableText && (
+                    <ToolbarGroup>
+                        {["left", "center", "right", "justify"].map((a) => (
+                            // @ts-ignore
+                            <ToolbarButton
+                                icon={
+                                    `editor-${
+                                        a === "justify" ? a : "align" + a
+                                    }` as any
+                                }
+                                label={__(
+                                    (a !== "justify" ? "Align " : "") +
+                                        a[0].toUpperCase() +
+                                        a.slice(1),
+                                )}
+                                isActive={reviewTextAlign === a}
+                                onClick={() =>
+                                    setAttributes({ reviewTextAlign: a })
+                                }
+                            />
+                        ))}
+                    </ToolbarGroup>
+                )}
             </WPBlockControls>
             <InspectorControls group="settings">
                 <PanelBody title={__("General")} initialOpen={true}>
                     <ToggleControl
                         label={__("Enable text")}
                         checked={attributes.enableText}
-                        onChange={(enableText) => setAttributes({enableText})}
+                        onChange={(enableText) => setAttributes({ enableText })}
                     />
                     <RangeControl
                         label={__("Number of stars")}
