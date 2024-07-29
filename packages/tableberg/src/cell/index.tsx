@@ -79,21 +79,7 @@ const ALLOWED_BLOCKS = [
     "core/list",
 ];
 
-const CELL_TEMPLATE: InnerBlockTemplate[] = [
-    [
-        "core/paragraph",
-        {
-            style: {
-                spacing: {
-                    margin: {
-                        top: "0",
-                        bottom: "0",
-                    },
-                },
-            },
-        },
-    ],
-];
+const CELL_TEMPLATE: InnerBlockTemplate[] = [["core/paragraph"]];
 
 const createSingleCell = (
     row: number,
@@ -890,7 +876,8 @@ function edit(
                 const block = innerBlocks[0];
                 if (
                     block.name === "core/paragraph" &&
-                    !block.attributes.content
+                    (!block.attributes.content ||
+                        !block.attributes.content.length)
                 ) {
                     evt.preventDefault();
                     evt.stopImmediatePropagation();
