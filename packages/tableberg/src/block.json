@@ -7,6 +7,7 @@
     "category": "design",
     "description": "Table Block By Tableberg - Advanced Table Block for Block Editor",
     "keywords": ["table", "tableberg", "cell", "row", "column"],
+    "allowedBlocks": ["tableberg/cell"],
     "supports": {
         "html": false
     },

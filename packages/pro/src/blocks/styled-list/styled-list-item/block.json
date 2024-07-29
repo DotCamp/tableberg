@@ -13,6 +13,7 @@
      "parent": [
           "tableberg/styled-list"
      ],
+     "allowedBlocks": ["tableberg/styled-list"],
      "textdomain": "tableberg-pro",
      "attributes": {
           "text": {
