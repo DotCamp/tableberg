@@ -138,6 +138,7 @@ export const PrimaryTable = (
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value.trim())}
+                        placeholder="Search..."
                     />
                     <FontAwesomeIcon icon={faSearch} />
                 </div>

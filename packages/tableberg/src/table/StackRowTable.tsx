@@ -168,7 +168,7 @@ export default function StackRowTable(
                 <div
                     className={`tableberg-search tableberg-search-${attributes.searchPosition}`}
                 >
-                    <input type="text" />
+                    <input type="text" placeholder="Search..." />
                     <FontAwesomeIcon icon={faSearch} />
                 </div>
             )}

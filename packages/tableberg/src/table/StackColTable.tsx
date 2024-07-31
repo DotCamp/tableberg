@@ -212,7 +212,7 @@ export default function StackColTable(
                 <div
                     className={`tableberg-search tableberg-search-${attributes.searchPosition}`}
                 >
-                    <input type="text" />
+                    <input type="text" placeholder="Search..." />
                     <FontAwesomeIcon icon={faSearch} />
                 </div>
             )}
