@@ -86,11 +86,15 @@ const createSingleCell = (
     col: number,
     isHeader: boolean,
 ): TablebergCellInstance => {
-    return createBlock("tableberg/cell", {
-        col: col,
-        row,
-        tagName: isHeader ? "th" : "td",
-    }) as TablebergCellInstance;
+    return createBlock(
+        "tableberg/cell",
+        {
+            col: col,
+            row,
+            tagName: isHeader ? "th" : "td",
+        },
+        [createBlock("core/paragraph")],
+    ) as TablebergCellInstance;
 };
 
 const addRow = (
