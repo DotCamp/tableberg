@@ -316,10 +316,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             "tableberg-border-col-only": attributes.innerBorderType === "col",
             "tableberg-border-row-only": attributes.innerBorderType === "row",
         }),
-        style: {
-            ...getBorderCSS(attributes.tableBorder),
-            ...getBorderRadiusCSS(attributes.tableBorderRadius),
-        },
     });
 
     const storeActions: BlockEditorStoreActions = useDispatch(

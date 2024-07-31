@@ -175,6 +175,14 @@
         "innerBorderType": {
             "type": "string",
             "default": ""
+        },
+        "search": {
+            "type": "boolean",
+            "default": false
+        },
+        "searchPosition": {
+            "type": "string",
+            "default": "wide"
         }
     },
     "example": {

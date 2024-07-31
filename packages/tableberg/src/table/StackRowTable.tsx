@@ -1,5 +1,8 @@
 import { BlockEditProps, BlockInstance, cloneBlock } from "@wordpress/blocks";
-import { TablebergBlockAttrs, TablebergCellInstance } from "@tableberg/shared/types";
+import {
+    TablebergBlockAttrs,
+    TablebergCellInstance,
+} from "@tableberg/shared/types";
 import {
     useInnerBlocksProps,
     store as blockEditorStore,
@@ -11,12 +14,18 @@ import { useDispatch } from "@wordpress/data";
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+    getBorderCSS,
+    getBorderRadiusCSS,
+} from "@tableberg/shared/utils/styling-helpers";
 
 export default function StackRowTable(
     props: BlockEditProps<TablebergBlockAttrs> & {
         tableBlock: BlockInstance<TablebergBlockAttrs>;
         preview: keyof TablebergBlockAttrs["responsive"]["breakpoints"];
-    }
+    },
 ) {
     const { attributes, tableBlock, clientId, setAttributes, preview } = props;
 
@@ -46,7 +55,7 @@ export default function StackRowTable(
     }, [attributes.cols]);
 
     const storeActions: BlockEditorStoreActions = useDispatch(
-        blockEditorStore
+        blockEditorStore,
     ) as any;
 
     const breakpoints = tableBlock.attributes.responsive.breakpoints;
@@ -92,7 +101,7 @@ export default function StackRowTable(
                 });
                 cell.attributes.responsiveTarget = `#tableberg-${clientId}-${rowCount}`;
                 tmplates.push(
-                    <tr id={`tableberg-${clientId}-${rowCount}`}></tr>
+                    <tr id={`tableberg-${clientId}-${rowCount}`}></tr>,
                 );
                 rowCount++;
             } else if (masterRow.count == colCount) {
@@ -120,7 +129,7 @@ export default function StackRowTable(
                     <tr
                         id={`tableberg-${clientId}-${rowCount}`}
                         style={style}
-                    ></tr>
+                    ></tr>,
                 );
                 rowCount++;
             } else {
@@ -133,11 +142,10 @@ export default function StackRowTable(
 
         storeActions.replaceInnerBlocks(clientId, newCells);
         storeActions.updateBlockAttributes(clientId, {
-            cells: newCells.length
+            cells: newCells.length,
         });
         setRowTemplates(tmplates);
         setColUpt((old) => old + 1);
-        
     }, [
         attributes.cells,
         attributes.enableTableHeader,
@@ -156,7 +164,23 @@ export default function StackRowTable(
 
     return (
         <>
-            <table {...blockProps}>{rowTemplates}</table>
+            {attributes.search && (
+                <div
+                    className={`tableberg-search tableberg-search-${attributes.searchPosition}`}
+                >
+                    <input type="text" placeholder="Search..." />
+                    <FontAwesomeIcon icon={faSearch} />
+                </div>
+            )}
+            <div
+                className="tableberg-table-wrapper"
+                style={{
+                    ...getBorderCSS(attributes.tableBorder),
+                    ...getBorderRadiusCSS(attributes.tableBorderRadius),
+                }}
+            >
+                <table {...blockProps}>{rowTemplates}</table>
+            </div>
             <div style={{ display: "none" }} key={colUpt}>
                 <div {...innerBlocksProps} />
             </div>

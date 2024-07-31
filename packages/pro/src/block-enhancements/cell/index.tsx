@@ -26,8 +26,8 @@ import TablebergProIcon from "@tableberg/shared/icons/tableberg-pro";
 
 import { ProBlockProps } from "..";
 import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
-import StickyRowColControl from "../../shared/StickyRowColControl";
 import { DragNDropSorting, moveCol, moveRow } from "./drag-sort";
+import TableAndCellControl from "../TableAndCellControl";
 
 const duplicateRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
@@ -406,12 +406,6 @@ export const CellBlockPro = ({
                             }
                         />
                     </InspectorControls>
-                    <InspectorControls>
-                        <StickyRowColControl
-                            attrs={tableAttrs}
-                            setAttrs={setTableAttrs}
-                        />
-                    </InspectorControls>
                     <InspectorControls group="border">
                         <BorderWithRadiusControl
                             isShownByDefault={false}
@@ -440,6 +434,12 @@ export const CellBlockPro = ({
                             onDeselect={() => null}
                         />
                     </InspectorControls>
+                    <TableAndCellControl
+                        tableAttrs={tableAttrs}
+                        setTableAttrs={setTableAttrs}
+                        cellAttrs={attrs}
+                        setCellAttrs={props.setAttributes}
+                    />
                 </>
             )}
             <BlockControls group="other" __experimentalShareWithChildBlocks>

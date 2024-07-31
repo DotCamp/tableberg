@@ -86,11 +86,15 @@ const createSingleCell = (
     col: number,
     isHeader: boolean,
 ): TablebergCellInstance => {
-    return createBlock("tableberg/cell", {
-        col: col,
-        row,
-        tagName: isHeader ? "th" : "td",
-    }) as TablebergCellInstance;
+    return createBlock(
+        "tableberg/cell",
+        {
+            col: col,
+            row,
+            tagName: isHeader ? "th" : "td",
+        },
+        [createBlock("core/paragraph")],
+    ) as TablebergCellInstance;
 };
 
 const addRow = (
@@ -1048,8 +1052,8 @@ function edit(
                     if (render === "primary") {
                         if (!attributes.isTmp)
                             targetEl =
-                                rootEl?.firstElementChild?.children?.[
-                                    attributes.row + 1
+                                rootEl?.querySelector("tbody")?.children?.[
+                                    attributes.row
                                 ];
                     } else if (attributes.responsiveTarget) {
                         targetEl = rootEl?.querySelector(
