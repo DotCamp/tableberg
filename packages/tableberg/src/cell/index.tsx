@@ -1048,8 +1048,8 @@ function edit(
                     if (render === "primary") {
                         if (!attributes.isTmp)
                             targetEl =
-                                rootEl?.firstElementChild?.children?.[
-                                    attributes.row + 1
+                                rootEl?.querySelector("tbody")?.children?.[
+                                    attributes.row
                                 ];
                     } else if (attributes.responsiveTarget) {
                         targetEl = rootEl?.querySelector(

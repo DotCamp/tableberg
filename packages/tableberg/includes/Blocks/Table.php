@@ -86,7 +86,7 @@ class Table
 	}
 
 
-	private static function get_root_styles($attributes)
+	private static function get_wrapper_styles($attributes)
 	{
 		$styles = Utils::get_border_style($attributes['tableBorder'] ?? []);
 		$styles += Utils::get_border_radius_style($attributes['tableBorderRadius'] ?? []);
@@ -198,7 +198,6 @@ class Table
 
 		$wrapper_attributes = get_block_wrapper_attributes([
 			'class' => trim(join(' ', $wrapper_classes)),
-			'style' => self::get_root_styles($attributes)
 		]);
 
 		$colBorders = [];
@@ -276,9 +275,28 @@ class Table
 
 		$content .= '</tbody>';
 
-		$table = '<table ' . $table_attrs . ' >' . $colGroup . $content . '</table>';
-
 		self::$rows = [];
+
+		$table = '';
+
+		if ($attributes['search']) {
+			$table = '
+				<div class="tableberg-search tableberg-search-' . $attributes['searchPosition'] . '">
+						<input type="text" data-tableberg-search/>
+						<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="magnifying-glass" class="svg-inline--fa fa-magnifying-glass " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+							<path fill="currentColor" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path>
+						</svg>
+				</div>
+			';
+		}
+
+		$table .= '
+			<div class="tableberg-table-wrapper" style="' . self::get_wrapper_styles($attributes) . '">
+				<table ' . $table_attrs . ' >' . $colGroup . $content . '</table>
+			</div>
+		';
+
+
 
 		return '<div ' . $wrapper_attributes . ' >' . $table . '</div>';
 	}

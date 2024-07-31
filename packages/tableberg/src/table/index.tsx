@@ -10,7 +10,13 @@ import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
 import { useDispatch } from "@wordpress/data";
-import { styles } from "@wordpress/icons";
+import {
+    getBorderCSS,
+    getBorderRadiusCSS,
+} from "@tableberg/shared/utils/styling-helpers";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 export const ALLOWED_BLOCKS = ["tableberg/cell"];
 
@@ -20,7 +26,9 @@ export const PrimaryTable = (
     },
 ) => {
     const { attributes, tableBlock, setAttributes } = props;
+    const tableRef = useRef<HTMLTableElement>();
     const blockProps = {
+        ref: tableRef,
         style: {
             ...getStyles(attributes),
             maxWidth: attributes.tableWidth,
@@ -69,13 +77,32 @@ export const PrimaryTable = (
         }
     }, []);
 
+    const [search, setSearch] = useState("");
+    const [hiddenRows, setHiddenRows] = useState<number[]>([]);
+
+    useEffect(() => {
+        const vRows: number[] = [];
+        if (tableRef.current && search.length > 2) {
+            const rows = tableRef.current.querySelector("tbody")?.children;
+            Array.from(rows!).forEach((row, idx) => {
+                if (!row.textContent?.includes(search)) {
+                    vRows.push(idx);
+                }
+            });
+        }
+        setHiddenRows(vRows);
+    }, [search]);
+
     const rowTemplate = createArray(attributes.rows).map((i) => {
         let className = "";
+        let mustBeShown = false;
 
         if (i === 0 && attributes.enableTableHeader) {
             className = "tableberg-header";
+            mustBeShown = true;
         } else if (i + 1 === attributes.rows && attributes.enableTableFooter) {
             className = "tableberg-footer";
+            mustBeShown = true;
         } else {
             const row = attributes.enableTableHeader ? i + 1 : i;
             className = row % 2 ? "tableberg-even-row" : "tableberg-odd-row";
@@ -88,6 +115,7 @@ export const PrimaryTable = (
                 style={{
                     height: rowStyle?.height,
                     background: rowStyle?.bgGradient || rowStyle?.background,
+                    display: !mustBeShown && hiddenRows.includes(i) ? "none" : "table-row",
                 }}
                 className={className}
             ></tr>
@@ -102,38 +130,58 @@ export const PrimaryTable = (
 
     return (
         <>
-            <table {...blockProps}>
-                <colgroup>
-                    {fixedWidth
-                        ? Array(attributes.cols)
-                              .fill("")
-                              .map(() => (
-                                  <col
-                                      style={{
-                                          width: fixedWidth,
-                                          minWidth: fixedWidth,
-                                      }}
-                                  />
-                              ))
-                        : Array(attributes.cols)
-                              .fill("")
-                              .map((_, i) => {
-                                  const colStyle = attributes.colStyles[i];
-                                  return (
+            {attributes.search && (
+                <div
+                    className={`tableberg-search tableberg-search-${attributes.searchPosition}`}
+                >
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value.trim())}
+                    />
+                    <FontAwesomeIcon icon={faSearch} />
+                </div>
+            )}
+            <div
+                className="tableberg-table-wrapper"
+                style={{
+                    ...getBorderCSS(attributes.tableBorder),
+                    ...getBorderRadiusCSS(attributes.tableBorderRadius),
+                }}
+            >
+                <table {...blockProps}>
+                    <colgroup>
+                        {fixedWidth
+                            ? Array(attributes.cols)
+                                  .fill("")
+                                  .map(() => (
                                       <col
                                           style={{
-                                              width: colStyle?.width,
-                                              minWidth: colStyle?.width,
-                                              background:
-                                                  colStyle?.bgGradient ||
-                                                  colStyle?.background,
+                                              width: fixedWidth,
+                                              minWidth: fixedWidth,
                                           }}
                                       />
-                                  );
-                              })}
-                </colgroup>
-                {rowTemplate}
-            </table>
+                                  ))
+                            : Array(attributes.cols)
+                                  .fill("")
+                                  .map((_, i) => {
+                                      const colStyle = attributes.colStyles[i];
+                                      return (
+                                          <col
+                                              style={{
+                                                  width: colStyle?.width,
+                                                  minWidth: colStyle?.width,
+                                                  background:
+                                                      colStyle?.bgGradient ||
+                                                      colStyle?.background,
+                                              }}
+                                          />
+                                      );
+                                  })}
+                    </colgroup>
+                    <tbody>{rowTemplate}</tbody>
+                </table>
+            </div>
             <div style={{ display: "none" }} key={colUpt}>
                 <div {...innerBlocksProps} />
             </div>

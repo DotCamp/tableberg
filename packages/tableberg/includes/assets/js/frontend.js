@@ -8,6 +8,16 @@
             });
             tables.forEach(resizeTable);
         }
+
+        const searchBoxes = document.querySelectorAll("[data-tableberg-search]");
+
+        if (searchBoxes.length) {
+            searchBoxes.forEach((searchBox) => {
+                searchBox.addEventListener("input", () => {
+                    searchTable(searchBox);
+                });
+            });
+        }
     });
 
     /**
@@ -32,14 +42,14 @@
                         table,
                         opts.tablebergMobileHeader,
                         opts.tablebergMobileCount,
-                        renderMode
+                        renderMode,
                     );
                 } else {
                     toColStack(
                         table,
                         opts.tablebergMobileHeader,
                         opts.tablebergMobileCount,
-                        renderMode
+                        renderMode,
                     );
                 }
             } else if (opts.tablebergMobileMode === "scroll") {
@@ -62,14 +72,14 @@
                         table,
                         opts.tablebergTabletHeader,
                         opts.tablebergTabletCount,
-                        renderMode
+                        renderMode,
                     );
                 } else {
                     toColStack(
                         table,
                         opts.tablebergTabletHeader,
                         opts.tablebergTabletCount,
-                        renderMode
+                        renderMode,
                     );
                 }
             } else if (opts.tablebergTabletMode === "scroll") {
@@ -465,8 +475,31 @@
      */
     function setTableClassName(table, className) {
         ["tableberg-rowstack-table", "tableberg-rowstack-table"].forEach(
-            (className) => table.classList.remove(className)
+            (className) => table.classList.remove(className),
         );
         className && table.classList.add(className);
+    }
+
+
+    function searchTable(input) {
+        const search = input.value.trim();
+        const rows = input.parentElement.parentElement.querySelectorAll("tr");
+        if (!search || search.length < 3) {
+            if (input.dataset.isDirty) {
+                input.dataset.isDirty = false;
+                Array.from(rows).forEach((row) => {
+                    row.style.display = "table-row";
+                });
+            }
+            return;
+        }
+        Array.from(rows).forEach((row) => {
+            if (row.querySelectorAll("th").length > 1 || row.textContent?.includes(search)) {
+                row.style.display = "table-row";
+            } else {
+                row.style.display = "none";
+            }
+        });
+        input.dataset.isDirty = true;
     }
 })();

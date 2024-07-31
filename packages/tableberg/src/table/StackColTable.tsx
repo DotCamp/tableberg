@@ -1,5 +1,8 @@
 import { BlockEditProps, BlockInstance, cloneBlock } from "@wordpress/blocks";
-import { TablebergBlockAttrs, TablebergCellInstance } from "@tableberg/shared/types";
+import {
+    TablebergBlockAttrs,
+    TablebergCellInstance,
+} from "@tableberg/shared/types";
 import {
     useInnerBlocksProps,
     store as blockEditorStore,
@@ -10,6 +13,12 @@ import { useDispatch } from "@wordpress/data";
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
+import {
+    getBorderCSS,
+    getBorderRadiusCSS,
+} from "@tableberg/shared/utils/styling-helpers";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 export default function StackColTable(
     props: BlockEditProps<TablebergBlockAttrs> & {
@@ -199,7 +208,23 @@ export default function StackColTable(
 
     return (
         <>
-            <table {...blockProps}>{rowTemplates}</table>
+            {attributes.search && (
+                <div
+                    className={`tableberg-search tableberg-search-${attributes.searchPosition}`}
+                >
+                    <input type="text" />
+                    <FontAwesomeIcon icon={faSearch} />
+                </div>
+            )}
+            <div
+                className="tableberg-table-wrapper"
+                style={{
+                    ...getBorderCSS(attributes.tableBorder),
+                    ...getBorderRadiusCSS(attributes.tableBorderRadius),
+                }}
+            >
+                <table {...blockProps}>{rowTemplates}</table>
+            </div>
             <div style={{ display: "none" }} key={colUpt}>
                 <div {...innerBlocksProps} />
             </div>

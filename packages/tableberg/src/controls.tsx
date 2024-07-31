@@ -745,6 +745,15 @@ function TablebergControls({
                             />
                         </LockedControl>
                     </PanelBody>
+                    <PanelBody title="[PRO] Search">
+                        <LockedControl isEnhanced selected="search">
+                            <ToggleControl
+                                checked={false}
+                                label="Enable Search"
+                                onChange={() => {}}
+                            />
+                        </LockedControl>
+                    </PanelBody>
                 </InspectorControls>
             )}
             <BlockControls>

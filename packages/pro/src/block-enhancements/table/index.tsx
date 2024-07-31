@@ -1,8 +1,7 @@
 import { TablebergBlockAttrs } from "@tableberg/shared/types";
 import { ProBlockProps } from "..";
 import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
-import { InspectorControls } from "@wordpress/block-editor";
-import StickyRowColControl from "../../shared/StickyRowColControl";
+import TableAndCellControl from "../TableAndCellControl";
 
 const TablePro = ({ props, BlockEdit }: ProBlockProps<TablebergBlockAttrs>) => {
     return (
@@ -16,12 +15,10 @@ const TablePro = ({ props, BlockEdit }: ProBlockProps<TablebergBlockAttrs>) => {
             )}
             <BlockEdit {...props} />
             {props.isSelected && (
-                <InspectorControls>
-                    <StickyRowColControl
-                        attrs={props.attributes}
-                        setAttrs={props.setAttributes}
-                    />
-                </InspectorControls>
+                <TableAndCellControl
+                    tableAttrs={props.attributes}
+                    setTableAttrs={props.setAttributes}
+                />
             )}
         </>
     );
