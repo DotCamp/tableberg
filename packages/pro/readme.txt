@@ -70,6 +70,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 
 = 0.5.6 =
 * PRO: NEW: Added search option
+* PRO: NEW: Added sorting option
 * FIX: Create paragraph block when creating cell
 
 = 0.5.5 =
