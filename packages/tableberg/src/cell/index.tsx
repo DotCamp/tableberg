@@ -1085,6 +1085,7 @@ function edit(
                                             evt.stopPropagation();
                                             evt.preventDefault();
                                             sortTableH(
+                                                rootEl!,
                                                 tableBlock.clientId,
                                                 attributes.row,
                                                 storeSelect,
@@ -1105,6 +1106,7 @@ function edit(
                                             evt.stopPropagation();
                                             evt.preventDefault();
                                             sortTableV(
+                                                rootEl!,
                                                 tableBlock.clientId,
                                                 attributes.col,
                                                 storeSelect,
