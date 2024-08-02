@@ -9,7 +9,9 @@
             tables.forEach(resizeTable);
         }
 
-        const searchBoxes = document.querySelectorAll("[data-tableberg-search]");
+        const searchBoxes = document.querySelectorAll(
+            "[data-tableberg-search]",
+        );
 
         if (searchBoxes.length) {
             searchBoxes.forEach((searchBox) => {
@@ -480,7 +482,6 @@
         className && table.classList.add(className);
     }
 
-
     function searchTable(input) {
         const search = input.value.trim();
         const rows = input.parentElement.parentElement.querySelectorAll("tr");
@@ -494,12 +495,204 @@
             return;
         }
         Array.from(rows).forEach((row) => {
-            if (row.querySelectorAll("th").length > 1 || row.textContent?.includes(search)) {
+            if (
+                row.querySelectorAll("th").length > 1 ||
+                row.textContent?.includes(search)
+            ) {
                 row.style.display = "table-row";
             } else {
                 row.style.display = "none";
             }
         });
         input.dataset.isDirty = true;
+    }
+
+    const vSortBtns = document.querySelectorAll(".tableberg-v-sorter");
+
+    vSortBtns.forEach((btn) => {
+        btn.addEventListener("click", vSortTable);
+    });
+
+    const hSortBtns = document.querySelectorAll(".tableberg-h-sorter");
+
+    hSortBtns.forEach((btn) => {
+        btn.addEventListener("click", hSortTable);
+    });
+
+    /**
+     *
+     * @param {HTMLTableRowElement} row
+     * @param {number} colIndex
+     * @returns
+     */
+    function getCellValue(row, colIndex) {
+        let cellIndex = 0;
+        for (let cell of row.cells) {
+            if (cellIndex === colIndex)
+                return cell.textContent.trim().toLowerCase();
+            cellIndex += cell.colSpan;
+        }
+        return "";
+    }
+
+    function vSortTable() {
+        const table = this.closest("table");
+        const byCol = parseInt(this.parentElement.dataset.tablebergCol);
+        if (!table) return;
+
+        const rows = Array.from(table.tBodies[0].rows);
+        const indexedRows = rows.map((row, index) => ({
+            originalIndex: index,
+            content: getCellValue(row, byCol),
+        }));
+
+        let carry = 0;
+
+        if (table.dataset.tablebergHeader) {
+            indexedRows.splice(0, 1);
+            carry = 1;
+        }
+
+        if (table.dataset.tablebergFooter) {
+            indexedRows.pop();
+        }
+        const newOrder =
+            table.dataset.vSortedBy == byCol && table.dataset.vOrder === "asc"
+                ? "desc"
+                : "asc";
+
+        if (newOrder === "asc") {
+            indexedRows.sort((a, b) =>
+                a.content.localeCompare(b.content, undefined, {
+                    numeric: true,
+                }),
+            );
+        } else {
+            indexedRows.sort((a, b) =>
+                b.content.localeCompare(a.content, undefined, {
+                    numeric: true,
+                }),
+            );
+        }
+
+        const indexMap = {};
+
+        indexedRows.forEach((item, newIndex) => {
+            indexMap[newIndex + carry] = item.originalIndex;
+        });
+
+        const sortedRows = [];
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[indexMap[i] || i];
+            sortedRows.push(row);
+            for (const cell of row.cells) {
+                cell.dataset.tablebergRow = i;
+            }
+        }
+
+        const tbody = table.tBodies[0];
+        sortedRows.forEach((row) => tbody.appendChild(row));
+
+        table.dataset.vSortedBy = byCol;
+        table.dataset.vOrder = newOrder;
+
+        this.closest("tr")
+            .querySelectorAll(".tableberg-v-sorter")
+            .forEach((btn) => {
+                btn.remove();
+            });
+
+        let index = 0;
+        for (const cell of tbody.rows[0].cells) {
+            const btn = document.createElement("button");
+            btn.classList.add("tableberg-v-sorter");
+            if (index === byCol) {
+                btn.classList.add(`tableberg-${newOrder}`);
+            }
+            btn.addEventListener("click", vSortTable);
+            cell.appendChild(btn);
+            index++;
+        }
+    }
+
+    function hSortTable() {
+        const table = this.closest("table");
+        const byRow = parseInt(this.parentElement.dataset.tablebergRow);
+        if (!table) return;
+
+        const cols = Array.from(table.tBodies[0].rows[byRow].cells);
+        const indexedCols = [];
+
+        let lastIdx = 0;
+        cols.forEach((col) => {
+            indexedCols.push({
+                originalIndex: lastIdx++,
+                content: col.textContent.trim().toLowerCase(),
+            });
+
+            for (let i = 1; i < col.colSpan; i++) {
+                indexedCols.push({
+                    originalIndex: lastIdx++,
+                    content: "",
+                });
+            }
+        });
+
+        const newOrder =
+            table.dataset.hSortedBy == byRow && table.dataset.hOrder === "asc"
+                ? "desc"
+                : "asc";
+
+        if (newOrder === "asc") {
+            indexedCols.sort((a, b) => {
+                if (a.content < b.content) return -1;
+                if (a.content > b.content) return 1;
+                return 0;
+            });
+        } else {
+            indexedCols.sort((a, b) => {
+                if (a.content < b.content) return 1;
+                if (a.content > b.content) return -1;
+                return 0;
+            });
+        }
+
+        const indexMap = {};
+
+        indexedCols.forEach((item, newIndex) => {
+            indexMap[item.originalIndex] = newIndex;
+        });
+
+        const tbody = table.tBodies[0];
+
+        table.dataset.hSortedBy = byRow;
+        table.dataset.hOrder = newOrder;
+
+        table.querySelectorAll(".tableberg-h-sorter").forEach((btn) => {
+            btn.remove();
+        });
+
+        let index = 0;
+        for (const row of tbody.rows) {
+
+            const sortedCells = [];
+            for (const cell of row.cells) {
+                const idx = indexMap[cell.dataset.tablebergCol];
+                sortedCells[idx] = cell;
+                cell.dataset.tablebergCol = idx;
+            }
+
+            sortedCells.forEach((cell) => cell && row.appendChild(cell));
+
+            const cell = sortedCells[0];
+            const btn = document.createElement("button");
+            btn.classList.add("tableberg-h-sorter");
+            if (index === byRow) {
+                btn.classList.add(`tableberg-${newOrder}`);
+            }
+            btn.addEventListener("click", hSortTable);
+            cell.appendChild(btn);
+            index++;
+        }
     }
 })();

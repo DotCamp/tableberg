@@ -162,16 +162,14 @@ class Table
 		$table_class_names = $this->get_style_class($attributes);
 		$table_style = $this->get_styles($attributes);
 
-		$table_attrs = 'class = "' . esc_attr(trim(join(' ', $table_class_names))) . '" style="' . $table_style . '"';
+		$table_attrs = 'class = "' . esc_attr(trim(join(' ', $table_class_names))) . '" style="' . $table_style . '" ';
+		
+		$table_attrs .= 'data-tableberg-header="' . $attributes['enableTableHeader'] . '" ';
+		$table_attrs .= 'data-tableberg-footer="' . $attributes['enableTableFooter'] . '" ';
 
 		$responsive = trim(self::get_responsiveness_metadata($attributes, 'mobile') . self::get_responsiveness_metadata($attributes, 'tablet'));
-
 		if ($responsive) {
-
-			$str = 'data-tableberg-header="' . $attributes['enableTableHeader'] . '" ';
-			$str .= 'data-tableberg-footer="' . $attributes['enableTableFooter'] . '" ';
-			$responsive = 'data-tableberg-responsive ' . $str . ' data-tableberg-rows="' . $attributes['rows'] . '" data-tableberg-cols="' . $attributes['cols'] . '" ' . $responsive;
-			$table_attrs .= ' ' . $responsive;
+			$table_attrs .= 'data-tableberg-responsive data-tableberg-rows="' . $attributes['rows'] . '" data-tableberg-cols="' . $attributes['cols'] . '" ' . $responsive;
 		}
 
 		$wrapper_classes = ['wp-block-tableberg-wrapper'];
