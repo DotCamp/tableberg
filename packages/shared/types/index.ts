@@ -1,6 +1,5 @@
 import { BlockInstance } from "@wordpress/blocks";
 
-
 export type ResponsiveMode = "" | "stack" | "scroll";
 
 export interface Breakpoint {
@@ -27,20 +26,26 @@ export interface TablebergBlockAttrs {
     cols: number;
     cells: number;
     fixedColWidth: boolean;
-    colStyles: Record<number, {
-        width?: string;
-        background?: string;
-        bgGradient?: string;
-        border?: any;
-        borderRadius?: any;
-    }>;
-    rowStyles: Record<number, {
-        height?: string;
-        background?: string;
-        bgGradient?: string;
-        border?: any;
-        borderRadius?: any;
-    }>;
+    colStyles: Record<
+        number,
+        {
+            width?: string;
+            background?: string;
+            bgGradient?: string;
+            border?: any;
+            borderRadius?: any;
+        }
+    >;
+    rowStyles: Record<
+        number,
+        {
+            height?: string;
+            background?: string;
+            bgGradient?: string;
+            border?: any;
+            borderRadius?: any;
+        }
+    >;
     hasTableCreated: boolean;
     tableWidth: string;
     blockSpacing: string;
@@ -75,9 +80,20 @@ export interface TablebergBlockAttrs {
 
     search: boolean;
     searchPosition: "left" | "right" | "center" | "wide";
+
+    sort?: {
+        vertical?: {
+            enabled: boolean;
+            order: "asc" | "desc";
+            col: number;
+        };
+        horizontal?:  {
+            enabled: boolean;
+            order: "asc" | "desc";
+            row: number;
+        };
+    };
 }
-
-
 
 export interface TablebergCellBlockAttrs {
     vAlign: "bottom" | "center" | "top";

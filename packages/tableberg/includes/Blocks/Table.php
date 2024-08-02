@@ -228,6 +228,9 @@ class Table
 
 		$content = '<tbody>';
 
+		$isHSort = isset($attributes['sort']['horizontal']['enabled']) && $attributes['sort']['horizontal']['enabled'];
+		$isVSort = isset($attributes['sort']['vertical']['enabled']) && $attributes['sort']['vertical']['enabled'];
+
 		for ($i = 0; $i < $attributes['rows']; $i++) {
 			$rowStyle = $attributes['rowStyles'][$i] ?? [];
 			$rowCss = Utils::generate_css_string([
@@ -264,10 +267,24 @@ class Table
 				$rowStyleCss .= '';
 			}
 
+
+
+
+			$sortingBtnV = '';
+
+			if ($isVSort && $i == 0) {
+				$sortingBtnV = '<button type="button" class="tableberg-v-sorter"></button>';
+			}
+
 			$content .= '<tr class="' . $trClasses . '" style="' . $rowStyleCss . '">';
 			for ($j = 0; $j < $attributes['cols']; $j++) {
+				$sortingBtns = $sortingBtnV;
+				if ($isHSort && $j == 0) {
+					$sortingBtns .= '<button type="button" class="tableberg-h-sorter"></button>';
+				}
 				$cell = self::$rows[$i][$j] ?? '';
 				$cell = HtmlUtils::append_attr_value($cell, $tagName, $rowCss . $colBorders[$j], 'style');
+				$cell = HtmlUtils::replace_closing_tag($cell, $tagName, $sortingBtns . '</' . $tagName . '>');
 				$content .= $cell;
 			}
 			$content .= '</tr>';

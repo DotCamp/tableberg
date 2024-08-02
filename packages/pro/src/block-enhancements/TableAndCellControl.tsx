@@ -91,6 +91,42 @@ export default function TableAndCellControl({
                     </ToggleGroupControl>
                 )}
             </PanelBody>
+            <PanelBody title="[PRO] Sorting">
+                <ToggleControl
+                    checked={!!tableAttrs.sort?.vertical?.enabled}
+                    label="Enable Vertical Sorting"
+                    onChange={(val) => {
+                        setTableAttrs({
+                            sort: {
+                                ...tableAttrs.sort,
+                                vertical: {
+                                    col: 0,
+                                    order: "asc",
+                                    ...tableAttrs.sort?.vertical,
+                                    enabled: val,
+                                },
+                            },
+                        });
+                    }}
+                />
+                <ToggleControl
+                    checked={!!tableAttrs.sort?.horizontal?.enabled}
+                    label="Enable Horizontal Sorting"
+                    onChange={(val) => {
+                        setTableAttrs({
+                            sort: {
+                                ...tableAttrs.sort,
+                                horizontal: {
+                                    row: 0,
+                                    order: "asc",
+                                    ...tableAttrs.sort?.horizontal,
+                                    enabled: val,
+                                },
+                            },
+                        });
+                    }}
+                />
+            </PanelBody>
         </InspectorControls>
     );
 }

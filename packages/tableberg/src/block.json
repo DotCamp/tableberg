@@ -183,6 +183,10 @@
         "searchPosition": {
             "type": "string",
             "default": "wide"
+        },
+        "sort": {
+            "type": "object",
+            "default": {}
         }
     },
     "example": {

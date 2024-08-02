@@ -754,6 +754,22 @@ function TablebergControls({
                             />
                         </LockedControl>
                     </PanelBody>
+                    <PanelBody title="[PRO] Sorting">
+                        <LockedControl isEnhanced selected="sorting">
+                            <ToggleControl
+                                checked={false}
+                                label="Enable Vertical Sorting"
+                                onChange={() => {}}
+                            />
+                        </LockedControl>
+                        <LockedControl isEnhanced selected="sorting">
+                            <ToggleControl
+                                checked={false}
+                                label="Enable Horizontal Sorting"
+                                onChange={() => {}}
+                            />
+                        </LockedControl>
+                    </PanelBody>
                 </InspectorControls>
             )}
             <BlockControls>
