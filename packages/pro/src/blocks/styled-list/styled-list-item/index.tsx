@@ -295,7 +295,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
 
             event.preventDefault();
 
-            const selection = window.getSelection();
+            const selection = (el.ownerDocument || window).getSelection();
             if (!selection?.rangeCount) return;
 
             const range = selection.getRangeAt(0);
@@ -352,7 +352,7 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
         // Backspace
         if (listBlock.innerBlocks.length > 1 && currentIndex > 0) {
             const prevItem = listBlock.innerBlocks[currentIndex - 1];
-            // const cursorPos = prevItem.attributes.text.length;
+            const cursorPos = prevItem.attributes.text.length;
             storeActions.updateBlockAttributes(prevItem.clientId, {
                 text: prevItem.attributes.text + text,
             });
@@ -373,7 +373,12 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                     ]);
                 }
             }
-            // storeActions.selectBlock(prevItem.clientId, cursorPos - 1);
+            storeActions.selectionChange(
+                prevItem.clientId,
+                "character",
+                cursorPos,
+                cursorPos,
+            );
             storeActions.removeBlock(clientId, false);
             return;
         }
