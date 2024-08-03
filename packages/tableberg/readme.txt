@@ -70,7 +70,10 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 
 = 0.5.6 =
 * PRO: NEW: Added search option
+* PRO: NEW: Added sorting option
+* PRO: FIX: Column background problem
 * FIX: Create paragraph block when creating cell
+* FIX: Adding header/footer caused empty cells
 
 = 0.5.5 =
 * PRO: NEW: Empty Cell option

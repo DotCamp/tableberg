@@ -53,7 +53,6 @@ interface TablebergCtx {
 
 export const TablebergCtx = createContext<TablebergCtx>({});
 
-
 const removeFirstRow = (
     innrBlocks: TablebergCellInstance[],
 ): TablebergCellInstance[] => {
@@ -147,6 +146,7 @@ const useTableHeaderFooter = (
                                 col,
                                 tagName: "th",
                             },
+                            [["core/paragraph"]],
                         ],
                     ])[0] as TablebergCellInstance,
                 );
@@ -218,6 +218,7 @@ const useTableHeaderFooter = (
                                 col,
                                 tagName: "th",
                             },
+                            [["core/paragraph"]],
                         ],
                     ])[0] as TablebergCellInstance,
                 );
@@ -312,7 +313,8 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 !!attributes.tableAlignment,
             "tableberg-sticky-top-row": attributes.stickyTopRow,
             "tableberg-sticky-first-col": attributes.stickyFirstCol,
-            "tableberg-cell-no-outside-border": attributes.hideCellOutsideBorders,
+            "tableberg-cell-no-outside-border":
+                attributes.hideCellOutsideBorders,
             "tableberg-border-col-only": attributes.innerBorderType === "col",
             "tableberg-border-row-only": attributes.innerBorderType === "row",
         }),
@@ -342,9 +344,12 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     >(tablebergGetLastDevice() || "desktop");
 
     useEffect(() => {
-        if (tableBlock.attributes.version && tableBlock.attributes.version < "0.5.3") {
+        if (
+            tableBlock.attributes.version &&
+            tableBlock.attributes.version < "0.5.3"
+        ) {
             // REMOVE IN 0.5.4
-            const rowStyles: TablebergBlockAttrs['rowStyles'] = {};
+            const rowStyles: TablebergBlockAttrs["rowStyles"] = {};
             // @ts-ignore
             const heights = tableBlock.attributes.rowHeights || [];
             for (let i = 0; i < heights.length; i++) {
@@ -355,7 +360,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 }
             }
 
-            const colStyles: TablebergBlockAttrs['colStyles'] = {};
+            const colStyles: TablebergBlockAttrs["colStyles"] = {};
             // @ts-ignore
             const widths = tableBlock.attributes.colWidths || [];
             for (let i = 0; i < widths.length; i++) {
@@ -479,7 +484,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     if (!attributes.hasTableCreated) {
         return (
             <div {...blockProps}>
-                <TableCreator clientId={clientId}/>
+                <TableCreator clientId={clientId} />
             </div>
         );
     }

@@ -184,4 +184,18 @@ export const ENHANCED_FEATURES = [
         upsellText:
             "<strong>Column Only Border</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
+    {
+        name: "search",
+        title: "Search",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Search</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
+    {
+        name: "sorting",
+        title: "Sorting",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Sorting</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
 ] as const;

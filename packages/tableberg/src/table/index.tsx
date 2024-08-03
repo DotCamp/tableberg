@@ -115,7 +115,10 @@ export const PrimaryTable = (
                 style={{
                     height: rowStyle?.height,
                     background: rowStyle?.bgGradient || rowStyle?.background,
-                    display: !mustBeShown && hiddenRows.includes(i) ? "none" : "table-row",
+                    display:
+                        !mustBeShown && hiddenRows.includes(i)
+                            ? "none"
+                            : "table-row",
                 }}
                 className={className}
             ></tr>
@@ -155,14 +158,20 @@ export const PrimaryTable = (
                         {fixedWidth
                             ? Array(attributes.cols)
                                   .fill("")
-                                  .map(() => (
-                                      <col
-                                          style={{
-                                              width: fixedWidth,
-                                              minWidth: fixedWidth,
-                                          }}
-                                      />
-                                  ))
+                                  .map((_, i) => {
+                                      const colStyle = attributes.colStyles[i];
+                                      return (
+                                          <col
+                                              style={{
+                                                  width: fixedWidth,
+                                                  minWidth: fixedWidth,
+                                                  background:
+                                                      colStyle?.bgGradient ||
+                                                      colStyle?.background,
+                                              }}
+                                          />
+                                      );
+                                  })
                             : Array(attributes.cols)
                                   .fill("")
                                   .map((_, i) => {

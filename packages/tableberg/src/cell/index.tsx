@@ -69,6 +69,7 @@ import {
     getSpacingCssSingle,
 } from "@tableberg/shared/utils/styling-helpers";
 import { getBorderVariablesCss } from "../utils/styling-helpers";
+import { sortTableH, sortTableV } from "./sorting";
 
 const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
@@ -1044,6 +1045,9 @@ function edit(
         });
     };
 
+    const vSort = tableBlock.attributes.sort?.vertical;
+    const hSort = tableBlock.attributes.sort?.horizontal;
+
     return (
         <>
             <TablebergCtx.Consumer>
@@ -1069,6 +1073,48 @@ function edit(
                                 colSpan={attributes.colspan}
                             >
                                 <div {...innerBlocksProps} />
+                                {hSort?.enabled && !attributes.col && (
+                                    <button
+                                        type="button"
+                                        className={classNames({
+                                            "tableberg-h-sorter": true,
+                                            [`tableberg-${hSort.order}`]:
+                                                hSort?.row === attributes.row,
+                                        })}
+                                        onPointerDown={(evt) => {
+                                            evt.stopPropagation();
+                                            evt.preventDefault();
+                                            sortTableH(
+                                                rootEl!,
+                                                tableBlock.clientId,
+                                                attributes.row,
+                                                storeSelect,
+                                                storeActions,
+                                            );
+                                        }}
+                                    />
+                                )}
+                                {vSort?.enabled && !attributes.row && (
+                                    <button
+                                        type="button"
+                                        className={classNames({
+                                            "tableberg-v-sorter": true,
+                                            [`tableberg-${vSort.order}`]:
+                                                vSort?.col === attributes.col,
+                                        })}
+                                        onPointerDown={(evt) => {
+                                            evt.stopPropagation();
+                                            evt.preventDefault();
+                                            sortTableV(
+                                                rootEl!,
+                                                tableBlock.clientId,
+                                                attributes.col,
+                                                storeSelect,
+                                                storeActions,
+                                            );
+                                        }}
+                                    />
+                                )}
                             </TagName>,
                             targetEl,
                         )
