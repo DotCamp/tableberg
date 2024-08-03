@@ -317,6 +317,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 attributes.hideCellOutsideBorders,
             "tableberg-border-col-only": attributes.innerBorderType === "col",
             "tableberg-border-row-only": attributes.innerBorderType === "row",
+            "tableberg-theme-disabled": attributes.disableThemeStyle,
         }),
     });
 

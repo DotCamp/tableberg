@@ -176,6 +176,10 @@
             "type": "string",
             "default": ""
         },
+        "disableThemeStyle": {
+            "type": "boolean",
+            "default": false
+        },
         "search": {
             "type": "boolean",
             "default": false

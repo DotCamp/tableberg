@@ -78,6 +78,8 @@ export interface TablebergBlockAttrs {
     stickyFirstCol: boolean;
     innerBorderType: "" | "col" | "row";
 
+    disableThemeStyle: boolean;
+
     search: boolean;
     searchPosition: "left" | "right" | "center" | "wide";
 
