@@ -41,6 +41,9 @@ import {
     ToolbarWithDropdown,
 } from "@tableberg/components";
 import { __ } from "@wordpress/i18n";
+
+import buttonBlockIcon from "@tableberg/shared/icons/button";
+
 import { getStyleClass } from "./get-classes";
 import { ButtonBlockTypes } from "./type";
 import { getStyles, getInnerStyles } from "./get-styles";
@@ -383,6 +386,7 @@ registerBlockType(metadata.name, {
     title: metadata.title,
     category: metadata.category,
     attributes: metadata.attributes,
+    icon: buttonBlockIcon,
     example: {},
     edit,
 });

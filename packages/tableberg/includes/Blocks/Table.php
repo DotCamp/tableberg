@@ -194,6 +194,10 @@ class Table
 			$wrapper_classes[] = 'tableberg-cell-no-outside-border';
 		}
 
+		if ($attributes['disableThemeStyle']) {
+			$wrapper_classes[] = 'tableberg-theme-disabled';
+		}
+
 		$wrapper_attributes = get_block_wrapper_attributes([
 			'class' => trim(join(' ', $wrapper_classes)),
 		]);

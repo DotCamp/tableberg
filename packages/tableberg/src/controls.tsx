@@ -348,7 +348,7 @@ function TablebergControls({
                         }}
                     />
                 </PanelBody>
-                <PanelBody>
+                <PanelBody title="Table Settings">
                     <HeightControl
                         value={tableAttributes.tableWidth}
                         label={__("Table Width", "tableberg")}
@@ -375,6 +375,15 @@ function TablebergControls({
                             ),
                         )}
                     </ToggleGroupControl>
+                    <ToggleControl
+                        checked={tableAttributes.disableThemeStyle}
+                        label="Disable Theme Style"
+                        onChange={(disableThemeStyle) => {
+                            setTableAttributes({
+                                disableThemeStyle,
+                            });
+                        }}
+                    />
                 </PanelBody>
             </InspectorControls>
 
