@@ -284,7 +284,7 @@ class Table
 				if ($isHSort && $j == 0) {
 					$sortingBtns .= '<button type="button" class="tableberg-h-sorter"></button>';
 				}
-				$cell = self::$rows[$i][$j] ?? '';
+				$cell = self::$rows[$i][$j] ?? ' ';
 				$cell = HtmlUtils::append_attr_value($cell, $tagName, $rowCss . $colBorders[$j], 'style');
 				$cell = HtmlUtils::replace_closing_tag($cell, $tagName, $sortingBtns . '</' . $tagName . '>');
 				$content .= $cell;
