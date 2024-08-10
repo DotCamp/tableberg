@@ -32,8 +32,8 @@ export default function TableCreator({ clientId }: Props) {
     const storeActions: BlockEditorStoreActions = useDispatch(store) as any;
 
     const [newTable, setNewTable] = useState({
-        rows: 2,
-        cols: 2,
+        rows: 4,
+        cols: 4,
     });
 
     const [modal, setModal] = useState<null | "patterns">(null);
