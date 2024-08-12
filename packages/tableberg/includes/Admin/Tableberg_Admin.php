@@ -230,62 +230,60 @@ class Tableberg_Admin
      *
      * @since 2.1.6
      */
-
-
-        public static function tableberg_review_notice()
-        {
-            $install_date = get_option('tableberg_installDate');
-            $display_date = date('Y-m-d h:i:s');
-            $datetime1    = new \DateTime($install_date);
-            $datetime2    = new \DateTime($display_date);
-            $diff_interval = round(($datetime2->format('U') - $datetime1->format('U')) / (60 * 60 * 24));
-        
-            if ($diff_interval >= 21 && get_option('tableberg_review_notify') == 'no') {
-                ?>
-                <div class="tableberg-review-notice notice notice-info" style="display: inline-block; position: relative; padding:0.5rem">
-                    <button type="button" class="notice-dismiss Tableberg_HideReview_Notice" style="position: absolute; top: 2px; right: 2px;">
-                        <span class="screen-reader-text">Dismiss this notice.</span>
-                    </button>
-                    <p style="font-size: 14px; line-height: 2;padding-right:3rem">
-                        <?php
-                        _e(
-                            'Hello! Seems like You\'ve been using <strong>Tableberg</strong> for a while now to translate your website. That\'s awesome!<br>If you can spare a few moments to rate it on wordpress.org it would help us a lot (and boost my motivation).<br>Imtiaz Rayhan, developer of TranslatePress',
-                            'tableberg'
-                        );
-                        ?>
-                    </p>
-                    <ul style="list-style-type: none; padding: 0;">
-                        <li>
-                            <a style="margin-right: 5px; margin-bottom: 5px;" class="button-primary" href="https://wordpress.org/support/plugin/tableberg/reviews/?filter=5#new-post" target="_blank">Ok, I will gladly help!</a>
-                            <a class="Tableberg_HideReview_Notice button" href="javascript:void(0);">No, thanks</a>
-                        </li>
-                    </ul>
-                </div>
-                <script>
-                    jQuery(document).ready(function($) {
-                        $('.Tableberg_HideReview_Notice').click(function() {
-                            var data = {
-                                'action': 'TablebergReviewNoticeHide'
-                            };
-                            $.ajax({
-                                url: "<?php echo admin_url('admin-ajax.php'); ?>",
-                                type: "post",
-                                data: data,
-                                dataType: "json",
-                                async: true,
-                                success: function(notice_hide) {
-                                    if (notice_hide == "success") {
-                                        $('.tableberg-review-notice').slideUp('fast');
-                                    }
-                                }
-                            });
-                        });
-                    });
-                </script>
-                <?php
-            }
-        }
-        
+     public static function tableberg_review_notice()
+     {
+         $install_date = get_option('tableberg_installDate');
+         $display_date = date('Y-m-d h:i:s');
+         $datetime1    = new \DateTime($install_date);
+         $datetime2    = new \DateTime($display_date);
+         $diff_interval = round(($datetime2->format('U') - $datetime1->format('U')) / (60 * 60 * 24));
+     
+         if ($diff_interval >= 21 && get_option('tableberg_review_notify') == 'no') {
+             ?>
+             <div class="tableberg-review-notice notice notice-info" style="display: inline-block; position: relative; padding:0.5rem">
+                 <button type="button" class="notice-dismiss Tableberg_HideReview_Notice" style="position: absolute; top: 2px; right: 2px;">
+                     <span class="screen-reader-text">Dismiss this notice.</span>
+                 </button>
+                 <p style="font-size: 14px; line-height: 2;padding-right:3rem">
+                     <?php
+                     _e(
+                         'Hello! Seems like You\'ve been using <strong>Tableberg</strong> for a while now to translate your website. That\'s awesome!<br>If you can spare a few moments to rate it on wordpress.org it would help us a lot (and boost my motivation).<br>Imtiaz Rayhan, developer of TranslatePress',
+                         'tableberg'
+                     );
+                     ?>
+                 </p>
+                 <ul style="list-style-type: none; padding: 0;">
+                     <li>
+                         <a style="margin-right: 5px; margin-bottom: 5px;" class="button-primary" href="https://wordpress.org/support/plugin/tableberg/reviews/?filter=5#new-post" target="_blank">Ok, I will gladly help!</a>
+                         <a class="Tableberg_HideReview_Notice button" href="javascript:void(0);">No, thanks</a>
+                     </li>
+                 </ul>
+             </div>
+             <script>
+                 jQuery(document).ready(function($) {
+                     $('.Tableberg_HideReview_Notice').click(function() {
+                         var data = {
+                             'action': 'TablebergReviewNoticeHide'
+                         };
+                         $.ajax({
+                             url: "<?php echo admin_url('admin-ajax.php'); ?>",
+                             type: "post",
+                             data: data,
+                             dataType: "json",
+                             async: true,
+                             success: function(notice_hide) {
+                                 if (notice_hide == "success") {
+                                     $('.tableberg-review-notice').slideUp('fast');
+                                 }
+                             }
+                         });
+                     });
+                 });
+             </script>
+             <?php
+         }
+     }
+     
 
     /**
      * Hides the review notice.
