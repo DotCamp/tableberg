@@ -247,7 +247,7 @@ class Tableberg_Admin
                  <p style="font-size: 14px; line-height: 2;padding-right:2rem">
                      <?php
                      _e(
-                         'Hello! Seems like You\'ve been using <strong>Tableberg</strong> for a while now to translate your website. That\'s awesome!<br>If you can spare a few moments to rate it on wordpress.org it would help us a lot (and boost my motivation).<br>Imtiaz Rayhan, developer of TranslatePress',
+                         'Hello! Seems like you\'ve been using <strong>Tableberg</strong> for a while on your website. That\'s awesome!<br>If you can spare a few moments to rate it on wordpress.org, it would help us a lot (and boost my motivation).<br>Imtiaz Rayhan, developer of Tableberg',
                          'tableberg'
                      );
                      ?>
