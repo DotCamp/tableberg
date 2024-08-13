@@ -240,11 +240,11 @@ class Tableberg_Admin
      
          if ($diff_interval >= 21 && get_option('tableberg_review_notify') == 'no') {
              ?>
-             <div class="tableberg-review-notice notice notice-info" style="display: inline-block; position: relative; padding:0.5rem">
+             <div class="tableberg-review-notice notice notice-info" style="display: inline-block; position: relative; padding:0.5rem 1.5rem">
                  <button type="button" class="notice-dismiss Tableberg_HideReview_Notice" style="position: absolute; top: 2px; right: 2px;">
                      <span class="screen-reader-text">Dismiss this notice.</span>
                  </button>
-                 <p style="font-size: 14px; line-height: 2;padding-right:3rem">
+                 <p style="font-size: 14px; line-height: 2;padding-right:2rem">
                      <?php
                      _e(
                          'Hello! Seems like You\'ve been using <strong>Tableberg</strong> for a while now to translate your website. That\'s awesome!<br>If you can spare a few moments to rate it on wordpress.org it would help us a lot (and boost my motivation).<br>Imtiaz Rayhan, developer of TranslatePress',
