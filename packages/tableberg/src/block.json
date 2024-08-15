@@ -18,11 +18,11 @@
         },
         "rows": {
             "type": "number",
-            "default": 0
+            "default": 2
         },
         "cols": {
             "type": "number",
-            "default": 0
+            "default": 2
         },
         "cells": {
             "type": "number",
