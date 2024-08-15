@@ -30,6 +30,7 @@ th.wp-block-tableberg-cell {
     }
 
     .tableberg-cell-inner {
+        position: static !important;
         .block-list-appender {
             display: none !important;
         }
