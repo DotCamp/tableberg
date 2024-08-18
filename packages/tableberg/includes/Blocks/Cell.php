@@ -109,7 +109,7 @@ class Cell
 			$json,
 			[
 				'attributes' => json_decode(file_get_contents($json), true)['attributes'],
-				'render_callback' => [$this, 'render_tableberg_cell_block'],
+				'render_callback' => [$this, 'render_tableberg_cell_block']
 			]
 		);
 	}

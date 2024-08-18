@@ -236,6 +236,16 @@ class Image {
 			TABLEBERG_DIR_PATH . 'build/image/block.json',
 			array(
 				'render_callback' => array( $this, 'render_tableberg_image_block' ),
+				'example' => array(
+					"viewportWidth"=> 185,
+					"viewportHeight" => 100,
+					'attributes' => array(
+						'media' => array(
+							'url' => plugins_url('includes/assets/block-previews/image.png', dirname(dirname(__FILE__)))
+						),
+						'alt' => 'Preview of the Tableberg Image block',
+					)
+				)
 			)
 		);
 	}

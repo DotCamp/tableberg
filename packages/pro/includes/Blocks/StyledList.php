@@ -91,7 +91,6 @@ class StyledList
 	 */
 	public function styled_list_block_registration()
 	{
-
 		$json = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/styled-list/block.json';
 		$attrs = json_decode(file_get_contents($json), true)['attributes'];
 
@@ -100,6 +99,16 @@ class StyledList
 			array(
 				'attributes' => $attrs,
 				'render_callback' => array($this, 'tableberg_render_styled_list_block'),
+				'example' => array(
+					"viewportWidth" => 185,
+					"viewportHeight" => 100,
+					'attributes' => array(
+						'media' => array(
+							'url' => plugins_url('packages/pro/includes/Assets/Block-previews/styled-list.png', dirname(dirname(__FILE__)))
+						),
+						'alt' => 'Preview of the Tableberg Styled List block'
+					)
+				)
 			)
 		);
 	}
