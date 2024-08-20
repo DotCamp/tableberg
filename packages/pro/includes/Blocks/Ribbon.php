@@ -188,6 +188,15 @@ class Ribbon
             [
                 'attributes' => $attrs,
                 'render_callback' => array($this, 'render_block'),
+                 'example' => [
+                    "viewportWidth" => 100,
+                    'attributes' => [
+                        'media' => [
+                            'url' => plugins_url('packages/pro/includes/Assets/Block-previews/image.png', dirname(dirname(__FILE__)))
+                        ],
+                        'alt' => 'Preview of the Tableberg preview block.'
+                    ]
+                 ]
             ]
         );
     }

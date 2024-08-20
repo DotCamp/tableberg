@@ -381,5 +381,6 @@ function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
 registerBlockType(metadata as any, {
     attributes: metadata.attributes as any,
     edit,
+    example:{},
     icon: IconBlockIcon,
 });
