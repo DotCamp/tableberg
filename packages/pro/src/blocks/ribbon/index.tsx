@@ -2,6 +2,7 @@ import { __ } from "@wordpress/i18n";
 import { ColorControl } from "@tableberg/components";
 import { FontSizePicker, InspectorControls } from "@wordpress/block-editor";
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
+import exampleImage from './image.png';
 import {
     BaseControl,
     PanelBody,
@@ -28,6 +29,7 @@ export interface RibbonAttrs {
     background?: string;
     bgGradient?: string;
     individual: any;
+    isExample:boolean;
 }
 
 export interface RibbonProps {
@@ -144,6 +146,10 @@ function edit({
     const Ribbon = RIBBONS_MAP[attributes.type];
 
     const hasText = attributes.type !== "icon";
+
+    if (attributes.isExample) {
+        return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
+    }
 
     return (
         <>

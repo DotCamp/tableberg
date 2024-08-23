@@ -45,6 +45,15 @@
         "bgGradient": {
             "type": "string",
             "default": null
+        },
+        "isExample":{
+            "type":"boolean",
+            "default":false
+        }
+    },
+    "example": {
+        "attributes": {
+            "isExample": true
         }
     },
     "editorScript": "tableberg-pro-block-script",

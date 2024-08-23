@@ -22,12 +22,21 @@
         "previewOnDeselect": {
             "type": "boolean",
             "default": true
+        },
+        "isExample":{
+            "type":"boolean",
+            "default":false
         }
     },
     "supports": {
         "customClassName": false,
         "className": false,
         "html": false
+    },
+    "example": {
+        "attributes": {
+            "isExample": true
+        }
     },
     "viewScript": "tableberg-pro-frontend",
     "editorScript": "tableberg-pro-block-script",

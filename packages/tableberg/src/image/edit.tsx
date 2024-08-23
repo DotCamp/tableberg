@@ -16,6 +16,8 @@ import Inspector from "./inspector";
 import BlockControls from "./block-controls";
 import type { AttributesTypes, MediaSizes } from "./types";
 import classNames from "classnames";
+import exampleImage from './image.png';
+
 
 function Edit(props: BlockEditProps<AttributesTypes>) {
     const { attributes, setAttributes, isSelected } = props;
@@ -75,6 +77,10 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
             height: `${h}px`,
         });
     }, [attributes.aspectRatio]);
+
+    if (attributes.isExample) {
+        return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
+    }
 
     return (
         <figure {...blockProps}>

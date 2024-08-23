@@ -36,6 +36,8 @@ import classNames from "classnames";
 import { useSelect } from "@wordpress/data";
 import { BlockInstance } from "@wordpress/blocks";
 import { useDispatch } from "@wordpress/data";
+import exampleImage from './image.png';
+
 
 export interface StyledListProps {
     icon: any;
@@ -51,6 +53,7 @@ export interface StyledListProps {
     listSpacing: object;
     listIndent: string;
     parentCount: number;
+    isExample: boolean;
 }
 
 const ALLOWED_BLOCKS = ["tableberg/styled-list-item"];
@@ -110,6 +113,10 @@ function edit(props: BlockEditProps<StyledListProps>) {
 
         storeActions.removeBlock(clientId, true);
     };
+
+    if (attributes.isExample) {
+        return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
+    }
 
     return (
         <>

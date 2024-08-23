@@ -71,6 +71,10 @@
         "borderRadius": {
             "type": "object",
             "default": {}
+        },
+        "isExample":{
+            "type":"boolean",
+            "default":false
         }
     },
     "supports": {
@@ -86,6 +90,11 @@
             "filter": {
                 "duotone": ".wp-block-tableberg-image img, .wp-block-tableberg-image .components-placeholder"
             }
+        }
+    },
+    "example": {
+        "attributes": {
+            "isExample": true
         }
     },
     "textdomain": "tableberg",

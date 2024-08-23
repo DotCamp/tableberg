@@ -74,6 +74,7 @@ export interface AttributesTypes {
     rel: string;
     linkTarget: string;
     border: Border | Borders;
+    isExample: boolean;
     borderRadius: {
         topLeft: string;
         topRight: string;

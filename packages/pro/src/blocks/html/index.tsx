@@ -28,9 +28,13 @@ import metadata from "./block.json";
 import { useSelect } from "@wordpress/data";
 import HtmlBlockIcon from "@tableberg/shared/icons/html";
 
+import exampleImage from './image.png';
+
+
 interface HtmlBlockProps {
     content: string;
     previewOnDeselect: boolean;
+    isExample: boolean
 }
 
 // Default styles used to unset some of the styles
@@ -132,6 +136,10 @@ function edit({
                 onLoad={renderIframeContent}
             />
         </div>
+    }
+
+    if (attributes.isExample) {
+        return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
     }
 
     return (

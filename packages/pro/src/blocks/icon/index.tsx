@@ -42,6 +42,8 @@ import {
 
 import IconBlockIcon from "@tableberg/shared/icons/icon";
 
+
+
 interface IconAttrs {
     icon: any;
     size: string;
@@ -200,7 +202,6 @@ function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
     ];
 
     const icon = attributes.icon || metadata.attributes.icon.default;
-
     return (
         <>
             <div {...blockProps}>
@@ -379,7 +380,9 @@ function edit({ attributes, setAttributes }: BlockEditProps<IconAttrs>) {
 }
 
 registerBlockType(metadata as any, {
+    title: metadata.title,
     attributes: metadata.attributes as any,
     edit,
     icon: IconBlockIcon,
+    example: {},
 });
