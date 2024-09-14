@@ -134,7 +134,7 @@ export default function IconPickerMini({ onSelect, maxHeight }: Props) {
     useEffect(() => {
         const s = debouncedSearch.trim();
         if (s === "") {
-            setIcons(ALL_ICONS.slice(0, 40) as any);
+            setIcons(ALL_ICONS as any);
             return;
         }
         const icons: any = [];
