@@ -3,7 +3,7 @@ Contributors: dotcamp, imtiazrayhan, istiakrayhan, permafrost06, ultimateblocks,
 Tags: table, comparison-tables, data-visualization, responsive-table, amazon-affiliate
 Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 7.0
 Stable tag: 0.5.6
 License: GPLv2 or later
