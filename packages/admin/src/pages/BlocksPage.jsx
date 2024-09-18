@@ -53,7 +53,7 @@ export default function BlocksPage() {
                 data-show-info="false"
             >
                 {blocks.map((info) => {
-                    const { title, name, icon, isPro } = info;
+                    const { title, name, icon, isPro, demoUrl } = info;
                     return (
                         <BlockControlCard
                             name={name}
@@ -63,7 +63,7 @@ export default function BlocksPage() {
                             isPro={isPro}
                             showUpsell={() => setUpsellView(info)}
                             isProPlugin={tablebergAdminMenuData.misc.pro_status}
-                            demoUrl={"https://tableberg.com/docs"}
+                            demoUrl={demoUrl}
                         />
                     );
                 })}
