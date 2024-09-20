@@ -17,6 +17,8 @@ import {
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { __ } from '@wordpress/i18n';
+
 
 export const ALLOWED_BLOCKS = ["tableberg/cell"];
 
@@ -141,7 +143,7 @@ export const PrimaryTable = (
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value.trim())}
-                        placeholder="Search..."
+                        placeholder={ __('Search...', 'tableberg') }
                     />
                     <FontAwesomeIcon icon={faSearch} />
                 </div>
