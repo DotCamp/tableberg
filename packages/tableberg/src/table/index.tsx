@@ -143,7 +143,7 @@ export const PrimaryTable = (
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value.trim())}
-                        placeholder={ __('Search...', 'tableberg') }
+                        placeholder={ attributes.searchPlaceholder ? attributes.searchPlaceholder : __('Search...', 'tableberg')}
                     />
                     <FontAwesomeIcon icon={faSearch} />
                 </div>
