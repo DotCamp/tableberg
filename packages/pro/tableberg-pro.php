@@ -8,8 +8,8 @@
  * Author:            Dotcamp
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       tableberg-pro
- *
+ * Text Domain:       tableberg
+ * Domain Path:       /languages
  * @package Tableberg Pro
  */
 
@@ -171,7 +171,9 @@ if (tp_fs_is_parent_active_and_loaded()) {
 	tp_fs_init();
 }
 
-
+function load_pro_textdomain() {
+	load_plugin_textdomain('tableberg',false,dirname(plugin_basename(__FILE__)) . '/languages');
+}
 
 add_action('admin_init', function () {
 	if (!is_plugin_active('tableberg/tableberg.php')) {
@@ -183,6 +185,8 @@ add_action('admin_init', function () {
                       </div>';
 			});
 		}
+
+		load_pro_textdomain();
 	}
 });
   
