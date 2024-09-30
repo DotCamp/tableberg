@@ -138,6 +138,10 @@ if (!class_exists('Tableberg')) {
 
 	new Tableberg();
 
+	function load_tableberg_textdomain() {
+		load_plugin_textdomain('tableberg',false,dirname(plugin_basename(__FILE__)) . '/languages');
+	}
+
 	add_action('init', function () {
 		global $pro_activated;
 		Tableberg\Patterns\RegisterPatterns::categories();
@@ -145,5 +149,9 @@ if (!class_exists('Tableberg')) {
 		if (!$pro_activated) {
 			Tableberg\Patterns\RegisterPatterns::upsells();
 		}
+
+		load_tableberg_textdomain();
+
+		// wp_set_script_translations("tableberg-script","tableberg", dirname(plugin_basename(__FILE__)) . '/languages');
 	});
 }
