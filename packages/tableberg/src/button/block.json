@@ -65,6 +65,11 @@
             "radius": true
         }
     },
+    "example": {
+        "attributes": {
+            "text": "Button"
+        }
+    },
     "textdomain": "tableberg",
     "editorScript": "tableberg-script",
     "editorStyle": "tableberg-editor-style",

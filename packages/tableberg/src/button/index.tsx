@@ -387,6 +387,5 @@ registerBlockType(metadata.name, {
     category: metadata.category,
     attributes: metadata.attributes,
     icon: buttonBlockIcon,
-    example: {},
     edit,
 });
