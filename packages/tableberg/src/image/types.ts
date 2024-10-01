@@ -80,6 +80,7 @@ export interface AttributesTypes {
         bottomLeft: string;
         bottomRight: string;
     }
+    isExample: boolean;
 }
 export interface MainPropTypes {
     attributes: AttributesTypes;
