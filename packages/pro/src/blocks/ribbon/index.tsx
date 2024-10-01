@@ -20,6 +20,12 @@ import Badge from "./ribbons/Badge";
 import { SizeControlProps } from "@tableberg/components/editor/SizeControl";
 import RibbonBlockIcon from "@tableberg/shared/icons/ribbon";
 
+import exampleImage1 from "./preview-1.png";
+import exampleImage2 from "./preview-2.png";
+import exampleImage3 from "./preview-3.png";
+import exampleImage4 from "./preview-4.png";
+import { useState, useEffect } from "react";
+
 export interface RibbonAttrs {
     type: "bookmark" | "corner" | "side" | "icon" | "badge";
     text: string;
@@ -28,6 +34,7 @@ export interface RibbonAttrs {
     background?: string;
     bgGradient?: string;
     individual: any;
+    isExample: boolean;
 }
 
 export interface RibbonProps {
@@ -144,6 +151,30 @@ function edit({
     const Ribbon = RIBBONS_MAP[attributes.type];
 
     const hasText = attributes.type !== "icon";
+
+    if (attributes.isExample) {
+        const previews = [
+            exampleImage1,
+            exampleImage2,
+            exampleImage3,
+            exampleImage4
+        ];
+
+        const [counter, setCounter] = useState(0);
+        useEffect(() => {
+            const interval = setInterval(() => {
+                setCounter(counter < 3 ? counter + 1 : 0);
+            }, 1000);
+
+            return () => {
+                clearInterval(interval);
+            };
+        });
+
+        return (
+            <img src={previews[counter]} style={{ maxWidth: "100%" }}></img>
+        );
+    }
 
     return (
         <>
