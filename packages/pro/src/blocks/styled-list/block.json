@@ -78,6 +78,15 @@
         "parentCount": {
             "type": "number",
             "default": 0
+        },
+        "isExample": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "example": {
+        "attributes": {
+            "isExample": true
         }
     },
     "supports": {},
