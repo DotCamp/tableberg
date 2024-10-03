@@ -29,6 +29,12 @@
         "className": false,
         "html": false
     },
+    "example": {
+        "attributes": {
+            "content": "<iframe width=\"1588\" height=\"616\" src=\"https://www.youtube.com/embed/TKsL_bUVCTU\" title=\"Table Block For WordPress Block Editor - Tableberg\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+            "previewOnDeselect": false
+        }
+    },
     "viewScript": "tableberg-pro-frontend",
     "editorScript": "tableberg-pro-block-script",
     "editorStyle": "tableberg-pro-editor-style",

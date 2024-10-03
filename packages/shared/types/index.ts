@@ -82,6 +82,7 @@ export interface TablebergBlockAttrs {
 
     search: boolean;
     searchPosition: "left" | "right" | "center" | "wide";
+    searchPlaceholder: string;
 
     sort?: {
         vertical?: {

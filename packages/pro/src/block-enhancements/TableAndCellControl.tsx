@@ -6,6 +6,7 @@ import { InspectorControls } from "@wordpress/block-editor";
 import StickyRowColControl from "../shared/StickyRowColControl";
 import {
     PanelBody,
+    TextControl,
     ToggleControl,
     __experimentalToggleGroupControl as ToggleGroupControl,
     __experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon,
@@ -66,6 +67,16 @@ export default function TableAndCellControl({
                             search,
                         });
                     }}
+                />
+
+                <TextControl 
+                    label={__('Search Placeholder', 'your-text-domain')}
+                    onChange={(newPlaceholder) => {
+                        setTableAttrs({
+                            searchPlaceholder: newPlaceholder
+                        });
+                    } } 
+                    value={tableAttrs.searchPlaceholder}              
                 />
 
                 {tableAttrs.search && (
