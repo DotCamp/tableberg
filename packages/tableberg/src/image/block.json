@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "version": "0.0.2",
+    "version": "0.0.3",
     "title": "Image",
     "name": "tableberg/image",
     "category": "design",

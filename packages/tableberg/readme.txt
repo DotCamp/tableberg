@@ -5,7 +5,7 @@ Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.6
 Requires PHP: 7.0
-Stable tag: 0.5.6
+Stable tag: 0.5.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,17 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 2. Core Table Block vs Tableberg Block
 
 == Changelog ==
+
+= 0.5.7 =
+*PRO: NEW: Added search placeholder edit option
+*PRO: NEW: Localized search placeholder
+*Pro: New: Added block previews to all the blocks
+*NEW: Added block previews to blocks and upsells
+*FIX: Review asking section changed
+*NEW: Added specific documentation link for each block
+*NEW: Added more icons to icon block
+*FIX: icon blocks select icon section scroll 
+*FIX: changed default Item spacing
 
 = 0.5.6 =
 * PRO: NEW: Added search option
