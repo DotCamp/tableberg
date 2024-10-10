@@ -1,105 +1,49 @@
-
-import { InnerBlocks, useBlockProps, useInnerBlocksProps } from "@wordpress/block-editor";
-import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
-import { Button } from "@wordpress/components";
-import { useDispatch, useSelect } from "@wordpress/data";
+import { InnerBlocks, useBlockProps, useInnerBlocksProps, store } from "@wordpress/block-editor";
+import { registerBlockType } from "@wordpress/blocks";
 import metadata from "./block.json";
-import { useEffect } from "react";
+import { useSelect } from "@wordpress/data";
 
-interface Tab {
-  title: string,
-  content: string
-}
+function edit({ clientId }) {
+    const blockProps = useBlockProps();
 
-interface TabBlockProps {
-  activeTab: number,
-  tabs: Tab[]
-}
-
-function edit(props: BlockEditProps<TabBlockProps>) {
-  const blockProps = useBlockProps();
-
-  const { tabs, activeTab } = props.attributes;
-
-  const { clientId, setAttributes } = props;
-
-  const getBlocks = useSelect((select) => select("core/block-editor").getBlocks(clientId), [clientId])
-  const { replaceInnerBlocks } = useDispatch("core/block-editor");
-
-  function saveActiveContent() {
-    const innerBlocksContent = getBlocks;
-    const serializeInnerBlocksContent = wp.blocks.serialize(innerBlocksContent);
-    const updatedTabs = [...tabs];
-    updatedTabs[activeTab].content = serializeInnerBlocksContent;
-    setAttributes({
-      tabs: updatedTabs
+    const innerBlocksProps = useInnerBlocksProps({
+        allowedBlocks: ['tableberg/table'],
+        renderAppender: InnerBlocks.ButtonBlockAppender,
+        template: [["tableberg/table"]]
     })
-  }
 
-  function restoreTabContent(index: number) {
-    const innerBlocks = wp.blocks.parse(tabs[index].content);
+    const innerBlocks = useSelect((select) => {
+        return (select(store) as BlockEditorStoreSelectors).getBlock(clientId)?.innerBlocks
+    }, [clientId])
 
-    replaceInnerBlocks(clientId, innerBlocks);
-  }
+    const setVisibleTable = (v) => {
+        for (let i = 0; i < innerBlocks?.length; i++) {
+            if (i === v) {
+                document.querySelector(`#block-${innerBlocks[i].clientId}`).style.display = "block";
+                continue;
+            }
+            document.querySelector(`#block-${innerBlocks[i].clientId}`).style.display = "none";
+        }
+    }
 
-  function tabClickHandler(index: number) {
-    saveActiveContent();
-    setAttributes(
-      {
-        activeTab: index
-      }
-    )
-    restoreTabContent(index)
-  }
-
-  function addTabHandler() {
-
-    const newTabs = [...tabs, { title: `Tab ${tabs.length + 1}`, content: "" }]
-
-    setAttributes({
-      tabs: newTabs,
-      activeTab: tabs.length
-    });
-  }
-
-  const { ...innerBlocksProps } = useInnerBlocksProps({
-    allowedBlocks: ['tableberg/table'],
-    renderAppender: InnerBlocks.ButtonBlockAppender,
-  })
-
-  useEffect(() => {
-    saveActiveContent()
-  }, [activeTab])
-
-  console.log({ ...innerBlocksProps });
-  return <div {...blockProps} className="tab-block" >
-
-    <nav className="tab-headings">
-      {
-        tabs.map((tab, index) => {
-          const isActive = index === activeTab;
-          return <div key={index} onClick={() => tabClickHandler(index)} className={`tab-heading ${isActive ? "active" : ""}`}>
-            {tab.title}
-          </div>
-        })
-      }
-      <Button className="add-tab-button" onClick={addTabHandler}>+</Button>
-    </nav>
-
-    <div className="tab-contents">
-      <div   {...innerBlocksProps} >
-      </div>
+    return <div {...blockProps} className="tab-block" >
+        <div className="tab-contents">
+            {Array.from({ length: innerBlocks.length }, (_, i) => i ).map(i => {
+                return <div onClick={() => setVisibleTable(i)}>{i+1}</div>
+            })}
+            <div {...innerBlocksProps} >
+            </div>
+        </div>
     </div>
-  </div>
 }
 
 function save() {
-  return <div>Hello world</div>
+    return <div>Hello world</div>
 }
 
 registerBlockType(metadata as any, {
-  attributes: metadata.attributes as any,
-  edit: edit,
-  save: save
+    attributes: metadata.attributes as any,
+    edit: edit,
+    save: save
 })
 
