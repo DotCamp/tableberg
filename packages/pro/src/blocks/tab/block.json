@@ -3,6 +3,7 @@
   "apiVersion": 3,
   "version": "0.1.0",
   "name": "tableberg-pro/tab",
+  "allowedBlocks": ["tableberg/table"],
   "title": "Tabbed Block",
   "category": "layout",
   "description": "Create a tabbed interface where each tab contains tables with full functionality.",
