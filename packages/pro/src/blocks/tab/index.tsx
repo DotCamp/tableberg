@@ -27,6 +27,9 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
     }, [clientId])
 
     useEffect(() => {
+        if (innerBlocksLength! <= 0) {
+            return;
+        }
         for (let i = 0; i < innerBlocks!.length; i++) {
             (document.querySelector(`#block-${innerBlocks![i].clientId}`) as HTMLElement).style.display = "none";
         }
