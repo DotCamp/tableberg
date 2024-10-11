@@ -36,8 +36,10 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         (document.querySelector(`#block-${innerBlocks![activeTab].clientId}`) as HTMLElement).style.display = "block";
     }, [innerBlocksLength, activeTab]);
 
+    const insertBlock = (useDispatch(store) as unknown as BlockEditorStoreActions).insertBlock;
+
     function addTabHandler() {
-        (useDispatch(store) as unknown as BlockEditorStoreActions).insertBlock(
+        insertBlock(
             createBlock("tableberg/table"),
             innerBlocksLength,
             clientId
