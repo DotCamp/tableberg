@@ -1,93 +1,71 @@
-import { InnerBlocks, useBlockProps, useInnerBlocksProps, store } from "@wordpress/block-editor";
-import { registerBlockType } from "@wordpress/blocks";
+import { useBlockProps, useInnerBlocksProps, store } from "@wordpress/block-editor";
+import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 import metadata from "./block.json";
-import { select, useSelect, dispatch } from "@wordpress/data";
+import { select, useSelect, dispatch, useDispatch } from "@wordpress/data";
 import { useEffect } from "react";
 import { createBlock } from "@wordpress/blocks";
 import { Button } from "@wordpress/components";
-function edit({ clientId, attributes, setAttributes }) {
-  const innerBlocksProps = useInnerBlocksProps(useBlockProps(), {
-    allowedBlocks: ['tableberg/table'],
-    template: [["tableberg/table"], ["tableberg/table"], ["tableberg/table"]],
-  })
 
-  const { activeTab } = attributes;
-
-  const innerBlocks = useSelect((select) => {
-    return (select(store) as BlockEditorStoreSelectors).getBlock(clientId)?.innerBlocks
-  }, [clientId])
-
-  const innerBlocksLength = useSelect((select) => {
-    return (select(store) as BlockEditorStoreSelectors).getBlock(clientId)?.innerBlocks.length
-  }, [clientId])
-
-  const setVisibleTable = (v) => {
-    for (let i = 0; i < innerBlocks!.length; i++) {
-      if (i === v) {
-        document.querySelector(`#block-${innerBlocks[i].clientId}`).style.display = "block";
-        continue;
-      }
-      document.querySelector(`#block-${innerBlocks[i].clientId}`).style.display = "none";
-    }
-  }
-
-  useEffect(() => {
-    for (let i = 1; i < innerBlocks!.length; i++) {
-      console.log(i);
-      if (activeTab === i) {
-        document.querySelector(`#block-${innerBlocks[i].clientId}`).style.display = "block";
-      }
-      else {
-        document.querySelector(`#block-${innerBlocks[i].clientId}`).style.display = "none";
-      }
-    }
-  }, [innerBlocksLength]);
-
-  function insertBlock() {
-    const innerCount = select("core/editor").getBlocksByClientId(clientId)[0]
-      .innerBlocks.length;
-    let block = createBlock("tableberg/table");
-    dispatch("core/block-editor").insertBlock(block, innerCount, clientId);
-  }
-
-  function clickHandler(index: number) {
-    setVisibleTable(index);
-    setAttributes({
-      activeTab: index
+function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
+    activeTab: number;
+}>) {
+    const { children, ...innerBlocksProps } = useInnerBlocksProps(useBlockProps(), {
+        allowedBlocks: ['tableberg/table'],
+        template: [["tableberg/table"], ["tableberg/table"], ["tableberg/table"]],
+        // @ts-ignore
+        renderAppender: false
     })
-  }
 
-  function addTabHandler() {
-    insertBlock();
-    setVisibleTable(innerBlocksLength)
-    setAttributes({
-      activeTab: innerBlocksLength
-    })
-  }
+    const { activeTab } = attributes;
 
-  return <div className="tab-block" >
-    <nav className="tab-headings">
-      {Array.from({ length: innerBlocks.length }, (_, i) => i).map(i => {
-        const isActive = activeTab === i;
-        return <div className={`tab-heading ${isActive ? "active" : ""}`} onClick={() => clickHandler(i)}>{i + 1}</div>
-      })}
+    const { innerBlocks, innerBlocksLength } = useSelect((select) => {
+        const innerBlocks = (select(store) as BlockEditorStoreSelectors).getBlock(clientId)?.innerBlocks;
+        return {
+            innerBlocks,
+            innerBlocksLength: innerBlocks?.length
+        };
+    }, [clientId])
 
-      <Button onClick={addTabHandler}>
-        +
-      </Button>
+    useEffect(() => {
+        for (let i = 0; i < innerBlocks!.length; i++) {
+            (document.querySelector(`#block-${innerBlocks![i].clientId}`) as HTMLElement).style.display = "none";
+        }
+        (document.querySelector(`#block-${innerBlocks![activeTab].clientId}`) as HTMLElement).style.display = "block";
+    }, [innerBlocksLength, activeTab]);
 
-    </nav >
-    <div {...innerBlocksProps} />
-  </div >
+    function addTabHandler() {
+        (useDispatch(store) as unknown as BlockEditorStoreActions).insertBlock(
+            createBlock("tableberg/table"),
+            innerBlocksLength,
+            clientId
+        );
+
+        setAttributes({
+            activeTab: innerBlocksLength
+        })
+    }
+
+    return <div {...innerBlocksProps} className="tab-block" >
+        <nav className="tab-headings">
+            {Array.from({ length: innerBlocks!.length }, (_, i) => i).map(i => {
+                const isActive = activeTab === i;
+                return <div className={`tab-heading ${isActive ? "active" : ""}`} onClick={() => setAttributes({ activeTab: i })}>{i + 1}</div>
+            })}
+            <Button onClick={addTabHandler}> + </Button>
+        </nav >
+        <div>
+            {children}
+        </div>
+    </div >
 }
 
 function save() {
-  return <div>Hello world</div>
+    return <div>Hello world</div>
 }
 
 registerBlockType(metadata as any, {
-  attributes: metadata.attributes as any,
-  edit: edit,
-  save: save
+    attributes: metadata.attributes as any,
+    edit: edit,
+    save: save
 })
 
