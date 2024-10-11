@@ -49,7 +49,14 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         <nav className="tab-headings">
             {Array.from({ length: innerBlocks!.length }, (_, i) => i).map(i => {
                 const isActive = activeTab === i;
-                return <div className={`tab-heading ${isActive ? "active" : ""}`} onClick={() => setAttributes({ activeTab: i })}>{i + 1}</div>
+                return (
+                    <div
+                        className={`tab-heading ${isActive ? "active" : ""}`}
+                        onClick={() => setAttributes({ activeTab: i })}
+                    >
+                        {i + 1}
+                    </div>
+                )
             })}
             <Button onClick={addTabHandler}> + </Button>
         </nav >
