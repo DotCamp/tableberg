@@ -1,7 +1,7 @@
 import { useBlockProps, useInnerBlocksProps, store } from "@wordpress/block-editor";
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 import metadata from "./block.json";
-import { select, useSelect, dispatch, useDispatch } from "@wordpress/data";
+import { useSelect, useDispatch } from "@wordpress/data";
 import { useEffect } from "react";
 import { createBlock } from "@wordpress/blocks";
 import { Button } from "@wordpress/components";
@@ -66,7 +66,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         <div>
             {children}
         </div>
-    </div >
+    </div>
 }
 
 function save() {
