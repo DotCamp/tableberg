@@ -15,9 +15,25 @@ class Tab
         add_action("init", [$this, "register_block"]);
     }
 
-    public function render_tab_block()
+    public function render_tab_block($attributes, $content)
     {
-        return "";
+
+        $output = '<div class = "tab-block" >';
+
+        $output .= '<nav class = "tab-headings">';
+
+        foreach ($attributes["tabs"] as $headings) {
+            $output .= '<div class = "tab-heading" >' . $headings["title"] . "</div>";
+        }
+
+        $output .= "</nav>";
+
+
+        $output .=  $content;
+
+        $output .= '</div>';
+
+        return $output;
     }
 
     public function register_block()
