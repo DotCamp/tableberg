@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "version": "0.1.0",
+    "name": "tableberg-pro/tab",
+    "allowedBlocks": [
+        "tableberg/table"
+    ],
+    "title": "Tabbed Block",
+    "category": "layout",
+    "description": "Create a tabbed interface where each tab contains tables with full functionality.",
+    "keywords": [
+        "Tabs",
+        "Tabbed Interface",
+        "Table",
+        "Layout"
+    ],
+    "supports": {},
+    "attributes": {
+        "activeTab": {
+            "type": "number",
+            "default": 0
+        },
+        "tabs": {
+            "type": "array",
+            "default": [
+                {
+                    "title": "Tab 1",
+                    "content": ""
+                },
+                {
+                    "title": "Tab 2",
+                    "content": ""
+                },
+                {
+                    "title": "Tab 3",
+                    "content": ""
+                }
+            ]
+        }
+    },
+    "example": {},
+    "viewScript": "tableberg-pro-frontend",
+    "editorScript": "tableberg-pro-block-script",
+    "editorStyle": "tableberg-pro-editor-style",
+    "style": "tableberg-pro-frontend-style",
+    "textdomain": "tableberg-pro"
+}

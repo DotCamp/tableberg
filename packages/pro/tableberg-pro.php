@@ -158,6 +158,7 @@ function tp_fs_init()
 	} else {
 		// Parent is inactive, add your error handling here.
 	}
+                    new Blocks\Tab();
 }
 
 if (tp_fs_is_parent_active_and_loaded()) {
