@@ -1,0 +1,32 @@
+
+
+.tab-block {
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 16px;
+}
+
+.tab-headings {
+    display: flex;
+    gap: 16px;
+    padding: 8px 0;
+}
+
+.tab-heading {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 4px;
+}
+
+.tab-heading.active {
+    background-color: #0073aa;
+    color: white;
+}
+
+
+
+.add-tab-button:hover {
+    background-color: #005a87;
+}
+
+
