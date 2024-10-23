@@ -13,7 +13,7 @@
 .tab-heading {
     cursor: pointer;
     border-bottom: 2px solid transparent;
-    transition: border-bottom-color 0.3s ease;
+    transition: border-bottom 0.3s ease;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,8 +23,6 @@
 .tab-heading.active {
     border-bottom-color: blue;
 }
-
-
 
 .add-tab-button:hover {
     background-color: #005a87;
@@ -39,4 +37,9 @@
   width: auto;
   white-space: noWrap;
   display: inline-block;
-}  
+}
+
+.tab-heading:hover{ 
+    border-bottom-color: blue;
+
+}

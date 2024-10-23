@@ -1,10 +1,12 @@
-import { useBlockProps, useInnerBlocksProps, store, InnerBlocks } from '@wordpress/block-editor';
+import { useBlockProps, useInnerBlocksProps, store, InnerBlocks, BlockControls } from '@wordpress/block-editor';
 import { BlockEditProps, registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { createBlock } from '@wordpress/blocks';
-import { Button } from '@wordpress/components';
+import { Button, ToolbarButton, ToolbarGroup } from '@wordpress/components';
+import { reset, plus } from '@wordpress/icons';
+import { min, remove } from 'lodash';
 
 
 function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
@@ -43,11 +45,14 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
 
     const insertBlock = (useDispatch(store) as unknown as BlockEditorStoreActions).insertBlock;
 
+    const removeBlock = (useDispatch(store) as unknown as BlockEditorStoreActions).removeBlock;
+
     function addTabHandler() {
         insertBlock(
             createBlock("tableberg/table"),
             innerBlocksLength,
-            clientId
+            clientId,
+            false,
         );
 
         setAttributes({
@@ -59,8 +64,30 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         })
     }
 
+    function removeTabHandler() {
+        console.log(innerBlocksLength);
+        if (innerBlocks && innerBlocksLength) {
+            removeBlock(innerBlocks[innerBlocksLength - 1].clientId, false);
+
+            const newTabs = tabs.slice(0, -1);
+
+            const newActiveTab = Math.min(activeTab, innerBlocksLength - 2);
+
+            setAttributes({
+                tabs: newTabs,
+                activeTab: newActiveTab
+            })
+        }
+    }
+
 
     return <div {...innerBlocksProps} className="tab-block" >
+        <BlockControls>
+            <ToolbarGroup>
+                <ToolbarButton icon={reset} onClick={removeTabHandler} label='remove tab' />
+                <ToolbarButton icon={plus} onClick={addTabHandler} label='add tab' />
+            </ToolbarGroup>
+        </BlockControls>
         <nav className="tab-headings">
             {Array.from({ length: innerBlocks!.length }, (_, i) => i).map(i => {
                 const isActive = activeTab === i;
@@ -82,7 +109,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                     </div>
                 )
             })}
-            <Button onClick={addTabHandler}> + </Button>
+
         </nav >
         <div>
             {children}
