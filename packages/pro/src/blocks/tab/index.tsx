@@ -59,6 +59,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         })
     }
 
+
     return <div {...innerBlocksProps} className="tab-block" >
         <nav className="tab-headings">
             {Array.from({ length: innerBlocks!.length }, (_, i) => i).map(i => {
@@ -68,7 +69,16 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                         className={`tab-heading ${isActive ? "active" : ""}`}
                         onClick={() => setAttributes({ activeTab: i })}
                     >
-                        {i + 1}
+                        <p contentEditable tabIndex={0} onBlur={(e) => {
+                            e.preventDefault();
+                            const newTabs = [...tabs];
+                            newTabs[i].title = e.target.innerText;
+                            setAttributes({
+                                tabs: newTabs
+                            })
+                        }}>
+                            {tabs[i].title}
+                        </p>
                     </div>
                 )
             })}
