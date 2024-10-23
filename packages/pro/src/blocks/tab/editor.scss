@@ -33,11 +33,16 @@
 
 .tab-heading p{
   color: black;
-  overflow: visible;
-  padding: 0;
-  margin: 0;
+  padding: 2px;
+  margin: 0px 10px;
   text-align: center;
-  background-color: inherit !important;
-  border: none !important;
   font-size: 1rem;
+  width: auto;
+  white-space: noWrap;
+  display: inline-block;
 }  
+
+.tab-heading p:focus {
+  outline: none;
+  curson: pointer;
+}

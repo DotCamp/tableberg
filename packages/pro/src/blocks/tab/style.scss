@@ -9,14 +9,34 @@
     padding: 8px 0;
 }
 
+
 .tab-heading {
-    padding: 8px 16px;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    border-radius: 4px;
+    border-bottom: 2px solid transparent;
+    transition: border-bottom-color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
 }
 
 .tab-heading.active {
-    background-color: #0073aa;
-    color: white;
+    border-bottom-color: blue;
 }
+
+
+
+.add-tab-button:hover {
+    background-color: #005a87;
+}
+
+.tab-heading p{
+  color: black;
+  padding: 10px;
+  margin: 0;
+  text-align: center;
+  font-size: 1rem;
+  width: auto;
+  white-space: noWrap;
+  display: inline-block;
+}  
