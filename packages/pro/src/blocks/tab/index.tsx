@@ -4,9 +4,9 @@ import metadata from './block.json';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { createBlock } from '@wordpress/blocks';
-import { Button, ToolbarButton, ToolbarGroup } from '@wordpress/components';
+import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { reset, plus } from '@wordpress/icons';
-import { min, remove } from 'lodash';
+
 
 
 function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
@@ -65,7 +65,6 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
     }
 
     function removeTabHandler() {
-        console.log(innerBlocksLength);
         if (innerBlocks && innerBlocksLength) {
             removeBlock(innerBlocks[innerBlocksLength - 1].clientId, false);
 
