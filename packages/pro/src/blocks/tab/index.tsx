@@ -33,15 +33,6 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         };
     }, [clientId])
 
-    useEffect(() => {
-        if (innerBlocksLength! <= 0) {
-            return;
-        }
-        for (let i = 0; i < innerBlocks!.length; i++) {
-            (document.querySelector(`#block-${innerBlocks![i].clientId}`) as HTMLElement).style.display = "none";
-        }
-        (document.querySelector(`#block-${innerBlocks![activeTab].clientId}`) as HTMLElement).style.display = "block";
-    }, [innerBlocksLength, activeTab]);
 
     const insertBlock = (useDispatch(store) as unknown as BlockEditorStoreActions).insertBlock;
 
@@ -111,7 +102,15 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
 
         </nav >
         <div>
-            {children}
+            <div>
+                <style>
+                    {innerBlocks?.map((block, index) => `
+                #block-${block.clientId} {
+                    display: ${activeTab === index ? 'block' : 'none'};
+                }`).join('\n')}
+                </style>
+                {children}
+            </div>
         </div>
     </div>
 }
