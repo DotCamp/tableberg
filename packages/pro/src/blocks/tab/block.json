@@ -37,6 +37,18 @@
                     "content": ""
                 }
             ]
+        },
+        "alignment": {
+            "type": "string",
+            "default": "left"
+        },
+        "gap": {
+            "type": "number",
+            "default": 0
+        },
+        "tabType": {
+            "type": "string",
+            "default": "horizontal"
         }
     },
     "example": {},

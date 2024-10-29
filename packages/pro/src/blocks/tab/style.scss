@@ -5,12 +5,28 @@
 
 .tab-headings {
     display: flex;
-    gap: 16px;
-    padding: 8px 0;
+    width: 100%;
 }
 
+.tab-headings.left {
+    justify-content: flex-start;
+}
+
+.tab-headings.center {
+    justify-content: center;
+}
+
+.tab-headings.right {
+    justify-content: flex-end;
+}
+
+.tab-headings.full {
+    justify-content: space-between;
+    width: 100%; 
+}
 
 .tab-heading {
+    width: auto;
     cursor: pointer;
     border-bottom: 2px solid transparent;
     transition: border-bottom 0.3s ease;
@@ -22,6 +38,11 @@
 
 .tab-heading.active {
     border-bottom-color: blue;
+}
+
+.tab-headings.full .tab-heading {
+  width: 100%;
+  text-align: center;
 }
 
 .add-tab-button:hover {

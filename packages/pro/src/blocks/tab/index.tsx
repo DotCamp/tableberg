@@ -1,13 +1,42 @@
-import { useBlockProps, useInnerBlocksProps, store, InnerBlocks, BlockControls } from '@wordpress/block-editor';
+import { useBlockProps, useInnerBlocksProps, store, InnerBlocks, BlockControls, InspectorControls } from '@wordpress/block-editor';
 import { BlockEditProps, registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
 import { createBlock } from '@wordpress/blocks';
-import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
-import { reset, plus } from '@wordpress/icons';
+import { PanelBody, RadioControl, SelectControl, ToolbarButton, ToolbarDropdownMenu, ToolbarGroup, __experimentalNumberControl } from '@wordpress/components';
+import { reset, plus, positionLeft, positionRight, positionCenter, stretchFullWidth } from '@wordpress/icons';
+import { useState } from 'react';
+
+interface AlignmentControls {
+    icon: JSX.Element;
+    title: string;
+    value?: string;
+    onClick?: (option: AlignmentControls) => void;
+}
 
 
+const alignmentOptions: Array<AlignmentControls> = [
+    {
+        icon: positionLeft,
+        title: "Align left",
+        value: "left"
+    },
+    {
+        icon: positionRight,
+        title: "Align right",
+        value: "right"
+    },
+    {
+        icon: positionCenter,
+        title: "Align center",
+        value: "center"
+    },
+    {
+        icon: stretchFullWidth,
+        title: "Stretch full width",
+        value: "full"
+    }
+]
 
 function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
     activeTab: number;
@@ -15,6 +44,9 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         title: string,
         content: string
     }>;
+    alignment: string;
+    gap: number;
+    tabType: string;
 }>) {
     const { children, ...innerBlocksProps } = useInnerBlocksProps(useBlockProps(), {
         allowedBlocks: ['tableberg/table'],
@@ -23,7 +55,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         renderAppender: false
     })
 
-    const { activeTab, tabs } = attributes;
+    const { activeTab, tabs, alignment, gap, tabType } = attributes;
 
     const { innerBlocks, innerBlocksLength } = useSelect((select) => {
         const innerBlocks = (select(store) as BlockEditorStoreSelectors).getBlock(clientId)?.innerBlocks;
@@ -32,6 +64,8 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
             innerBlocksLength: innerBlocks?.length
         };
     }, [clientId])
+
+    const [selectedAlignment, setSelectedAlignment] = useState<JSX.Element>(positionLeft)
 
 
     const insertBlock = (useDispatch(store) as unknown as BlockEditorStoreActions).insertBlock;
@@ -70,15 +104,55 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         }
     }
 
+    function handleAlignmentClick(option: AlignmentControls) {
+        setSelectedAlignment(option.icon);
+        setAttributes({
+            alignment: option.value
+        })
+
+    }
+
 
     return <div {...innerBlocksProps} className="tab-block" >
+        <InspectorControls>
+            <PanelBody title='Tab Content Settings'>
+                <__experimentalNumberControl
+                    label="Tab content gap"
+                    value={gap}
+                    onChange={(newGap) => setAttributes({
+                        gap: Number(newGap)
+                    })}
+                    min={0}
+                    max={60}
+                    step={1}
+                />
+                <SelectControl
+                    label="Tab type"
+                    value={tabType}
+                    options={[
+                        { label: "horizontal", value: "" },
+                        { label: "vertical", value: "vertical" },
+                    ]}
+                    onChange={(changedType) => setAttributes({
+                        tabType: changedType
+                    })}
+                />
+            </PanelBody>
+        </InspectorControls>
         <BlockControls>
             <ToolbarGroup>
                 <ToolbarButton icon={reset} onClick={removeTabHandler} label='remove tab' />
                 <ToolbarButton icon={plus} onClick={addTabHandler} label='add tab' />
+                <ToolbarDropdownMenu icon={selectedAlignment} label='Headings Alignment' controls={alignmentOptions.map((option) => {
+                    return {
+                        ...option,
+                        onClick: () => handleAlignmentClick(option)
+                    }
+                })} />
+
             </ToolbarGroup>
         </BlockControls>
-        <nav className="tab-headings">
+        <nav className={`tab-headings ${alignment}`} style={{ marginBottom: `${gap}px` }}>
             {Array.from({ length: innerBlocks!.length }, (_, i) => i).map(i => {
                 const isActive = activeTab === i;
                 return (
