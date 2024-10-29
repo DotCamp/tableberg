@@ -126,17 +126,6 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                     max={60}
                     step={1}
                 />
-                <SelectControl
-                    label="Tab type"
-                    value={tabType}
-                    options={[
-                        { label: "horizontal", value: "" },
-                        { label: "vertical", value: "vertical" },
-                    ]}
-                    onChange={(changedType) => setAttributes({
-                        tabType: changedType
-                    })}
-                />
             </PanelBody>
         </InspectorControls>
         <BlockControls>
