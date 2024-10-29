@@ -15,26 +15,31 @@ class Tab
         add_action("init", [$this, "register_block"]);
     }
 
+
     public function render_tab_block($attributes, $content)
     {
+        $alignment_class = isset($attributes['alignment']) ? $attributes['alignment'] : 'left';
+        $gap_style = isset($attributes['gap']) ? 'margin-bottom:' . esc_attr($attributes['gap']) . 'px;' : '';
 
-        $output = '<div class = "tab-block" >';
 
-        $output .= '<nav class = "tab-headings">';
+        $output = '<div class="tab-block">';
+
+        $output .= '<nav class="tab-headings ' . esc_attr($alignment_class) . '" style="' . $gap_style . '">';
 
         foreach ($attributes["tabs"] as $headings) {
-            $output .= '<div class = "tab-heading" >' . $headings["title"] . "</div>";
+            $output .= '<div class="tab-heading"><p>' . esc_html($headings["title"]) . "</p></div>";
         }
 
         $output .= "</nav>";
 
 
-        $output .=  $content;
+        $output .= $content;
 
         $output .= '</div>';
 
         return $output;
     }
+
 
     public function register_block()
     {

@@ -40,12 +40,13 @@
   display: inline-block;
 }  
 
+.tab-heading:hover{ 
+    border-bottom-color: blue;
+}
+
 .tab-heading p:focus {
   outline: none;
   curson: pointer;
 }
 
-.tab-heading:hover{ 
-    border-bottom-color: blue;
 
-}
