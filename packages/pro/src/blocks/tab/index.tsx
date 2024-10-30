@@ -3,8 +3,8 @@ import { BlockEditProps, registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
-import { PanelBody, ToolbarButton, ToolbarDropdownMenu, ToolbarGroup } from '@wordpress/components';
-import { reset, plus, positionLeft, positionRight, positionCenter, stretchFullWidth } from '@wordpress/icons';
+import { PanelBody, ToolbarButton, ToolbarDropdownMenu, ToolbarGroup, TabPanel, Icon } from '@wordpress/components';
+import { reset, plus, positionLeft, positionRight, positionCenter, stretchFullWidth, settings, styles } from '@wordpress/icons';
 import { useState } from 'react';
 import { SpacingControlSingle } from '@tableberg/components';
 
@@ -118,27 +118,61 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
 
     return <div {...innerBlocksProps} className="tab-block" >
         <InspectorControls>
-            <PanelBody title='Tab Content Settings'>
-                <SpacingControlSingle
-                    label="Tab content gap"
-                    value={gap}
-                    onChange={(newGap) => {
-                        setAttributes({
-                            gap: newGap
-                        })
+            <TabPanel
+                className="tab-block-panel"
+                activeClass="active-tab"
+                tabs={[
+                    {
+                        name: 'settings',
+                        title: (
+                            <>
+                                <Icon icon={settings} />
+                            </>
+                        ),
+                        className: 'tab-settings',
+                    },
+                    {
+                        name: 'style',
+                        title: (
+                            <>
+                                <Icon icon={styles} />
+                            </>
+                        ),
+                        className: 'tab-style',
+                    },
+                ]}
+            >
+                {(tab) => {
+                    if (tab.name === 'settings') {
+                        return (
+                            <PanelBody title='Tab Content Settings'>
 
-                        const spacing = newGap.toString().split('|');
-
-                        if (spacing.length > 1) {
-                            setContentGap(spacing[spacing.length - 1] + 'px');
-                        } else {
-                            setContentGap(newGap);
-                        }
-                    }}
-                />
-            </PanelBody>
-        </InspectorControls>
-        <BlockControls>
+                            </PanelBody>
+                        );
+                    } else if (tab.name === 'style') {
+                        return (
+                            <PanelBody title='Style Settings'>
+                                <SpacingControlSingle
+                                    label="Tab content gap"
+                                    value={gap}
+                                    onChange={(newGap) => {
+                                        setAttributes({
+                                            gap: newGap
+                                        })
+                                        const spacing = newGap.toString().split('|');
+                                        if (spacing.length > 1) {
+                                            setContentGap(spacing[spacing.length - 1] + 'px');
+                                        } else {
+                                            setContentGap(newGap);
+                                        }
+                                    }}
+                                />
+                            </PanelBody>
+                        );
+                    }
+                }}
+            </TabPanel>
+        </InspectorControls>       <BlockControls>
             <ToolbarGroup>
                 <ToolbarButton icon={reset} onClick={removeTabHandler} label='remove tab' />
                 <ToolbarButton icon={plus} onClick={addTabHandler} label='add tab' />
