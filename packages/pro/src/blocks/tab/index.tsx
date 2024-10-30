@@ -6,6 +6,8 @@ import { createBlock } from '@wordpress/blocks';
 import { PanelBody, RadioControl, SelectControl, ToolbarButton, ToolbarDropdownMenu, ToolbarGroup, __experimentalNumberControl } from '@wordpress/components';
 import { reset, plus, positionLeft, positionRight, positionCenter, stretchFullWidth } from '@wordpress/icons';
 import { useState } from 'react';
+import { SpacingControlSingle } from '@tableberg/components';
+import { getSpacingCssSingle } from '../../utils/styling-helpers';
 
 interface AlignmentControls {
     icon: JSX.Element;
@@ -45,7 +47,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         content: string
     }>;
     alignment: string;
-    gap: number;
+    gap: string;
     tabType: string;
 }>) {
     const { children, ...innerBlocksProps } = useInnerBlocksProps(useBlockProps(), {
@@ -55,7 +57,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         renderAppender: false
     })
 
-    const { activeTab, tabs, alignment, gap, tabType } = attributes;
+    const { activeTab, tabs, alignment, gap } = attributes;
 
     const { innerBlocks, innerBlocksLength } = useSelect((select) => {
         const innerBlocks = (select(store) as BlockEditorStoreSelectors).getBlock(clientId)?.innerBlocks;
@@ -65,7 +67,8 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         };
     }, [clientId])
 
-    const [selectedAlignment, setSelectedAlignment] = useState<JSX.Element>(positionLeft)
+    const [selectedAlignment, setSelectedAlignment] = useState<JSX.Element>(positionLeft);
+    const [contentGap, setContentGap] = useState("0px");
 
 
     const insertBlock = (useDispatch(store) as unknown as BlockEditorStoreActions).insertBlock;
@@ -116,15 +119,22 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
     return <div {...innerBlocksProps} className="tab-block" >
         <InspectorControls>
             <PanelBody title='Tab Content Settings'>
-                <__experimentalNumberControl
+                <SpacingControlSingle
                     label="Tab content gap"
                     value={gap}
-                    onChange={(newGap) => setAttributes({
-                        gap: Number(newGap)
-                    })}
-                    min={0}
-                    max={60}
-                    step={1}
+                    onChange={(newGap) => {
+                        setAttributes({
+                            gap: newGap
+                        })
+
+                        const spacing = newGap.toString().split('|');
+
+                        if (spacing.length > 1) {
+                            setContentGap(spacing[spacing.length - 1] + 'px');
+                        } else {
+                            setContentGap(newGap);
+                        }
+                    }}
                 />
             </PanelBody>
         </InspectorControls>
@@ -141,7 +151,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
 
             </ToolbarGroup>
         </BlockControls>
-        <nav className={`tab-headings ${alignment}`} style={{ marginBottom: `${gap}px` }}>
+        <nav className={`tab-headings ${alignment}`} style={{ marginBottom: `${contentGap}` }}>
             {Array.from({ length: innerBlocks!.length }, (_, i) => i).map(i => {
                 const isActive = activeTab === i;
                 return (

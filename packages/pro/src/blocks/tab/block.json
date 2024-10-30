@@ -43,8 +43,8 @@
             "default": "left"
         },
         "gap": {
-            "type": "number",
-            "default": 0
+            "type": "string",
+            "default": "0"
         },
         "tabType": {
             "type": "string",
