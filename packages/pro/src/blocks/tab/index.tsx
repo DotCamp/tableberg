@@ -3,11 +3,11 @@ import { BlockEditProps, registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
-import { PanelBody, RadioControl, SelectControl, ToolbarButton, ToolbarDropdownMenu, ToolbarGroup, __experimentalNumberControl } from '@wordpress/components';
+import { PanelBody, ToolbarButton, ToolbarDropdownMenu, ToolbarGroup } from '@wordpress/components';
 import { reset, plus, positionLeft, positionRight, positionCenter, stretchFullWidth } from '@wordpress/icons';
 import { useState } from 'react';
 import { SpacingControlSingle } from '@tableberg/components';
-import { getSpacingCssSingle } from '../../utils/styling-helpers';
+
 
 interface AlignmentControls {
     icon: JSX.Element;

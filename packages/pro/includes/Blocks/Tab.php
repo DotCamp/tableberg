@@ -16,10 +16,23 @@ class Tab
     }
 
 
+    function getSpacingCss($spacing)
+    {
+        if (strpos($spacing, 'var:preset|spacing|') === 0) {
+
+            $value = substr($spacing, strrpos($spacing, '|') + 1);
+
+            return 'var(--wp--preset--spacing--' . esc_attr($value) . ')';
+        }
+
+
+        return esc_attr($spacing);
+    }
+
     public function render_tab_block($attributes, $content)
     {
         $alignment_class = isset($attributes['alignment']) ? $attributes['alignment'] : 'left';
-        $gap_style = isset($attributes['gap']) ? 'margin-bottom:' . esc_attr($attributes['gap']) . 'px;' : '';
+        $gap_style = isset($attributes['gap']) ? 'margin-bottom:' . $this->getSpacingCss($attributes['gap'])  : '';
 
 
         $output = '<div class="tab-block">';
