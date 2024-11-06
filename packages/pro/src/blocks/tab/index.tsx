@@ -3,17 +3,19 @@ import { BlockEditProps, registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
-import { PanelBody, ToolbarButton, ToolbarDropdownMenu, ToolbarGroup, TabPanel, Icon } from '@wordpress/components';
+import { PanelBody, ToolbarButton, ToolbarDropdownMenu, ToolbarGroup, TabPanel, Icon, SelectControl, DropdownMenu, RadioControl } from '@wordpress/components';
 import { reset, plus, positionLeft, positionRight, positionCenter, stretchFullWidth, settings, styles } from '@wordpress/icons';
 import { useState } from 'react';
 import { SpacingControlSingle } from '@tableberg/components';
+import {
+    __experimentalToggleGroupControl as ToggleGroupControl, __experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon
+} from '@wordpress/components';
 
 
 interface AlignmentControls {
     icon: JSX.Element;
     title: string;
-    value?: string;
-    onClick?: (option: AlignmentControls) => void;
+    value: string;
 }
 
 
@@ -107,14 +109,6 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         }
     }
 
-    function handleAlignmentClick(option: AlignmentControls) {
-        setSelectedAlignment(option.icon);
-        setAttributes({
-            alignment: option.value
-        })
-
-    }
-
 
     return <div {...innerBlocksProps} className="tab-block" >
         <InspectorControls>
@@ -167,22 +161,23 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                                         }
                                     }}
                                 />
+                                <ToggleGroupControl __nextHasNoMarginBottom label="Table alignment" value={alignment} onChange={(newAlignment: string) => setAttributes({
+                                    alignment: newAlignment
+                                })} >
+                                    {
+                                        alignmentOptions.map(({ icon, title, value }) => (<ToggleGroupControlOptionIcon key={value} icon={icon} value={value} label={title} />))
+                                    }
+                                </ToggleGroupControl>
                             </PanelBody>
                         );
                     }
                 }}
             </TabPanel>
-        </InspectorControls>       <BlockControls>
+        </InspectorControls>
+        <BlockControls>
             <ToolbarGroup>
                 <ToolbarButton icon={reset} onClick={removeTabHandler} label='remove tab' />
                 <ToolbarButton icon={plus} onClick={addTabHandler} label='add tab' />
-                <ToolbarDropdownMenu icon={selectedAlignment} label='Headings Alignment' controls={alignmentOptions.map((option) => {
-                    return {
-                        ...option,
-                        onClick: () => handleAlignmentClick(option)
-                    }
-                })} />
-
             </ToolbarGroup>
         </BlockControls>
         <nav className={`tab-headings ${alignment}`} style={{ marginBottom: `${contentGap}` }}>
@@ -219,7 +214,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                 {children}
             </div>
         </div>
-    </div>
+    </div >
 }
 
 function save() {
