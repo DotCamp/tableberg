@@ -107,7 +107,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                 activeTab: 0
             })
         }
-        console.log(innerBlocks);
+
     }
 
 

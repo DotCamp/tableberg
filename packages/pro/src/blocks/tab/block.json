@@ -6,7 +6,7 @@
     "allowedBlocks": [
         "tableberg/table"
     ],
-    "title": "Tabbed Block",
+    "title": "Toggle for Tableberg",
     "category": "layout",
     "description": "Create a tabbed interface where each tab contains tables with full functionality.",
     "keywords": [
