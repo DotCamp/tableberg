@@ -52,7 +52,9 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
     gap: string;
     tabType: string;
 }>) {
-    const { children, ...innerBlocksProps } = useInnerBlocksProps(useBlockProps(), {
+    const blockProps = useBlockProps();
+    const { children, ...innerBlocksProps } = useInnerBlocksProps(blockProps, {
+        className: 'tab-block',
         allowedBlocks: ['tableberg/table'],
         template: [["tableberg/table"], ["tableberg/table"], ["tableberg/table"]],
         // @ts-ignore
@@ -110,7 +112,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
     }
 
 
-    return <div {...innerBlocksProps} className="tab-block" >
+    return <div {...blockProps} className="tab-block" >
         <InspectorControls>
             <TabPanel
                 className="tab-block-panel"
@@ -161,7 +163,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                                         }
                                     }}
                                 />
-                                <ToggleGroupControl __nextHasNoMarginBottom label="Table alignment" value={alignment} onChange={(newAlignment: string) => setAttributes({
+                                <ToggleGroupControl __nextHasNoMarginBottom label="Table alignment" value={alignment} onChange={(newAlignment: any) => setAttributes({
                                     alignment: newAlignment
                                 })} >
                                     {
@@ -180,38 +182,41 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                 <ToolbarButton icon={plus} onClick={addTabHandler} label='add tab' />
             </ToolbarGroup>
         </BlockControls>
-        <nav className={`tab-headings ${alignment}`} style={{ marginBottom: `${contentGap}` }}>
-            {Array.from({ length: innerBlocks!.length }, (_, i) => i).map(i => {
-                const isActive = activeTab === i;
-                return (
-                    <div
-                        className={`tab-heading ${isActive ? "active" : ""}`}
-                        onClick={() => setAttributes({ activeTab: i })}
-                    >
-                        <p contentEditable tabIndex={0} onBlur={(e) => {
-                            e.preventDefault();
-                            const newTabs = [...tabs];
-                            newTabs[i].title = e.target.innerText;
-                            setAttributes({
-                                tabs: newTabs
-                            })
-                        }}>
-                            {tabs[i].title}
-                        </p>
-                    </div>
-                )
-            })}
+        <div {...innerBlocksProps}>
+            <nav data-toolbar-trigger="true" className={`tab-headings ${alignment}`} style={{ marginBottom: `${contentGap}` }}>
+                {Array.from({ length: innerBlocks!.length }, (_, i) => i).map(i => {
+                    const isActive = activeTab === i;
+                    return (
+                        <div
+                            className={`tab-heading ${isActive ? "active" : ""}`}
+                            onClick={() => setAttributes({ activeTab: i })}
+                            data-toolbar-trigger='true'
+                        >
+                            <p contentEditable tabIndex={0} onBlur={(e) => {
+                                e.preventDefault();
+                                const newTabs = [...tabs];
+                                newTabs[i].title = e.target.innerText;
+                                setAttributes({
+                                    tabs: newTabs
+                                })
+                            }}>
+                                {tabs[i].title}
+                            </p>
+                        </div>
+                    )
+                })}
 
-        </nav >
-        <div>
+            </nav >
             <div>
-                <style>
-                    {innerBlocks?.map((block, index) => `
+                <div>
+                    <style>
+                        {innerBlocks?.map((block, index) => `
                 #block-${block.clientId} {
                     display: ${activeTab === index ? 'block' : 'none'};
                 }`).join('\n')}
-                </style>
-                {children}
+                    </style>
+                    {children}
+                </div>
             </div>
         </div>
     </div >
