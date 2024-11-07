@@ -90,7 +90,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         setAttributes({
             activeTab: innerBlocksLength,
             tabs: [...tabs, {
-                title: `Tab ${innerBlocksLength! + 1}`,
+                title: `Untitled Tab`,
                 content: "",
             }]
         })
