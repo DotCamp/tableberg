@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 if (!defined('TABLEBERG_VERSION')) {
-	define('TABLEBERG_VERSION', '0.0.2');
+	define('TABLEBERG_VERSION', '0.5.7');
 }
 if (!defined('TABLEBERG_DIR_PATH')) {
 	define('TABLEBERG_DIR_PATH', plugin_dir_path(__FILE__));
