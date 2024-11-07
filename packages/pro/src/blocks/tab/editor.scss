@@ -19,6 +19,7 @@
     justify-content: center;
     align-items: center;
     overflow: visible;
+    position:relative;
 }
 
 .tab-heading.active {
@@ -38,7 +39,22 @@
   width: auto;
   white-space: noWrap;
   display: inline-block;
-}  
+}
+
+.tab-heading-remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 18px;
+    outline:none;
+}
+
+.tab-heading:hover .tab-heading-remove {
+    opacity: 1;
+}
 
 .tab-heading:hover{ 
     border-bottom-color: blue;

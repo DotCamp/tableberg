@@ -3,14 +3,14 @@ import { BlockEditProps, registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
-import { PanelBody, ToolbarButton, ToolbarDropdownMenu, ToolbarGroup, TabPanel, Icon, SelectControl, DropdownMenu, RadioControl } from '@wordpress/components';
-import { reset, plus, positionLeft, positionRight, positionCenter, stretchFullWidth, settings, styles } from '@wordpress/icons';
+import { PanelBody, TabPanel, Button } from '@wordpress/components';
+import { positionLeft, positionRight, positionCenter, stretchFullWidth, settings, styles, reset, plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { SpacingControlSingle } from '@tableberg/components';
 import {
     __experimentalToggleGroupControl as ToggleGroupControl, __experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon
 } from '@wordpress/components';
-
+import { Icon, } from '@wordpress/icons'
 
 interface AlignmentControls {
     icon: JSX.Element;
@@ -96,19 +96,18 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         })
     }
 
-    function removeTabHandler() {
+    function removeTabHandler(i: number) {
         if (innerBlocks && innerBlocksLength) {
-            removeBlock(innerBlocks[innerBlocksLength - 1].clientId, false);
+            removeBlock(innerBlocks[i].clientId, false);
 
-            const newTabs = tabs.slice(0, -1);
-
-            const newActiveTab = Math.min(activeTab, innerBlocksLength - 2);
+            const newTabs = [...tabs.slice(0, i), ...tabs.slice(i + 1)];
 
             setAttributes({
                 tabs: newTabs,
-                activeTab: newActiveTab
+                activeTab: 0
             })
         }
+        console.log(innerBlocks);
     }
 
 
@@ -176,15 +175,9 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                 }}
             </TabPanel>
         </InspectorControls>
-        <BlockControls>
-            <ToolbarGroup>
-                <ToolbarButton icon={reset} onClick={removeTabHandler} label='remove tab' />
-                <ToolbarButton icon={plus} onClick={addTabHandler} label='add tab' />
-            </ToolbarGroup>
-        </BlockControls>
         <div {...innerBlocksProps}>
             <nav data-toolbar-trigger="true" className={`tab-headings ${alignment}`} style={{ marginBottom: `${contentGap}` }}>
-                {Array.from({ length: innerBlocks!.length }, (_, i) => i).map(i => {
+                {tabs.map((v, i) => {
                     const isActive = activeTab === i;
                     return (
                         <div
@@ -202,10 +195,20 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                             }}>
                                 {tabs[i].title}
                             </p>
+                            <Button
+                                className='tab-heading-remove'
+                                icon={reset}
+                                onClick={() => removeTabHandler(i)}
+                            />
                         </div>
                     )
                 })}
+                <div
+                    className="tab-heading tab-heading-add"
 
+                >
+                    <Button icon={plus} onClick={addTabHandler} />
+                </div>
             </nav >
             <div>
                 <div>
