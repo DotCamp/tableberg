@@ -10,6 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const iframeDoc =
             iframe.contentDocument || iframe.contentWindow!.document;
 
+        const styles = `
+            html,body,:root {
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+                min-height: auto !important;
+            }
+        `;
+
         const hasDoctype = templateContent.querySelector("html");
         if (hasDoctype) {
             iframeDoc.open();
@@ -20,7 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             iframeDoc.open();
             iframeDoc.write(
-                "<!DOCTYPE html><html><head><title>iFrame Content</title></head><body></body></html>",
+                `<!DOCTYPE html>
+                <html>
+                    <head>
+                        <title>iFrame Content</title>
+                        <style>${styles}</style>
+                    </head>
+                    <body></body>
+                </html>`,
             );
             iframeDoc.close();
             iframeDoc.body.appendChild(templateContent);
