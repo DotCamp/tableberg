@@ -1,41 +1,41 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faClose} from "@fortawesome/free-solid-svg-icons";
+import {useEffect, useState} from "react";
 import {
     MenuGroup,
     MenuItem,
     Modal,
-    SearchControl,
+    SearchControl, Spinner,
 } from "@wordpress/components";
 
 // @ts-ignore
-import { BlockPreview, store } from "@wordpress/block-editor";
+import {BlockPreview, store} from "@wordpress/block-editor";
 
 import TablebergIcon from "@tableberg/shared/icons/tableberg";
-import { useSelect } from "@wordpress/data";
-import { __ } from "@wordpress/i18n";
-import { BlockInstance } from "@wordpress/blocks";
+import {useSelect} from "@wordpress/data";
+import {__} from "@wordpress/i18n";
+import {BlockInstance} from "@wordpress/blocks";
 import classNames from "classnames";
 
-import { UpsellPatternsModal } from "../../components/UpsellModal";
-import { createPortal } from "react-dom";
+import {UpsellPatternsModal} from "../../components/UpsellModal";
+import {createPortal} from "react-dom";
 
 interface PatternLibraryProps {
     onClose: () => void;
     onSelect: (block: BlockInstance) => void;
 }
 
-function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
+function PatternsLibrary({onClose, onSelect}: PatternLibraryProps) {
     const [search, setSearch] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
     const [pageItems, setPageItems] = useState<any[]>([]);
 
     const [upsell, setUpsell] = useState<string | null>(null);
 
-    const { categories, patterns } = useSelect((select) => {
+    const {categories, patterns} = useSelect((select) => {
         // @ts-ignore
-        const { __experimentalGetAllowedPatterns, getSettings } = select(store);
-        const { __experimentalBlockPatternCategories } = getSettings();
+        const {__experimentalGetAllowedPatterns, getSettings} = select(store);
+        const {__experimentalBlockPatternCategories} = getSettings();
 
         const catTitleMap = new Map<string, string>();
         __experimentalBlockPatternCategories.forEach((cat: any) => {
@@ -49,7 +49,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
             if (!pattern.name.startsWith("tableberg/")) {
                 return;
             }
-            
+
             pattern.isUpsell = pattern.name.indexOf("/upsell-") > -1;
 
             patterns.push(pattern);
@@ -143,18 +143,30 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
                             placeholder=""
                         />
                         <button onClick={onClose}>
-                            <FontAwesomeIcon icon={faClose} />
+                            <FontAwesomeIcon icon={faClose}/>
                         </button>
                     </div>
                     <div className="tableberg-pattern-library-body">
-                        <div className="tableberg-pattern-library-grid">
+                        {
+                            patterns.length === 0 && (
+                                <div className="tableberg-pattern-library-body-empty">
+                                    <Spinner style={{
+                                        width: "80px",
+                                        height: "80px",
+                                    }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}/>
+                                </div>
+                            )
+                        }
+                        <div style={{
+                            display: patterns.length === 0 ? "none" : "grid",
+                        }} className="tableberg-pattern-library-grid">
                             {pageItems.map((pattern) => (
                                 <div
                                     className={classNames({
                                         "tableberg-pattern-library-preview":
                                             true,
                                         "tableberg-pattern-library-preview-upsell":
-                                            pattern.isUpsell,
+                                        pattern.isUpsell,
                                     })}
                                     onClick={() =>
                                         pattern.isUpsell
@@ -163,6 +175,12 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
                                     }
                                 >
                                     <div className="tableberg-pattern-library-preview-item">
+                                        <div className={"tableberg-pattern-library-preview-item-busy"}>
+                                            <Spinner style={{
+                                                width: "80px",
+                                                height: "80px",
+                                            }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}/>
+                                        </div>
                                         <BlockPreview
                                             blocks={pattern.blocks}
                                             viewportWidth={
