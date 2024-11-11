@@ -19,6 +19,7 @@ import classNames from "classnames";
 
 import {UpsellPatternsModal} from "../../components/UpsellModal";
 import {createPortal} from "react-dom";
+import InView from "../../components/InView";
 
 interface PatternLibraryProps {
     onClose: () => void;
@@ -181,12 +182,14 @@ function PatternsLibrary({onClose, onSelect}: PatternLibraryProps) {
                                                 height: "80px",
                                             }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}/>
                                         </div>
-                                        <BlockPreview
-                                            blocks={pattern.blocks}
-                                            viewportWidth={
-                                                pattern.viewportWidth
-                                            }
-                                        />
+                                        <InView>
+                                            <BlockPreview
+                                                blocks={pattern.blocks}
+                                                viewportWidth={
+                                                    pattern.viewportWidth
+                                                }
+                                            />
+                                        </InView>
                                     </div>
                                     <p>{pattern.title}</p>
                                 </div>
