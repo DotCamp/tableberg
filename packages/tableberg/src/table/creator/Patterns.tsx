@@ -178,8 +178,8 @@ function PatternsLibrary({onClose, onSelect}: PatternLibraryProps) {
                                     <div className="tableberg-pattern-library-preview-item">
                                         <div className={"tableberg-pattern-library-preview-item-busy"}>
                                             <Spinner style={{
-                                                width: "80px",
-                                                height: "80px",
+                                                width: "50px",
+                                                height: "50px",
                                             }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}/>
                                         </div>
                                         <InView>
