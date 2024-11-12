@@ -3,7 +3,7 @@ import { BlockEditProps, registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
-import { PanelBody, TabPanel, Button } from '@wordpress/components';
+import { PanelBody, TabPanel, Button, __experimentalConfirmDialog as ConfirmDialog } from '@wordpress/components';
 import { positionLeft, positionRight, positionCenter, stretchFullWidth, settings, styles, reset, plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { SpacingControlSingle } from '@tableberg/components';
@@ -78,6 +78,8 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         };
     }, [clientId])
 
+    const [deleteConfirmDialogIsOpen, setDeleteConfirmDialogIsOpen] = useState(false);
+    const [deleteIndex, setDeleteIndex] = useState(0);
 
     const [contentGap, setContentGap] = useState("0px");
 
@@ -255,12 +257,21 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                             <div className='tab-heading-remove'>
                                 <Button
                                     icon={reset}
-                                    onClick={() => removeTabHandler(i)}
+                                    onClick={() => {
+                                        setDeleteIndex(i);
+                                        setDeleteConfirmDialogIsOpen(true);
+                                    }}
                                 />
                             </div>
                         </div>
                     )
                 })}
+                {
+                    deleteConfirmDialogIsOpen && (
+                        <ConfirmDialog isOpen={deleteConfirmDialogIsOpen} onCancel={() => setDeleteConfirmDialogIsOpen(false)} onConfirm={() => { removeTabHandler(deleteIndex); setDeleteConfirmDialogIsOpen(false) }}>Are you sure you want to delete this tab?</ConfirmDialog>
+                    )
+                }
+
                 <div
                     className="tab-heading tab-heading-add"
 
