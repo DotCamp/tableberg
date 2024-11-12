@@ -48,17 +48,29 @@
 
 .tab-heading-remove {
     position: absolute;
-    top: 0;
-    right: 0;
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 18px;
-    outline:none;
+    top: -8px;
+    right: 0px;
+    width: 16px;
+    height:16px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.tab-heading:hover .tab-heading-remove {
-    opacity: 1;
+.tab-heading-remove button {
+    color: #ffffff;
+    font-size: 4px;
+    border: none;
+    background: none;
+}
+
+.tab-heading-remove:hover {
+    background-color: #ff0000;
+    transform: scale(1.1);
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .tab-heading:hover{ 

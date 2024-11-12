@@ -252,11 +252,12 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                             }}>
                                 {tabs[i].title}
                             </p>
-                            <Button
-                                className='tab-heading-remove'
-                                icon={reset}
-                                onClick={() => removeTabHandler(i)}
-                            />
+                            <div className='tab-heading-remove'>
+                                <Button
+                                    icon={reset}
+                                    onClick={() => removeTabHandler(i)}
+                                />
+                            </div>
                         </div>
                     )
                 })}
