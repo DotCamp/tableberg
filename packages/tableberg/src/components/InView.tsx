@@ -41,7 +41,7 @@ export default function InView({children, viewRatio = 1.0}: InViewProps) {
         }
     }, [isInView])
 
-    return <div className={'patterns-library-in-view'} ref={wrapperRef}>
+    return <div className={'tableberg-in-view-wrapper'} ref={wrapperRef}>
         {
             isInView && children
         }
