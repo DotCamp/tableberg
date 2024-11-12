@@ -35,10 +35,14 @@
     justify-content: center;
     align-items: center;
     overflow: visible;
+    color: var(--tab-inactive-text-color);
+    background-color: var(--tab-inactive-background-color); 
 }
 
 .tab-heading.active {
-    border-bottom-color: blue;
+    border-bottom-color: var(--tab-active-color);
+    background-color: var(--tab-active-background-color);
+    color: var(--tab-active-text-color);
 }
 
 .tab-headings.full .tab-heading {
@@ -46,12 +50,7 @@
   text-align: center;
 }
 
-.add-tab-button:hover {
-    background-color: #005a87;
-}
-
 .tab-heading p{
-  color: black;
   padding: 10px;
   margin: 0;
   text-align: center;
@@ -59,9 +58,10 @@
   width: auto;
   white-space: noWrap;
   display: inline-block;
+  color: var(--tab-inactive-text-color);
 }
 
 .tab-heading:hover{ 
-    border-bottom-color: blue;
+    border-bottom-color: var(--tab-active-color);
 
 }
