@@ -1,4 +1,4 @@
-import { useBlockProps, useInnerBlocksProps, store, InnerBlocks, BlockControls, InspectorControls } from '@wordpress/block-editor';
+import { useBlockProps, useInnerBlocksProps, store, InnerBlocks, BlockControls, InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 import { BlockEditProps, registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -51,6 +51,13 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
     alignment: string;
     gap: string;
     tabType: string;
+    activeColor: string,
+    inactiveColor: string,
+    activeText: string,
+    activeBackground: string,
+    activeBorder: string,
+    inactiveText: string,
+    inactiveBackground: string,
 }>) {
     const blockProps = useBlockProps();
     const { children, ...innerBlocksProps } = useInnerBlocksProps(blockProps, {
@@ -61,7 +68,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         renderAppender: false
     })
 
-    const { activeTab, tabs, alignment, gap } = attributes;
+    const { activeTab, tabs, alignment, gap, activeColor, inactiveColor, activeBackground, inactiveBackground, activeText, inactiveText } = attributes;
 
     const { innerBlocks, innerBlocksLength } = useSelect((select) => {
         const innerBlocks = (select(store) as BlockEditorStoreSelectors).getBlock(clientId)?.innerBlocks;
@@ -71,7 +78,7 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
         };
     }, [clientId])
 
-    const [selectedAlignment, setSelectedAlignment] = useState<JSX.Element>(positionLeft);
+
     const [contentGap, setContentGap] = useState("0px");
 
 
@@ -169,12 +176,58 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                                         alignmentOptions.map(({ icon, title, value }) => (<ToggleGroupControlOptionIcon key={value} icon={icon} value={value} label={title} />))
                                     }
                                 </ToggleGroupControl>
+                                <PanelColorSettings title='color' initialOpen={true} colorSettings={[
+                                    {
+                                        value: activeColor,
+                                        onChange: (color) => setAttributes({ activeColor: color }),
+                                        label: "Active Color"
+                                    },
+                                    {
+                                        value: inactiveColor,
+                                        onChange: (color) => setAttributes({ inactiveColor: color }),
+                                        label: "Inactive Color"
+                                    },
+                                    {
+                                        value: activeText,
+                                        onChange: (color) => setAttributes({ activeText: color }),
+                                        label: "Active Text"
+                                    },
+                                    {
+                                        value: inactiveText,
+                                        onChange: (color) => setAttributes({ inactiveText: color }),
+                                        label: "Inactive Text"
+                                    },
+                                    {
+                                        value: activeBackground,
+                                        onChange: (color) => setAttributes({ activeBackground: color }),
+                                        label: "Active Background"
+                                    },
+                                    {
+                                        value: inactiveBackground,
+                                        onChange: (color) => setAttributes({ inactiveBackground: color }),
+                                        label: "Inactive Background"
+                                    },]} disableCustomColors={false} />
                             </PanelBody>
                         );
                     }
                 }}
             </TabPanel>
         </InspectorControls>
+
+        <style>
+            {`
+        .wp-block-tableberg-pro-tab {
+            --tab-active-color: ${activeColor};
+            --tab-inactive-color: ${inactiveColor};
+            --tab-active-text-color: ${activeText};
+            --tab-inactive-text-color: ${inactiveText};
+            --tab-active-background-color: ${activeBackground};
+            --tab-inactive-background-color: ${inactiveBackground};
+        }
+            `}
+        </style>
+
+
         <div {...innerBlocksProps}>
             <nav data-toolbar-trigger="true" className={`tab-headings ${alignment}`} style={{ marginBottom: `${contentGap}` }}>
                 {tabs.map((v, i) => {
@@ -184,6 +237,10 @@ function edit({ clientId, attributes, setAttributes }: BlockEditProps<{
                             className={`tab-heading ${isActive ? "active" : ""}`}
                             onClick={() => setAttributes({ activeTab: i })}
                             data-toolbar-trigger='true'
+                            style={{
+                                borderBottomColor: isActive ? activeColor : "",
+                                color: isActive ? activeColor : inactiveColor
+                            }}
                         >
                             <p contentEditable tabIndex={0} onBlur={(e) => {
                                 e.preventDefault();

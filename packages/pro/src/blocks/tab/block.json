@@ -49,6 +49,30 @@
         "tabType": {
             "type": "string",
             "default": "horizontal"
+        },
+        "activeColor": {
+            "type": "string",
+            "default": "blue"
+        },
+        "inactiveColor": {
+            "type": "string",
+            "default": "black"
+        },
+        "activeText": {
+            "type": "string",
+            "default": "black"
+        },
+        "activeBackground": {
+            "type": "string",
+            "default": "transparent"
+        },
+        "inactiveText": {
+            "type": "string",
+            "default": "black"
+        },
+        "inactiveBackground": {
+            "type": "string",
+            "default": "transparent"
         }
     },
     "example": {},
