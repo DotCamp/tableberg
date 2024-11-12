@@ -1,6 +1,11 @@
 import {useEffect, useRef, useState} from "react";
 
-export default function InView({children}: { children: React.ReactNode }) {
+interface InViewProps {
+    children: React.ReactNode;
+    viewRatio?: number;
+}
+
+export default function InView({children, viewRatio = 1.0}: InViewProps) {
     const [isInView, setIsInView] = useState(false);
 
     const wrapperRef = useRef(null);
@@ -12,7 +17,7 @@ export default function InView({children}: { children: React.ReactNode }) {
         if (isIntersecting) {
             setIsInView(isIntersecting);
         }
-    }, {threshold: 1})
+    }, {threshold: viewRatio})
 
     useEffect(() => {
         if (wrapperRef.current) {

@@ -13,7 +13,6 @@ import {BlockPreview, store} from "@wordpress/block-editor";
 
 import TablebergIcon from "@tableberg/shared/icons/tableberg";
 import {useSelect} from "@wordpress/data";
-import {__} from "@wordpress/i18n";
 import {BlockInstance} from "@wordpress/blocks";
 import classNames from "classnames";
 
