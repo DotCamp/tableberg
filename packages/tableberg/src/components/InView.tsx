@@ -1,5 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 
+/**
+ * Props for InView component.
+ */
 interface InViewProps {
     children: React.ReactNode;
     viewRatio?: number;
@@ -9,11 +12,11 @@ interface InViewProps {
  * Component to render children when they are in view.
  *
  * @param children Component to render when in view.
- * @param viewRatio Ratio of the element that needs to be in view to trigger the render. (0.1 - 1.0)
+ * @param [viewRatio=0.1] Ratio of the element that needs to be in view to trigger the render. (1.0 being fully in view)
  *
  * @constructor
  */
-export default function InView({children, viewRatio = 1.0}: InViewProps) {
+const InView: React.FC<InViewProps> = ({children, viewRatio = 0.1}) => {
     const [isInView, setIsInView] = useState(false);
 
     const wrapperRef = useRef(null);
@@ -41,9 +44,11 @@ export default function InView({children, viewRatio = 1.0}: InViewProps) {
         }
     }, [isInView])
 
-    return <div className={'tableberg-in-view-wrapper'} ref={wrapperRef}>
+    return (<div className={'tableberg-in-view-wrapper'} ref={wrapperRef}>
         {
             isInView && children
         }
-    </div>
+    </div>);
 }
+
+export default InView;
