@@ -1,0 +1,21 @@
+name: PHP Compatibility Check
+
+on: 
+  push:
+    branches: 
+      - '**'
+
+jobs:
+  php-compatibility:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run PHP Compatibility Check
+        uses: permafrost06/phpcompatibility-action@main
+        with:
+          test-versions: 7.0-
+          paths: ${{ github.workspace }}
+          extensions: php
+
