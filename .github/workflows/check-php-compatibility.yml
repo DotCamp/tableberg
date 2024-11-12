@@ -13,9 +13,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run PHP Compatibility Check
-        uses: permafrost06/phpcompatibility-action@main
+        uses: permafrost06/phpcompatibility-action@add-ignore-cmd
         with:
           test-versions: 7.0-
           paths: ${{ github.workspace }}
           extensions: php
-
+          ignore: "*/vendor/php-stubs/*"
