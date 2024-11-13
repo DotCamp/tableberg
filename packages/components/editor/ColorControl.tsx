@@ -28,7 +28,7 @@ function ColorSetting({
     colorValue,
     gradientValue,
     label,
-    palette,
+    palette = "theme",
     onColorChange,
     onGradientChange,
     onDeselect,
