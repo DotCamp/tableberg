@@ -47,7 +47,7 @@ export default function StackColTable(
         ),
     } as Record<string, any>;
 
-    const [rowTemplates, setRowTemplates] = useState([]);
+    const [rowTemplates, setRowTemplates] = useState<React.ReactElement[]>([]);
     const [colUpt, setColUpt] = useState(0);
 
     useEffect(() => {
@@ -65,123 +65,94 @@ export default function StackColTable(
             : breakpoints[preview];
 
     useLayoutEffect(() => {
-        const newCells: TablebergCellInstance[] = [];
+        if (!breakpoint) {
+            return;
+        }
 
-        const headerArr: TablebergCellInstance[] = [];
-        let stackRowCount = Math.max(breakpoint?.stackCount || 1, 1);
+        const moveCellToRow = (cell: TablebergCellInstance, row: number, setTemp = false) => {
+            cell.attributes.responsiveTarget = `#tableberg-${clientId}-${row}`;
+            if (row > attributes.rows - 1) {
+                cell.attributes.isTmp = setTemp;
+            }
+            return cell;
+        }
 
-        const templates: any = [];
-        let rowIdxStart = 0;
-        let rowCount = -1,
-            lastRow = -1,
-            stackTrack = 0,
-            headerCount = 0;
+        const generateEmptyRows = (numberOfRows: number) => {
+            const templates: React.ReactElement[] = [];
+            for (let i = 0; i < numberOfRows; i++) {
+                const Row = ({ rowClass = "row" }) => <tr
+                    id={`tableberg-${clientId}-${i}`}
+                    className={`tableberg-${rowClass}`}
+                />;
 
-        if (attributes.enableTableHeader) {
-            stackRowCount++;
-            rowCount++;
-            headerCount++;
-            templates.push(
-                <tr
-                    id={`tableberg-${clientId}-${rowCount}`}
-                    className="tableberg-header"
-                />,
-            );
-            stackTrack++;
+                const isHeaderRow = i % attributes.rows === 0;
+                const isFooterRow = i % attributes.rows === attributes.rows - 1;
 
-            for (; rowIdxStart < tableBlock.innerBlocks.length; rowIdxStart++) {
-                const cell = tableBlock.innerBlocks[
-                    rowIdxStart
-                ] as TablebergCellInstance;
+                if (attributes.enableTableHeader && isHeaderRow) {
+                    templates.push(<Row rowClass="header" />);
+                } else if (attributes.enableTableFooter && isFooterRow) {
+                    templates.push(<Row rowClass="footer" />);
+                } else if (i % 2 === 0) {
+                    templates.push(<Row rowClass="even-row" />);
+                } else if (i % 2 !== 0) {
+                    templates.push(<Row rowClass="odd-row" />);
+                }
+            }
+            return templates;
+        }
+
+        const cellsWithHeadersAsLeftCol = (colCells: TablebergCellInstance[], numRows: number) => {
+            const newCells: TablebergCellInstance[] = [];
+            for (let row = 0; row < numRows; row++) {
+                const col1Cell = cloneBlock(colCells[row % attributes.rows]) as TablebergCellInstance;
+                if (col1Cell.attributes.isTmp) {
+                    continue;
+                }
+
+                const setTemp = row > (attributes.rows - 1) ? true : false;
+                newCells.push(moveCellToRow(col1Cell, row, setTemp));
+            }
+            return newCells;
+        }
+
+        const generateCellsWithCorrectRows = (cells: TablebergCellInstance[]) => {
+            const newCells: TablebergCellInstance[] = [];
+            for (const cell of cells) {
                 if (cell.attributes.isTmp) {
                     continue;
                 }
-                if (cell.attributes.row > 0) {
-                    break;
-                }
-                cell.attributes.responsiveTarget = `#tableberg-${clientId}-${rowCount}`;
-                headerArr.push(cell);
-                newCells.push(cell);
+
+                const tableRows = attributes.rows;
+                const coli = breakpoint?.headerAsCol ? cell.attributes.col - 1 : cell.attributes.col;
+                const rowi = cell.attributes.row;
+
+                let targetRow = tableRows * (Math.ceil((coli + 1) / stacksCount) - 1) + rowi;
+
+                newCells.push(moveCellToRow(cell, targetRow));
             }
+            return newCells;
         }
 
-        const footerArr: TablebergCellInstance[] = [];
-        const maxRow = attributes.rows - 1;
+        const stacksCount = Math.max(breakpoint.stackCount || 1, 1);
 
-        for (
-            let idx = rowIdxStart;
-            idx < tableBlock.innerBlocks.length;
-            idx++
-        ) {
-            const cell: TablebergCellInstance = tableBlock.innerBlocks[
-                idx
-            ] as any;
+        let cells = tableBlock.innerBlocks as TablebergCellInstance[];
 
-            if (cell.attributes.isTmp) {
-                continue;
-            }
+        const cols = breakpoint?.headerAsCol ? attributes.cols - 1 : attributes.cols;
+        const rowsToGenerate = attributes.rows * Math.ceil(cols / stacksCount);
+        const templates = generateEmptyRows(rowsToGenerate);
 
-            if (attributes.enableTableFooter && cell.attributes.row == maxRow) {
-                footerArr.push(cell);
-                continue;
-            }
+        let newCells;
 
-            if (lastRow != cell.attributes.row) {
-                lastRow = cell.attributes.row;
+        if (breakpoint?.headerAsCol) {
+            const leftColCells = cells.filter(cell => cell.attributes.col === 0);
+            const cellsExcludingLeftCol = cells.filter(cell => cell.attributes.col !== 0);
 
-                if (
-                    tableBlock.attributes.enableTableHeader &&
-                    stackTrack == stackRowCount
-                ) {
-                    rowCount++;
-                    headerCount++;
-                    templates.push(
-                        <tr
-                            id={`tableberg-${clientId}-${rowCount}`}
-                            className="tableberg-header"
-                        />,
-                    );
-                    stackTrack = 1;
-
-                    for (const cell of headerArr) {
-                        const headerCell = cloneBlock(cell, {
-                            responsiveTarget: `#tableberg-${clientId}-${rowCount}`,
-                            isTmp: true,
-                        });
-                        newCells.push(headerCell);
-                    }
-                }
-
-                rowCount++;
-                templates.push(
-                    <tr
-                        id={`tableberg-${clientId}-${rowCount}`}
-                        className={
-                            (rowCount - headerCount) % 2
-                                ? "tableberg-even-row"
-                                : "tableberg-odd-row"
-                        }
-                    />,
-                );
-                stackTrack++;
-            }
-
-            cell.attributes.responsiveTarget = `#tableberg-${clientId}-${rowCount}`;
-            newCells.push(cell);
-        }
-
-        if (footerArr.length > 0) {
-            rowCount++;
-            templates.push(
-                <tr
-                    id={`tableberg-${clientId}-${rowCount}`}
-                    className="tableberg-footer"
-                />,
-            );
-            footerArr.forEach((cell) => {
-                cell.attributes.responsiveTarget = `#tableberg-${clientId}-${rowCount}`;
-                newCells.push(cell);
-            });
+            newCells = [
+                ...cellsWithHeadersAsLeftCol(leftColCells, templates.length),
+                ...generateCellsWithCorrectRows(cellsExcludingLeftCol)
+            ];
+        } else {
+            newCells = generateCellsWithCorrectRows(cells);
         }
 
         storeActions.replaceInnerBlocks(clientId, newCells);
@@ -193,6 +164,7 @@ export default function StackColTable(
     }, [
         attributes.cells,
         attributes.enableTableHeader,
+        attributes.enableTableFooter,
         breakpoint?.stackCount,
         breakpoint?.headerAsCol,
     ]);
@@ -231,3 +203,4 @@ export default function StackColTable(
         </>
     );
 }
+
