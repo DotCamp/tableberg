@@ -330,7 +330,7 @@ function edit({
                     className={`tab-headings ${alignment}`}
                     style={{ marginBottom: `${contentGap}` }}
                 >
-                    {tabs.map((v, i) => {
+                    {tabs.map((_, i) => {
                         const isActive = activeTab === i;
                         return (
                             <div
@@ -398,7 +398,6 @@ function edit({
                         <style>
                             {innerBlocks
                                 ?.map((block, index) => {
-                                    console.log(block.clientId);
                                     return `#block-${
                                         block.clientId
                                     } {display: ${
