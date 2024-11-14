@@ -10,6 +10,7 @@ import { TablebergBlockAttrs } from "@tableberg/shared/types";
 import { BlockIcon, store } from "@wordpress/block-editor";
 import {
     InnerBlockTemplate,
+    cloneBlock,
     createBlock,
     createBlocksFromInnerBlocksTemplate,
 } from "@wordpress/blocks";
@@ -148,7 +149,9 @@ export default function TableCreator({ clientId }: Props) {
             {modal === "patterns" && (
                 <PatternsLibrary
                     onClose={() => setModal(null)}
-                    onSelect={(b) => storeActions.replaceBlock(clientId, b)}
+                    onSelect={(b) =>
+                        storeActions.replaceBlock(clientId, cloneBlock(b))
+                    }
                 />
             )}
         </div>

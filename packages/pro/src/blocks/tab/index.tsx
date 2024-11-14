@@ -337,7 +337,9 @@ function edit({
                                 className={`tab-heading ${
                                     isActive ? "active" : ""
                                 }`}
-                                onClick={() => setAttributes({ activeTab: i })}
+                                onClick={() => {
+                                    setAttributes({ activeTab: i });
+                                }}
                                 data-toolbar-trigger="true"
                                 style={{
                                     borderBottomColor: isActive
@@ -395,15 +397,17 @@ function edit({
                     <div>
                         <style>
                             {innerBlocks
-                                ?.map(
-                                    (block, index) => `
-                #block-${block.clientId} {
-                    display: ${activeTab === index ? "block" : "none"};
-                }`,
-                                )
+                                ?.map((block, index) => {
+                                    console.log(block.clientId);
+                                    return `#block-${
+                                        block.clientId
+                                    } {display: ${
+                                        activeTab === index ? "block" : "none"
+                                    };}`;
+                                })
                                 .join("\n")}
                         </style>
-                        {children}
+                        <div>{children}</div>
                     </div>
                 </div>
             </div>
