@@ -1,5 +1,5 @@
 === Table Block by Tableberg – Best WordPress Table Plugin ===
-Contributors: dotcamp, imtiazrayhan, istiakrayhan, permafrost06, ultimateblocks, wptb
+Contributors: dotcamp, imtiazrayhan, istiakrayhan, permafrost06, ultimateblocks, wptb, erdembircan, protibimbok
 Tags: table, comparison-tables, data-visualization, responsive-table, amazon-affiliate
 Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
