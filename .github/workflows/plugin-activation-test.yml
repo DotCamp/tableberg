@@ -33,5 +33,4 @@ jobs:
 
             - name: run checker script
               run: |
-                  scripts/plugin-activation-test.sh packages/tableberg/tableberg.zip
-                  scripts/plugin-activation-test.sh packages/pro/tableberg-pro.zip
+                  scripts/plugin-activation-test.sh
