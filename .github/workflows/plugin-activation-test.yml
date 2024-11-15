@@ -1,0 +1,36 @@
+name: Plugin activation test
+on: [workflow_dispatch, push]
+jobs:
+    test-plugin-activation:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            - uses: pnpm/action-setup@v4
+              name: Install pnpm
+              with:
+                run_install: false
+
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                node-version: 20
+                cache: 'pnpm'
+
+            - name: pnpm install build export
+              run: |
+                  pnpm i
+                  pnpm run export
+
+            - name: setup mariadb
+              run: |
+                sudo systemctl start mysql
+
+            - name: setup wp cli
+              uses: godaddy-wordpress/setup-wp-cli@1
+
+            - name: run checker script
+              run: |
+                  scripts/plugin-activation-test.sh
