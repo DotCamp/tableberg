@@ -55,7 +55,7 @@ class RegisterPatterns {
 	public static function register_pattern_custom_rest_fields( $image_path_segment ) {
 		register_rest_field(
 			'block-pattern',
-			'tableberg_pattern_screenshot',
+			'tablebergPatternScreenshot',
 			array(
 				'get_callback' => function ( $pattern_obj ) use ( $image_path_segment ) {
 					$screenshot_url = false;
@@ -83,6 +83,21 @@ class RegisterPatterns {
 
 					return $screenshot_url;
 				},
+				'schema'       => array(
+					'description' => 'The screenshot url of the tableberg pattern.',
+					'type'        => 'string',
+					'oneOf'       => array(
+						array(
+							'type'   => 'string',
+							'format' => 'uri',
+						),
+						array(
+							'type' => 'boolean',
+							'enum' => false,
+						),
+					),
+					'context'     => array( 'view' ),
+				),
 			)
 		);
 	}
