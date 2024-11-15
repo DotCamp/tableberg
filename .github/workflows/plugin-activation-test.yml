@@ -25,10 +25,8 @@ jobs:
                   pnpm run export
 
             - name: setup mariadb
-              uses: YakkaDev/mariadb-actions@v1.1.0
-              with:
-                user: 'admin'
-                password: 'admin'
+              run: |
+                sudo systemctl start mysql
 
             - name: setup wp cli
               uses: godaddy-wordpress/setup-wp-cli@1

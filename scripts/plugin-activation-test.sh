@@ -11,7 +11,7 @@ cd "$sitename" || exit 1
 wp core download
 
 # Create wp-config.php
-wp config create --dbname="$sitename" --dbuser=admin --dbpass=admin
+wp config create --dbname="$sitename" --dbuser=root --dbpass=root
 
 # Create the database
 wp db create
