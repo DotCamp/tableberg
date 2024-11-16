@@ -219,7 +219,7 @@ function edit({
                                     >
                                         <SpacingControlSingle
                                             label={__(
-                                                "Tab content gap",
+                                                "Spacing Under Tabs",
                                                 "tableberg",
                                             )}
                                             value={gap}
