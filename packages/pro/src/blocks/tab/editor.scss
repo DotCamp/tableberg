@@ -88,6 +88,20 @@
     margin-top: var(--tableberg-tab-gap);
 }
 
+.tab-heading-add {
+    background-color: black;
+    height: 26px;
+    width: 26px;
+    border: none;
+    border-radius: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tab-heading-add button {
+    color: white;
+}
+
 .block-editor-block-inspector .tab-block-panel .components-tab-panel__tabs {
     display: flex;
     width: 100%;

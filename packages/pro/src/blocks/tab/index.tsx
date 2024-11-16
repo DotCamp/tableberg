@@ -431,7 +431,7 @@ function edit({
                         </ConfirmDialog>
                     )}
 
-                    <div className="tab-heading tab-heading-add">
+                    <div className=" tab-heading-add">
                         <Button icon={plus} onClick={addTabHandler} />
                     </div>
                 </nav>
