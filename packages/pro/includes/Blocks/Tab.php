@@ -2,6 +2,8 @@
 
 namespace Tableberg\Pro\Blocks;
 
+use Tableberg\Utils\Utils;
+
 /**
  *
  *@package Tableberg_pro 
@@ -15,51 +17,40 @@ class Tab
         add_action("init", [$this, "register_block"]);
     }
 
-
-    function getSpacingCss($spacing)
-    {
-        if (strpos($spacing, 'var:preset|spacing|') === 0) {
-
-            $value = substr($spacing, strrpos($spacing, '|') + 1);
-
-            return 'var(--wp--preset--spacing--' . esc_attr($value) . ')';
-        }
-
-
-        return esc_attr($spacing);
-    }
-
     public function render_tab_block($attributes, $content)
     {
         $alignment_class = isset($attributes['alignment']) ? $attributes['alignment'] : 'left';
-        $gap_style = isset($attributes['gap']) ? 'margin-bottom:' . $this->getSpacingCss($attributes['gap'])  : '';
-        $activeColor = isset($attributes['activeColor']) ? $attributes['activeColor'] : '#0000ff';
-        $inactiveColor = isset($attributes['inactiveColor']) ? $attributes['inactiveColor'] : '#cccccc';
-        $activeBackground = isset($attributes['activeBackground']) ? $attributes['activeBackground'] : '#ffffff';
-        $inactiveBackground = isset($attributes['inactiveBackground']) ? $attributes['inactiveBackground'] : '#f0f0f0';
-        $activeText = isset($attributes['activeText']) ? $attributes['activeText'] : '#ffffff';
-        $inactiveText = isset($attributes['inactiveText']) ? $attributes['inactiveText'] : '#333333';
+        $gap = isset($attributes['gap']) ? Utils::get_spacing_css_single($attributes['gap']) : '0';
+        $borderRadius = isset($attributes['tabBorderRadius']) ? Utils::get_spacing_css_single($attributes['tabBorderRadius']) : '0';
+        $activeTabIndicatorColor = isset($attributes['activeTabIndicatorColor']) ? $attributes['activeTabIndicatorColor'] : '#0000ff';
+        $inactiveColor = isset($attributes['inactiveTabBackgroundColor']) ? $attributes['inactiveTabBackgroundColor'] : '#cccccc';
+        $activeBackground = isset($attributes['activeTabBackgroundColor']) ? $attributes['activeTabBackgroundColor'] : '#ffffff';
+        $inactiveBackground = isset($attributes['inactiveTabBackgroundColor']) ? $attributes['inactiveTabBackgroundColor'] : '#f0f0f0';
+        $activeText = isset($attributes['activeTabTextColor']) ? $attributes['activeTabTextColor'] : '#ffffff';
+        $inactiveText = isset($attributes['inactiveTabTextColor']) ? $attributes['inactiveTabTextColor'] : '#333333';
 
 
+        // Construct the outer container with updated CSS variables
         $output = '<div class="tab-block" style="
-        --tab-active-color: ' . esc_attr($activeColor) . ';
-        --tab-inactive-background-color: ' . esc_attr($inactiveBackground) . ';
-        --tab-active-background-color: ' . esc_attr($activeBackground) . ';
-        --tab-active-text-color: ' . esc_attr($activeText) . ';
-        --tab-inactive-text-color: ' . esc_attr($inactiveText) . ';
-        --tab-inactive-color: ' . esc_attr($inactiveColor)  . ';">';
+        --tableberg-tab-gap: ' . esc_attr($gap) . ';
+        --tableberg-tab-border-radius: ' . esc_attr($borderRadius) . ';
+        --tableberg-tab-active-indicator-color: ' . esc_attr($activeTabIndicatorColor) . ';
+        --tableberg-tab-inactive-background-color: ' . esc_attr($inactiveBackground) . ';
+        --tableberg-tab-active-background-color: ' . esc_attr($activeBackground) . ';
+        --tableberg-tab-active-text-color: ' . esc_attr($activeText) . ';
+        --tableberg-tab-inactive-text-color: ' . esc_attr($inactiveText) . ';
+        --tableberg-tab-inactive-color: ' . esc_attr($inactiveColor) . ';
+    ">';
 
-        $output .= '<nav class="tab-headings ' . esc_attr($alignment_class) . '" style="' . $gap_style . '">';
-
+        // Add the tab headings with alignment and gap styles
+        $output .= '<nav class="tab-headings ' . esc_attr($alignment_class) . '">';
         foreach ($attributes["tabs"] as $headings) {
             $output .= '<div class="tab-heading"><p>' . esc_html($headings["title"]) . "</p></div>";
         }
-
         $output .= "</nav>";
 
-
+        // Append content and close the outer container
         $output .= $content;
-
         $output .= '</div>';
 
         return $output;

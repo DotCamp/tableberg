@@ -1,12 +1,8 @@
-.tab-block {
-    border-bottom: 2px solid #e0e0e0;
-    margin-bottom: 16px;
-}
-
 .tab-headings {
     display: flex;
     gap: 16px;
     padding: 8px 0;
+    margin-bottom: var(--tableberg-tab-gap);
 }
 
 .tab-headings.left {
@@ -23,45 +19,46 @@
 
 .tab-headings.full {
     justify-content: space-between;
-    width: 100%; 
+    width: 100%;
 }
 
 .tab-heading {
     width: auto;
     cursor: pointer;
     border-bottom: 2px solid transparent;
+    border-bottom-color: transparent;
     transition: border-bottom 0.3s ease;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: visible;
-    color: var(--tab-inactive-text-color);
-    background-color: var(--tab-inactive-background-color); 
+    color: var(--tableberg-tab-inactive-text-color);
+    background-color: var(--tableberg-tab-inactive-background-color);
+    border-radius: var(--tableberg-tab-border-radius);
 }
 
 .tab-heading.active {
-    border-bottom-color: var(--tab-active-color);
-    background-color: var(--tab-active-background-color);
-    color: var(--tab-active-text-color);
+    border-bottom-color: var(--tableberg-tab-active-indicator-color);
+    background-color: var(--tableberg-tab-active-background-color);
+    color: var(--tableberg-tab-active-text-color);
 }
 
 .tab-headings.full .tab-heading {
-  width: 100%;
-  text-align: center;
+    width: 100%;
+    text-align: center;
 }
 
-.tab-heading p{
-  padding: 10px;
-  margin: 0;
-  text-align: center;
-  font-size: 1rem;
-  width: auto;
-  white-space: noWrap;
-  display: inline-block;
-  color: var(--tab-inactive-text-color);
+.tab-heading p {
+    padding: 10px;
+    margin: 0;
+    text-align: center;
+    font-size: 1rem;
+    width: auto;
+    white-space: noWrap;
+    display: inline-block;
+    color: var(--tableberg-tab-inactive-text-color);
 }
 
-.tab-heading:hover{ 
-    border-bottom-color: var(--tab-active-color);
-
+.tab-heading:hover {
+    border-bottom-color: var(--tableberg-tab-active-indicator-color);
 }
