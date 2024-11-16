@@ -17,21 +17,21 @@
     justify-content: center;
     align-items: center;
     overflow: visible;
-    position:relative;
-    background-color: var(--tab-inactive-background-color); 
+    position: relative;
+    background-color: var(--tableberg-tab-inactive-background-color);
+    border-radius: var(--tableberg-tab-border-radius);
 }
 
 .tab-heading.active {
-    border-bottom-color: var(--tab-active-color);
-    background-color: var(--tab-active-background-color);
-
+    border-bottom-color: var(--tableberg-tab-active-indicator-color);
+    background-color: var(--tableberg-tab-active-background-color);
 }
 
 .add-tab-button:hover {
-    background-color: #005a87;
+    background-color: var(--tableberg-tab-active-indicator-color);
 }
 
-.tab-heading p{
+.tab-heading p {
     padding: 2px;
     margin: 0px 10px;
     text-align: center;
@@ -39,11 +39,11 @@
     width: auto;
     white-space: noWrap;
     display: inline-block;
-    color: var(--tab-inactive-text-color);
+    color: var(--tableberg-tab-inactive-text-color);
 }
 
-.tab-heading.active p{
-    color: var(--tab-active-text-color);
+.tab-heading.active p {
+    color: var(--tableberg-tab-active-text-color);
 }
 
 .tab-heading-remove {
@@ -51,7 +51,7 @@
     top: -8px;
     right: 0px;
     width: 16px;
-    height:16px;
+    height: 16px;
     background-color: #ff4d4d;
     border-radius: 50%;
     cursor: pointer;
@@ -70,16 +70,22 @@
 .tab-heading-remove:hover {
     background-color: #ff0000;
     transform: scale(1.1);
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
 }
 
-.tab-heading:hover{ 
-    border-bottom-color: var(--tab-active-color);
+.tab-heading:hover {
+    border-bottom-color: var(--tableberg-tab-active-indicator-color);
 }
 
 .tab-heading p:focus {
     outline: none;
     cursor: pointer;
+}
+
+.tab-content {
+    margin-top: var(--tableberg-tab-gap);
 }
 
 .block-editor-block-inspector .tab-block-panel .components-tab-panel__tabs {
@@ -88,7 +94,10 @@
     border-bottom: 1px solid #e2e4e7;
 }
 
-.block-editor-block-inspector .tab-block-panel .components-tab-panel__tabs button {
+.block-editor-block-inspector
+    .tab-block-panel
+    .components-tab-panel__tabs
+    button {
     flex: 1;
     justify-content: center;
     text-align: center;
@@ -98,15 +107,25 @@
     transition: all 0.2s;
 }
 
-.block-editor-block-inspector .tab-block-panel .components-tab-panel__tabs button.active-tab {
+.block-editor-block-inspector
+    .tab-block-panel
+    .components-tab-panel__tabs
+    button.active-tab {
     border-bottom: 3px solid #007cba;
 }
 
-.block-editor-block-inspector .tab-block-panel .components-tab-panel__tabs button:hover {
+.block-editor-block-inspector
+    .tab-block-panel
+    .components-tab-panel__tabs
+    button:hover {
     border-bottom: 3px solid #007cba;
     color: #007cba;
 }
 
-.block-editor-block-inspector .tab-block-panel .components-tab-panel__tabs button svg {
+.block-editor-block-inspector
+    .tab-block-panel
+    .components-tab-panel__tabs
+    button
+    svg {
     margin: 0 auto;
 }

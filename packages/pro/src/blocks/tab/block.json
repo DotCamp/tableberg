@@ -3,18 +3,11 @@
     "apiVersion": 3,
     "version": "0.1.0",
     "name": "tableberg-pro/tab",
-    "allowedBlocks": [
-        "tableberg/table"
-    ],
+    "allowedBlocks": ["tableberg/table"],
     "title": "Toggle for Tableberg",
     "category": "layout",
     "description": "Create a tabbed interface where each tab contains tables with full functionality.",
-    "keywords": [
-        "Tabs",
-        "Tabbed Interface",
-        "Table",
-        "Layout"
-    ],
+    "keywords": ["Tabs", "Tabbed Interface", "Table", "Layout"],
     "supports": {},
     "attributes": {
         "activeTab": {
@@ -46,31 +39,27 @@
             "type": "string",
             "default": "0"
         },
-        "tabType": {
+        "tabBorderRadius": {
             "type": "string",
-            "default": "horizontal"
+            "default": "0"
         },
-        "activeColor": {
+        "activeTabIndicatorColor": {
             "type": "string",
             "default": "blue"
         },
-        "inactiveColor": {
+        "activeTabTextColor": {
             "type": "string",
             "default": "black"
         },
-        "activeText": {
-            "type": "string",
-            "default": "black"
-        },
-        "activeBackground": {
+        "activeTabBackgroundColor": {
             "type": "string",
             "default": "transparent"
         },
-        "inactiveText": {
+        "inactiveTabTextColor": {
             "type": "string",
             "default": "black"
         },
-        "inactiveBackground": {
+        "inactiveTabBackgroundColor": {
             "type": "string",
             "default": "transparent"
         }

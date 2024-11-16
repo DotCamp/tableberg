@@ -32,8 +32,13 @@ import { SpacingControlSingle } from "@tableberg/components";
 import {
     __experimentalToggleGroupControl as ToggleGroupControl,
     __experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon,
+    __experimentalToolsPanel as ToolsPanel,
+    __experimentalToolsPanelItem as ToolsPanelItem,
 } from "@wordpress/components";
 import { Icon } from "@wordpress/icons";
+import { __ } from "@wordpress/i18n";
+import { ColorControl } from "@tableberg/components";
+import { getStyles } from "./getStyles";
 
 interface AlignmentControls {
     icon: JSX.Element;
@@ -77,13 +82,12 @@ function edit({
     alignment: string;
     gap: string;
     tabType: string;
-    activeColor: string;
-    inactiveColor: string;
-    activeText: string;
-    activeBackground: string;
-    activeBorder: string;
-    inactiveText: string;
-    inactiveBackground: string;
+    activeTabIndicatorColor: string;
+    activeTabTextColor: string;
+    activeTabBackgroundColor: string;
+    inactiveTabTextColor: string;
+    inactiveTabBackgroundColor: string;
+    tabBorderRadius: string;
 }>) {
     const blockProps = useBlockProps();
     const { children, ...innerBlocksProps } = useInnerBlocksProps(blockProps, {
@@ -103,12 +107,12 @@ function edit({
         tabs,
         alignment,
         gap,
-        activeColor,
-        inactiveColor,
-        activeBackground,
-        inactiveBackground,
-        activeText,
-        inactiveText,
+        activeTabIndicatorColor,
+        activeTabTextColor,
+        inactiveTabTextColor,
+        activeTabBackgroundColor,
+        inactiveTabBackgroundColor,
+        tabBorderRadius,
     } = attributes;
 
     const { innerBlocks, innerBlocksLength } = useSelect(
@@ -127,8 +131,6 @@ function edit({
     const [deleteConfirmDialogIsOpen, setDeleteConfirmDialogIsOpen] =
         useState(false);
     const [deleteIndex, setDeleteIndex] = useState(0);
-
-    const [contentGap, setContentGap] = useState("0px");
 
     const insertBlock = (
         useDispatch(store) as unknown as BlockEditorStoreActions
@@ -172,7 +174,11 @@ function edit({
     }
 
     return (
-        <div {...blockProps} className="tab-block">
+        <div
+            {...blockProps}
+            style={getStyles(attributes)}
+            className="tab-block"
+        >
             <InspectorControls>
                 <TabPanel
                     className="tab-block-panel"
@@ -200,135 +206,179 @@ function edit({
                 >
                     {(tab) => {
                         if (tab.name === "settings") {
-                            return (
-                                <PanelBody title="Tab Content Settings"></PanelBody>
-                            );
+                            return <></>;
                         } else if (tab.name === "style") {
                             return (
-                                <PanelBody title="Style Settings">
-                                    <SpacingControlSingle
-                                        label="Tab content gap"
-                                        value={gap}
-                                        onChange={(newGap) => {
-                                            setAttributes({
-                                                gap: newGap,
-                                            });
-                                            const spacing = newGap
-                                                .toString()
-                                                .split("|");
-                                            if (spacing.length > 1) {
-                                                setContentGap(
-                                                    spacing[
-                                                        spacing.length - 1
-                                                    ] + "px",
-                                                );
-                                            } else {
-                                                setContentGap(newGap);
-                                            }
-                                        }}
-                                    />
-                                    <ToggleGroupControl
-                                        __nextHasNoMarginBottom
-                                        label="Table alignment"
-                                        value={alignment}
-                                        onChange={(newAlignment: any) =>
-                                            setAttributes({
-                                                alignment: newAlignment,
-                                            })
-                                        }
+                                <ToolsPanel
+                                    label={__("Style Settings", "tableberg")}
+                                    resetAll={() => {}}
+                                >
+                                    <ToolsPanelItem
+                                        label={__("")}
+                                        hasValue={() => true}
                                     >
-                                        {alignmentOptions.map(
-                                            ({ icon, title, value }) => (
-                                                <ToggleGroupControlOptionIcon
-                                                    key={value}
-                                                    icon={icon}
-                                                    value={value}
-                                                    label={title}
-                                                />
-                                            ),
-                                        )}
-                                    </ToggleGroupControl>
-                                    <PanelColorSettings
-                                        title="color"
-                                        initialOpen={true}
-                                        colorSettings={[
-                                            {
-                                                value: activeColor,
-                                                onChange: (color) =>
-                                                    setAttributes({
-                                                        activeColor: color,
-                                                    }),
-                                                label: "Active Color",
-                                            },
-                                            {
-                                                value: inactiveColor,
-                                                onChange: (color) =>
-                                                    setAttributes({
-                                                        inactiveColor: color,
-                                                    }),
-                                                label: "Inactive Color",
-                                            },
-                                            {
-                                                value: activeText,
-                                                onChange: (color) =>
-                                                    setAttributes({
-                                                        activeText: color,
-                                                    }),
-                                                label: "Active Text",
-                                            },
-                                            {
-                                                value: inactiveText,
-                                                onChange: (color) =>
-                                                    setAttributes({
-                                                        inactiveText: color,
-                                                    }),
-                                                label: "Inactive Text",
-                                            },
-                                            {
-                                                value: activeBackground,
-                                                onChange: (color) =>
-                                                    setAttributes({
-                                                        activeBackground: color,
-                                                    }),
-                                                label: "Active Background",
-                                            },
-                                            {
-                                                value: inactiveBackground,
-                                                onChange: (color) =>
-                                                    setAttributes({
-                                                        inactiveBackground:
-                                                            color,
-                                                    }),
-                                                label: "Inactive Background",
-                                            },
-                                        ]}
-                                        disableCustomColors={false}
-                                    />
-                                </PanelBody>
+                                        <SpacingControlSingle
+                                            label={__(
+                                                "Tab content gap",
+                                                "tableberg",
+                                            )}
+                                            value={gap}
+                                            onChange={(newGap) =>
+                                                setAttributes({
+                                                    gap: newGap,
+                                                })
+                                            }
+                                        />
+                                        <ToggleGroupControl
+                                            __nextHasNoMarginBottom
+                                            label={__(
+                                                "Table alignment",
+                                                "tableberg",
+                                            )}
+                                            value={alignment}
+                                            onChange={(newAlignment: any) =>
+                                                setAttributes({
+                                                    alignment: newAlignment,
+                                                })
+                                            }
+                                        >
+                                            {alignmentOptions.map(
+                                                ({ icon, title, value }) => (
+                                                    <ToggleGroupControlOptionIcon
+                                                        key={value}
+                                                        icon={icon}
+                                                        value={value}
+                                                        label={title}
+                                                    />
+                                                ),
+                                            )}
+                                        </ToggleGroupControl>
+                                        <SpacingControlSingle
+                                            label={__(
+                                                "Tab Heading Corner Radius",
+                                                "tableberg",
+                                            )}
+                                            value={tabBorderRadius}
+                                            onChange={(newValue) =>
+                                                setAttributes({
+                                                    tabBorderRadius: newValue,
+                                                })
+                                            }
+                                        />
+                                    </ToolsPanelItem>
+                                    <ToolsPanelItem
+                                        label="Color"
+                                        hasValue={() => true}
+                                    >
+                                        <h3>{__("Colors", "tableberg")}</h3>
+                                        <ColorControl
+                                            label={__(
+                                                "Active Tab Indicator Color",
+                                                "tableberg",
+                                            )}
+                                            colorValue={activeTabIndicatorColor}
+                                            onColorChange={(newColor) =>
+                                                setAttributes({
+                                                    activeTabIndicatorColor:
+                                                        newColor,
+                                                })
+                                            }
+                                            onDeselect={() =>
+                                                setAttributes({
+                                                    activeTabIndicatorColor: "",
+                                                })
+                                            }
+                                        />
+                                        <ColorControl
+                                            label={__(
+                                                "Active Tab Text Color",
+                                                "",
+                                            )}
+                                            colorValue={activeTabTextColor}
+                                            onColorChange={(newColor) =>
+                                                setAttributes({
+                                                    activeTabTextColor:
+                                                        newColor,
+                                                })
+                                            }
+                                            onDeselect={() =>
+                                                setAttributes({
+                                                    activeTabTextColor: "",
+                                                })
+                                            }
+                                        />
+                                        <ColorControl
+                                            label={__(
+                                                "Inactive Tab Text Color",
+                                                "tableberg",
+                                            )}
+                                            colorValue={inactiveTabTextColor}
+                                            onColorChange={(newColor) =>
+                                                setAttributes({
+                                                    inactiveTabTextColor:
+                                                        newColor,
+                                                })
+                                            }
+                                            onDeselect={() =>
+                                                setAttributes({
+                                                    inactiveTabTextColor: "",
+                                                })
+                                            }
+                                        />
+                                        <ColorControl
+                                            label={__(
+                                                "Active Tab Background Color",
+                                                "tableberg",
+                                            )}
+                                            colorValue={
+                                                activeTabBackgroundColor
+                                            }
+                                            onColorChange={(newColor) =>
+                                                setAttributes({
+                                                    activeTabBackgroundColor:
+                                                        newColor,
+                                                })
+                                            }
+                                            onDeselect={() =>
+                                                setAttributes({
+                                                    activeTabBackgroundColor:
+                                                        "",
+                                                })
+                                            }
+                                        />
+                                        <ColorControl
+                                            label={__(
+                                                "Inactive Tab Background Color",
+                                                "tableberg",
+                                            )}
+                                            colorValue={
+                                                inactiveTabBackgroundColor
+                                            }
+                                            onColorChange={(newColor) =>
+                                                setAttributes({
+                                                    inactiveTabBackgroundColor:
+                                                        newColor,
+                                                })
+                                            }
+                                            onDeselect={() =>
+                                                setAttributes({
+                                                    inactiveTabBackgroundColor:
+                                                        "",
+                                                })
+                                            }
+                                        />
+                                    </ToolsPanelItem>
+                                </ToolsPanel>
                             );
                         }
                     }}
                 </TabPanel>
             </InspectorControls>
 
-            <style>
-                {`
-        .wp-block-tableberg-pro-tab {
-            --tab-active-color: ${activeColor};
-            --tab-inactive-color: ${inactiveColor};
-            --tab-active-text-color: ${activeText};
-            --tab-inactive-text-color: ${inactiveText};
-            --tab-active-background-color: ${activeBackground};
-            --tab-inactive-background-color: ${inactiveBackground};
-        }
-            `}
-            </style>
-
             <div {...innerBlocksProps}>
                 <nav
                     data-toolbar-trigger="true"
                     className={`tab-headings ${alignment}`}
-                    style={{ marginBottom: `${contentGap}` }}
                 >
                     {tabs.map((_, i) => {
                         const isActive = activeTab === i;
@@ -341,14 +391,6 @@ function edit({
                                     setAttributes({ activeTab: i });
                                 }}
                                 data-toolbar-trigger="true"
-                                style={{
-                                    borderBottomColor: isActive
-                                        ? activeColor
-                                        : "",
-                                    color: isActive
-                                        ? activeColor
-                                        : inactiveColor,
-                                }}
                             >
                                 <p
                                     contentEditable
@@ -393,7 +435,7 @@ function edit({
                         <Button icon={plus} onClick={addTabHandler} />
                     </div>
                 </nav>
-                <div>
+                <div className="tab-content">
                     <div>
                         <style>
                             {innerBlocks
