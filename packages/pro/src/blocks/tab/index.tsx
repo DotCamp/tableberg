@@ -39,6 +39,7 @@ import { Icon } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import { ColorControl } from "@tableberg/components";
 import { getStyles } from "./getStyles";
+import blockIcon from "@tableberg/shared/icons/tableberg";
 
 interface AlignmentControls {
     icon: JSX.Element;
@@ -468,6 +469,7 @@ function save() {
 
 registerBlockType(metadata as any, {
     attributes: metadata.attributes as any,
+    icon: blockIcon,
     edit: edit,
     save: save,
 });
