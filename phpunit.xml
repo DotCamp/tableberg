@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="phpunit_bootstrap.php"
+>
+    <testsuites>
+        <testsuite name="tableberg:unit">
+            <directory>__tests__/php/unit/tableberg</directory>
+        </testsuite>
+        <testsuite name="tableberg_pro:unit">
+            <directory>__tests__/php/unit/pro</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <env name="PHPUNIT_TABLEBERG_AUTOLOAD" value="packages/tableberg/vendor/autoload.php"/>
+        <env name="PHPUNIT_TABLEBERG_PRO_AUTOLOAD" value="packages/pro/vendor/autoload.php"/>
+    </php>
+</phpunit>

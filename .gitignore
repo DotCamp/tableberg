@@ -7,9 +7,11 @@ dist
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+vendor/
 # Files
 tableberg.zip
 tableberg-pro.zip
 .DS_Store
 .env
 packages/tableberg/includes/Admin/assets
+.phpunit.result.cache
