@@ -5,7 +5,7 @@ Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.7
 Requires PHP: 7.0
-Stable tag: 0.5.7
+Stable tag: 0.5.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,11 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 2. Core Table Block vs Tableberg Block
 
 == Changelog ==
+
+= 0.5.8 =
+* FIX: Custom HTML not displayed properly on frontend
+* FIX: Color picker now shows theme colors
+* IMPROVE: Decreased loading time of prebuilt table gallery
 
 = 0.5.7 =
 *PRO: NEW: Added search placeholder edit option
