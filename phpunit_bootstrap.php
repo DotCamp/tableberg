@@ -16,9 +16,11 @@ $autoload_file = __DIR__ . '/vendor/autoload.php';
 function get_test_suite() {
 	$argv = isset( $_SERVER['argv'] ) ? filter_var( $_SERVER['argv'], FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) : array();
 	foreach ( $argv as $arg ) {
-		if ( strpos( $arg, '--testsuite=' ) !== false ) {
-			return str_replace( '--testsuite=', '', $arg );
+		$test_suite_matches = array();
+		if ( preg_match( '/--testsuite=(.+)/', $arg, $test_suite_matches ) ) {
+			return $test_suite_matches[1];
 		}
+
 	}
 
 	return null;

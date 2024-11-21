@@ -3,6 +3,7 @@
 namespace Tableberg\Patterns;
 
 use function register_rest_field;
+use function trailingslashit;
 
 class RegisterPatterns {
 
@@ -48,6 +49,34 @@ class RegisterPatterns {
 	}
 
 	/**
+	 * Generate the tableberg pattern name from the pattern id.
+	 *
+	 * Tableberg patterns are registered with the format of tableberg/{upsell-}?pattern-{pattern_name}.
+	 *
+	 * @param string $pattern_id ID of the pattern as it is registered to patterns api.
+	 *
+	 * @return false | string The tableberg pattern name or false if id of pattern is not from tableberg.
+	 */
+	public static function generate_tableberg_pattern_name( $pattern_id ) {
+		$generated_name           = false;
+		$tableberg_prefix_matches = array();
+		$match_status             = preg_match( '/^tableberg\/(.*)/', $pattern_id, $tableberg_prefix_matches );
+
+		if ( $match_status ) {
+			$generated_name = $tableberg_prefix_matches[1];
+
+			// Check if the pattern is an upsell pattern.
+			$upsell_name_matches = array();
+			$is_upsell           = preg_match( '/^upsell\-(.*)/', $generated_name, $upsell_name_matches );
+			if ( $is_upsell ) {
+				$generated_name = $upsell_name_matches[1];
+			}
+		}
+
+		return $generated_name;
+	}
+
+	/**
 	 * Register custom rest fields for tableberg patterns.
 	 *
 	 * @param string $image_path_segment The path segment to the images directory relative to the plugin root.
@@ -61,26 +90,15 @@ class RegisterPatterns {
 					$screenshot_url = false;
 					$pattern_name   = $pattern_obj['name'];
 
-					$tableberg_prefix_matches = array();
-					$match_status             = preg_match( '/tableberg\/(.*)/', $pattern_name, $tableberg_prefix_matches );
+					$pattern_name = self::generate_tableberg_pattern_name( $pattern_name );
 
 					// Only add rest field value if the pattern is from tableberg.
-					if ( $match_status ) {
-						$pattern_name = $tableberg_prefix_matches[1];
-
-						// Check if the pattern is an upsell pattern.
-						$upsell_name_matches = array();
-						$is_upsell           = preg_match( '/upsell\-(.*)/', $pattern_name, $upsell_name_matches );
-						if ( $is_upsell ) {
-							$pattern_name = $upsell_name_matches[1];
-						}
-
-						$path_segment = sprintf( '/%s/%s.png', $image_path_segment, $pattern_name );
-						if ( file_exists( stripslashes( TABLEBERG_DIR_PATH ) . $path_segment ) ) {
-							$screenshot_url = stripslashes( TABLEBERG_URL ) . $path_segment;
+					if ( $pattern_name ) {
+						$path_segment = sprintf( '%s/%s.png', $image_path_segment, $pattern_name );
+						if ( file_exists( trailingslashit( TABLEBERG_DIR_PATH ) . $path_segment ) ) {
+							$screenshot_url = trailingslashit( TABLEBERG_URL ) . $path_segment;
 						}
 					}
-
 					return $screenshot_url;
 				},
 				'schema'       => array(
