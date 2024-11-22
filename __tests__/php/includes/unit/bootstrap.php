@@ -5,8 +5,11 @@
  * @package tableberg
  */
 
+// Get the absolute path to the root directory.
+$abs_path = dirname( __DIR__, 4 );
+
 // Default autoload file.
-$autoload_file = __DIR__ . '/vendor/autoload.php';
+$autoload_file = $abs_path . '/vendor/autoload.php';
 
 /**
  * Get the test suite name.
@@ -20,7 +23,6 @@ function get_test_suite() {
 		if ( preg_match( '/--testsuite=(.+)/', $arg, $test_suite_matches ) ) {
 			return $test_suite_matches[1];
 		}
-
 	}
 
 	return null;
@@ -31,9 +33,9 @@ fwrite( STDOUT, sprintf( "Running test suite: %s\n", is_null( $test_suite ) ? 'n
 
 // Decide which autoload file to use based on the test suite.
 if ( isset( $_ENV['PHPUNIT_TABLEBERG_AUTOLOAD'] ) && 'tableberg:unit' === $test_suite ) {
-	$autoload_file = sprintf( '%s/%s', __DIR__, $_ENV['PHPUNIT_TABLEBERG_AUTOLOAD'] );
+	$autoload_file = sprintf( '%s/%s', $abs_path, $_ENV['PHPUNIT_TABLEBERG_AUTOLOAD'] );
 } elseif ( isset( $_ENV['PHPUNIT_TABLEBERG_PRO_AUTOLOAD'] ) && 'tableberg_pro:unit' === $test_suite ) {
-	$autoload_file = sprintf( '%s/%s', __DIR__, $_ENV['PHPUNIT_TABLEBERG_AUTOLOAD'] );
+	$autoload_file = sprintf( '%s/%s', $abs_path, $_ENV['PHPUNIT_TABLEBERG_AUTOLOAD'] );
 }
 
 if ( file_exists( $autoload_file ) ) {

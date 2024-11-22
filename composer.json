@@ -4,7 +4,7 @@
   "type": "project",
   "license": "MIT",
   "scripts": {
-    "test:unit:tableberg": "phpunit --testsuite=tableberg:unit"
+    "test:unit:tableberg": "phpunit --config php_unit_testing.xml --testsuite=tableberg:unit"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
