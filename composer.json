@@ -10,7 +10,27 @@
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "koodimonni/composer-dropin-installer": true,
+      "mnsami/composer-custom-directory-installer": true
+    }
+  },
   "require-dev": {
-    "phpunit/phpunit": "^11.4"
+    "phpunit/phpunit": "^11.4",
+    "koodimonni/composer-dropin-installer": "^1.4",
+    "wordpress/wordpress": "^6.7",
+    "mnsami/composer-custom-directory-installer": "^2.0"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/WordPress/wordpress-develop"
+    }
+  ],
+  "extra" : {
+    "installer-paths": {
+      "./__tests__/php/includes/integration/wp/" : ["wordpress/wordpress"]
+    }
   }
 }
