@@ -6,7 +6,8 @@
   "scripts": {
     "test": "@test:unit",
     "test:unit": "@test:unit:tableberg",
-    "test:unit:tableberg": "phpunit --config php_unit_testing.xml --testsuite=tableberg:unit"
+    "test:unit:tableberg": "phpunit --config php_unit_tests.xml --testsuite=tableberg",
+    "test:integration:tableberg": "phpunit --config php_integration_tests.xml --testsuite=tableberg"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,

@@ -8,7 +8,7 @@ dist
 /blob-report/
 /playwright/.cache/
 vendor/
-__tests__/php/includes/integration/wp
+__tests__/php/includes/integration/wp/
 # Files
 tableberg.zip
 tableberg-pro.zip

@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    PHPUnit configuration file for the Tableberg project.
+    This file defines the test suites and environment variables for running unit tests.
+-->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="__tests__/php/includes/unit/bootstrap.php"
 >
     <testsuites>
-        <testsuite name="tableberg:unit">
+        <testsuite name="tableberg">
             <directory>__tests__/php/unit/tableberg</directory>
         </testsuite>
-        <testsuite name="tableberg_pro:unit">
+        <testsuite name="tableberg_pro">
             <directory>__tests__/php/unit/pro</directory>
         </testsuite>
     </testsuites>

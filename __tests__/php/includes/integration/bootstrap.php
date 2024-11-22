@@ -1,6 +1,6 @@
 <?php
 /**
- * Tableberg unit testing bootstrap file.
+ * Tableberg integration testing bootstrap file.
  *
  * @package tableberg
  */
