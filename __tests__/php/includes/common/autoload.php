@@ -29,7 +29,7 @@ function get_test_suite() {
 }
 
 $test_suite = get_test_suite();
-fwrite( STDOUT, sprintf( "Running test suite: %s\n", is_null( $test_suite ) ? 'no test suit provided' : $test_suite ) );
+fwrite( STDOUT, sprintf( "\033[32mRunning test suite: \033[34m%s\033[0m\n", is_null( $test_suite ) ? 'no test suit provided' : $test_suite ) );
 
 // Decide which autoload file to use based on the test suite.
 if ( isset( $_ENV['PHPUNIT_TABLEBERG_AUTOLOAD'] ) && 'tableberg' === $test_suite ) {
@@ -39,7 +39,7 @@ if ( isset( $_ENV['PHPUNIT_TABLEBERG_AUTOLOAD'] ) && 'tableberg' === $test_suite
 }
 
 if ( file_exists( $autoload_file ) ) {
-	fwrite( STDOUT, "Autoload file: $autoload_file\n" );
+	fwrite( STDOUT, "\033[32mAutoload file: \033[34m$autoload_file\033[0m\n" );
 	require_once $autoload_file;
 } else {
 	fwrite( STDERR, "Couldn't find autoload file at $autoload_file\n" );

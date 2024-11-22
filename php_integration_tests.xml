@@ -5,7 +5,7 @@
 -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="__tests__/php/includes/unit/bootstrap.php"
+         bootstrap="__tests__/php/includes/integration/bootstrap.php"
 >
     <testsuites>
         <testsuite name="tableberg:integration">
@@ -15,5 +15,9 @@
     <php>
         <env name="PHPUNIT_TABLEBERG_AUTOLOAD" value="packages/tableberg/vendor/autoload.php"/>
         <env name="PHPUNIT_TABLEBERG_PRO_AUTOLOAD" value="packages/pro/vendor/autoload.php"/>
+        <!-- Force the integration setup to run.
+        Normally the integration setup is only run once when tests initiated for the first time, but if you need to force it to run again, set this to true.
+         -->
+        <env name="FORCE_INTEGRATION_SETUP" value="true"/>
     </php>
 </phpunit>
