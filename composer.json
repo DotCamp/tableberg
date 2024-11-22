@@ -4,6 +4,8 @@
   "type": "project",
   "license": "MIT",
   "scripts": {
+    "test": "@test:unit",
+    "test:unit": "@test:unit:tableberg",
     "test:unit:tableberg": "phpunit --config php_unit_testing.xml --testsuite=tableberg:unit"
   },
   "minimum-stability": "stable",
