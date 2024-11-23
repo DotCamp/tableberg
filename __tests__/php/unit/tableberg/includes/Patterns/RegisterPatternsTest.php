@@ -16,7 +16,9 @@ class RegisterPatternsTest extends TestCase {
 		);
 	}
 
-	#[DataProvider( 'patternIdProvider' )]
+	/**
+	 * @dataProvider patternIdProvider
+	 */
 	public function test_generate_tableberg_pattern_name( $pattern_id, $expected ) {
 		$this->assertEquals( $expected, RegisterPatterns::generate_tableberg_pattern_name( $pattern_id ) );
 	}

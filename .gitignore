@@ -9,6 +9,7 @@ dist
 /playwright/.cache/
 vendor/
 __tests__/php/includes/integration/wp/
+wp-content/
 # Files
 tableberg.zip
 tableberg-pro.zip

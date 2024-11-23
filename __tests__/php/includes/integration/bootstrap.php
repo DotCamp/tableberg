@@ -26,7 +26,7 @@ if ( ! $config_file_status || $force_setup ) {
 	copy( $wordpress_development_dir . '/wp-tests-config-sample.php', $test_config_path );
 
 	$test_config_contents = file_get_contents( $test_config_path );
-	$test_config_contents = str_replace( "define( 'ABSPATH', dirname( __FILE__ ) . '/src/' )", "define( 'ABSPATH', dirname( __FILE__, 3 ) . '/packages/tableberg/' )", $test_config_contents );
+	$test_config_contents = str_replace( "define( 'ABSPATH', dirname( __FILE__ ) . '/src/' )", "define( 'ABSPATH', dirname( __FILE__, 3 ) . '/src/' )", $test_config_contents );
 	$test_config_contents = str_replace( 'youremptytestdbnamehere', $_SERVER['DB_NAME'], $test_config_contents );
 	$test_config_contents = str_replace( 'yourusernamehere', $_SERVER['DB_USER'], $test_config_contents );
 	$test_config_contents = str_replace( 'yourpasswordhere', $_SERVER['DB_PASS'], $test_config_contents );
