@@ -233,7 +233,7 @@ function edit({
                                         <ToggleGroupControl
                                             __nextHasNoMarginBottom
                                             label={__(
-                                                "Table alignment",
+                                                "Tabs alignment",
                                                 "tableberg",
                                             )}
                                             value={alignment}
@@ -256,7 +256,7 @@ function edit({
                                         </ToggleGroupControl>
                                         <SpacingControlSingle
                                             label={__(
-                                                "Tab Heading Corner Radius",
+                                                "Tab Heading Border Radius",
                                                 "tableberg",
                                             )}
                                             value={tabBorderRadius}
