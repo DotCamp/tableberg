@@ -3,6 +3,7 @@
 namespace Tableberg\Pro\Blocks;
 
 use Tableberg\Utils\Utils;
+use WP_Block_Type_Registry;
 
 /**
  *
@@ -62,12 +63,14 @@ class Tab
         $json = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/tab/block.json';
         $attrs = json_decode(file_get_contents($json), true)['attributes'];
 
-        register_block_type_from_metadata(
-            $json,
-            [
-                "attributes" => $attrs,
-                "render_callback" => [$this, "render_tab_block"]
-            ]
-        );
+        if (!WP_Block_Type_Registry::get_instance()->is_registered('tableberg-pro/tab')) {
+            register_block_type_from_metadata(
+                $json,
+                [
+                    "attributes" => $attrs,
+                    "render_callback" => [$this, "render_tab_block"]
+                ]
+            );
+        }
     }
 }
