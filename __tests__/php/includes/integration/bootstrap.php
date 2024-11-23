@@ -36,4 +36,11 @@ if ( ! $config_file_status || $force_setup ) {
 }
 
 require_once $wordpress_development_dir . '/tests/phpunit/includes/functions.php';
+
+function load_tableberg() {
+	require dirname( __DIR__, 4 ) . '/packages/tableberg/tableberg.php';
+}
+
+tests_add_filter( 'muplugins_loaded', 'load_tableberg' );
+
 require_once $wordpress_development_dir . '/tests/phpunit/includes/bootstrap.php';

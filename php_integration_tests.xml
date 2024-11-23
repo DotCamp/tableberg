@@ -6,9 +6,10 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="__tests__/php/includes/integration/bootstrap.php"
+         backupGlobals="true"
 >
     <testsuites>
-        <testsuite name="tableberg:integration">
+        <testsuite name="tableberg">
             <directory>__tests__/php/integration/tableberg</directory>
         </testsuite>
     </testsuites>
