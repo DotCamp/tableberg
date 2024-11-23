@@ -1,8 +1,8 @@
 <?php
 
-use Yoast\WPTestUtils\WPIntegration\TestCase;
+use Dotcamp\Tableberg\Tests\includes\common\TablebergIntegrationTestCase;
 
-class RegisterPatternsTest extends TestCase {
+class RegisterPatternsTest extends TablebergIntegrationTestCase {
 
 	public function setUp(): void {
 		parent::setUp();

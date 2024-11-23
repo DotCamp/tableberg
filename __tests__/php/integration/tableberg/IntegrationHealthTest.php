@@ -1,8 +1,8 @@
 <?php
 
-use Yoast\WPTestUtils\BrainMonkey\TestCase;
+use Dotcamp\Tableberg\Tests\includes\common\TablebergIntegrationTestCase;
 
-class IntegrationHealthTest extends TestCase {
+class IntegrationHealthTest extends TablebergIntegrationTestCase {
 
 	public function test_rest_api() {
 		global $wp_rest_server;

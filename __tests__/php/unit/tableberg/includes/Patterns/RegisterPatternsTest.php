@@ -1,10 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
+use Dotcamp\Tableberg\Tests\includes\common\TablebergUnitTestCase;
 use Tableberg\Patterns\RegisterPatterns;
 
-class RegisterPatternsTest extends TestCase {
+class RegisterPatternsTest extends TablebergUnitTestCase {
 
 	public static function patternIdProvider() {
 		return array(

@@ -15,6 +15,11 @@
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Dotcamp\\Tableberg\\Tests\\": "__tests__/php"
+    }
+  },
   "config": {
     "allow-plugins": {
       "koodimonni/composer-dropin-installer": true,

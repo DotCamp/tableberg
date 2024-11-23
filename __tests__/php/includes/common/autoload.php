@@ -12,6 +12,7 @@ $abs_path = dirname( __DIR__, 4 );
 
 // Default autoload file.
 $autoload_file = $abs_path . '/vendor/autoload.php';
+require_once $autoload_file;
 
 $test_suite = get_test_suite();
 fwrite( STDOUT, sprintf( "\033[32mRunning test suite: \033[34m%s\033[0m\n", is_null( $test_suite ) ? 'no test suit provided' : $test_suite ) );
