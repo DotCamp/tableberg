@@ -4,8 +4,12 @@
   "type": "project",
   "license": "MIT",
   "scripts": {
-    "test": "@test:unit",
+    "test": [
+      "@test:unit",
+      "@test:integration"
+    ],
     "test:unit": "@test:unit:tableberg",
+    "test:integration": "@test:integration:tableberg",
     "test:unit:tableberg": "phpunit --config php_unit_tests.xml --testsuite=tableberg",
     "test:integration:tableberg": "phpunit --config php_integration_tests.xml --testsuite=tableberg"
   },
@@ -29,9 +33,11 @@
       "url": "https://github.com/WordPress/wordpress-develop"
     }
   ],
-  "extra" : {
+  "extra": {
     "installer-paths": {
-      "./__tests__/php/includes/integration/wp/" : ["wordpress/wordpress"]
+      "./__tests__/php/includes/integration/wp/": [
+        "wordpress/wordpress"
+      ]
     }
   }
 }
