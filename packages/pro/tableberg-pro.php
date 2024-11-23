@@ -144,6 +144,8 @@ function tp_fs_init()
 					new Blocks\Html();
 					new Blocks\Icon();
 					new Blocks\Ribbon();
+                    new Blocks\Tab();
+
 					new Assets();
 
 					\Tableberg\Patterns\RegisterPatterns::from_dir(__DIR__ . '/includes/patterns');
@@ -158,7 +160,6 @@ function tp_fs_init()
 	} else {
 		// Parent is inactive, add your error handling here.
 	}
-                    new Blocks\Tab();
 }
 
 if (tp_fs_is_parent_active_and_loaded()) {
