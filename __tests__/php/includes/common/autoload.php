@@ -13,23 +13,6 @@ $abs_path = dirname( __DIR__, 4 );
 // Default autoload file.
 $autoload_file = $abs_path . '/vendor/autoload.php';
 
-/**
- * Get the test suite name.
- *
- * @return string|null The test suite name or null if not found.
- */
-function get_test_suite() {
-	$argv = isset( $_SERVER['argv'] ) ? filter_var( $_SERVER['argv'], FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) : array();
-	foreach ( $argv as $arg ) {
-		$test_suite_matches = array();
-		if ( preg_match( '/--testsuite=(.+)/', $arg, $test_suite_matches ) ) {
-			return $test_suite_matches[1];
-		}
-	}
-
-	return null;
-}
-
 $test_suite = get_test_suite();
 fwrite( STDOUT, sprintf( "\033[32mRunning test suite: \033[34m%s\033[0m\n", is_null( $test_suite ) ? 'no test suit provided' : $test_suite ) );
 

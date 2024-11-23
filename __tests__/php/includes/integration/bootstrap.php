@@ -15,13 +15,25 @@ if ( ! file_exists( $wordpress_development_dir ) ) {
 	exit( 1 );
 }
 
-$force_setup = isset( $_ENV['FORCE_INTEGRATION_SETUP'] ) ? $_ENV['FORCE_INTEGRATION_SETUP'] : false;
-
+$force_setup        = isset( $_ENV['FORCE_INTEGRATION_SETUP'] ) ? $_ENV['FORCE_INTEGRATION_SETUP'] : false;
 $config_file_status = file_exists( $wordpress_development_dir . '/tests/phpunit/wp-tests-config.php' );
 if ( ! $config_file_status || $force_setup ) {
 	if ( $config_file_status && $force_setup ) {
 		fwrite( STDOUT, "\033[32mReinitializing integration tests setup...\033[0m\n" );
 	}
 
-	copy( $wordpress_development_dir . '/wp-tests-config-sample.php', $wordpress_development_dir . '/tests/phpunit/wp-tests-config.php' );
+	$test_config_path = $wordpress_development_dir . '/tests/phpunit/wp-tests-config.php';
+	copy( $wordpress_development_dir . '/wp-tests-config-sample.php', $test_config_path );
+
+	$test_config_contents = file_get_contents( $test_config_path );
+	$test_config_contents = str_replace( "define( 'ABSPATH', dirname( __FILE__ ) . '/src/' )", "define( 'ABSPATH', dirname( __FILE__, 3 ) . '/packages/tableberg/' )", $test_config_contents );
+	$test_config_contents = str_replace( 'youremptytestdbnamehere', $_SERVER['DB_NAME'], $test_config_contents );
+	$test_config_contents = str_replace( 'yourusernamehere', $_SERVER['DB_USER'], $test_config_contents );
+	$test_config_contents = str_replace( 'yourpasswordhere', $_SERVER['DB_PASS'], $test_config_contents );
+	$test_config_contents = str_replace( 'localhost', $_SERVER['DB_HOST'], $test_config_contents );
+
+	file_put_contents( $test_config_path, $test_config_contents );
 }
+
+require_once $wordpress_development_dir . '/tests/phpunit/includes/functions.php';
+require_once $wordpress_development_dir . '/tests/phpunit/includes/bootstrap.php';

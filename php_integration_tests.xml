@@ -19,5 +19,9 @@
         Normally the integration setup is only run once when tests initiated for the first time, but if you need to force it to run again, set this to true.
          -->
         <env name="FORCE_INTEGRATION_SETUP" value="true"/>
+        <server name="DB_NAME" value="tableberg_integration_db"/>
+        <server name="DB_USER" value="root"/>
+        <server name="DB_PASS" value=""/>
+        <server name="DB_HOST" value="localhost"/>
     </php>
 </phpunit>
