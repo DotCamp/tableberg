@@ -95,9 +95,7 @@ class RegisterPatterns {
 					// Only add rest field value if the pattern is from tableberg.
 					if ( $pattern_name ) {
 						$path_segment = sprintf( '%s/%s.png', $image_path_segment, $pattern_name );
-						if ( file_exists( trailingslashit( TABLEBERG_DIR_PATH ) . $path_segment ) ) {
-							$screenshot_url = trailingslashit( TABLEBERG_URL ) . $path_segment;
-						}
+						$screenshot_url = trailingslashit( TABLEBERG_URL ) . $path_segment;
 					}
 					return $screenshot_url;
 				},

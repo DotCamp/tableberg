@@ -6,7 +6,6 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="__tests__/php/includes/integration/bootstrap.php"
-         backupGlobals="true"
 >
     <testsuites>
         <testsuite name="tableberg">
@@ -19,7 +18,7 @@
         <!-- Force the integration setup to run.
         Normally the integration setup is only run once when tests initiated for the first time, but if you need to force it to run again, set this to true.
          -->
-        <env name="FORCE_INTEGRATION_SETUP" value="true"/>
+        <env name="FORCE_INTEGRATION_SETUP" value="false"/>
         <server name="DB_NAME" value="tableberg_integration_db"/>
         <server name="DB_USER" value="root"/>
         <server name="DB_PASS" value=""/>

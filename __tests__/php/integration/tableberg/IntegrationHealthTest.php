@@ -14,10 +14,4 @@ class IntegrationHealthTest extends TestCase {
 		$this->assertIsArray( $routes );
 		$this->assertArrayHasKey( '/wp/v2/posts', $routes );
 	}
-
-	public function test_global_backup() {
-		global $wp_rest_server;
-
-		$this->assertNotInstanceOf( 'WP_REST_Server', $wp_rest_server );
-	}
 }
