@@ -5,6 +5,8 @@
  * @package tableberg
  */
 
+require_once __DIR__ . '/functions.php';
+
 // Get the absolute path to the root directory.
 $abs_path = dirname( __DIR__, 4 );
 
@@ -42,6 +44,6 @@ if ( file_exists( $autoload_file ) ) {
 	fwrite( STDOUT, "\033[32mAutoload file: \033[34m$autoload_file\033[0m\n" );
 	require_once $autoload_file;
 } else {
-	fwrite( STDERR, "Couldn't find autoload file at $autoload_file\n" );
+	tableberg_echo_error( "Couldn't find autoload file at $autoload_file" );
 	exit( 1 );
 }
