@@ -3,16 +3,13 @@ import {
     useInnerBlocksProps,
     store,
     InnerBlocks,
-    BlockControls,
     InspectorControls,
-    PanelColorSettings,
 } from "@wordpress/block-editor";
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 import metadata from "./block.json";
 import { useSelect, useDispatch } from "@wordpress/data";
 import { createBlock } from "@wordpress/blocks";
 import {
-    PanelBody,
     TabPanel,
     Button,
     __experimentalConfirmDialog as ConfirmDialog,

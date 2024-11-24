@@ -1,2 +1,2 @@
 import "./blocks/html/frontend";
-import "./blocks/tab/frontend";
+import "./blocks/toggle/frontend";

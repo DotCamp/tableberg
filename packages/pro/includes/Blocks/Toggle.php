@@ -3,14 +3,14 @@
 namespace Tableberg\Pro\Blocks;
 
 use Tableberg\Utils\Utils;
-use WP_Block_Type_Registry;
+
 
 /**
  *
  *@package Tableberg_pro 
  */
 
-class Tab
+class Toggle
 {
 
     public function __construct()
@@ -18,7 +18,7 @@ class Tab
         add_action("init", [$this, "register_block"]);
     }
 
-    public function render_tab_block($attributes, $content)
+    public function render_toggle_block($attributes, $content)
     {
         $alignment_class = isset($attributes['alignment']) ? $attributes['alignment'] : 'left';
         $gap = isset($attributes['gap']) ? Utils::get_spacing_css_single($attributes['gap']) : '0';
@@ -67,7 +67,7 @@ class Tab
             $json,
             [
                 "attributes" => $attrs,
-                "render_callback" => [$this, "render_tab_block"]
+                "render_callback" => [$this, "render_toggle_block"]
             ]
         );
     }
