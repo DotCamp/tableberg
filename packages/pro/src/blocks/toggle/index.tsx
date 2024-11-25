@@ -35,8 +35,14 @@ import {
 import { Icon } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import { ColorControl } from "@tableberg/components";
-import { getStyles } from "./getStyles";
+import {
+    getStyles,
+    getSpacingUnderTabs,
+    getInactiveTabHeadingStyles,
+    getActiveTabHeadingStyles,
+} from "./getStyles";
 import blockIcon from "@tableberg/shared/icons/tableberg";
+import { ToggleBlockTypes } from "./type";
 
 interface AlignmentControls {
     icon: JSX.Element;
@@ -71,25 +77,10 @@ function edit({
     clientId,
     attributes,
     setAttributes,
-}: BlockEditProps<{
-    activeTab: number;
-    tabs: Array<{
-        title: string;
-        content: string;
-    }>;
-    alignment: string;
-    gap: string;
-    tabType: string;
-    activeTabIndicatorColor: string;
-    activeTabTextColor: string;
-    activeTabBackgroundColor: string;
-    inactiveTabTextColor: string;
-    inactiveTabBackgroundColor: string;
-    tabBorderRadius: string;
-}>) {
+}: BlockEditProps<ToggleBlockTypes>) {
     const blockProps = useBlockProps();
     const { children, ...innerBlocksProps } = useInnerBlocksProps(blockProps, {
-        className: "tab-block",
+        className: "toggle-block",
         allowedBlocks: ["tableberg/table"],
         template: [
             ["tableberg/table"],
@@ -377,6 +368,7 @@ function edit({
                 <nav
                     data-toolbar-trigger="true"
                     className={`tab-headings ${alignment}`}
+                    style={getSpacingUnderTabs(attributes)}
                 >
                     {tabs.map((_, i) => {
                         const isActive = activeTab === i;
@@ -389,6 +381,13 @@ function edit({
                                     setAttributes({ activeTab: i });
                                 }}
                                 data-toolbar-trigger="true"
+                                style={
+                                    isActive
+                                        ? getActiveTabHeadingStyles(attributes)
+                                        : getInactiveTabHeadingStyles(
+                                              attributes,
+                                          )
+                                }
                             >
                                 <p
                                     contentEditable

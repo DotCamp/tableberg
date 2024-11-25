@@ -1,39 +1,86 @@
 import { omitBy, isUndefined, isEmpty, trim } from "lodash";
 import { getSpacingCssSingle } from "../../utils/styling-helpers";
+import { ToggleBlockTypes } from "./type";
 
-export function getStyles(attributes: any) {
+function validateValues(styles: Object) {
+    return Object.fromEntries(
+        Object.entries(styles).filter(([key, value]) => {
+            return (
+                value !== false &&
+                value !== undefined &&
+                value !== null &&
+                (typeof value !== "string" || value.trim() !== "") &&
+                value !== "undefined undefined undefined"
+            );
+        }),
+    );
+}
+
+function getBorderRadiusCss(input: string) {
+    const varMatch = input.match(/var\(--.*--(\d+)\)/);
+    if (varMatch) {
+        return `${varMatch[1]}px`;
+    }
+
+    return input;
+}
+
+export function getStyles(attributes: ToggleBlockTypes) {
+    const { activeTabTextColor, activeTabBackgroundColor } = attributes;
+
+    const styles = {
+        "--tableberg-tab-active-text-color": activeTabTextColor,
+        "--tableberg-tab-active-background-color": activeTabBackgroundColor,
+    };
+
+    return validateValues(styles);
+}
+
+export function getSpacingUnderTabs(attributes: ToggleBlockTypes) {
+    const { gap } = attributes;
+    const spacingUnderTabsCss = getSpacingCssSingle(gap);
+
+    const styles = {
+        "margin-bottom": spacingUnderTabsCss,
+    };
+
+    const filteredStyles = validateValues(styles);
+
+    return filteredStyles;
+}
+
+export function getInactiveTabHeadingStyles(attributes: ToggleBlockTypes) {
     const {
-        gap,
         tabBorderRadius,
-        activeTabIndicatorColor,
-        activeTabTextColor,
-        activeTabBackgroundColor,
         inactiveTabTextColor,
         inactiveTabBackgroundColor,
     } = attributes;
 
-    const gapCss = getSpacingCssSingle(gap);
     const tabBorderRadiusCss = getSpacingCssSingle(tabBorderRadius);
 
-    // Map attributes to CSS variables
     const styles = {
-        "--tableberg-tab-gap": gapCss,
-        "--tableberg-tab-border-radius": tabBorderRadiusCss,
-        "--tableberg-tab-active-indicator-color": activeTabIndicatorColor,
-        "--tableberg-tab-active-text-color": activeTabTextColor,
-        "--tableberg-tab-active-background-color": activeTabBackgroundColor,
-        "--tableberg-tab-inactive-text-color": inactiveTabTextColor,
-        "--tableberg-tab-inactive-background-color": inactiveTabBackgroundColor,
+        "background-color": inactiveTabBackgroundColor,
+        "border-radius": getBorderRadiusCss(tabBorderRadiusCss || ""),
+        color: inactiveTabTextColor,
     };
 
-    // Filter out invalid values
-    return omitBy(
-        styles,
-        (value: any) =>
-            value === false || // Remove explicitly false values
-            isEmpty(value) || // Remove empty values
-            isUndefined(value) || // Remove undefined values
-            trim(value) === "" || // Remove empty strings
-            trim(value) === "undefined undefined undefined", // Remove specific invalid strings
-    );
+    const filteredStyles = validateValues(styles);
+
+    return filteredStyles;
+}
+
+export function getActiveTabHeadingStyles(attributes: ToggleBlockTypes) {
+    const { tabBorderRadius, activeTabTextColor, activeTabBackgroundColor } =
+        attributes;
+
+    const tabBorderRadiusCss = getSpacingCssSingle(tabBorderRadius);
+
+    const styles = {
+        "background-color": activeTabBackgroundColor,
+        "border-radius": getBorderRadiusCss(tabBorderRadiusCss || ""),
+        color: activeTabTextColor,
+    };
+    const filteredStyles = validateValues(styles);
+
+    return filteredStyles;
 }
