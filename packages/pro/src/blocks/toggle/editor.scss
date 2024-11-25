@@ -14,8 +14,8 @@
 }
 
 .tab-heading p {
-    padding: 10px;
-
+    padding: 3px;
+    margin: 0px 10px;
     text-align: center;
     font-size: 1rem;
     width: auto;
@@ -26,22 +26,16 @@
 .tab-heading-remove {
     position: absolute;
     top: -8px;
-    right: 0px;
-    width: 16px;
+    right: -5px;
     height: 16px;
+    width: 16px;
     background-color: #ff4d4d;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.tab-heading-remove button {
-    color: #ffffff;
-    font-size: 4px;
-    border: none;
-    background: none;
+    padding: 0;
 }
 
 .tab-heading-remove:hover {

@@ -403,15 +403,15 @@ function edit({
                                 >
                                     {tabs[i].title}
                                 </p>
-                                <div className="tab-heading-remove">
-                                    <Button
-                                        icon={reset}
-                                        onClick={() => {
-                                            setDeleteIndex(i);
-                                            setDeleteConfirmDialogIsOpen(true);
-                                        }}
-                                    />
-                                </div>
+                                <button
+                                    className="tab-heading-remove"
+                                    onClick={() => {
+                                        setDeleteIndex(i);
+                                        setDeleteConfirmDialogIsOpen(true);
+                                    }}
+                                >
+                                    <Icon icon={reset} />
+                                </button>
                             </div>
                         );
                     })}

@@ -1,4 +1,3 @@
-import { omitBy, isUndefined, isEmpty, trim } from "lodash";
 import { getSpacingCssSingle } from "../../utils/styling-helpers";
 import { ToggleBlockTypes } from "./type";
 
