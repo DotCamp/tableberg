@@ -96,7 +96,6 @@ function edit({
         tabs,
         alignment,
         gap,
-        activeTabIndicatorColor,
         activeTabTextColor,
         inactiveTabTextColor,
         activeTabBackgroundColor,
@@ -260,24 +259,6 @@ function edit({
                                         hasValue={() => true}
                                     >
                                         <h3>{__("Colors", "tableberg")}</h3>
-                                        <ColorControl
-                                            label={__(
-                                                "Active Tab Indicator Color",
-                                                "tableberg",
-                                            )}
-                                            colorValue={activeTabIndicatorColor}
-                                            onColorChange={(newColor) =>
-                                                setAttributes({
-                                                    activeTabIndicatorColor:
-                                                        newColor,
-                                                })
-                                            }
-                                            onDeselect={() =>
-                                                setAttributes({
-                                                    activeTabIndicatorColor: "",
-                                                })
-                                            }
-                                        />
                                         <ColorControl
                                             label={__(
                                                 "Active Tab Text Color",

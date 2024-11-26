@@ -43,10 +43,6 @@
             "type": "string",
             "default": "0"
         },
-        "activeTabIndicatorColor": {
-            "type": "string",
-            "default": "blue"
-        },
         "activeTabTextColor": {
             "type": "string",
             "default": "black"

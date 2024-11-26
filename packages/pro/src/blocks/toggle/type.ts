@@ -7,7 +7,6 @@ export interface ToggleBlockTypes {
     alignment: string;
     gap: string;
     tabType: string;
-    activeTabIndicatorColor: string;
     activeTabTextColor: string;
     activeTabBackgroundColor: string;
     inactiveTabTextColor: string;
