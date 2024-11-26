@@ -4,6 +4,7 @@ export interface ToggleBlockTypes {
         title: string;
         content: string;
     }>;
+    defaultActiveTabIndex: number;
     alignment: string;
     gap: string;
     tabType: string;

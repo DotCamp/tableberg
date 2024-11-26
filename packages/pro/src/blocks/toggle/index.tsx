@@ -31,6 +31,7 @@ import {
     __experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon,
     __experimentalToolsPanel as ToolsPanel,
     __experimentalToolsPanelItem as ToolsPanelItem,
+    __experimentalNumberControl as NumberControl,
 } from "@wordpress/components";
 import { Icon } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
@@ -95,6 +96,7 @@ function edit({
         activeTab,
         tabs,
         alignment,
+        defaultActiveTabIndex,
         gap,
         activeTabTextColor,
         inactiveTabTextColor,
@@ -194,7 +196,43 @@ function edit({
                 >
                     {(tab) => {
                         if (tab.name === "settings") {
-                            return <></>;
+                            return (
+                                <>
+                                    <ToolsPanel
+                                        label={__(
+                                            "Toggle Settings",
+                                            "tableberg",
+                                        )}
+                                        resetAll={() => {}}
+                                    >
+                                        <ToolsPanelItem
+                                            label={__("")}
+                                            hasValue={() => true}
+                                        >
+                                            <NumberControl
+                                                label="Default Active Tab"
+                                                value={
+                                                    defaultActiveTabIndex + 1
+                                                }
+                                                onChange={(newValue) =>
+                                                    setAttributes({
+                                                        defaultActiveTabIndex:
+                                                            Math.max(
+                                                                0,
+                                                                Number(
+                                                                    newValue ||
+                                                                        1,
+                                                                ) - 1,
+                                                            ),
+                                                    })
+                                                }
+                                                min={1}
+                                                max={tabs.length}
+                                            />
+                                        </ToolsPanelItem>
+                                    </ToolsPanel>
+                                </>
+                            );
                         } else if (tab.name === "style") {
                             return (
                                 <ToolsPanel

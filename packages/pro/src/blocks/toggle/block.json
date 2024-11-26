@@ -31,6 +31,10 @@
                 }
             ]
         },
+        "defaultActiveTabIndex": {
+            "type": "number",
+            "default": 1
+        },
         "alignment": {
             "type": "string",
             "default": "left"
