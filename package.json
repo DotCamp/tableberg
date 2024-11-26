@@ -13,6 +13,9 @@
     "author": "Dotcamp",
     "license": "GPL-2.0-or-later",
     "devDependencies": {
+        "@testing-library/dom": "^10.4.0",
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/react": "^16.0.1",
         "@types/jest": "^29.5.14",
         "@types/lodash": "^4.14.202",
         "@types/node": "^20.11.13",
