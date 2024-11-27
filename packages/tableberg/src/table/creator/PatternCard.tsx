@@ -44,7 +44,9 @@ const PatternCard: React.FC<PatternCardProps> = ({
 	};
 
 	return (
+		// eslint-disable-next-line jsx-a11y/interactive-supports-focus,jsx-a11y/click-events-have-key-events
 		<div
+			role={'button'}
 			className={classNames({
 				'tableberg-pattern-library-preview': true,
 				'tableberg-pattern-library-preview-upsell': pattern.isUpsell,
