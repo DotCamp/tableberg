@@ -1,6 +1,6 @@
 import Pattern, {
 	PatternOptions,
-} from '../../../../../../../../packages/tableberg/src/table/creator/includes/Pattern';
+} from '@tableberg/src/table/creator/includes/Pattern';
 
 describe('Pattern data object', () => {
 	it('should convert rest supplied data to pattern object compatible', () => {

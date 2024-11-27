@@ -7,6 +7,10 @@ const config: JestConfigWithTsJest = {
 	},
 	preset: 'ts-jest',
 	testMatch: ['**/__tests__/js/**/*.test.(j)?ts(x)?'],
+	// add path alias
+	moduleNameMapper: {
+		'^@tableberg/(.*)$': '<rootDir>/packages/tableberg/$1',
+	},
 };
 
 export default config;
