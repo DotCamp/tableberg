@@ -257,6 +257,12 @@
                 justify-content: center;
                 align-items: center;
             }
+
+            &-view {
+                &-image {
+                    width: 100%;
+                }
+            }
         }
 
         &-upsell::before {

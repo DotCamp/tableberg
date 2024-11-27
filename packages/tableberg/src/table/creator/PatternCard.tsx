@@ -12,7 +12,7 @@ interface PatternData {
 	isUpsell: boolean;
 	blocks: BlockInstance[];
 	viewportWidth: number;
-	tablebergPatternScreenshot: false | string;
+	tablebergPatternScreenshot: undefined | string;
 }
 
 interface PatternCardProps {
@@ -36,10 +36,20 @@ const PatternCard: React.FC<PatternCardProps> = ({
 	onSelect,
 }) => {
 	const [useImagePreview, setUseImagePreview] = useState(false);
+	const [isBusy, setIsBusy] = useState(true);
+
+	const handleImageError = () => {
+		setUseImagePreview(false);
+		setIsBusy(false);
+	};
 
 	useEffect(() => {
-		setUseImagePreview(pattern.tablebergPatternScreenshot !== false);
+		setUseImagePreview(pattern.tablebergPatternScreenshot !== undefined);
 	}, [pattern]);
+
+	const handleImageLoad = () => {
+		setIsBusy(false);
+	};
 
 	return (
 		<div
@@ -53,27 +63,43 @@ const PatternCard: React.FC<PatternCardProps> = ({
 					: onSelect(pattern.blocks[0])
 			}
 		>
-			<div className="tableberg-pattern-library-preview-item">
-				<div className={'tableberg-pattern-library-preview-item-busy'}>
-					<Spinner
-						style={{
-							width: '50px',
-							height: '50px',
-						}}
-						onPointerEnterCapture={undefined}
-						onPointerLeaveCapture={undefined}
-					/>
-				</div>
-				<InView>
-					{useImagePreview ? (
-						<div>image</div>
-					) : (
-						<BlockPreview
-							blocks={pattern.blocks}
-							viewportWidth={pattern.viewportWidth}
+			<div className={'tableberg-pattern-library-preview-item'}>
+				{isBusy && (
+					<div
+						className={
+							'tableberg-pattern-library-preview-item-busy'
+						}
+					>
+						<Spinner
+							style={{
+								width: '50px',
+								height: '50px',
+							}}
+							onPointerEnterCapture={undefined}
+							onPointerLeaveCapture={undefined}
 						/>
-					)}
-				</InView>
+					</div>
+				)}
+				<div className={'tableberg-pattern-library-preview-item-view'}>
+					<InView>
+						{useImagePreview ? (
+							<img
+								alt={pattern.title}
+								className={
+									'tableberg-pattern-library-preview-item-view-image'
+								}
+								onError={handleImageError}
+								onLoad={handleImageLoad}
+								src={pattern.tablebergPatternScreenshot}
+							/>
+						) : (
+							<BlockPreview
+								blocks={pattern.blocks}
+								viewportWidth={pattern.viewportWidth}
+							/>
+						)}
+					</InView>
+				</div>
 			</div>
 			<p>{pattern.title}</p>
 		</div>
