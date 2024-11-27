@@ -20,6 +20,10 @@ beforeAll(() => {
 			<div data-testid="in-view-mock">{children}</div>
 		),
 	}));
+
+	jest.mock('@wordpress/components', () => ({
+		Spinner: () => <div data-testid="spinner-mock">Mock Spinner</div>,
+	}));
 });
 
 const testPatternOptions: PatternOptions = {
@@ -106,5 +110,24 @@ describe('PatternCard component', () => {
 
 		expect(selectCallback).not.toHaveBeenCalled();
 		expect(upsellCallback).toHaveBeenCalled();
+	});
+	it('should not render a busy spinner if component is not busy', async () => {
+		const PatternCard =
+			require('@tableberg/src/table/creator/PatternCard').default;
+
+		render(
+			<PatternCard
+				pattern={patternObj}
+				setUpsell={jest.fn()}
+				onSelect={jest.fn()}
+			/>
+		);
+
+		const spinnerElement = screen.queryByTestId('spinner-mock');
+		expect(spinnerElement).toBeInTheDocument();
+
+		const imageElement = screen.getByAltText(testPatternOptions.title);
+		fireEvent.load(imageElement);
+		expect(spinnerElement).not.toBeInTheDocument();
 	});
 });
