@@ -5,18 +5,10 @@ import InView from '../../components/InView';
 import { BlockPreview } from '@wordpress/block-editor';
 import type { BlockInstance } from '@wordpress/blocks';
 import { useEffect, useState } from 'react';
-
-interface PatternData {
-	name: string;
-	title: string;
-	isUpsell: boolean;
-	blocks: BlockInstance[];
-	viewportWidth: number;
-	tablebergPatternScreenshot: undefined | string;
-}
+import Pattern from './includes/Pattern';
 
 interface PatternCardProps {
-	pattern: PatternData;
+	pattern: Pattern;
 	setUpsell: (patternName: string) => void;
 	onSelect: (block: BlockInstance) => void;
 }
@@ -44,7 +36,7 @@ const PatternCard: React.FC<PatternCardProps> = ({
 	};
 
 	useEffect(() => {
-		setUseImagePreview(pattern.tablebergPatternScreenshot !== undefined);
+		setUseImagePreview(pattern.screenshotUrl !== undefined);
 	}, [pattern]);
 
 	const handleImageLoad = () => {
@@ -90,7 +82,7 @@ const PatternCard: React.FC<PatternCardProps> = ({
 								}
 								onError={handleImageError}
 								onLoad={handleImageLoad}
-								src={pattern.tablebergPatternScreenshot}
+								src={pattern.screenshotUrl}
 							/>
 						) : (
 							<BlockPreview

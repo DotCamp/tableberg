@@ -19,6 +19,7 @@ import type { BlockInstance } from '@wordpress/blocks';
 import { UpsellPatternsModal } from '../../components/UpsellModal';
 import { createPortal } from 'react-dom';
 import PatternCard from './PatternCard';
+import Pattern from './includes/Pattern';
 
 interface PatternLibraryProps {
 	onClose: () => void;
@@ -47,7 +48,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 			title: string;
 			count: number;
 		}[] = [];
-		const availablePatterns: any[] = [];
+		const availablePatterns: Pattern[] = [];
 
 		__experimentalGetAllowedPatterns().forEach((pattern: any) => {
 			if (!pattern.name.startsWith('tableberg/')) {
@@ -56,7 +57,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 
 			pattern.isUpsell = pattern.name.indexOf('/upsell-') > -1;
 
-			availablePatterns.push(pattern);
+			availablePatterns.push(new Pattern(pattern));
 
 			pattern.categories.forEach((pCat: any) => {
 				if (pCat === 'tableberg') {
