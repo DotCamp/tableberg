@@ -390,7 +390,7 @@ const useMerging = (
         return select(blockEditorStore) as BlockEditorStoreSelectors;
     }, []);
 
-    const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
+    const elClickEvt = function(this: HTMLElement, evt: MouseEvent) {
         const cell: TablebergCellInstance = storeSelect.getBlock(
             clientId,
         ) as any;
@@ -1048,16 +1048,18 @@ function edit(
     const vSort = tableBlock.attributes.sort?.vertical;
     const hSort = tableBlock.attributes.sort?.horizontal;
 
+    const rootEl = cellRef.current?.closest(".wp-block-tableberg-wrapper");
+
     return (
         <>
             <TablebergCtx.Consumer>
-                {({ rootEl, render }) => {
+                {({ render }) => {
                     let targetEl;
                     if (render === "primary") {
                         if (!attributes.isTmp)
                             targetEl =
                                 rootEl?.querySelector("tbody")?.children?.[
-                                    attributes.row
+                                attributes.row
                                 ];
                     } else if (attributes.responsiveTarget) {
                         targetEl = rootEl?.querySelector(
@@ -1085,7 +1087,7 @@ function edit(
                                             evt.stopPropagation();
                                             evt.preventDefault();
                                             sortTableH(
-                                                rootEl!,
+                                                rootEl! as HTMLElement,
                                                 tableBlock.clientId,
                                                 attributes.row,
                                                 storeSelect,
@@ -1106,7 +1108,7 @@ function edit(
                                             evt.stopPropagation();
                                             evt.preventDefault();
                                             sortTableV(
-                                                rootEl!,
+                                                rootEl! as HTMLElement,
                                                 tableBlock.clientId,
                                                 attributes.col,
                                                 storeSelect,

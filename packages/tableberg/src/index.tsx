@@ -495,7 +495,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             <div {...blockProps}>
                 <TablebergCtx.Provider
                     value={{
-                        rootEl: rootRef.current!,
                         render: renderMode as any,
                     }}
                 >
