@@ -21,7 +21,7 @@ import {
     TextControl,
 } from "@wordpress/components";
 import { useDispatch } from "@wordpress/data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import metadata from "../../block.json";
 import PatternsLibrary from "./Patterns";
 
@@ -58,6 +58,11 @@ export default function TableCreator({ clientId }: Props) {
         });
 
     };
+
+   // TODO [ErdemBircan] remove after development
+    useEffect(() => {
+        setModal('patterns');
+    });
 
     return (
         <div className="tableberg-table-creator">
