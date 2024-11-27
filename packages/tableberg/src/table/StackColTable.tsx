@@ -7,7 +7,7 @@ import {
     useInnerBlocksProps,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ALLOWED_BLOCKS } from ".";
 import { useDispatch } from "@wordpress/data";
 import { getStyles } from "./get-styles";
@@ -19,6 +19,14 @@ import {
 } from "@tableberg/shared/utils/styling-helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+
+const useInnerBlocksUpdate = () => {
+    const [key, setKey] = useState(0);
+
+    const incrementKey = () => setKey(k => k + 1);
+
+    return [key, incrementKey] as [number, () => void];
+}
 
 export default function StackColTable(
     props: BlockEditProps<TablebergBlockAttrs> & {
@@ -47,39 +55,48 @@ export default function StackColTable(
         ),
     } as Record<string, any>;
 
-    const [rowTemplates, setRowTemplates] = useState<React.ReactElement[]>([]);
-    const [colUpt, setColUpt] = useState(0);
+    const [rowTemplate, setRowTemplate] = useState<React.ReactElement[]>([]);
 
-    useEffect(() => {
-        setColUpt((old) => old + 1);
-    }, [attributes.cols, attributes.cells]);
-
-    const storeActions: BlockEditorStoreActions = useDispatch(
+    const {
+        replaceInnerBlocks,
+        updateBlockAttributes,
+        removeBlocks,
+    }: BlockEditorStoreActions = useDispatch(
         blockEditorStore,
     ) as any;
 
-    const breakpoints = tableBlock.attributes.responsive.breakpoints;
-    const breakpoint =
+    const breakpoints = attributes.responsive.breakpoints;
+    const currentBreakpoint =
         preview == "mobile" && !breakpoints[preview]
             ? breakpoints.tablet
             : breakpoints[preview];
 
-    useLayoutEffect(() => {
-        if (!breakpoint) {
+    const [updateKey, refreshInnerBlocks] = useInnerBlocksUpdate();
+
+    useEffect(() => {
+        if (!currentBreakpoint) {
             return;
         }
 
-        const moveCellToRow = (cell: TablebergCellInstance, row: number, setTemp = false) => {
+        const setRowPortalTarget = (
+            cell: TablebergCellInstance, row: number, setTemp = false
+        ) => {
             cell.attributes.responsiveTarget = `#tableberg-${clientId}-${row}`;
-            if (row > attributes.rows - 1) {
-                cell.attributes.isTmp = setTemp;
-            }
+            cell.attributes.isTmp = setTemp;
             return cell;
         }
 
-        const generateEmptyRows = (numberOfRows: number) => {
-            const templates: React.ReactElement[] = [];
-            for (let i = 0; i < numberOfRows; i++) {
+        const stacksCount = Math.max(currentBreakpoint.stackCount || 1, 1);
+
+        let cells = tableBlock.innerBlocks as TablebergCellInstance[];
+        const newCells: TablebergCellInstance[] = [];
+        const template: React.ReactElement[] = [];
+
+        const cols = currentBreakpoint?.headerAsCol ? attributes.cols - 1 : attributes.cols;
+        const rowsToGenerate = attributes.rows * Math.ceil(cols / stacksCount);
+
+        (function generateRows() {
+            for (let i = 0; i < rowsToGenerate; i++) {
                 const Row = ({ rowClass = "row" }) => <tr
                     id={`tableberg-${clientId}-${i}`}
                     className={`tableberg-${rowClass}`}
@@ -89,84 +106,62 @@ export default function StackColTable(
                 const isFooterRow = i % attributes.rows === attributes.rows - 1;
 
                 if (attributes.enableTableHeader && isHeaderRow) {
-                    templates.push(<Row rowClass="header" />);
+                    template.push(<Row key={i} rowClass="header" />);
                 } else if (attributes.enableTableFooter && isFooterRow) {
-                    templates.push(<Row rowClass="footer" />);
+                    template.push(<Row key={i} rowClass="footer" />);
                 } else if (i % 2 === 0) {
-                    templates.push(<Row rowClass="even-row" />);
+                    template.push(<Row key={i} rowClass="even-row" />);
                 } else if (i % 2 !== 0) {
-                    templates.push(<Row rowClass="odd-row" />);
+                    template.push(<Row key={i} rowClass="odd-row" />);
                 }
             }
-            return templates;
-        }
+        })();
 
-        const cellsWithHeadersAsLeftCol = (colCells: TablebergCellInstance[], numRows: number) => {
-            const newCells: TablebergCellInstance[] = [];
-            for (let row = 0; row < numRows; row++) {
-                const col1Cell = cloneBlock(colCells[row % attributes.rows]) as TablebergCellInstance;
+        (function addColumnToEachStack() {
+            if (!currentBreakpoint?.headerAsCol) {
+                return
+            }
+
+            const leftColCells = cells.filter(cell => cell.attributes.col === 0);
+            const cellsExcludingLeftCol = cells.filter(cell => cell.attributes.col !== 0);
+            cells = cellsExcludingLeftCol;
+
+            for (let row = 0; row < template.length; row++) {
+                const col1Cell = cloneBlock(leftColCells[row % attributes.rows]) as TablebergCellInstance;
                 if (col1Cell.attributes.isTmp) {
                     continue;
                 }
 
                 const setTemp = row > (attributes.rows - 1) ? true : false;
-                newCells.push(moveCellToRow(col1Cell, row, setTemp));
+                newCells.push(setRowPortalTarget(col1Cell, row, setTemp));
             }
-            return newCells;
-        }
+        })();
 
-        const generateCellsWithCorrectRows = (cells: TablebergCellInstance[]) => {
-            const newCells: TablebergCellInstance[] = [];
+        (function moveCellsToCorrectRows() {
             for (const cell of cells) {
                 if (cell.attributes.isTmp) {
                     continue;
                 }
 
                 const tableRows = attributes.rows;
-                const coli = breakpoint?.headerAsCol ? cell.attributes.col - 1 : cell.attributes.col;
+                const coli = currentBreakpoint?.headerAsCol ? cell.attributes.col - 1 : cell.attributes.col;
                 const rowi = cell.attributes.row;
 
                 let targetRow = tableRows * (Math.ceil((coli + 1) / stacksCount) - 1) + rowi;
 
-                newCells.push(moveCellToRow(cell, targetRow));
+                newCells.push(setRowPortalTarget(cell, targetRow));
             }
-            return newCells;
-        }
+        })();
 
-        const stacksCount = Math.max(breakpoint.stackCount || 1, 1);
-
-        let cells = tableBlock.innerBlocks as TablebergCellInstance[];
-
-        const cols = breakpoint?.headerAsCol ? attributes.cols - 1 : attributes.cols;
-        const rowsToGenerate = attributes.rows * Math.ceil(cols / stacksCount);
-        const templates = generateEmptyRows(rowsToGenerate);
-
-        let newCells;
-
-        if (breakpoint?.headerAsCol) {
-            const leftColCells = cells.filter(cell => cell.attributes.col === 0);
-            const cellsExcludingLeftCol = cells.filter(cell => cell.attributes.col !== 0);
-
-            newCells = [
-                ...cellsWithHeadersAsLeftCol(leftColCells, templates.length),
-                ...generateCellsWithCorrectRows(cellsExcludingLeftCol)
-            ];
-        } else {
-            newCells = generateCellsWithCorrectRows(cells);
-        }
-
-        storeActions.replaceInnerBlocks(clientId, newCells);
-        storeActions.updateBlockAttributes(clientId, {
+        replaceInnerBlocks(clientId, newCells);
+        updateBlockAttributes(clientId, {
             cells: newCells.length,
         });
-        setRowTemplates(templates);
-        setColUpt((old) => old + 1);
+        setRowTemplate(template);
+        refreshInnerBlocks();
     }, [
-        attributes.cells,
-        attributes.enableTableHeader,
-        attributes.enableTableFooter,
-        breakpoint?.stackCount,
-        breakpoint?.headerAsCol,
+        currentBreakpoint?.stackCount,
+        currentBreakpoint?.headerAsCol,
     ]);
 
     useEffect(() => {
@@ -195,11 +190,13 @@ export default function StackColTable(
                     ...getBorderRadiusCSS(attributes.tableBorderRadius),
                 }}
             >
-                <table {...blockProps}>{rowTemplates}</table>
+                <table {...blockProps}>{rowTemplate}</table>
             </div>
-            <div style={{ display: "none" }} key={colUpt}>
-                <div {...innerBlocksProps} />
-            </div>
+            <table style={{ display: "none" }} key={updateKey}>
+                <tbody>
+                    <tr {...innerBlocksProps} />
+                </tbody>
+            </table>
         </>
     );
 }
