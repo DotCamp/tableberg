@@ -6,11 +6,11 @@ const TablebergProIcon = (
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
     >
-        <g clip-path="url(#clip0_46_2)">
+        <g clipPath="url(#clip0_46_2)">
             <rect width="24" height="24" fill="white" />
             <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M7.5 14.0001C6.94772 14.0001 6.5 13.5524 6.5 13.0001V11.0001C6.5 10.4478 6.94772 10.0001 7.5 10.0001H16.5C17.0523 10.0001 17.5 10.4478 17.5 11.0001V13.0001C17.5 13.5524 17.0523 14.0001 16.5 14.0001H7.5ZM7.5 11.0001H11.5V13.0001H7.5V11.0001ZM12.5 11.0001V13.0001H16.5V11.0001H12.5Z"
                 fill="#671FEB"
             />

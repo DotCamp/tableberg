@@ -7,7 +7,7 @@ const TablebergIcon = (
         xmlns="http://www.w3.org/2000/svg"
     >
         <rect width="256" height="256" fill="white" />
-        <g clip-path="url(#clip0_50_2)">
+        <g clipPath="url(#clip0_50_2)">
             <rect
                 x="30"
                 y="30"

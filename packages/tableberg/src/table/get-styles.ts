@@ -55,7 +55,7 @@ export function getStyles({
         "--tableberg-even-bg":
             evenRowBackgroundGradient || evenRowBackgroundColor,
         "--tableberg-block-spacing": getSpacingCssSingle(blockSpacing),
-        "border-spacing": `${cellSpacingCSS?.left || 0} ${
+        "borderSpacing": `${cellSpacingCSS?.left || 0} ${
             cellSpacingCSS?.top || 0
         }`,
         ...tableInnerBorder,
