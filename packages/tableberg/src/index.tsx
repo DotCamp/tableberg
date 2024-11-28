@@ -482,7 +482,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
     }
 
-    if (!attributes.hasTableCreated) {
+    if (!(attributes.cols > 0) || !(attributes.rows > 0)) {
         return (
             <div {...blockProps}>
                 <TableCreator clientId={clientId} />
@@ -558,7 +558,6 @@ registerBlockType(metadata.name, {
                         cols: number;
                     } = {
                         version: metadata.version,
-                        hasTableCreated: true,
                         cells: 0,
                         responsive: {
                             target: "window",

@@ -31,15 +31,13 @@ interface Props {
 export default function TableCreator({ clientId }: Props) {
     const storeActions: BlockEditorStoreActions = useDispatch(store) as any;
 
-    const [newTable, setNewTable] = useState({
-        rows: 4,
-        cols: 4,
-    });
+    const [rows, setRows] = useState<number | undefined>(4);
+    const [cols, setCols] = useState<number | undefined>(4);
 
     const [modal, setModal] = useState<null | "patterns">(null);
 
     const onCreateNew = () => {
-        const { rows, cols } = newTable;
+        if (!rows || !cols) return;
         if (rows < 1 || cols < 1) return;
 
         let initialInnerBlocks: InnerBlockTemplate[] = [];
@@ -48,14 +46,14 @@ export default function TableCreator({ clientId }: Props) {
                 initialInnerBlocks.push(["tableberg/cell", { row: i, col: j }, [["core/paragraph"]]]);
             }
         }
-        
+
         storeActions.replaceInnerBlocks(clientId, createBlocksFromInnerBlocksTemplate(initialInnerBlocks));
 
         storeActions.updateBlockAttributes(clientId, {
             version: metadata.version,
-            hasTableCreated: true,
             cells: initialInnerBlocks.length,
-            ...newTable,
+            rows,
+            cols
         });
 
     };
@@ -66,33 +64,27 @@ export default function TableCreator({ clientId }: Props) {
                 label={"Tableberg"}
                 icon={<BlockIcon icon={TablebergIcon} />}
             >
-                
+
                 <div className="tableberg-table-creator-heading">Create Blank Table</div>
                 <Flex gap="10px" justify="center" align="end">
                     <TextControl
                         __nextHasNoMarginBottom
                         type="number"
                         label={"Column count"}
-                        value={newTable.cols}
+                        value={String(cols)}
                         onChange={(count) => {
-                            setNewTable({
-                                ...newTable,
-                                cols: Number(count),
-                            });
+                            setCols( (count === "") ? undefined : Number(count));
                         }}
-                        min="1"
-                        className="blocks-table__placeholder-input"
+                    min="1"
+                    className="blocks-table__placeholder-input"
                     />
                     <TextControl
                         __nextHasNoMarginBottom
                         type="number"
                         label={"Row count"}
-                        value={newTable.rows}
+                        value={String(rows)}
                         onChange={(count) => {
-                            setNewTable({
-                                ...newTable,
-                                rows: Number(count),
-                            });
+                            setRows( (count === "") ? undefined : Number(count));
                         }}
                         min="1"
                         className="blocks-table__placeholder-input"

@@ -46,7 +46,6 @@ export interface TablebergBlockAttrs {
             borderRadius?: any;
         }
     >;
-    hasTableCreated: boolean;
     tableWidth: string;
     blockSpacing: string;
     enableTableHeader: "" | "converted" | "added";

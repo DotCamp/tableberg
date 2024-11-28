@@ -37,10 +37,6 @@ class Defaults
 					'type' => 'array',
 					'default' => ['', ''],
 				),
-				'hasTableCreated' => array(
-					'type' => 'boolean',
-					'default' => false,
-				),
 				'cellPadding' => array(
 					'type' => 'array',
 					'default' => array(),

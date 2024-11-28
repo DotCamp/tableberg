@@ -18,11 +18,11 @@
         },
         "rows": {
             "type": "number",
-            "default": 2
+            "default": 0
         },
         "cols": {
             "type": "number",
-            "default": 2
+            "default": 0
         },
         "cells": {
             "type": "number",
@@ -49,10 +49,6 @@
         "rowStyles": {
             "type": "object",
             "default": {}
-        },
-        "hasTableCreated": {
-            "type": "boolean",
-            "default": false
         },
         "cellPadding": {
             "type": "object",
