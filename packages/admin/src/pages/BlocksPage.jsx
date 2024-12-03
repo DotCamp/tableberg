@@ -14,14 +14,17 @@ function UpsellModal({ info, onClose }) {
                         {info.icon} {info.title}
                     </h2>
                     <div className="tableberg-upsell-modal-content">
-                        <img src={
-                            TABLEBERG_CFG.plugin_url +
-                            'includes/Admin/images/upsell/' +
-                            info.image
-                        } alt={info.title + " Demo"} />
+                        <img
+                            src={
+                                TABLEBERG_CFG.plugin_url +
+                                "includes/Admin/images/upsell/" +
+                                info.image
+                            }
+                            alt={info.title + " Demo"}
+                        />
                         <p>{info.upsellText}</p>
                         <p>
-                            Limited Time: Use code <b>TB10</b> to get a 10%
+                            Limited Time: Use code <b>TB20</b> to get a 20%
                             discount.
                         </p>
                     </div>

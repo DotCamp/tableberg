@@ -79,13 +79,18 @@ export function UpsellModalComponent({
                             />
                         )}
                         <p>
-                            Limited Time: Use code <b>TB10</b> to get a 10%
+                            Limited Time: Use code <b>TB20</b> to get a 20%
                             discount.
                         </p>
                     </div>
                     <div className="tableberg-upsell-modal-footer">
                         <button onClick={onClose}>Cancel</button>
-                        <a href="https://tableberg.com/pricing/" target="_blank">Buy PRO</a>
+                        <a
+                            href="https://tableberg.com/pricing/"
+                            target="_blank"
+                        >
+                            Buy PRO
+                        </a>
                     </div>
                 </div>
                 {!!next && (
