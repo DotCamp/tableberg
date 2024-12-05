@@ -4,7 +4,6 @@ namespace Tableberg\Pro\Blocks;
 
 use Tableberg\Utils\Utils;
 
-
 /**
  *
  *@package Tableberg_pro 
@@ -24,7 +23,6 @@ class Toggle
                         --tableberg-tab-active-text-color: ' . esc_attr($activeText) . ';';
     }
 
-
     private function get_border_radius_css($input)
     {
         if (preg_match('/var\(--.*--(\d+)\)/', $input, $matches)) {
@@ -35,7 +33,6 @@ class Toggle
 
     private function get_style($gap, $borderRadius, $activeBackground, $activeText, $inactiveBackground, $inactiveText)
     {
-
         $borderRadiusCss = $this->get_border_radius_css($borderRadius);
         return '<style>
         .tab-headings { margin-bottom: ' . esc_attr($gap) . '; }
