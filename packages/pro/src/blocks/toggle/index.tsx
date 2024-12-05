@@ -10,19 +10,15 @@ import metadata from "./block.json";
 import { useSelect, useDispatch } from "@wordpress/data";
 import { createBlock } from "@wordpress/blocks";
 import {
-    TabPanel,
     Button,
     __experimentalConfirmDialog as ConfirmDialog,
-    PanelBody,
-    BaseControl,
+    TextControl,
 } from "@wordpress/components";
 import {
     positionLeft,
     positionRight,
     positionCenter,
     stretchFullWidth,
-    settings,
-    styles,
     reset,
     plus,
 } from "@wordpress/icons";
@@ -180,7 +176,6 @@ function edit({
             });
         }
     }
-
     return (
         <div
             {...blockProps}
@@ -199,6 +194,17 @@ function edit({
                         label={__("Default Active Tab")}
                         hasValue={() => true}
                     >
+                        <TextControl
+                            label="Current Tab Title"
+                            value={tabs[activeTab].title}
+                            onChange={(val) => {
+                                const newTabs = [...tabs];
+                                newTabs[activeTab].title = val;
+                                setAttributes({
+                                    tabs: newTabs,
+                                });
+                            }}
+                        />
                         <NumberControl
                             label="Default Active Tab"
                             value={
@@ -388,18 +394,7 @@ function edit({
                                         )
                                 }
                             >
-                                <p
-                                    contentEditable
-                                    tabIndex={0}
-                                    onBlur={(e) => {
-                                        e.preventDefault();
-                                        const newTabs = [...tabs];
-                                        newTabs[i].title = e.target.innerText;
-                                        setAttributes({
-                                            tabs: newTabs,
-                                        });
-                                    }}
-                                >
+                                <p tabIndex={0}>
                                     {tabs[i].title}
                                 </p>
                                 <button
