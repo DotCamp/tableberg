@@ -41,23 +41,23 @@
         },
         "tabBorderRadius": {
             "type": "string",
-            "default": "0"
+            "default": "var:preset|spacing|5"
         },
         "activeTabTextColor": {
             "type": "string",
-            "default": "black"
+            "default": "white"
         },
         "activeTabBackgroundColor": {
             "type": "string",
-            "default": "transparent"
+            "default": "#671feb"
         },
         "inactiveTabTextColor": {
             "type": "string",
-            "default": "black"
+            "default": "white"
         },
         "inactiveTabBackgroundColor": {
             "type": "string",
-            "default": "transparent"
+            "default": "black"
         }
     },
     "example": {},
