@@ -1,5 +1,5 @@
 import { getSpacingCssSingle } from "../../utils/styling-helpers";
-import { ToggleBlockTypes } from "./type";
+import { ToggleBlockTypes } from "./";
 
 function validateValues(styles: Object) {
     return Object.fromEntries(

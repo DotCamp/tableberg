@@ -43,7 +43,23 @@ import {
     getActiveTabHeadingStyles,
 } from "./getStyles";
 import blockIcon from "@tableberg/shared/icons/tableberg";
-import { ToggleBlockTypes } from "./type";
+
+export interface ToggleBlockTypes {
+    activeTab: number;
+    tabs: Array<{
+        title: string;
+        content: string;
+    }>;
+    defaultActiveTabIndex: number;
+    alignment: string;
+    gap: string;
+    tabType: string;
+    activeTabTextColor: string;
+    activeTabBackgroundColor: string;
+    inactiveTabTextColor: string;
+    inactiveTabBackgroundColor: string;
+    tabBorderRadius: string;
+}
 
 interface AlignmentControls {
     icon: JSX.Element;
