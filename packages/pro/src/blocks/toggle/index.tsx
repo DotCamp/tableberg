@@ -95,7 +95,6 @@ function edit({
 }: BlockEditProps<ToggleBlockTypes>) {
     const blockProps = useBlockProps();
     const { children, ...innerBlocksProps } = useInnerBlocksProps(blockProps, {
-        className: "toggle-block",
         allowedBlocks: ["tableberg/table"],
         template: [
             ["tableberg/table"],
@@ -181,7 +180,7 @@ function edit({
         <div
             {...blockProps}
             style={getStyles(attributes)}
-            className="tab-block"
+            className="toggle-block"
         >
             <InspectorControls>
                 <ToolsPanel
@@ -381,8 +380,9 @@ function edit({
                         const isActive = activeTab === i;
                         return (
                             <div
-                                className={`tab-heading ${isActive ? "active" : ""
-                                    }`}
+                                className={
+                                    `tab-heading ${isActive ? "active" : ""}`
+                                }
                                 onClick={() => {
                                     setActiveTab(i);
                                 }}
