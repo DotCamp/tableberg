@@ -43,10 +43,7 @@ import {
 import blockIcon from "@tableberg/shared/icons/tableberg";
 
 export interface ToggleBlockTypes {
-    tabs: Array<{
-        title: string;
-        content: string;
-    }>;
+    tabs: Array<string>;
     defaultActiveTabIndex: number;
     alignment: string;
     gap: string;
@@ -156,10 +153,7 @@ function edit({
         setAttributes({
             tabs: [
                 ...tabs,
-                {
-                    title: `Untitled Tab`,
-                    content: "",
-                },
+                `Untitled Tab`,
             ],
         });
     }
@@ -204,10 +198,10 @@ function edit({
                     >
                         <TextControl
                             label="Current Tab Title"
-                            value={tabs[activeTab].title}
+                            value={tabs[activeTab]}
                             onChange={(val) => {
                                 const newTabs = [...tabs];
-                                newTabs[activeTab].title = val;
+                                newTabs[activeTab] = val;
                                 setAttributes({
                                     tabs: newTabs,
                                 });
@@ -384,40 +378,36 @@ function edit({
                     className={`tab-headings ${alignment}`}
                     style={getSpacingUnderTabs(attributes)}
                 >
-                    {tabs.map((_, i) => {
-                        const isActive = activeTab === i;
-                        return (
-                            <div
-                                className={
-                                    `tab-heading ${isActive ? "active" : ""}`
-                                }
-                                onClick={() => {
-                                    setActiveTab(i);
-                                }}
-                                data-toolbar-trigger="true"
-                                style={
-                                    isActive
-                                        ? getActiveTabHeadingStyles(attributes)
-                                        : getInactiveTabHeadingStyles(
-                                            attributes,
-                                        )
-                                }
-                            >
-                                <p tabIndex={0}>
-                                    {tabs[i].title}
-                                </p>
-                                <button
-                                    className="tab-heading-remove"
-                                    onClick={() => {
-                                        setDeleteIndex(i);
-                                        setDeleteConfirmDialogIsOpen(true);
-                                    }}
-                                >
-                                    <Icon icon={reset} />
-                                </button>
-                            </div>
-                        );
-                    })}
+                    {tabs.map((tab, i) => <div
+                        className={
+                            `tab-heading ${activeTab === i ? "active" : ""}`
+                        }
+                        onClick={() => {
+                            setActiveTab(i);
+                        }}
+                        data-toolbar-trigger="true"
+                        style={
+                            activeTab === i
+                                ? getActiveTabHeadingStyles(attributes)
+                                : getInactiveTabHeadingStyles(
+                                    attributes,
+                                )
+                        }
+                    >
+                        <p tabIndex={0}>
+                            {tab}
+                        </p>
+                        <button
+                            className="tab-heading-remove"
+                            onClick={() => {
+                                setDeleteIndex(i);
+                                setDeleteConfirmDialogIsOpen(true);
+                            }}
+                        >
+                            <Icon icon={reset} />
+                        </button>
+                    </div>)}
+
                     {deleteConfirmDialogIsOpen && (
                         <ConfirmDialog
                             isOpen={deleteConfirmDialogIsOpen}
