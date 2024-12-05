@@ -5,7 +5,7 @@ import {
     InnerBlocks,
     InspectorControls,
 } from "@wordpress/block-editor";
-import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
+import { BlockEditProps, BlockInstance, registerBlockType } from "@wordpress/blocks";
 import metadata from "./block.json";
 import { useSelect, useDispatch } from "@wordpress/data";
 import { createBlock } from "@wordpress/blocks";
@@ -176,6 +176,14 @@ function edit({
             });
         }
     }
+
+    function cssTemplate({ clientId }: BlockInstance, i: number) {
+        return `
+        #block-${clientId} {
+            display: ${activeTab === i ? "block" : "none"};
+        }`;
+    }
+
     return (
         <div
             {...blockProps}
@@ -427,17 +435,11 @@ function edit({
                         <Button icon={plus} onClick={addTabHandler} />
                     </div>}
                 </nav>
+                <style>
+                    {innerBlocks?.map(cssTemplate).join("\n")}
+                </style>
                 <div className="tab-content">
                     <div>
-                        <style>
-                            {innerBlocks
-                                ?.map((block, index) => {
-                                    return `#block-${block.clientId
-                                        } {display: ${activeTab === index ? "block" : "none"
-                                        };}`;
-                                })
-                                .join("\n")}
-                        </style>
                         <div>{children}</div>
                     </div>
                 </div>
