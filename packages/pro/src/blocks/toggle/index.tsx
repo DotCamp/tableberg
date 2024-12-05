@@ -91,6 +91,7 @@ function edit({
     clientId,
     attributes,
     setAttributes,
+    isSelected
 }: BlockEditProps<ToggleBlockTypes>) {
     const blockProps = useBlockProps();
     const { children, ...innerBlocksProps } = useInnerBlocksProps(blockProps, {
@@ -422,9 +423,9 @@ function edit({
                         </ConfirmDialog>
                     )}
 
-                    <div className=" tab-heading-add">
+                    {isSelected && <div className="tab-heading-add">
                         <Button icon={plus} onClick={addTabHandler} />
-                    </div>
+                    </div>}
                 </nav>
                 <div className="tab-content">
                     <div>
