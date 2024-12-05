@@ -45,7 +45,6 @@ import {
 import blockIcon from "@tableberg/shared/icons/tableberg";
 
 export interface ToggleBlockTypes {
-    activeTab: number;
     tabs: Array<{
         title: string;
         content: string;
@@ -109,7 +108,6 @@ function edit({
     });
 
     const {
-        activeTab,
         tabs,
         alignment,
         defaultActiveTabIndex,
@@ -120,6 +118,8 @@ function edit({
         inactiveTabBackgroundColor,
         tabBorderRadius,
     } = attributes;
+
+    const [activeTab, setActiveTab] = useState(defaultActiveTabIndex);
 
     const { innerBlocks, innerBlocksLength } = useSelect(
         (select) => {
@@ -154,8 +154,8 @@ function edit({
             false,
         );
 
+        setActiveTab(innerBlocksLength!);
         setAttributes({
-            activeTab: innerBlocksLength,
             tabs: [
                 ...tabs,
                 {
@@ -172,9 +172,9 @@ function edit({
 
             const newTabs = [...tabs.slice(0, i), ...tabs.slice(i + 1)];
 
+            setActiveTab(0);
             setAttributes({
                 tabs: newTabs,
-                activeTab: 0,
             });
         }
     }
@@ -413,7 +413,7 @@ function edit({
                                     isActive ? "active" : ""
                                 }`}
                                 onClick={() => {
-                                    setAttributes({ activeTab: i });
+                                    setActiveTab(i);
                                 }}
                                 data-toolbar-trigger="true"
                                 style={

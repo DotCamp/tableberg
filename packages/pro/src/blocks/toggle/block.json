@@ -10,10 +10,6 @@
     "keywords": ["Tabs", "Tabbed Interface", "Table", "Layout"],
     "supports": {},
     "attributes": {
-        "activeTab": {
-            "type": "number",
-            "default": 0
-        },
         "tabs": {
             "type": "array",
             "default": [
@@ -33,7 +29,7 @@
         },
         "defaultActiveTabIndex": {
             "type": "number",
-            "default": 1
+            "default": 0
         },
         "alignment": {
             "type": "string",
