@@ -14,7 +14,7 @@ class Toggle
 
     public function __construct()
     {
-        add_action("init", [$this, "register_block"]);
+        // add_action("init", [$this, "register_block"]);
     }
 
     private function generate_tab_contianer_styles($activeBackground, $activeText)
