@@ -1,0 +1,19 @@
+ //device resolution breakpoints
+$screen-sm: 640px;
+$screen-md: 768px;
+$screen-lg: 1024px;
+$screen-xl: 1280px;
+$screen-2xl: 1536px;
+
+@mixin screen-min($min) {
+  @media screen and (min-width: $min + 1) {
+    @content;
+  }
+}
+
+@mixin screen-max($max) {
+  @media screen and (max-width: $max - 1) {
+    @content;
+  }
+}
+

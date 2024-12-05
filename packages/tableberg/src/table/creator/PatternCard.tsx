@@ -47,55 +47,42 @@ const PatternCard: React.FC<PatternCardProps> = ({
 		// eslint-disable-next-line jsx-a11y/interactive-supports-focus,jsx-a11y/click-events-have-key-events
 		<div
 			role={'button'}
-			className={classNames({
-				'tableberg-pattern-library-preview': true,
-				'tableberg-pattern-library-preview-upsell': pattern.isUpsell,
-			})}
+			className={'tableberg-pattern-library-card'}
 			onClick={() =>
 				pattern.isUpsell
 					? setUpsell(pattern.name.substring(17))
 					: onSelect(pattern.blocks[0])
 			}
 		>
-			<div className={'tableberg-pattern-library-preview-item'}>
-				{isBusy && (
-					<div
-						className={
-							'tableberg-pattern-library-preview-item-busy'
-						}
-					>
-						<Spinner
-							style={{
-								width: '50px',
-								height: '50px',
-							}}
-							onPointerEnterCapture={undefined}
-							onPointerLeaveCapture={undefined}
+			<div className={'tableberg-pattern-library-card-preview'}>
+				<InView>
+					{useImagePreview ? (
+						<img
+							alt={pattern.title}
+							className={
+								'tableberg-pattern-library-card-preview-image'
+							}
+							onError={handleImageError}
+							onLoad={handleImageLoad}
+							src={pattern.screenshotUrl}
 						/>
-					</div>
-				)}
-				<div className={'tableberg-pattern-library-preview-item-view'}>
-					<InView>
-						{useImagePreview ? (
-							<img
-								alt={pattern.title}
-								className={
-									'tableberg-pattern-library-preview-item-view-image'
-								}
-								onError={handleImageError}
-								onLoad={handleImageLoad}
-								src={pattern.screenshotUrl}
-							/>
-						) : (
-							<BlockPreview
-								blocks={pattern.blocks}
-								viewportWidth={pattern.viewportWidth}
-							/>
-						)}
-					</InView>
-				</div>
+					) : (
+						<BlockPreview
+							blocks={pattern.blocks}
+							viewportWidth={pattern.viewportWidth}
+						/>
+					)}
+				</InView>
 			</div>
-			<p>{pattern.title}</p>
+			<div className={'tableberg-pattern-library-card-info'}>
+				<div className={'tableberg-pattern-library-card-info-header'}>
+					{pattern.title}
+				</div>
+
+				<div
+					className={'tableberg-pattern-library-card-info-footer'}
+				></div>
+			</div>
 		</div>
 	);
 };

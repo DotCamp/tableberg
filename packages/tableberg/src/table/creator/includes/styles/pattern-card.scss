@@ -1,0 +1,16 @@
+.tableberg-pattern-library-card {
+  display: grid;
+  grid-template: 'preview' auto 'info' auto/ 1fr;
+  overflow: hidden;
+
+  &-preview {
+    grid-area: preview;
+    overflow: hidden;
+    min-height: 270px;
+    aspect-ratio: 450/270;
+  }
+
+  &-info {
+    grid-area: info;
+  }
+}

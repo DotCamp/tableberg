@@ -1,3 +1,8 @@
+@import "./includes/styles/pattern-card";
+@import "../../common";
+
+
+
 .tableberg-table-creator {
 
     border: 1px solid black;
@@ -45,7 +50,7 @@
             font-size: 13px;
         }
 
-        
+
         &.tableberg-upcoming {
             position: relative;
             cursor: not-allowed;
@@ -224,6 +229,22 @@
     }
 
     &-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      grid-template-rows: auto;
+      grid-gap: 2rem;
+      padding: 2rem;
+
+        @include screen-min($screen-lg) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include screen-min($screen-2xl) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    &-grid-legacy {
         padding: 10px;
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -231,7 +252,7 @@
         gap: 10px;
     }
 
-    &-preview {
+    &-preview-legacy {
         cursor: pointer;
         position: relative;
         display: flex;
