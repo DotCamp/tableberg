@@ -1,11 +1,9 @@
-import classNames from 'classnames';
-import { Spinner } from '@wordpress/components';
 import InView from '../../components/InView';
 // @ts-ignore
 import { BlockPreview } from '@wordpress/block-editor';
 import type { BlockInstance } from '@wordpress/blocks';
-import { useEffect, useState } from 'react';
-import Pattern from './includes/Pattern';
+import { useEffect, useState, type FC } from 'react';
+import type Pattern from './includes/Pattern';
 
 interface PatternCardProps {
 	pattern: Pattern;
@@ -22,7 +20,7 @@ interface PatternCardProps {
  * @param props.onSelect  Pattern selection handler.
  * @class
  */
-const PatternCard: React.FC<PatternCardProps> = ({
+const PatternCard: FC<PatternCardProps> = ({
 	pattern,
 	setUpsell,
 	onSelect,

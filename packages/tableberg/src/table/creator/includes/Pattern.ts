@@ -7,9 +7,10 @@ export interface PatternOptions {
 	blocks: BlockInstance[];
 	viewportWidth: number;
 	tablebergPatternScreenshot: false | string;
+	categories: string[];
 }
 
-interface PatternType
+export interface PatternType
 	extends Omit<PatternOptions, 'tablebergPatternScreenshot'> {
 	screenshotUrl: string | undefined;
 }
@@ -28,6 +29,7 @@ class Pattern implements PatternType {
 	isUpsell!: boolean;
 	blocks!: BlockInstance[];
 	viewportWidth!: number;
+	categories!: string[];
 
 	constructor(options: PatternOptions) {
 		Object.assign(this, options);

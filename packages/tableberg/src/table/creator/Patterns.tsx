@@ -19,7 +19,7 @@ import type { BlockInstance } from '@wordpress/blocks';
 import { UpsellPatternsModal } from '../../components/UpsellModal';
 import { createPortal } from 'react-dom';
 import PatternCard from './PatternCard';
-import Pattern from './includes/Pattern';
+import Pattern, { PatternOptions } from './includes/Pattern';
 
 interface PatternLibraryProps {
 	onClose: () => void;
@@ -29,7 +29,7 @@ interface PatternLibraryProps {
 function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 	const [search, setSearch] = useState('');
 	const [categoryFilter, setCategoryFilter] = useState('');
-	const [pageItems, setPageItems] = useState<any[]>([]);
+	const [pageItems, setPageItems] = useState<readonly Pattern[]>([]);
 
 	const [upsell, setUpsell] = useState<string | null>(null);
 
@@ -56,8 +56,30 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 			}
 
 			pattern.isUpsell = pattern.name.indexOf('/upsell-') > -1;
+			const {
+				name,
+				title,
+				isUpsell,
+				blocks,
+				viewportWidth,
+				tablebergPatternScreenshot,
+				categories: categorySlugs,
+			}: PatternOptions = pattern;
 
-			availablePatterns.push(new Pattern(pattern));
+			availablePatterns.push(
+				new Pattern({
+					name,
+					title,
+					isUpsell,
+					blocks,
+					viewportWidth,
+					tablebergPatternScreenshot,
+					categories: categorySlugs.map((cSlug: string) => {
+						const targetCatLabel = catTitleMap.get(cSlug);
+						return targetCatLabel ?? cSlug;
+					}),
+				})
+			);
 
 			pattern.categories.forEach((pCat: any) => {
 				if (pCat === 'tableberg') {
@@ -168,6 +190,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 						)}
 						<div className="tableberg-pattern-library-grid">
 							{pageItems
+								// TODO [ErdemBircan] remove after implementation
 								.filter((pT) => pT.isUpsell)
 								.map((pattern) => (
 									<PatternCard
