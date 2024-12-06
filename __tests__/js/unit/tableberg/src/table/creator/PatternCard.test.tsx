@@ -76,7 +76,7 @@ describe('PatternCard component', () => {
 			/>
 		);
 
-		const cardElement = screen.getByRole('button');
+		const cardElement = screen.getByRole('gridcell');
 		const user = userEvent.setup();
 		await user.click(cardElement);
 
@@ -101,12 +101,15 @@ describe('PatternCard component', () => {
 			/>
 		);
 
-		const cardElement = screen.getByRole('button');
+		const cardElement = screen.getByRole('gridcell');
 		const user = userEvent.setup();
 		await user.click(cardElement);
 
 		expect(selectCallback).not.toHaveBeenCalled();
 		expect(upsellCallback).toHaveBeenCalled();
+		expect(upsellCallback).toHaveBeenCalledWith(
+			testPatternOptions.name.replace(/^tableberg\/upsell-/, '')
+		);
 	});
 	it.todo('should render skeleton layout when component is busy');
 });

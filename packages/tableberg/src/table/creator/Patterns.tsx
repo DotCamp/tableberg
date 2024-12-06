@@ -188,7 +188,10 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 								/>
 							</div>
 						)}
-						<div className="tableberg-pattern-library-grid">
+						<div
+							role={'grid'}
+							className="tableberg-pattern-library-grid"
+						>
 							{pageItems
 								// TODO [ErdemBircan] remove after implementation
 								.filter((pT) => pT.isUpsell)

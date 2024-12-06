@@ -33,24 +33,38 @@ const PatternCard: FC<PatternCardProps> = ({
 		setIsBusy(false);
 	};
 
-	useEffect(() => {
-		setUseImagePreview(pattern.screenshotUrl !== undefined);
-	}, [pattern]);
-
 	const handleImageLoad = () => {
 		setIsBusy(false);
 	};
 
+	/**
+	 * Card selection handler.
+	 */
+	const cardSelectionHandler = () => {
+		const match = pattern.name.match(/^tableberg\/upsell-(.*)$/);
+
+		if (pattern.isUpsell && match) {
+			setUpsell(match[1]);
+		} else {
+			onSelect(pattern.blocks[0]);
+		}
+	};
+
+	useEffect(() => {
+		setUseImagePreview(pattern.screenshotUrl !== undefined);
+	}, [pattern]);
+
 	return (
-		// eslint-disable-next-line jsx-a11y/interactive-supports-focus,jsx-a11y/click-events-have-key-events
 		<div
-			role={'button'}
+			role={'gridcell'}
+			tabIndex={0}
 			className={'tableberg-pattern-library-card'}
-			onClick={() =>
-				pattern.isUpsell
-					? setUpsell(pattern.name.substring(17))
-					: onSelect(pattern.blocks[0])
-			}
+			onClick={cardSelectionHandler}
+			onKeyDown={(event) => {
+				if (event.key === 'Enter') {
+					cardSelectionHandler();
+				}
+			}}
 		>
 			<div className={'tableberg-pattern-library-card-preview'}>
 				<InView>
