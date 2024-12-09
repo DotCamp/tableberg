@@ -14,38 +14,7 @@ class Toggle
 
     public function __construct()
     {
-        // add_action("init", [$this, "register_block"]);
-    }
-
-    private function generate_tab_contianer_styles($activeBackground, $activeText)
-    {
-        return '--tableberg-tab-active-background-color: ' . esc_attr($activeBackground) . ';
-                        --tableberg-tab-active-text-color: ' . esc_attr($activeText) . ';';
-    }
-
-    private function get_border_radius_css($input)
-    {
-        if (preg_match('/var\(--.*--(\d+)\)/', $input, $matches)) {
-            return $matches[1] . 'px';
-        }
-        return $input;
-    }
-
-    private function get_style($gap, $borderRadius, $activeBackground, $activeText, $inactiveBackground, $inactiveText)
-    {
-        $borderRadiusCss = $this->get_border_radius_css($borderRadius);
-        return '<style>
-        .tab-headings { margin-bottom: ' . esc_attr($gap) . '; }
-        .tab-heading { border-radius: ' . esc_attr($borderRadiusCss) . '; }
-        .tab-heading.active {
-            background-color: ' . esc_attr($activeBackground) . ';
-            color: ' . esc_attr($activeText) . ';
-        }
-        .tab-heading {
-            background-color: ' . esc_attr($inactiveBackground) . ';
-            color: ' . esc_attr($inactiveText) . ';
-        }
-        </style>';
+        add_action("init", [$this, "register_block"]);
     }
 
     public function render_toggle_block($attributes, $content)
@@ -58,26 +27,33 @@ class Toggle
         $activeText = isset($attributes['activeTabTextColor']) ? $attributes['activeTabTextColor'] : '#ffffff';
         $inactiveText = isset($attributes['inactiveTabTextColor']) ? $attributes['inactiveTabTextColor'] : '#333333';
 
-        $style = $this->get_style($gap, $borderRadius, $activeBackground, $activeText, $inactiveBackground, $inactiveText);
-
-        $container_styles = $this->generate_tab_contianer_styles($activeBackground, $inactiveBackground, $activeText, $inactiveText, $borderRadius);
-
-        $output = '<div class="tab-block" style="' . esc_attr($container_styles) . '">';
-        $output .= $style;
-        $output .= '<nav class="tab-headings ' . esc_attr($alignment_class) . '" style="margin-bottom: ' . esc_attr($gap) . ';">';
+        $output = '<div
+            class="tab-block"
+            data-active-background-color="' . esc_attr($activeBackground) . '"
+            data-active-color="' . esc_attr($activeText) . '"
+            data-background-color="' . esc_attr($inactiveBackground) . '"
+            data-color="' . esc_attr($inactiveText) . '"
+        >';
+        $output .= '<nav
+            class="tab-headings ' . esc_attr($alignment_class) . '"
+            style="margin-bottom: ' . esc_attr($gap) . ';"
+        >';
 
         $defaultActiveTabIndex = $attributes['defaultActiveTabIndex'];
 
-        foreach ($attributes["tabs"] as $index => $headings) {
+        foreach ($attributes["tabs"] as $index => $title) {
             $activeClass = ((int)$index === (int) $defaultActiveTabIndex) ? 'active' : '';
 
-            $output .= '<div class="tab-heading ' . esc_attr($activeClass) . '" data-index="' . esc_attr($index) .  '">
-                        <p>' . esc_html($headings["title"]) . "</p>
-                    </div>";
+            $output .= '<div
+                    class="tab-heading ' . esc_attr($activeClass) . '"
+                    data-index="' . esc_attr($index) .  '"
+                    style="border-radius: ' . esc_attr($borderRadius) . ';"
+                >
+                    <p>' . esc_html($title) . "</p>
+                </div>";
         }
 
         $output .= "</nav>";
-
 
         $output .= '<div class="tab-content" style="display:block;">';
         $output .= $content;
