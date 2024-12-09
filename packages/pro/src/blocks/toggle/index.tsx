@@ -164,11 +164,6 @@ function edit({
         });
     }
 
-    const styles: Record<string, string> = {
-        "--tableberg-tab-active-text-color": activeTabTextColor,
-        "--tableberg-tab-active-background-color": activeTabBackgroundColor,
-    };
-
     function cssTemplate({ clientId }: BlockInstance, i: number) {
         return `
             #block-${clientId} {
@@ -367,7 +362,7 @@ function edit({
     </>);
 
     return (
-        <div {...blockProps} style={styles} className="toggle-block">
+        <div {...blockProps} className="toggle-block">
             {SidebarControls}
             <div {...innerBlocksProps}>
                 <nav
