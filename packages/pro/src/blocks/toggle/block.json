@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "version": "0.0.1",
+    "name": "tableberg-pro/toggle",
+    "allowedBlocks": ["tableberg/table"],
+    "title": "Toggle for Tableberg",
+    "category": "layout",
+    "description": "Create a tabbed interface where each tab contains tables with full functionality.",
+    "keywords": ["Tabs", "Tabbed Interface", "Table", "Layout"],
+    "supports": {},
+    "attributes": {
+        "tabs": {
+            "type": "array",
+            "default": [
+                "Tab 1",
+                "Tab 2",
+                "Tab 3"
+            ]
+        },
+        "defaultActiveTabIndex": {
+            "type": "number",
+            "default": 0
+        },
+        "alignment": {
+            "type": "string",
+            "default": "left"
+        },
+        "gap": {
+            "type": "string",
+            "default": "0"
+        },
+        "tabBorderRadius": {
+            "type": "string",
+            "default": "var:preset|spacing|5"
+        },
+        "activeTabTextColor": {
+            "type": "string",
+            "default": "white"
+        },
+        "activeTabBackgroundColor": {
+            "type": "string",
+            "default": "#671feb"
+        },
+        "inactiveTabTextColor": {
+            "type": "string",
+            "default": "white"
+        },
+        "inactiveTabBackgroundColor": {
+            "type": "string",
+            "default": "black"
+        }
+    },
+    "example": {},
+    "viewScript": "tableberg-pro-frontend",
+    "editorScript": "tableberg-pro-block-script",
+    "editorStyle": "tableberg-pro-editor-style",
+    "style": "tableberg-pro-frontend-style",
+    "textdomain": "tableberg-pro"
+}

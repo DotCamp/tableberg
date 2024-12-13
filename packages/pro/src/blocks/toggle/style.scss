@@ -1,0 +1,47 @@
+.tab-headings {
+    display: flex;
+    padding: 8px 0;
+    gap: 16px;
+    flex-wrap: noWrap;
+}
+
+.tab-headings.left {
+    justify-content: flex-start;
+}
+
+.tab-headings.center {
+    justify-content: center;
+}
+
+.tab-headings.right {
+    justify-content: flex-end;
+}
+
+.tab-headings.full {
+    justify-content: space-between;
+    width: 100%;
+}
+
+.tab-heading {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+    position: relative;
+}
+
+.tab-headings.full .tab-heading {
+    width: 100%;
+    text-align: center;
+}
+
+.tab-heading p {
+    padding: 3px;
+    margin: 0px 10px;
+    text-align: center;
+    font-size: 1rem;
+    width: auto;
+    white-space: nowrap;
+    display: inline-block;
+}
