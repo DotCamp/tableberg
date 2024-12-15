@@ -1,16 +1,80 @@
+@use 'sass:math';
+@import '../../../../style-inc/colors';
+@import '../../../../style-inc/common';
+
+
+$preview-height: 270px;
+$preview-ratio: math.div(450, $preview-height) * 1px;
+$text-color: $gray-800;
+$default-border-radius: 10px;
+
+
+%pattern-card-default-border-radius {
+  border-radius: $default-border-radius;
+}
+
 .tableberg-pattern-library-card {
+  @extend %pattern-card-default-border-radius;
+  @extend %text-base;
+
   display: grid;
   grid-template: 'preview' auto 'info' auto/ 1fr;
   overflow: hidden;
+  border: 1px solid $gray-300;
+  color: $text-color;
 
   &-preview {
     grid-area: preview;
     overflow: hidden;
-    min-height: 270px;
-    aspect-ratio: 450/270;
+    min-height: $preview-height;
+    aspect-ratio: $preview-ratio;
+    background-color: $gray-200;
+    padding: 1rem;
+
+    &-image_wrapper {
+      @extend %size-full;
+      @extend %flex-center-all;
+
+      &-image {
+        @extend %pattern-card-default-border-radius;
+        @extend %shadow-md;
+
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        object-position: center;
+        overflow: hidden;
+      }
+    }
   }
 
   &-info {
     grid-area: info;
+    padding: 0 1rem;
+
+    &-header {
+      @extend %text-sm;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+
+      &-pro {
+        @extend %font-bold;
+
+        color: $logo-color;
+      }
+    }
+
+    &-footer {
+      @extend %text-xs;
+
+      padding-bottom: 0.5rem;
+
+      &-tags {
+        color: $gray-500;
+      }
+    }
   }
 }

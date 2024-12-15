@@ -67,12 +67,16 @@ const PatternCard: FC<PatternCardProps> = ({
 			}}
 		>
 			<div className={'tableberg-pattern-library-card-preview'}>
-				<InView>
+				<InView
+					classNames={[
+						'tableberg-pattern-library-card-preview-image_wrapper',
+					]}
+				>
 					{useImagePreview ? (
 						<img
 							alt={pattern.title}
 							className={
-								'tableberg-pattern-library-card-preview-image'
+								'tableberg-pattern-library-card-preview-image_wrapper-image'
 							}
 							onError={handleImageError}
 							onLoad={handleImageLoad}
@@ -88,12 +92,32 @@ const PatternCard: FC<PatternCardProps> = ({
 			</div>
 			<div className={'tableberg-pattern-library-card-info'}>
 				<div className={'tableberg-pattern-library-card-info-header'}>
-					{pattern.title}
+					<div
+						className={
+							'tableberg-pattern-library-card-info-header-title'
+						}
+					>
+						{pattern.title}
+					</div>
+					{pattern.isUpsell && (
+						<div
+							className={
+								'tableberg-pattern-library-card-info-header-pro'
+							}
+						>
+							PRO
+						</div>
+					)}
 				</div>
-
-				<div
-					className={'tableberg-pattern-library-card-info-footer'}
-				></div>
+				<div className={'tableberg-pattern-library-card-info-footer'}>
+					<div
+						className={
+							'tableberg-pattern-library-card-info-footer-tags'
+						}
+					>
+						footer
+					</div>
+				</div>
 			</div>
 		</div>
 	);

@@ -6,6 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 interface InViewProps {
 	children: React.ReactNode;
 	viewRatio?: number;
+	classNames?: string[];
 }
 
 /**
@@ -15,14 +16,19 @@ interface InViewProps {
  * @param props.children        Component to render when in view.
  * @param [props.viewRatio=0.1] Ratio of the element that needs to be in view to trigger the render. (1.0 being fully in view)
  *
+ * @param [props.classNames=[]] Additional class names to apply to the wrapper.
  * @class
  */
-const InView: React.FC<InViewProps> = ({ children, viewRatio = 0.1 }) => {
+const InView: React.FC<InViewProps> = ({
+	children,
+	viewRatio = 0.1,
+	classNames = [],
+}) => {
 	const [isInView, setIsInView] = useState(false);
 
 	const wrapperRef = useRef(null);
 
-	// component observer initialization
+	// Component observer initialization.
 	const observer = useMemo(
 		() =>
 			new IntersectionObserver(
@@ -39,6 +45,12 @@ const InView: React.FC<InViewProps> = ({ children, viewRatio = 0.1 }) => {
 		[viewRatio]
 	);
 
+	// Class list for the wrapper.
+	const classList = useMemo(
+		() => ['tableberg-in-view-wrapper', ...classNames].join(' '),
+		[classNames]
+	);
+
 	useEffect(() => {
 		if (wrapperRef.current) {
 			observer.observe(wrapperRef.current);
@@ -53,7 +65,7 @@ const InView: React.FC<InViewProps> = ({ children, viewRatio = 0.1 }) => {
 	}, [observer, isInView]);
 
 	return (
-		<div className={'tableberg-in-view-wrapper'} ref={wrapperRef}>
+		<div className={classList} ref={wrapperRef}>
 			{isInView && children}
 		</div>
 	);

@@ -1,0 +1,66 @@
+//device resolution breakpoints
+$screen-sm: 640px;
+$screen-md: 768px;
+$screen-lg: 1024px;
+$screen-xl: 1280px;
+$screen-2xl: 1536px;
+
+
+@mixin screen-min($min) {
+  @media screen and (min-width: $min + 1) {
+    @content;
+  }
+}
+
+@mixin screen-max($max) {
+  @media screen and (max-width: $max - 1) {
+    @content;
+  }
+}
+
+%shadow-md {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+%filter-shadow-md {
+  filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
+}
+
+
+%size-full {
+  width: 100%;
+  height: 100%;
+}
+
+%flex-center-all {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+%text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+%text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+%text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+%font-normal {
+  font-weight: 400;
+}
+
+%font-medium {
+  font-weight: 500;
+}
+
+%font-bold {
+  font-weight: 700;
+}
