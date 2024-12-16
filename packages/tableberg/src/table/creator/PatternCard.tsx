@@ -3,6 +3,8 @@ import InView from '../../components/InView';
 import { BlockPreview } from '@wordpress/block-editor';
 import type { BlockInstance } from '@wordpress/blocks';
 import { useEffect, useState, type FC } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTags } from '@fortawesome/free-solid-svg-icons';
 import type Pattern from './includes/Pattern';
 
 interface PatternCardProps {
@@ -115,7 +117,20 @@ const PatternCard: FC<PatternCardProps> = ({
 							'tableberg-pattern-library-card-info-footer-tags'
 						}
 					>
-						footer
+						<div
+							className={
+								'tableberg-pattern-library-card-info-footer-tags-icon'
+							}
+						>
+							<FontAwesomeIcon icon={faTags} />
+						</div>
+						<div
+							className={
+								'tableberg-pattern-library-card-info-footer-tags-listing'
+							}
+						>
+							{pattern.categories.join(', ')}
+						</div>
 					</div>
 				</div>
 			</div>

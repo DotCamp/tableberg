@@ -73,7 +73,16 @@ $default-border-radius: 10px;
       padding-bottom: 0.5rem;
 
       &-tags {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
         color: $gray-500;
+        text-transform: capitalize;
+        gap: 0.375rem;
+
+        &-icon {
+          font-size: 125%;
+        }
       }
     }
   }
