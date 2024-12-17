@@ -39,6 +39,8 @@ const PatternCard: FC<PatternCardProps> = ({
 		setIsBusy(false);
 	};
 
+	const ariaLabelId = `pattern-card-${pattern.name}`;
+
 	/**
 	 * Card selection handler.
 	 */
@@ -59,6 +61,7 @@ const PatternCard: FC<PatternCardProps> = ({
 	return (
 		<div
 			role={'gridcell'}
+			aria-labelledby={ariaLabelId}
 			tabIndex={0}
 			className={'tableberg-pattern-library-card'}
 			onClick={cardSelectionHandler}
@@ -98,6 +101,7 @@ const PatternCard: FC<PatternCardProps> = ({
 						className={
 							'tableberg-pattern-library-card-info-header-title'
 						}
+						id={ariaLabelId}
 					>
 						{pattern.title}
 					</div>
