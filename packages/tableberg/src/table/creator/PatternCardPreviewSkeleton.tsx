@@ -11,7 +11,9 @@ import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 const PatternCardPreviewSkeleton: FC = () => {
 	return (
 		<div className={'tableberg-pattern-library-card-skeleton-preview'}>
-			<FontAwesomeIcon icon={faEyeSlash} />
+			<div className={'tableberg-pattern-library-card-skeleton-preview-icon'}>
+				<FontAwesomeIcon icon={faEyeSlash} />
+			</div>
 		</div>
 	);
 };

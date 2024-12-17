@@ -13,12 +13,17 @@
   border-radius: 10px;
   border: 1px solid $gray-300;
   color: $gray-300;
+
+  &-icon {
+    animation: skeleton-emphasis-color 0.5s ease-out infinite alternate;
+  }
 }
 
 .tableberg-pattern-library-card-skeleton-text {
   @extend %size-full;
 
   position: relative;
+
   &-overlay {
     position: absolute;
     top: 0;
@@ -26,5 +31,24 @@
     height: 100%;
     background-color: $gray-200;
     border-radius: 5px;
+    animation: skeleton-emphasis-bg 0.5s ease-out infinite alternate;
+  }
+}
+
+@keyframes skeleton-emphasis-bg {
+  0% {
+    background-color: $gray-100;
+  }
+  100% {
+    background-color: $gray-200;
+  }
+}
+
+@keyframes skeleton-emphasis-color {
+  0% {
+    color: $gray-50;
+  }
+  100% {
+    color: unset
   }
 }

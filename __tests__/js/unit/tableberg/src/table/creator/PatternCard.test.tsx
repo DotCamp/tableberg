@@ -44,6 +44,11 @@ const testPatternOptions: PatternOptions = {
 
 const patternObj = new Pattern(testPatternOptions);
 
+const notUpsellPattern = new Pattern({
+	...testPatternOptions,
+	isUpsell: false,
+});
+
 describe('PatternCard component', () => {
 	it('should render pattern screenshot image if an available one supplied via props', async () => {
 		const PatternCard =
@@ -67,12 +72,7 @@ describe('PatternCard component', () => {
 		expect(imageElement).not.toBeInTheDocument();
 		expect(fallbackRender).toBeInTheDocument();
 	});
-	it('should select card on click', async () => {
-		const notUpsellPattern = new Pattern({
-			...testPatternOptions,
-			isUpsell: false,
-		});
-
+	it('should select card on click if component is not busy', async () => {
 		const PatternCard =
 			require('@tableberg/src/table/creator/PatternCard').default;
 
@@ -86,13 +86,16 @@ describe('PatternCard component', () => {
 			/>
 		);
 
+		const imageElement = screen.getByAltText(testPatternOptions.title);
+		fireEvent.load(imageElement);
+
 		const cardElement = screen.getByRole('gridcell');
 		const user = userEvent.setup();
 		await user.click(cardElement);
 
 		expect(selectCallback).toHaveBeenCalled();
 	});
-	it('should set upsell for  selected card', async () => {
+	it('should set upsell for selected card if component is not busy', async () => {
 		const upsellPattern = new Pattern({
 			...testPatternOptions,
 		});
@@ -110,6 +113,9 @@ describe('PatternCard component', () => {
 				onSelect={selectCallback}
 			/>
 		);
+
+		const imageElement = screen.getByAltText(testPatternOptions.title);
+		fireEvent.load(imageElement);
 
 		const cardElement = screen.getByRole('gridcell');
 		const user = userEvent.setup();
@@ -196,5 +202,47 @@ describe('PatternCard component', () => {
 		expect(
 			screen.queryByTestId(skeletonPreviewMockTestId)
 		).toBeInTheDocument();
+	});
+	it('should suppress card selection event if it is a dummy', async () => {
+		const PatternCard =
+			require('@tableberg/src/table/creator/PatternCard').default;
+
+		const onSelectSpy = jest.fn();
+
+		render(
+			<PatternCard
+				pattern={notUpsellPattern}
+				setUpsell={jest.fn()}
+				onSelect={onSelectSpy}
+				isDummy={true}
+			/>
+		);
+
+		const cardElement = screen.getByRole('gridcell');
+		const user = userEvent.setup();
+		await user.click(cardElement);
+
+		expect(onSelectSpy).not.toHaveBeenCalled();
+	});
+	it('should suppress upsell event if it is a dummy', async () => {
+		const PatternCard =
+			require('@tableberg/src/table/creator/PatternCard').default;
+
+		const onUpsellSpy = jest.fn();
+
+		render(
+			<PatternCard
+				pattern={patternObj}
+				setUpsell={onUpsellSpy}
+				onSelect={jest.fn()}
+				isDummy={true}
+			/>
+		);
+
+		const cardElement = screen.getByRole('gridcell');
+		const user = userEvent.setup();
+		await user.click(cardElement);
+
+		expect(onUpsellSpy).not.toHaveBeenCalled();
 	});
 });

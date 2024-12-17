@@ -60,12 +60,13 @@ const PatternCard: FC<PatternCardProps> = ({
 	 * Card selection handler.
 	 */
 	const cardSelectionHandler = () => {
-		const match = pattern.name.match(/^tableberg\/upsell-(.*)$/);
-
-		if (pattern.isUpsell && match) {
-			setUpsell(match[1]);
-		} else {
-			onSelect(pattern.blocks[0]);
+		if (!isBusy && !isDummy) {
+			const match = pattern.name.match(/^tableberg\/upsell-(.*)$/);
+			if (pattern.isUpsell && match) {
+				setUpsell(match[1]);
+			} else {
+				onSelect(pattern.blocks[0]);
+			}
 		}
 	};
 
