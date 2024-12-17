@@ -234,7 +234,7 @@
     grid-template-columns: repeat(1, 1fr);
     grid-template-rows: auto;
     justify-items: center;
-    grid-gap: 2rem;
+    grid-gap: 3rem;
     padding: 2rem;
 
     @include screen-min($screen-lg) {

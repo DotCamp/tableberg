@@ -132,19 +132,20 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 	useEffect(() => {
 		if (patterns.length) {
 			setUseDummies(false);
-			if (!categoryFilter) {
-				setPageItems(patterns);
-				return;
-			}
 			const newPage: any = [];
 			patterns.forEach((pattern: any) => {
-				if (pattern.categorySlugs.includes(categoryFilter)) {
+				if (
+					(categoryFilter
+						? pattern.categorySlugs.includes(categoryFilter)
+						: true) &&
+					pattern.title.toLowerCase().includes(search.toLowerCase())
+				) {
 					newPage.push(pattern);
 				}
 			});
 			setPageItems(newPage);
 		}
-	}, [patterns, categoryFilter]);
+	}, [patterns, categoryFilter, search]);
 
 	return (
 		<Modal
