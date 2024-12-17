@@ -8,6 +8,7 @@ import { faTags } from '@fortawesome/free-solid-svg-icons';
 import type Pattern from './includes/Pattern';
 import PatternCardPreviewSkeleton from './PatternCardPreviewSkeleton';
 import ConditionalRenderer from './ConditionalRenderer';
+import PatternCardTextSkeleton from './PatternCardTextSkeleton';
 
 interface PatternCardProps {
 	pattern: Pattern;
@@ -124,17 +125,23 @@ const PatternCard: FC<PatternCardProps> = ({
 						}
 						id={ariaLabelId}
 					>
-						{pattern.title}
+						{isDummy ? (
+							<PatternCardTextSkeleton width={'MEDIUM'} />
+						) : (
+							pattern.title
+						)}
 					</div>
-					{pattern.isUpsell && (
-						<div
-							className={
-								'tableberg-pattern-library-card-info-header-pro'
-							}
-						>
-							PRO
-						</div>
-					)}
+					<ConditionalRenderer conditionToTest={!isDummy}>
+						{pattern.isUpsell && (
+							<div
+								className={
+									'tableberg-pattern-library-card-info-header-pro'
+								}
+							>
+								PRO
+							</div>
+						)}
+					</ConditionalRenderer>
 				</div>
 				<div className={'tableberg-pattern-library-card-info-footer'}>
 					<div
@@ -142,19 +149,25 @@ const PatternCard: FC<PatternCardProps> = ({
 							'tableberg-pattern-library-card-info-footer-tags'
 						}
 					>
-						<div
-							className={
-								'tableberg-pattern-library-card-info-footer-tags-icon'
-							}
-						>
-							<FontAwesomeIcon icon={faTags} />
-						</div>
+						<ConditionalRenderer conditionToTest={!isDummy}>
+							<div
+								className={
+									'tableberg-pattern-library-card-info-footer-tags-icon'
+								}
+							>
+								<FontAwesomeIcon icon={faTags} />
+							</div>
+						</ConditionalRenderer>
 						<div
 							className={
 								'tableberg-pattern-library-card-info-footer-tags-listing'
 							}
 						>
-							{pattern.categories.join(', ')}
+							{isDummy ? (
+								<PatternCardTextSkeleton width={'SMALL'} />
+							) : (
+								pattern.categories.join(', ')
+							)}
 						</div>
 					</div>
 				</div>

@@ -70,6 +70,10 @@ $preview-ratio: math.div($preview-width, $preview-height) * 1px;
       align-items: center;
       padding: 1rem 0;
 
+      &-title {
+        flex: 1;
+      }
+
       &-pro {
         @extend %font-bold;
 
@@ -92,6 +96,10 @@ $preview-ratio: math.div($preview-width, $preview-height) * 1px;
 
         &-icon {
           font-size: 125%;
+        }
+
+        &-listing {
+          flex: 1;
         }
       }
     }
