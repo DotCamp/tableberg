@@ -26,6 +26,14 @@ $preview-ratio: math.div($preview-width, $preview-height) * 1px;
   border: 1px solid $gray-300;
   color: $text-color;
   width: 100%;
+  cursor: pointer;
+  transition: 0.2s ease-out;
+
+  &:hover {
+    @extend %shadow-md;
+
+    transform: scale(1.02);
+  }
 
   &-preview {
     position: relative;
