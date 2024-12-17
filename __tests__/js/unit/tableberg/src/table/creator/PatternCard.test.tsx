@@ -176,4 +176,25 @@ describe('PatternCard component', () => {
 			screen.queryByTestId(skeletonPreviewMockTestId)
 		).not.toBeInTheDocument();
 	});
+	it('should render a dummy card if enabled', () => {
+		const PatternCard =
+			require('@tableberg/src/table/creator/PatternCard').default;
+
+		render(
+			<PatternCard
+				pattern={patternObj}
+				setUpsell={jest.fn()}
+				onSelect={jest.fn()}
+				isDummy={true}
+			/>
+		);
+
+		expect(
+			screen.queryByAltText(testPatternOptions.title)
+		).not.toBeInTheDocument();
+
+		expect(
+			screen.queryByTestId(skeletonPreviewMockTestId)
+		).toBeInTheDocument();
+	});
 });

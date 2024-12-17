@@ -12,32 +12,44 @@ interface PatternCardProps {
 	pattern: Pattern;
 	setUpsell: (patternName: string) => void;
 	onSelect: (block: BlockInstance) => void;
+	isDummy?: boolean;
 }
 
 /**
  * Pattern card component to display pattern related data and operations.
  *
- * @param props           Component properties.
- * @param props.pattern   Pattern data.
- * @param props.setUpsell Upsell setter.
- * @param props.onSelect  Pattern selection handler.
+ * @param props                 Component properties.
+ * @param props.pattern         Pattern data.
+ * @param props.setUpsell       Upsell setter.
+ * @param props.onSelect        Pattern selection handler.
+ * @param [props.isDummy=false] Dummy pattern flag. In this mode pattern card will be rendered as a dummy card.
  * @class
  */
 const PatternCard: FC<PatternCardProps> = ({
 	pattern,
 	setUpsell,
 	onSelect,
+	isDummy = false,
 }) => {
 	const [useImagePreview, setUseImagePreview] = useState(false);
 	const [isBusy, setIsBusy] = useState(true);
 
+	/**
+	 * Handle busy status.
+	 *
+	 * @param {boolean} status Busy status.
+	 */
+	const handleBusyStatus = (status: boolean) => {
+		setIsBusy(isDummy ? false : status);
+	};
+
 	const handleImageError = () => {
 		setUseImagePreview(false);
-		setIsBusy(false);
+		handleBusyStatus(false);
 	};
 
 	const handleImageLoad = () => {
-		setIsBusy(false);
+		handleBusyStatus(false);
 	};
 
 	const ariaLabelId = `pattern-card-${pattern.name}`;
@@ -74,30 +86,32 @@ const PatternCard: FC<PatternCardProps> = ({
 		>
 			<div className={'tableberg-pattern-library-card-preview'}>
 				{isBusy && <PatternCardPreviewSkeleton />}
-				<InView
-					classNames={[
-						'tableberg-pattern-library-card-preview-image_wrapper',
-					]}
-				>
-					{useImagePreview ? (
-						<img
-							data-tableberg-preview-loaded={!isBusy}
-							alt={pattern.title}
-							className={
-								'tableberg-pattern-library-card-preview-image_wrapper-image'
-							}
-							onError={handleImageError}
-							onLoad={handleImageLoad}
-							src={pattern.screenshotUrl}
-							role={'presentation'}
-						/>
-					) : (
-						<BlockPreview
-							blocks={pattern.blocks}
-							viewportWidth={pattern.viewportWidth}
-						/>
-					)}
-				</InView>
+				{!isDummy && (
+					<InView
+						classNames={[
+							'tableberg-pattern-library-card-preview-image_wrapper',
+						]}
+					>
+						{useImagePreview ? (
+							<img
+								data-tableberg-preview-loaded={!isBusy}
+								alt={pattern.title}
+								className={
+									'tableberg-pattern-library-card-preview-image_wrapper-image'
+								}
+								onError={handleImageError}
+								onLoad={handleImageLoad}
+								src={pattern.screenshotUrl}
+								role={'presentation'}
+							/>
+						) : (
+							<BlockPreview
+								blocks={pattern.blocks}
+								viewportWidth={pattern.viewportWidth}
+							/>
+						)}
+					</InView>
+				)}
 			</div>
 			<div className={'tableberg-pattern-library-card-info'}>
 				<div className={'tableberg-pattern-library-card-info-header'}>
