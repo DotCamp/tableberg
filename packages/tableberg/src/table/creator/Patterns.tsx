@@ -192,19 +192,14 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 							role={'grid'}
 							className="tableberg-pattern-library-grid"
 						>
-							{pageItems
-								// TODO [ErdemBircan] remove after implementation
-								.filter((pT) => pT.isUpsell)
-								.map((pattern) => (
-									<PatternCard
-										key={pattern.name}
-										pattern={pattern}
-										setUpsell={setUpsell}
-										onSelect={onSelect}
-										// TODO [ErdemBircan] remove after implementation
-										isDummy={true}
-									/>
-								))}
+							{pageItems.map((pattern) => (
+								<PatternCard
+									key={pattern.name}
+									pattern={pattern}
+									setUpsell={setUpsell}
+									onSelect={onSelect}
+								/>
+							))}
 						</div>
 					</div>
 				</div>

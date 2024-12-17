@@ -94,7 +94,7 @@ const PatternCard: FC<PatternCardProps> = ({
 				<ConditionalRenderer conditionToTest={!isDummy}>
 					<InView
 						classNames={[
-							'tableberg-pattern-library-card-preview-image_wrapper',
+							'tableberg-pattern-library-card-preview-wrapper',
 						]}
 					>
 						{useImagePreview ? (
@@ -102,7 +102,7 @@ const PatternCard: FC<PatternCardProps> = ({
 								data-tableberg-preview-loaded={!isBusy}
 								alt={pattern.title}
 								className={
-									'tableberg-pattern-library-card-preview-image_wrapper-image'
+									'tableberg-pattern-library-card-preview-wrapper-image'
 								}
 								onError={handleImageError}
 								onLoad={handleImageLoad}
@@ -110,10 +110,16 @@ const PatternCard: FC<PatternCardProps> = ({
 								role={'presentation'}
 							/>
 						) : (
-							<BlockPreview
-								blocks={pattern.blocks}
-								viewportWidth={pattern.viewportWidth}
-							/>
+							<div
+								className={
+									'tableberg-pattern-library-card-preview-wrapper-block_preview_wrapper'
+								}
+							>
+								<BlockPreview
+									blocks={pattern.blocks}
+									viewportWidth={pattern.viewportWidth}
+								/>
+							</div>
 						)}
 					</InView>
 				</ConditionalRenderer>
