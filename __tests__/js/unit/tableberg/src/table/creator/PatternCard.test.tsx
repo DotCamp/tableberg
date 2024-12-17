@@ -6,6 +6,7 @@ import Pattern, {
 import { userEvent } from '@testing-library/user-event';
 
 const blockPreviewMockTestId = 'block-preview-mock';
+const skeletonPreviewMockTestId = 'skeleton-mock';
 
 beforeAll(() => {
 	jest.mock('@wordpress/block-editor', () => ({
@@ -20,6 +21,15 @@ beforeAll(() => {
 			<div data-testid="in-view-mock">{children}</div>
 		),
 	}));
+
+	jest.mock('@tableberg/src/table/creator/PatternCardPreviewSkeleton', () => {
+		return {
+			__esModule: true,
+			default: () => (
+				<div data-testid={skeletonPreviewMockTestId}>Mock Skeleton</div>
+			),
+		};
+	});
 });
 
 const testPatternOptions: PatternOptions = {
@@ -35,7 +45,7 @@ const testPatternOptions: PatternOptions = {
 const patternObj = new Pattern(testPatternOptions);
 
 describe('PatternCard component', () => {
-	it('should render patter screenshot image if an available one supplied via props', async () => {
+	it('should render pattern screenshot image if an available one supplied via props', async () => {
 		const PatternCard =
 			require('@tableberg/src/table/creator/PatternCard').default;
 
@@ -111,5 +121,59 @@ describe('PatternCard component', () => {
 			testPatternOptions.name.replace(/^tableberg\/upsell-/, '')
 		);
 	});
-	it.todo('should render skeleton layout when component is busy');
+	it('should render skeleton preview layout while image is loading', () => {
+		const PatternCard =
+			require('@tableberg/src/table/creator/PatternCard').default;
+
+		render(
+			<PatternCard
+				pattern={patternObj}
+				setUpsell={jest.fn()}
+				onSelect={jest.fn()}
+			/>
+		);
+
+		expect(
+			screen.queryByTestId(skeletonPreviewMockTestId)
+		).toBeInTheDocument();
+	});
+	it('should remove skeleton preview layout after image is loaded', () => {
+		const PatternCard =
+			require('@tableberg/src/table/creator/PatternCard').default;
+
+		render(
+			<PatternCard
+				pattern={patternObj}
+				setUpsell={jest.fn()}
+				onSelect={jest.fn()}
+			/>
+		);
+
+		const imageElement = screen.getByAltText(testPatternOptions.title);
+		fireEvent.load(imageElement);
+
+		expect(
+			screen.queryByTestId(skeletonPreviewMockTestId)
+		).not.toBeInTheDocument();
+	});
+
+	it('should remove skeleton preview layout after image is not loaded due to error', () => {
+		const PatternCard =
+			require('@tableberg/src/table/creator/PatternCard').default;
+
+		render(
+			<PatternCard
+				pattern={patternObj}
+				setUpsell={jest.fn()}
+				onSelect={jest.fn()}
+			/>
+		);
+
+		const imageElement = screen.getByAltText(testPatternOptions.title);
+		fireEvent.error(imageElement);
+
+		expect(
+			screen.queryByTestId(skeletonPreviewMockTestId)
+		).not.toBeInTheDocument();
+	});
 });

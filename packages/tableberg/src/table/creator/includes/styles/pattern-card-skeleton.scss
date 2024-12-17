@@ -1,0 +1,16 @@
+@import '../../../../style-inc/common';
+@import '../../../../style-inc/colors';
+
+
+.tableberg-pattern-library-card-skeleton-preview {
+  @extend %flex-center-all;
+  @extend %shadow-md;
+  @extend %text-2xl;
+
+  position: absolute;
+  inset: 15%;
+  background-color: $white;
+  border-radius: 10px;
+  border: 1px solid $gray-300;
+  color: $gray-300;
+}

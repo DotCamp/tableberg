@@ -6,6 +6,7 @@ import { useEffect, useState, type FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTags } from '@fortawesome/free-solid-svg-icons';
 import type Pattern from './includes/Pattern';
+import PatternCardPreviewSkeleton from './PatternCardPreviewSkeleton';
 
 interface PatternCardProps {
 	pattern: Pattern;
@@ -72,6 +73,7 @@ const PatternCard: FC<PatternCardProps> = ({
 			}}
 		>
 			<div className={'tableberg-pattern-library-card-preview'}>
+				{isBusy && <PatternCardPreviewSkeleton />}
 				<InView
 					classNames={[
 						'tableberg-pattern-library-card-preview-image_wrapper',
@@ -79,6 +81,7 @@ const PatternCard: FC<PatternCardProps> = ({
 				>
 					{useImagePreview ? (
 						<img
+							data-tableberg-preview-loaded={!isBusy}
 							alt={pattern.title}
 							className={
 								'tableberg-pattern-library-card-preview-image_wrapper-image'
@@ -86,6 +89,7 @@ const PatternCard: FC<PatternCardProps> = ({
 							onError={handleImageError}
 							onLoad={handleImageLoad}
 							src={pattern.screenshotUrl}
+							role={'presentation'}
 						/>
 					) : (
 						<BlockPreview
