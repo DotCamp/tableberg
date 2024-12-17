@@ -8,6 +8,7 @@ export interface PatternOptions {
 	viewportWidth: number;
 	tablebergPatternScreenshot: false | string;
 	categories: string[];
+	categorySlugs: string[];
 }
 
 export interface PatternType
@@ -30,6 +31,7 @@ class Pattern implements PatternType {
 	blocks!: BlockInstance[];
 	viewportWidth!: number;
 	categories!: string[];
+	categorySlugs!: string[];
 
 	constructor(options: PatternOptions) {
 		Object.assign(this, options);

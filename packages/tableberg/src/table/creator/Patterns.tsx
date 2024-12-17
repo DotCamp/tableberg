@@ -40,6 +40,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 				viewportWidth: 0,
 				tablebergPatternScreenshot: '',
 				categories: ['tableberg'],
+				categorySlugs: ['tableberg'],
 			});
 			dummyPatterns.push(dummyPattern);
 		}
@@ -99,6 +100,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 						const targetCatLabel = catTitleMap.get(cSlug);
 						return targetCatLabel ?? cSlug;
 					}),
+					categorySlugs,
 				})
 			);
 
@@ -136,7 +138,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 			}
 			const newPage: any = [];
 			patterns.forEach((pattern: any) => {
-				if (pattern.categories.indexOf(categoryFilter) > -1) {
+				if (pattern.categorySlugs.includes(categoryFilter)) {
 					newPage.push(pattern);
 				}
 			});
