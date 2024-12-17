@@ -201,6 +201,8 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 										pattern={pattern}
 										setUpsell={setUpsell}
 										onSelect={onSelect}
+										// TODO [ErdemBircan] remove after implementation
+										isDummy={true}
 									/>
 								))}
 						</div>

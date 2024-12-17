@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTags } from '@fortawesome/free-solid-svg-icons';
 import type Pattern from './includes/Pattern';
 import PatternCardPreviewSkeleton from './PatternCardPreviewSkeleton';
+import ConditionalRenderer from './ConditionalRenderer';
 
 interface PatternCardProps {
 	pattern: Pattern;
@@ -85,8 +86,10 @@ const PatternCard: FC<PatternCardProps> = ({
 			}}
 		>
 			<div className={'tableberg-pattern-library-card-preview'}>
-				{isBusy && <PatternCardPreviewSkeleton />}
-				{!isDummy && (
+				<ConditionalRenderer conditionToTest={isBusy}>
+					<PatternCardPreviewSkeleton />
+				</ConditionalRenderer>
+				<ConditionalRenderer conditionToTest={!isDummy}>
 					<InView
 						classNames={[
 							'tableberg-pattern-library-card-preview-image_wrapper',
@@ -111,7 +114,7 @@ const PatternCard: FC<PatternCardProps> = ({
 							/>
 						)}
 					</InView>
-				)}
+				</ConditionalRenderer>
 			</div>
 			<div className={'tableberg-pattern-library-card-info'}>
 				<div className={'tableberg-pattern-library-card-info-header'}>
