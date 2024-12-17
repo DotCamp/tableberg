@@ -6,7 +6,6 @@ import {
 	MenuItem,
 	Modal,
 	SearchControl,
-	Spinner,
 } from '@wordpress/components';
 
 // @ts-ignore
@@ -29,7 +28,29 @@ interface PatternLibraryProps {
 function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 	const [search, setSearch] = useState('');
 	const [categoryFilter, setCategoryFilter] = useState('');
-	const [pageItems, setPageItems] = useState<readonly Pattern[]>([]);
+
+	const populateDummyCards = (amount = 4) => {
+		const dummyPatterns: Pattern[] = [];
+		for (let i = 0; i < amount; i++) {
+			const dummyPattern = new Pattern({
+				name: `tableberg/dummy-${i}`,
+				title: `Dummy ${i}`,
+				isUpsell: false,
+				blocks: [],
+				viewportWidth: 0,
+				tablebergPatternScreenshot: '',
+				categories: ['tableberg'],
+			});
+			dummyPatterns.push(dummyPattern);
+		}
+
+		return dummyPatterns;
+	};
+
+	const [pageItems, setPageItems] = useState<readonly Pattern[]>(
+		populateDummyCards(6)
+	);
+	const [useDummies, setUseDummies] = useState(true);
 
 	const [upsell, setUpsell] = useState<string | null>(null);
 
@@ -107,17 +128,20 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 	}, []);
 
 	useEffect(() => {
-		if (!categoryFilter) {
-			setPageItems(patterns);
-			return;
-		}
-		const newPage: any = [];
-		patterns.forEach((pattern: any) => {
-			if (pattern.categories.indexOf(categoryFilter) > -1) {
-				newPage.push(pattern);
+		if (patterns.length) {
+			setUseDummies(false);
+			if (!categoryFilter) {
+				setPageItems(patterns);
+				return;
 			}
-		});
-		setPageItems(newPage);
+			const newPage: any = [];
+			patterns.forEach((pattern: any) => {
+				if (pattern.categories.indexOf(categoryFilter) > -1) {
+					newPage.push(pattern);
+				}
+			});
+			setPageItems(newPage);
+		}
 	}, [patterns, categoryFilter]);
 
 	return (
@@ -176,18 +200,6 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 						</button>
 					</div>
 					<div className="tableberg-pattern-library-body">
-						{patterns.length === 0 && (
-							<div className="tableberg-pattern-library-body-empty">
-								<Spinner
-									style={{
-										width: '80px',
-										height: '80px',
-									}}
-									onPointerEnterCapture={undefined}
-									onPointerLeaveCapture={undefined}
-								/>
-							</div>
-						)}
 						<div
 							role={'grid'}
 							className="tableberg-pattern-library-grid"
@@ -198,6 +210,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 									pattern={pattern}
 									setUpsell={setUpsell}
 									onSelect={onSelect}
+									isDummy={useDummies}
 								/>
 							))}
 						</div>
