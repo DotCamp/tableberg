@@ -150,10 +150,12 @@ if (!class_exists('Tableberg')) {
 			Tableberg\Patterns\RegisterPatterns::upsells();
 		}
 
-		Tableberg\Patterns\RegisterPatterns::register_pattern_custom_rest_fields('includes/Patterns/images');
-
 		load_tableberg_textdomain();
 
 		// wp_set_script_translations("tableberg-script","tableberg", dirname(plugin_basename(__FILE__)) . '/languages');
+	});
+
+	add_action('rest_api_init', function() {
+		Tableberg\Patterns\RegisterPatterns::register_pattern_custom_rest_fields('includes/Patterns/images');
 	});
 }
