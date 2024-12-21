@@ -12,6 +12,7 @@ describe('Pattern data object', () => {
 			viewportWidth: 0,
 			tablebergPatternScreenshot: false,
 			categories: [],
+			categorySlugs: [],
 		};
 
 		const patternObject01 = new Pattern(restPatternData01);

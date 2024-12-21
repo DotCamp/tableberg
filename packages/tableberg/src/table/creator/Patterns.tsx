@@ -5,7 +5,6 @@ import {
 	MenuGroup,
 	MenuItem,
 	Modal,
-	SearchControl,
 } from '@wordpress/components';
 
 // @ts-ignore
@@ -19,6 +18,7 @@ import { UpsellPatternsModal } from '../../components/UpsellModal';
 import { createPortal } from 'react-dom';
 import PatternCard from './PatternCard';
 import Pattern, { PatternOptions } from './includes/Pattern';
+import PatternSearchControl from './PatternSearchControl';
 
 interface PatternLibraryProps {
 	onClose: () => void;
@@ -192,12 +192,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 				<div className="tableberg-pattern-library-content">
 					<div className="tableberg-pattern-library-content-header">
 						<span>Search</span>
-						<SearchControl
-							value={search}
-							onChange={setSearch}
-							size="compact"
-							placeholder=""
-						/>
+						<PatternSearchControl onChange={setSearch} />
 						<button onClick={onClose}>
 							<FontAwesomeIcon icon={faClose} />
 						</button>

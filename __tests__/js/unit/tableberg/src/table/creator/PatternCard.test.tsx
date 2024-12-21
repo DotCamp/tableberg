@@ -40,6 +40,7 @@ const testPatternOptions: PatternOptions = {
 	viewportWidth: 0,
 	tablebergPatternScreenshot: 'https://example.com/image.png',
 	categories: [],
+	categorySlugs: [],
 };
 
 const patternObj = new Pattern(testPatternOptions);
