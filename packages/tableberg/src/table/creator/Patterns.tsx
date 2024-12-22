@@ -99,10 +99,13 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 							blocks,
 							viewportWidth,
 							tablebergPatternScreenshot,
-							categories: categorySlugs.map((cSlug: string) => {
-								const targetCatLabel = catTitleMap.get(cSlug);
-								return targetCatLabel ?? cSlug;
-							}),
+							categories: categorySlugs
+								.map((cSlug: string) => {
+									const targetCatLabel =
+										catTitleMap.get(cSlug);
+									return targetCatLabel ?? cSlug;
+								})
+								.filter((c) => c !== 'Tableberg'),
 							categorySlugs,
 						})
 					);
