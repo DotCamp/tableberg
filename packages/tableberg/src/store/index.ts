@@ -9,6 +9,8 @@ interface ITBStoreState {
     maxCol: number;
 
     indexes: number[];
+    patterns: object[];
+    categories: object[];
 }
 
 
@@ -21,7 +23,14 @@ const DEFAULT_STATE: ITBStoreState = {
 
     minCol: Number.MAX_VALUE,
     maxCol: -1,
+    patterns: [],
+    categories: []
 };
+
+const tablebergPatterns = window["tablebergPatterns"] || [];
+const tablebergCategories = window["tablebergPatternCategories"] || [];
+DEFAULT_STATE.patterns = tablebergPatterns;
+DEFAULT_STATE.categories = tablebergCategories;
 
 export const store = createReduxStore("tableberg-store", {
     reducer(state: ITBStoreState = DEFAULT_STATE, action) {
@@ -137,7 +146,7 @@ export const store = createReduxStore("tableberg-store", {
             row: number,
             col: number
         ): boolean {
-            
+
             return (
                 state.tableId === tableId &&
                 state.minCol <= col &&
@@ -161,6 +170,12 @@ export const store = createReduxStore("tableberg-store", {
             }
             return state.indexes;
         },
+        getPatterns(state: ITBStoreState): object[] {
+            return state.patterns;
+        },
+        getPatternCategories(state: ITBStoreState): object[] {
+            return state.categories;
+        }
     },
 });
 

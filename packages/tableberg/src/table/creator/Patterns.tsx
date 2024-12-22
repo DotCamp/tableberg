@@ -12,7 +12,8 @@ import { UpsellPatternsModal } from '../../components/UpsellModal';
 import PatternCard from './PatternCard';
 import Pattern, { PatternOptions } from './includes/Pattern';
 import PatternSearchControl from './PatternSearchControl';
-import apiFetch from '@wordpress/api-fetch';
+import { select } from '@wordpress/data';
+import { store } from '../../store';
 
 interface PatternLibraryProps {
 	onClose: () => void;
@@ -56,93 +57,80 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 	const handleSetSearch = debounce((val) => setSearch(val as string), 300);
 
 	useEffect(() => {
-		const preparePatternsAndCategories = async () => {
-			const availablePatternCategories = (await apiFetch({
-				path: '/wp/v2/block-patterns/categories',
-			})) as { name: string; label: string }[];
+		const availablePatternCategories = select(
+			store
+		).getPatternCategories() as { name: string; label: string }[];
+		const availablePatterns = select(store).getPatterns();
 
-			const availablePatterns = (await apiFetch({
-				path: '/wp/v2/block-patterns/patterns',
-			})) as PatternOptions[];
+		const catTitleMap = new Map<string, string>();
+		availablePatternCategories.forEach(({ name, label }) => {
+			catTitleMap.set(name, label);
+		});
 
-			const catTitleMap = new Map<string, string>();
-			availablePatternCategories.forEach(({ name, label }) => {
-				catTitleMap.set(name, label);
-			});
+		const patternCategories: {
+			slug: string;
+			title: string;
+			count: number;
+		}[] = [];
 
-			const patternCategories: {
-				slug: string;
-				title: string;
-				count: number;
-			}[] = [];
+		const tablebergPatterns = availablePatterns.reduce(
+			(carry: Pattern[], pattern: any) => {
+				if (pattern.name.startsWith('tableberg/')) {
+					pattern.isUpsell = pattern.name.indexOf('/upsell-') > -1;
 
-			const tablebergPatterns = availablePatterns.reduce(
-				(carry: Pattern[], pattern: any) => {
-					if (pattern.name.startsWith('tableberg/')) {
-						pattern.isUpsell =
-							pattern.name.indexOf('/upsell-') > -1;
+					// Since the pattern content is a string, we need to parse it to block objects.
+					pattern.blocks = parse(pattern.content);
 
-						// Since we are gathering patterns from the REST API, we need to parse the blocks content.
-						// And also we need to change some properties to match the Pattern class properties.
-						pattern.blocks = parse(pattern.content);
-						pattern.viewportWidth = pattern.viewport_width;
+					const {
+						name,
+						title,
+						isUpsell,
+						blocks,
+						viewportWidth,
+						tablebergPatternScreenshot,
+						categories: categorySlugs,
+					}: PatternOptions = pattern;
 
-						const {
+					carry.push(
+						new Pattern({
 							name,
 							title,
 							isUpsell,
 							blocks,
 							viewportWidth,
 							tablebergPatternScreenshot,
-							categories: categorySlugs,
-						}: PatternOptions = pattern;
+							categories: categorySlugs.map((cSlug: string) => {
+								const targetCatLabel = catTitleMap.get(cSlug);
+								return targetCatLabel ?? cSlug;
+							}),
+							categorySlugs,
+						})
+					);
 
-						carry.push(
-							new Pattern({
-								name,
-								title,
-								isUpsell,
-								blocks,
-								viewportWidth,
-								tablebergPatternScreenshot,
-								categories: categorySlugs.map(
-									(cSlug: string) => {
-										const targetCatLabel =
-											catTitleMap.get(cSlug);
-										return targetCatLabel ?? cSlug;
-									}
-								),
-								categorySlugs,
-							})
+					pattern.categories.forEach((pCat: any) => {
+						if (pCat === 'tableberg') {
+							return;
+						}
+						const cat = patternCategories.find(
+							(fCat) => fCat.slug === pCat
 						);
-
-						pattern.categories.forEach((pCat: any) => {
-							if (pCat === 'tableberg') {
-								return;
-							}
-							const cat = patternCategories.find(
-								(fCat) => fCat.slug === pCat
-							);
-							if (!cat) {
-								patternCategories.push({
-									slug: pCat,
-									title: catTitleMap.get(pCat) || pCat,
-									count: 1,
-								});
-							} else {
-								cat.count++;
-							}
-						});
-					}
-					return carry;
-				},
-				[]
-			);
-			setCategories(patternCategories);
-			setPatterns(tablebergPatterns);
-		};
-
-		preparePatternsAndCategories();
+						if (!cat) {
+							patternCategories.push({
+								slug: pCat,
+								title: catTitleMap.get(pCat) || pCat,
+								count: 1,
+							});
+						} else {
+							cat.count++;
+						}
+					});
+				}
+				return carry;
+			},
+			[]
+		);
+		setCategories(patternCategories);
+		setPatterns(tablebergPatterns);
 	}, []);
 
 	useEffect(() => {

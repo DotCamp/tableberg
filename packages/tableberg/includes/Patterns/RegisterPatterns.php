@@ -2,10 +2,13 @@
 
 namespace Tableberg\Patterns;
 
+use WP_Block_Pattern_Categories_Registry;
+use WP_Block_Patterns_Registry;
 use function register_rest_field;
 use function trailingslashit;
 
 class RegisterPatterns {
+	static $image_path_segment = 'includes/Patterns/images';
 
 	public static function from_dir( $dir ) {
 		if ( ! file_exists( $dir ) ) {
@@ -78,26 +81,15 @@ class RegisterPatterns {
 
 	/**
 	 * Register custom rest fields for tableberg patterns.
-	 *
-	 * @param string $image_path_segment The path segment to the images directory relative to the plugin root.
 	 */
-	public static function register_pattern_custom_rest_fields( $image_path_segment ) {
+	public static function register_pattern_custom_rest_fields() {
+		$image_path_segment = static::$image_path_segment;
 		register_rest_field(
 			'block-pattern',
 			'tablebergPatternScreenshot',
 			array(
 				'get_callback' => function ( $pattern_obj ) use ( $image_path_segment ) {
-					$screenshot_url = false;
-					$pattern_name   = $pattern_obj['name'];
-
-					$pattern_name = self::generate_tableberg_pattern_name( $pattern_name );
-
-					// Only add rest field value if the pattern is from tableberg.
-					if ( $pattern_name ) {
-						$path_segment = sprintf( '%s/%s.png', $image_path_segment, $pattern_name );
-						$screenshot_url = trailingslashit( TABLEBERG_URL ) . $path_segment;
-					}
-					return $screenshot_url;
+					return self::generate_screenshot_path( $pattern_obj, $image_path_segment );
 				},
 				'schema'       => array(
 					'description' => 'The screenshot url of the tableberg pattern.',
@@ -116,5 +108,63 @@ class RegisterPatterns {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Generate the screenshot url for the tableberg pattern.
+	 *
+	 * @param array  $pattern_obj The pattern object.
+	 * @param string $image_path_segment The path segment to the images directory relative to the plugin root.
+	 *
+	 * @return string|false The screenshot url or false if the pattern is not from tableberg.
+	 */
+	public static function generate_screenshot_path( $pattern_obj, $image_path_segment ) {
+		$screenshot_url = false;
+		$pattern_name   = $pattern_obj['name'];
+
+		$pattern_name = self::generate_tableberg_pattern_name( $pattern_name );
+
+		// Only add rest field value if the pattern is from tableberg.
+		if ( $pattern_name ) {
+			$path_segment   = sprintf( '%s/%s.png', $image_path_segment, $pattern_name );
+			$screenshot_url = trailingslashit( TABLEBERG_URL ) . $path_segment;
+		}
+		return $screenshot_url;
+	}
+
+	/**
+	 * Get all registered tableberg patterns.
+	 *
+	 * @return array The list of all registered tableberg patterns.
+	 */
+	public static function get_all_registered_tableberg_patterns() {
+		$available_block_patterns = WP_Block_Patterns_Registry::get_instance()->get_all_registered();
+
+		return array_values(
+			array_map(
+				function ( $pattern_obj ) {
+					$pattern_screenshot_url                    = self::generate_screenshot_path( $pattern_obj, static::$image_path_segment );
+					$pattern_obj['tablebergPatternScreenshot'] = $pattern_screenshot_url;
+
+					return $pattern_obj;
+				},
+				array_filter(
+					$available_block_patterns,
+					function ( $pattern_obj ) {
+						$pattern_name = $pattern_obj['name'];
+						return self::generate_tableberg_pattern_name( $pattern_name );
+					}
+				)
+			)
+		);
+	}
+
+	/**
+	 * Get all registered block pattern categories.
+	 *
+	 * @return array The list of all available block pattern categories.
+	 */
+	public static function get_all_registered_tableberg_pattern_categories(  ) {
+		return WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered();
 	}
 }
