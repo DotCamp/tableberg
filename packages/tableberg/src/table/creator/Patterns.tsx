@@ -1,11 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
-import {
-	MenuGroup,
-	MenuItem,
-	Modal,
-} from '@wordpress/components';
+import { createPortal } from 'react-dom';
+import { MenuGroup, MenuItem, Modal } from '@wordpress/components';
 
 // @ts-ignore
 import { store } from '@wordpress/block-editor';
@@ -13,9 +10,9 @@ import { store } from '@wordpress/block-editor';
 import TablebergIcon from '@tableberg/shared/icons/tableberg';
 import { useSelect } from '@wordpress/data';
 import type { BlockInstance } from '@wordpress/blocks';
+import { debounce } from '@wordpress/compose';
 
 import { UpsellPatternsModal } from '../../components/UpsellModal';
-import { createPortal } from 'react-dom';
 import PatternCard from './PatternCard';
 import Pattern, { PatternOptions } from './includes/Pattern';
 import PatternSearchControl from './PatternSearchControl';
@@ -54,6 +51,8 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 	const [useDummies, setUseDummies] = useState(true);
 
 	const [upsell, setUpsell] = useState<string | null>(null);
+
+	const handleSetSearch = debounce((val) => setSearch(val as string), 300);
 
 	const { categories, patterns } = useSelect((select) => {
 		// @ts-ignore
@@ -192,7 +191,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 				<div className="tableberg-pattern-library-content">
 					<div className="tableberg-pattern-library-content-header">
 						<span>Search</span>
-						<PatternSearchControl onChange={setSearch} />
+						<PatternSearchControl onChange={handleSetSearch} />
 						<button onClick={onClose}>
 							<FontAwesomeIcon icon={faClose} />
 						</button>
