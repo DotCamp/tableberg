@@ -59,11 +59,6 @@ export default function TableCreator({ clientId }: Props) {
 
     };
 
-   // TODO [ErdemBircan] remove after development
-    useEffect(() => {
-        setModal('patterns');
-    });
-
     return (
         <div className="tableberg-table-creator">
             <Placeholder

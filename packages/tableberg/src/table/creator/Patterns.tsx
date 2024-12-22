@@ -4,18 +4,15 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { MenuGroup, MenuItem, Modal } from '@wordpress/components';
 
-// @ts-ignore
-import { store } from '@wordpress/block-editor';
-
 import TablebergIcon from '@tableberg/shared/icons/tableberg';
-import { useSelect } from '@wordpress/data';
-import type { BlockInstance } from '@wordpress/blocks';
+import { BlockInstance, parse } from '@wordpress/blocks';
 import { debounce } from '@wordpress/compose';
 
 import { UpsellPatternsModal } from '../../components/UpsellModal';
 import PatternCard from './PatternCard';
 import Pattern, { PatternOptions } from './includes/Pattern';
 import PatternSearchControl from './PatternSearchControl';
+import apiFetch from '@wordpress/api-fetch';
 
 interface PatternLibraryProps {
 	onClose: () => void;
@@ -25,6 +22,10 @@ interface PatternLibraryProps {
 function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 	const [search, setSearch] = useState('');
 	const [categoryFilter, setCategoryFilter] = useState('');
+	const [categories, setCategories] = useState<
+		{ slug: string; title: string; count: number }[]
+	>([]);
+	const [patterns, setPatterns] = useState<Pattern[]>([]);
 
 	const populateDummyCards = (amount = 4) => {
 		const dummyPatterns: Pattern[] = [];
@@ -54,78 +55,94 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 
 	const handleSetSearch = debounce((val) => setSearch(val as string), 300);
 
-	const { categories, patterns } = useSelect((select) => {
-		// @ts-ignore
-		const { __experimentalGetAllowedPatterns, getSettings } = select(store);
-		const { __experimentalBlockPatternCategories } = getSettings();
+	useEffect(() => {
+		const preparePatternsAndCategories = async () => {
+			const availablePatternCategories = (await apiFetch({
+				path: '/wp/v2/block-patterns/categories',
+			})) as { name: string; label: string }[];
 
-		const catTitleMap = new Map<string, string>();
-		__experimentalBlockPatternCategories.forEach((cat: any) => {
-			catTitleMap.set(cat.name, cat.label);
-		});
+			const availablePatterns = (await apiFetch({
+				path: '/wp/v2/block-patterns/patterns',
+			})) as PatternOptions[];
 
-		const patternCategories: {
-			slug: string;
-			title: string;
-			count: number;
-		}[] = [];
-		const availablePatterns: Pattern[] = [];
-
-		__experimentalGetAllowedPatterns().forEach((pattern: any) => {
-			if (!pattern.name.startsWith('tableberg/')) {
-				return;
-			}
-
-			pattern.isUpsell = pattern.name.indexOf('/upsell-') > -1;
-			const {
-				name,
-				title,
-				isUpsell,
-				blocks,
-				viewportWidth,
-				tablebergPatternScreenshot,
-				categories: categorySlugs,
-			}: PatternOptions = pattern;
-
-			availablePatterns.push(
-				new Pattern({
-					name,
-					title,
-					isUpsell,
-					blocks,
-					viewportWidth,
-					tablebergPatternScreenshot,
-					categories: categorySlugs.map((cSlug: string) => {
-						const targetCatLabel = catTitleMap.get(cSlug);
-						return targetCatLabel ?? cSlug;
-					}),
-					categorySlugs,
-				})
-			);
-
-			pattern.categories.forEach((pCat: any) => {
-				if (pCat === 'tableberg') {
-					return;
-				}
-				const cat = patternCategories.find(
-					(fCat) => fCat.slug === pCat
-				);
-				if (!cat) {
-					patternCategories.push({
-						slug: pCat,
-						title: catTitleMap.get(pCat) || pCat,
-						count: 1,
-					});
-				} else {
-					cat.count++;
-				}
+			const catTitleMap = new Map<string, string>();
+			availablePatternCategories.forEach(({ name, label }) => {
+				catTitleMap.set(name, label);
 			});
-		});
 
-		return {
-			patterns: availablePatterns,
-			categories: patternCategories,
+			const patternCategories: {
+				slug: string;
+				title: string;
+				count: number;
+			}[] = [];
+
+			const tablebergPatterns = availablePatterns.reduce(
+				(carry: Pattern[], pattern: any) => {
+					if (pattern.name.startsWith('tableberg/')) {
+						pattern.isUpsell =
+							pattern.name.indexOf('/upsell-') > -1;
+
+						// Since we are gathering patterns from the REST API, we need to parse the blocks content.
+						// And also we need to change some properties to match the Pattern class properties.
+						pattern.blocks = parse(pattern.content);
+						pattern.viewportWidth = pattern.viewport_width;
+
+						const {
+							name,
+							title,
+							isUpsell,
+							blocks,
+							viewportWidth,
+							tablebergPatternScreenshot,
+							categories: categorySlugs,
+						}: PatternOptions = pattern;
+
+						carry.push(
+							new Pattern({
+								name,
+								title,
+								isUpsell,
+								blocks,
+								viewportWidth,
+								tablebergPatternScreenshot,
+								categories: categorySlugs.map(
+									(cSlug: string) => {
+										const targetCatLabel =
+											catTitleMap.get(cSlug);
+										return targetCatLabel ?? cSlug;
+									}
+								),
+								categorySlugs,
+							})
+						);
+
+						pattern.categories.forEach((pCat: any) => {
+							if (pCat === 'tableberg') {
+								return;
+							}
+							const cat = patternCategories.find(
+								(fCat) => fCat.slug === pCat
+							);
+							if (!cat) {
+								patternCategories.push({
+									slug: pCat,
+									title: catTitleMap.get(pCat) || pCat,
+									count: 1,
+								});
+							} else {
+								cat.count++;
+							}
+						});
+					}
+					return carry;
+				},
+				[]
+			);
+			setCategories(patternCategories);
+			setPatterns(tablebergPatterns);
 		};
+
+		preparePatternsAndCategories();
 	}, []);
 
 	useEffect(() => {
