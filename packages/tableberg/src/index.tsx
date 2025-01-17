@@ -24,7 +24,7 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { useEffect, useRef, useState, createContext } from "react";
+import { useEffect, useRef, useState } from "react";
 import TablebergControls from "./controls";
 import {
     TablebergBlockAttrs,
@@ -38,20 +38,11 @@ import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
 import { createPortal } from "react-dom";
 import { SidebarUpsell } from "./components/SidebarUpsell";
-import {
-    getBorderCSS,
-    getBorderRadiusCSS,
-} from "@tableberg/shared/utils/styling-helpers";
 import { __ } from "@wordpress/i18n";
 import TableCreator from "./table/creator";
+import { store as tbStore } from "./store";
 
-export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
-interface TablebergCtx {
-    rootEl?: HTMLElement;
-    render?: TablebergRenderMode;
-}
-
-export const TablebergCtx = createContext<TablebergCtx>({});
+export type TablebergRenderMode = "" | "primary" | "stack-row" | "stack-col";
 
 const removeFirstRow = (
     innrBlocks: TablebergCellInstance[],
@@ -341,7 +332,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const [previewDevice, updatePreview] = useState<
         keyof TablebergBlockAttrs["responsive"]["breakpoints"]
-        // @ts-ignore
+    // @ts-ignore
     >(tablebergGetLastDevice() || "desktop");
 
     useEffect(() => {
@@ -391,9 +382,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     useTableHeaderFooter(tableBlock, storeActions);
 
+    const { setRenderMode: setStoreRenderMode } = useDispatch(tbStore);
+
     const [renderMode, setRenderMode] =
-        useState<TablebergRenderMode>("primary");
-    const prevRenderMode = useRef<TablebergRenderMode>("primary");
+        useState<TablebergRenderMode>("");
+    const prevRenderMode = useRef<TablebergRenderMode>("");
     useSelect((select) => {
         // @ts-ignore
         const getDevice: () => string = select("core/editor").getDeviceType;
@@ -426,6 +419,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
         if (newRMode !== prevRenderMode.current) {
             setRenderMode(newRMode);
+            setStoreRenderMode(newRMode);
             prevRenderMode.current = newRMode;
         }
     }, [previewDevice, attributes.responsive.breakpoints]);
@@ -493,29 +487,23 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     return (
         <>
             <div {...blockProps}>
-                <TablebergCtx.Provider
-                    value={{
-                        render: renderMode as any,
-                    }}
-                >
-                    {(renderMode === "primary" && (
-                        <PrimaryTable {...props} tableBlock={tableBlock} />
+                {(renderMode === "primary" && (
+                    <PrimaryTable {...props} tableBlock={tableBlock} />
+                )) ||
+                    (renderMode === "stack-row" && (
+                        <StackRowTable
+                            {...props}
+                            tableBlock={tableBlock}
+                            preview={previewDevice}
+                        />
                     )) ||
-                        (renderMode === "stack-row" && (
-                            <StackRowTable
-                                {...props}
-                                tableBlock={tableBlock}
-                                preview={previewDevice}
-                            />
-                        )) ||
-                        (renderMode === "stack-col" && (
-                            <StackColTable
-                                {...props}
-                                tableBlock={tableBlock}
-                                preview={previewDevice}
-                            />
-                        ))}
-                </TablebergCtx.Provider>
+                    (renderMode === "stack-col" && (
+                        <StackColTable
+                            {...props}
+                            tableBlock={tableBlock}
+                            preview={previewDevice}
+                        />
+                    ))}
             </div>
             <TablebergControls
                 clientId={clientId}
@@ -651,7 +639,7 @@ registerBlockType(metadata.name, {
                         attrs.rows++;
                     }
 
-                    data.body.forEach((row: any, rowIdx: number) => {
+                    data.body.forEach((row: any, _: number) => {
                         attrs.cols = row.cells.length;
                         row.cells.forEach((cell: any, colIdx: number) => {
                             // @ts-ignore
