@@ -111,13 +111,6 @@ class Assets
 
 		self::pass_data_to_js('tableberg-admin-script');
 
-		wp_enqueue_script(
-			'tableberg-preview-device-change-observer',
-			TABLEBERG_URL . 'includes/assets/js/PreviewDeviceChangeObserver.js',
-			[],
-			Constants::plugin_version(),
-			true
-		);
 		$frontend_script_data = apply_filters('tableberg/filter/admin_settings_menu_data', array());
 		wp_localize_script('tableberg-admin-script', 'tablebergAdminMenuData', $frontend_script_data);
 		wp_enqueue_style(

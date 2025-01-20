@@ -289,8 +289,6 @@ const useUndoRedo = (
 };
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
-    // @ts-ignore
-    registerTablebergPreviewDeviceChangeObserver();
     const { attributes, setAttributes, clientId } = props;
     const rootRef = useRef<HTMLTableElement>();
 
@@ -330,10 +328,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, []);
     useUndoRedo(attributes, tableBlock.innerBlocks.length, setAttributes);
 
-    const [previewDevice, updatePreview] = useState<
-        keyof TablebergBlockAttrs["responsive"]["breakpoints"]
-    // @ts-ignore
-    >(tablebergGetLastDevice() || "desktop");
+    const previewDevice: keyof TablebergBlockAttrs["responsive"]["breakpoints"]
+        = useSelect((select) => {
+            // @ts-ignore
+            return select("core/editor").getDeviceType().toLowerCase();
+        }, []);
 
     useEffect(() => {
         if (
@@ -369,15 +368,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 version: metadata.version,
             });
         }
-        const localUpdater = (evt: any) => {
-            updatePreview(evt.detail.currentPreview);
-        };
-        document.addEventListener("TablebergPreviewDeviceChange", localUpdater);
-        return () =>
-            document.removeEventListener(
-                "TablebergPreviewDeviceChange",
-                localUpdater,
-            );
     }, []);
 
     useTableHeaderFooter(tableBlock, storeActions);
@@ -387,13 +377,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const [renderMode, setRenderMode] =
         useState<TablebergRenderMode>("");
     const prevRenderMode = useRef<TablebergRenderMode>("");
-    useSelect((select) => {
-        // @ts-ignore
-        const getDevice: () => string = select("core/editor").getDeviceType;
-        if (getDevice) {
-            updatePreview(getDevice().toLowerCase() as any);
-        }
-    }, []);
 
     useEffect(() => {
         let newRMode: TablebergRenderMode = "primary";
