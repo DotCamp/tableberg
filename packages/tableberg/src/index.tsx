@@ -288,6 +288,34 @@ const useUndoRedo = (
     }
 };
 
+const usePreventCellDelete = (rootRef: React.RefObject<HTMLTableElement | undefined>) => {
+    useSelect(
+        (select) => {
+            rootRef.current?.addEventListener(
+                "keydown",
+                (evt: KeyboardEvent) => {
+                    if (evt.key !== "Backspace" && evt.key !== "Delete") {
+                        return;
+                    }
+                    const cur: TablebergCellInstance = (
+                        select("core/block-editor") as any
+                    ).getSelectedBlock();
+
+                    if (cur.name === "tableberg/cell") {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        return;
+                    }
+                },
+                {
+                    capture: true,
+                },
+            );
+        },
+        [rootRef.current],
+    );
+};
+
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
     const rootRef = useRef<HTMLTableElement>();
@@ -407,31 +435,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         }
     }, [previewDevice, attributes.responsive.breakpoints]);
 
-    useSelect(
-        (select) => {
-            rootRef.current?.addEventListener(
-                "keydown",
-                (evt: KeyboardEvent) => {
-                    if (evt.key !== "Backspace" && evt.key !== "Delete") {
-                        return;
-                    }
-                    const cur: TablebergCellInstance = (
-                        select("core/block-editor") as any
-                    ).getSelectedBlock();
-
-                    if (cur.name === "tableberg/cell") {
-                        evt.preventDefault();
-                        evt.stopPropagation();
-                        return;
-                    }
-                },
-                {
-                    capture: true,
-                },
-            );
-        },
-        [rootRef.current],
-    );
+    usePreventCellDelete(rootRef);
 
     const targetEl = document.querySelector(".interface-complementary-area");
 
