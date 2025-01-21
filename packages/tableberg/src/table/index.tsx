@@ -46,10 +46,6 @@ export const PrimaryTable = (
         allowedBlocks: ALLOWED_BLOCKS,
     });
 
-    const storeActions: BlockEditorStoreActions = useDispatch(
-        blockEditorStore,
-    ) as any;
-
     const [colUpt, setColUpt] = useState(0);
     const lastRowCount = useRef(attributes.rows);
     useEffect(() => {
@@ -60,24 +56,22 @@ export const PrimaryTable = (
         }
     }, [attributes.rows, attributes.cells]);
 
-    useEffect(() => {
-        if (attributes.responsive?.last === "stack") {
-            const toRemoves: string[] = [];
-            tableBlock.innerBlocks.forEach((cell) => {
-                if (cell.attributes.isTmp) {
-                    toRemoves.push(cell.clientId);
-                }
-            });
-            setAttributes({
-                responsive: {
-                    ...(attributes.responsive || {}),
-                    last: "",
-                },
-                cells: attributes.cells - toRemoves.length,
-            });
-            storeActions.removeBlocks(toRemoves);
-        }
-    }, []);
+    const toRemoves = tableBlock.innerBlocks
+    .filter((cell) => cell.attributes.isTmp)
+    .map((cell) => cell.clientId);
+
+    setAttributes({
+        cells: attributes.cells - toRemoves.length,
+    });
+
+    try {
+        useDispatch(blockEditorStore).removeBlocks(toRemoves);
+    } catch (e) {
+        console.warn(
+            "Tableberg: Tried to call removeBlocks before the previous call has returned. React might be running in development mode.",
+            e
+        );
+    }
 
     const [search, setSearch] = useState("");
     const [hiddenRows, setHiddenRows] = useState<number[]>([]);
