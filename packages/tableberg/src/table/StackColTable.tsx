@@ -7,7 +7,7 @@ import {
     useInnerBlocksProps,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ALLOWED_BLOCKS } from ".";
 import { useDispatch } from "@wordpress/data";
 import { getStyles } from "./get-styles";
@@ -20,13 +20,22 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
+const useInnerBlocksUpdate = () => {
+    const [key, setKey] = useState(0);
+
+    const incrementKey = () => setKey(k => k + 1);
+
+    return [key, incrementKey] as [number, () => void];
+}
+
 export default function StackColTable(
     props: BlockEditProps<TablebergBlockAttrs> & {
         tableBlock: BlockInstance<TablebergBlockAttrs>;
-        preview: keyof TablebergBlockAttrs["responsive"]["breakpoints"];
+        stackCount: number;
+        headerAsCol: boolean;
     },
 ) {
-    const { attributes, tableBlock, clientId, setAttributes, preview } = props;
+    const { attributes, tableBlock, clientId, setAttributes, stackCount, headerAsCol } = props;
 
     const innerBlocksProps = useInnerBlocksProps({
         // @ts-ignore false can obviously be assigned to renderAppender as does
@@ -47,154 +56,102 @@ export default function StackColTable(
         ),
     } as Record<string, any>;
 
-    const [rowTemplates, setRowTemplates] = useState([]);
-    const [colUpt, setColUpt] = useState(0);
+    const [rowTemplate, setRowTemplate] = useState<React.ReactElement[]>([]);
 
-    useEffect(() => {
-        setColUpt((old) => old + 1);
-    }, [attributes.cols, attributes.cells]);
-
-    const storeActions: BlockEditorStoreActions = useDispatch(
+    const {
+        replaceInnerBlocks,
+        updateBlockAttributes,
+    }: BlockEditorStoreActions = useDispatch(
         blockEditorStore,
     ) as any;
 
-    const breakpoints = tableBlock.attributes.responsive.breakpoints;
-    const breakpoint =
-        preview == "mobile" && !breakpoints[preview]
-            ? breakpoints.tablet
-            : breakpoints[preview];
+    const [updateKey, refreshInnerBlocks] = useInnerBlocksUpdate();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
+        const setRowPortalTarget = (
+            cell: TablebergCellInstance, row: number, setTemp = false
+        ) => {
+            cell.attributes.responsiveTarget = `#tableberg-${clientId}-${row}`;
+            cell.attributes.isTmp = setTemp;
+            return cell;
+        }
+
+        const stacksCount = Math.max(stackCount || 1, 1);
+
+        let cells = tableBlock.innerBlocks as TablebergCellInstance[];
         const newCells: TablebergCellInstance[] = [];
+        const template: React.ReactElement[] = [];
 
-        const headerArr: TablebergCellInstance[] = [];
-        let stackRowCount = Math.max(breakpoint?.stackCount || 1, 1);
+        const cols = headerAsCol ? attributes.cols - 1 : attributes.cols;
+        const rowsToGenerate = attributes.rows * Math.ceil(cols / stacksCount);
 
-        const templates: any = [];
-        let rowIdxStart = 0;
-        let rowCount = -1,
-            lastRow = -1,
-            stackTrack = 0,
-            headerCount = 0;
+        (function generateRows() {
+            for (let i = 0; i < rowsToGenerate; i++) {
+                const Row = ({ rowClass = "row" }) => <tr
+                    id={`tableberg-${clientId}-${i}`}
+                    className={`tableberg-${rowClass}`}
+                />;
 
-        if (attributes.enableTableHeader) {
-            stackRowCount++;
-            rowCount++;
-            headerCount++;
-            templates.push(
-                <tr
-                    id={`tableberg-${clientId}-${rowCount}`}
-                    className="tableberg-header"
-                />,
-            );
-            stackTrack++;
+                const isHeaderRow = i % attributes.rows === 0;
+                const isFooterRow = i % attributes.rows === attributes.rows - 1;
 
-            for (; rowIdxStart < tableBlock.innerBlocks.length; rowIdxStart++) {
-                const cell = tableBlock.innerBlocks[
-                    rowIdxStart
-                ] as TablebergCellInstance;
+                if (attributes.enableTableHeader && isHeaderRow) {
+                    template.push(<Row key={i} rowClass="header" />);
+                } else if (attributes.enableTableFooter && isFooterRow) {
+                    template.push(<Row key={i} rowClass="footer" />);
+                } else if (i % 2 === 0) {
+                    template.push(<Row key={i} rowClass="even-row" />);
+                } else if (i % 2 !== 0) {
+                    template.push(<Row key={i} rowClass="odd-row" />);
+                }
+            }
+        })();
+
+        (function addColumnToEachStack() {
+            if (!headerAsCol) {
+                return
+            }
+
+            const leftColCells = cells.filter(cell => cell.attributes.col === 0);
+            const cellsExcludingLeftCol = cells.filter(cell => cell.attributes.col !== 0);
+            cells = cellsExcludingLeftCol;
+
+            for (let row = 0; row < template.length; row++) {
+                const col1Cell = cloneBlock(leftColCells[row % attributes.rows]) as TablebergCellInstance;
+                if (col1Cell.attributes.isTmp) {
+                    continue;
+                }
+
+                const setTemp = row > (attributes.rows - 1) ? true : false;
+                newCells.push(setRowPortalTarget(col1Cell, row, setTemp));
+            }
+        })();
+
+        (function moveCellsToCorrectRows() {
+            for (const cell of cells) {
                 if (cell.attributes.isTmp) {
                     continue;
                 }
-                if (cell.attributes.row > 0) {
-                    break;
-                }
-                cell.attributes.responsiveTarget = `#tableberg-${clientId}-${rowCount}`;
-                headerArr.push(cell);
-                newCells.push(cell);
+
+                const tableRows = attributes.rows;
+                const coli = headerAsCol ? cell.attributes.col - 1 : cell.attributes.col;
+                const rowi = cell.attributes.row;
+
+                let targetRow = tableRows * (Math.ceil((coli + 1) / stacksCount) - 1) + rowi;
+
+                newCells.push(setRowPortalTarget(cell, targetRow));
             }
-        }
+        })();
 
-        const footerArr: TablebergCellInstance[] = [];
-        const maxRow = attributes.rows - 1;
-
-        for (
-            let idx = rowIdxStart;
-            idx < tableBlock.innerBlocks.length;
-            idx++
-        ) {
-            const cell: TablebergCellInstance = tableBlock.innerBlocks[
-                idx
-            ] as any;
-
-            if (cell.attributes.isTmp) {
-                continue;
-            }
-
-            if (attributes.enableTableFooter && cell.attributes.row == maxRow) {
-                footerArr.push(cell);
-                continue;
-            }
-
-            if (lastRow != cell.attributes.row) {
-                lastRow = cell.attributes.row;
-
-                if (
-                    tableBlock.attributes.enableTableHeader &&
-                    stackTrack == stackRowCount
-                ) {
-                    rowCount++;
-                    headerCount++;
-                    templates.push(
-                        <tr
-                            id={`tableberg-${clientId}-${rowCount}`}
-                            className="tableberg-header"
-                        />,
-                    );
-                    stackTrack = 1;
-
-                    for (const cell of headerArr) {
-                        const headerCell = cloneBlock(cell, {
-                            responsiveTarget: `#tableberg-${clientId}-${rowCount}`,
-                            isTmp: true,
-                        });
-                        newCells.push(headerCell);
-                    }
-                }
-
-                rowCount++;
-                templates.push(
-                    <tr
-                        id={`tableberg-${clientId}-${rowCount}`}
-                        className={
-                            (rowCount - headerCount) % 2
-                                ? "tableberg-even-row"
-                                : "tableberg-odd-row"
-                        }
-                    />,
-                );
-                stackTrack++;
-            }
-
-            cell.attributes.responsiveTarget = `#tableberg-${clientId}-${rowCount}`;
-            newCells.push(cell);
-        }
-
-        if (footerArr.length > 0) {
-            rowCount++;
-            templates.push(
-                <tr
-                    id={`tableberg-${clientId}-${rowCount}`}
-                    className="tableberg-footer"
-                />,
-            );
-            footerArr.forEach((cell) => {
-                cell.attributes.responsiveTarget = `#tableberg-${clientId}-${rowCount}`;
-                newCells.push(cell);
-            });
-        }
-
-        storeActions.replaceInnerBlocks(clientId, newCells);
-        storeActions.updateBlockAttributes(clientId, {
+        replaceInnerBlocks(clientId, newCells);
+        updateBlockAttributes(clientId, {
             cells: newCells.length,
         });
-        setRowTemplates(templates);
-        setColUpt((old) => old + 1);
+        setRowTemplate(template);
+        refreshInnerBlocks();
     }, [
-        attributes.cells,
-        attributes.enableTableHeader,
-        breakpoint?.stackCount,
-        breakpoint?.headerAsCol,
+        stackCount,
+        headerAsCol,
     ]);
 
     useEffect(() => {
@@ -223,11 +180,13 @@ export default function StackColTable(
                     ...getBorderRadiusCSS(attributes.tableBorderRadius),
                 }}
             >
-                <table {...blockProps}>{rowTemplates}</table>
+                <table {...blockProps}>{rowTemplate}</table>
             </div>
-            <div style={{ display: "none" }} key={colUpt}>
-                <div {...innerBlocksProps} />
-            </div>
+            <table style={{ display: "none" }} key={updateKey}>
+                <tbody>
+                    <tr {...innerBlocksProps} />
+                </tbody>
+            </table>
         </>
     );
 }

@@ -349,7 +349,7 @@ function useRenderMode(
         setRenderMode("primary");
     }
 
-    return { renderMode, isScrollMode }
+    return { renderMode, isScrollMode, breakpoint }
 }
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
@@ -418,7 +418,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     useTableHeaderFooter(tableBlock, storeActions);
 
-    const { renderMode, isScrollMode } = useRenderMode(
+    const { renderMode, isScrollMode, breakpoint } = useRenderMode(
         attributes.responsive.breakpoints,
         previewDevice
     );
@@ -481,18 +481,19 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 {(renderMode === "primary" && (
                     <PrimaryTable {...props} tableBlock={tableBlock} />
                 )) ||
-                    (renderMode === "stack-row" && (
+                    (renderMode === "stack-row" && breakpoint && (
                         <StackRowTable
                             {...props}
                             tableBlock={tableBlock}
                             preview={previewDevice}
                         />
                     )) ||
-                    (renderMode === "stack-col" && (
+                    (renderMode === "stack-col" && breakpoint && (
                         <StackColTable
                             {...props}
                             tableBlock={tableBlock}
-                            preview={previewDevice}
+                            stackCount={breakpoint?.stackCount}
+                            headerAsCol={breakpoint?.headerAsCol}
                         />
                     ))}
             </div>
