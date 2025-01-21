@@ -246,7 +246,7 @@ export const CellBlockPro = ({
         setTableAttrs({ colStyles });
     };
 
-    const proProps = { DragNDropSorting, makeMove };
+    const proProps = { makeMove };
 
     const tableControls: DropdownOption[] = [
         {
