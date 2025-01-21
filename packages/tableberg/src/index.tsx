@@ -23,9 +23,10 @@ import {
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import TablebergControls from "./controls";
 import {
+    Breakpoint,
     TablebergBlockAttrs,
     TablebergCellInstance,
 } from "@tableberg/shared/types";
@@ -316,27 +317,44 @@ const usePreventCellDelete = (rootRef: React.RefObject<HTMLTableElement | undefi
     );
 };
 
+function useRenderMode(
+    breakpoints: {
+        desktop?: Breakpoint;
+        tablet?: Breakpoint;
+        mobile?: Breakpoint;
+    },
+    previewDevice: keyof TablebergBlockAttrs["responsive"]["breakpoints"]
+) {
+    let breakpoint = breakpoints?.[previewDevice];
+
+    if (!breakpoint && previewDevice === "mobile") {
+        breakpoint = breakpoints?.tablet;
+    }
+
+    const renderMode = useSelect((select) => {
+        return select(tbStore).getRenderMode();
+    }, []);
+    const { setRenderMode } = useDispatch(tbStore);
+
+    if (previewDevice === "desktop" || !breakpoint || !breakpoint.enabled) {
+        setRenderMode("primary");
+    }
+
+    if (breakpoint?.enabled && breakpoint?.mode === "stack") {
+        setRenderMode(`stack-${breakpoint.direction}` as "stack-row" | "stack-col");
+    }
+
+    const isScrollMode = breakpoint?.enabled && breakpoint?.mode === "scroll";
+    if (isScrollMode) {
+        setRenderMode("primary");
+    }
+
+    return { renderMode, isScrollMode }
+}
+
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
     const rootRef = useRef<HTMLTableElement>();
-
-    const [isScrollMode, setIsScrollMode] = useState<boolean>(false);
-
-    const blockProps = useBlockProps({
-        ref: rootRef,
-        className: classNames("wp-block-tableberg-wrapper", {
-            "tableberg-scroll-x": isScrollMode,
-            [`justify-table-${attributes.tableAlignment}`]:
-                !!attributes.tableAlignment,
-            "tableberg-sticky-top-row": attributes.stickyTopRow,
-            "tableberg-sticky-first-col": attributes.stickyFirstCol,
-            "tableberg-cell-no-outside-border":
-                attributes.hideCellOutsideBorders,
-            "tableberg-border-col-only": attributes.innerBorderType === "col",
-            "tableberg-border-row-only": attributes.innerBorderType === "row",
-            "tableberg-theme-disabled": attributes.disableThemeStyle,
-        }),
-    });
 
     const storeActions: BlockEditorStoreActions = useDispatch(
         blockEditorStore,
@@ -400,40 +418,26 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     useTableHeaderFooter(tableBlock, storeActions);
 
-    const { setRenderMode: setStoreRenderMode } = useDispatch(tbStore);
+    const { renderMode, isScrollMode } = useRenderMode(
+        attributes.responsive.breakpoints,
+        previewDevice
+    );
 
-    const [renderMode, setRenderMode] =
-        useState<TablebergRenderMode>("");
-    const prevRenderMode = useRef<TablebergRenderMode>("");
-
-    useEffect(() => {
-        let newRMode: TablebergRenderMode = "primary";
-        if (previewDevice === "desktop") {
-            newRMode = "primary";
-        } else {
-            let breakpoint =
-                attributes.responsive?.breakpoints?.[previewDevice];
-            if (!breakpoint && previewDevice === "mobile") {
-                breakpoint = attributes.responsive?.breakpoints?.tablet;
-            }
-            if (!breakpoint) {
-                newRMode = "primary";
-                setIsScrollMode(false);
-            } else if (breakpoint.enabled) {
-                if (breakpoint.mode === "stack") {
-                    newRMode = `stack-${breakpoint.direction}` as any;
-                } else {
-                    setIsScrollMode(true);
-                }
-            }
-        }
-
-        if (newRMode !== prevRenderMode.current) {
-            setRenderMode(newRMode);
-            setStoreRenderMode(newRMode);
-            prevRenderMode.current = newRMode;
-        }
-    }, [previewDevice, attributes.responsive.breakpoints]);
+    const blockProps = useBlockProps({
+        ref: rootRef,
+        className: classNames("wp-block-tableberg-wrapper", {
+            "tableberg-scroll-x": isScrollMode,
+            [`justify-table-${attributes.tableAlignment}`]:
+                !!attributes.tableAlignment,
+            "tableberg-sticky-top-row": attributes.stickyTopRow,
+            "tableberg-sticky-first-col": attributes.stickyFirstCol,
+            "tableberg-cell-no-outside-border":
+                attributes.hideCellOutsideBorders,
+            "tableberg-border-col-only": attributes.innerBorderType === "col",
+            "tableberg-border-row-only": attributes.innerBorderType === "row",
+            "tableberg-theme-disabled": attributes.disableThemeStyle,
+        }),
+    });
 
     usePreventCellDelete(rootRef);
 
