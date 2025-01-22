@@ -5,7 +5,7 @@ Donate link: https://www.paypal.me/imtiazrayhan/
 Requires at least: 6.1
 Tested up to: 6.7
 Requires PHP: 7.0
-Stable tag: 0.5.8
+Stable tag: 0.5.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,10 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 2. Core Table Block vs Tableberg Block
 
 == Changelog ==
+
+= 0.5.9 =
+* PRO: NEW: Toggle block
+* FIX: Table disappearing when changing preview device, reloading posts etc.
 
 = 0.5.8 =
 * FIX: Custom HTML not displayed properly on frontend
