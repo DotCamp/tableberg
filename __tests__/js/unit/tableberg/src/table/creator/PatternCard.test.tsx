@@ -15,13 +15,6 @@ beforeAll(() => {
 		),
 	}));
 
-	jest.mock('@tableberg/src/components/InView', () => ({
-		__esModule: true,
-		default: ({ children }: { children: React.ReactNode }) => (
-			<div data-testid="in-view-mock">{children}</div>
-		),
-	}));
-
 	jest.mock('@tableberg/src/table/creator/PatternCardPreviewSkeleton', () => {
 		return {
 			__esModule: true,
@@ -30,6 +23,11 @@ beforeAll(() => {
 			),
 		};
 	});
+
+	window.IntersectionObserver = jest.fn().mockImplementation(() => ({
+		observe: jest.fn(),
+		disconnect: jest.fn(),
+	}));
 });
 
 const testPatternOptions: PatternOptions = {

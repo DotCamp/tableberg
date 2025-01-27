@@ -216,6 +216,7 @@ function PatternsLibrary({ onClose, onSelect }: PatternLibraryProps) {
 									setUpsell={setUpsell}
 									onSelect={onSelect}
 									isDummy={useDummies}
+									useInView={true}
 								/>
 							))}
 						</div>

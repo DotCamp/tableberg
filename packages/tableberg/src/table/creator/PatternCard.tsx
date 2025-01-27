@@ -1,8 +1,7 @@
-import InView from '../../components/InView';
 // @ts-ignore
 import { BlockPreview } from '@wordpress/block-editor';
 import type { BlockInstance } from '@wordpress/blocks';
-import { useEffect, useState, type FC } from 'react';
+import { useEffect, useState, type FC, useRef, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTags } from '@fortawesome/free-solid-svg-icons';
 import type Pattern from './includes/Pattern';
@@ -14,16 +13,20 @@ interface PatternCardProps {
 	setUpsell: (patternName: string) => void;
 	onSelect: (block: BlockInstance) => void;
 	isDummy?: boolean;
+	useInView?: boolean;
+	viewRatio?: number;
 }
 
 /**
  * Pattern card component to display pattern related data and operations.
  *
- * @param props                 Component properties.
- * @param props.pattern         Pattern data.
- * @param props.setUpsell       Upsell setter.
- * @param props.onSelect        Pattern selection handler.
- * @param [props.isDummy=false] Dummy pattern flag. In this mode pattern card will be rendered as a dummy card.
+ * @param props                   Component properties.
+ * @param props.pattern           Pattern data.
+ * @param props.setUpsell         Upsell setter.
+ * @param props.onSelect          Pattern selection handler.
+ * @param [props.isDummy=false]   Dummy pattern flag. In this mode pattern card will be rendered as a dummy card.
+ * @param [props.useInView=false] Flag to enable in view observer to render card contents.
+ * @param [props.viewRatio=0.1]   Ratio of the element that needs to be in view to trigger the render. (1.0 being fully in view)
  * @class
  */
 const PatternCard: FC<PatternCardProps> = ({
@@ -31,9 +34,46 @@ const PatternCard: FC<PatternCardProps> = ({
 	setUpsell,
 	onSelect,
 	isDummy = false,
+	useInView = false,
+	viewRatio = 0.1,
 }) => {
 	const [useImagePreview, setUseImagePreview] = useState(false);
 	const [isBusy, setIsBusy] = useState(true);
+	const [isInView, setIsInView] = useState(!useInView);
+
+	// Reference to the wrapper element for in view observer.
+	const wrapperRef = useRef(null);
+
+	// Component observer initialization.
+	const observer = useMemo(() => {
+		return useInView
+			? new IntersectionObserver(
+					([entry]) => {
+						const { isIntersecting } = entry;
+
+						// only update state if element is in view
+						if (isIntersecting) {
+							setIsInView(isIntersecting);
+						}
+					},
+					{ threshold: viewRatio }
+				)
+			: null;
+	}, [viewRatio]);
+
+	// Start observing the wrapper element for in view operations.
+	useEffect(() => {
+		if (wrapperRef.current) {
+			observer?.observe(wrapperRef.current);
+		}
+	}, [observer, wrapperRef]);
+
+	// Disconnect observer when component is in view to prevent multiple calls.
+	useEffect(() => {
+		if (isInView) {
+			observer?.disconnect();
+		}
+	}, [observer, isInView]);
 
 	/**
 	 * Handle busy status.
@@ -89,12 +129,13 @@ const PatternCard: FC<PatternCardProps> = ({
 			<div className={'tableberg-pattern-library-card-preview'}>
 				{isBusy && <PatternCardPreviewSkeleton />}
 				{!isDummy && (
-					<InView
-						classNames={[
-							'tableberg-pattern-library-card-preview-wrapper',
-						]}
+					<div
+						className={
+							'tableberg-in-view-wrapper tableberg-pattern-library-card-preview-wrapper'
+						}
+						ref={wrapperRef}
 					>
-						{useImagePreview ? (
+						{isInView && useImagePreview ? (
 							<img
 								data-tableberg-preview-loaded={!isBusy}
 								alt={pattern.title}
@@ -118,7 +159,7 @@ const PatternCard: FC<PatternCardProps> = ({
 								/>
 							</div>
 						)}
-					</InView>
+					</div>
 				)}
 			</div>
 			<div className={'tableberg-pattern-library-card-info'}>
