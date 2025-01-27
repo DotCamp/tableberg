@@ -482,7 +482,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         return <img src={exampleImage} style={{ maxWidth: "100%" }}></img>;
     }
 
-    if (!(attributes.cols > 0) || !(attributes.rows > 0)) {
+    if (attributes.cells === 0) {
         return (
             <div {...blockProps}>
                 <TableCreator clientId={clientId} />

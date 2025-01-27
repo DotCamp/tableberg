@@ -159,7 +159,7 @@ class Table
 	 */
 	public function render_tableberg_table_block($attributes, $content, $block)
 	{
-        if (!($attributes['rows'] > 0) || !($attributes['cols'] > 0)) {
+        if ($attributes['cells'] === 0) {
             return;
         }
 
