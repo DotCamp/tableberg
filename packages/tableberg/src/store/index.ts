@@ -26,13 +26,6 @@ const DEFAULT_STATE: ITBStoreState = {
 	categories: [],
 };
 
-declare global {
-	interface Window {
-		tablebergPatterns: object[];
-		tablebergPatternCategories: object[];
-	}
-}
-
 const context = (self || global) as typeof window & typeof global;
 const tablebergPatterns = context.tablebergPatterns || [];
 const tablebergCategories = context.tablebergPatternCategories || [];
