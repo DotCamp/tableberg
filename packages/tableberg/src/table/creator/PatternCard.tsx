@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTags } from '@fortawesome/free-solid-svg-icons';
 import type Pattern from './includes/Pattern';
 import PatternCardPreviewSkeleton from './PatternCardPreviewSkeleton';
-import ConditionalRenderer from './ConditionalRenderer';
 import PatternCardTextSkeleton from './PatternCardTextSkeleton';
 
 interface PatternCardProps {
@@ -88,10 +87,8 @@ const PatternCard: FC<PatternCardProps> = ({
 			}}
 		>
 			<div className={'tableberg-pattern-library-card-preview'}>
-				<ConditionalRenderer conditionToTest={isBusy}>
-					<PatternCardPreviewSkeleton />
-				</ConditionalRenderer>
-				<ConditionalRenderer conditionToTest={!isDummy}>
+				{isBusy && <PatternCardPreviewSkeleton />}
+				{!isDummy && (
 					<InView
 						classNames={[
 							'tableberg-pattern-library-card-preview-wrapper',
@@ -122,7 +119,7 @@ const PatternCard: FC<PatternCardProps> = ({
 							</div>
 						)}
 					</InView>
-				</ConditionalRenderer>
+				)}
 			</div>
 			<div className={'tableberg-pattern-library-card-info'}>
 				<div className={'tableberg-pattern-library-card-info-header'}>
@@ -138,17 +135,15 @@ const PatternCard: FC<PatternCardProps> = ({
 							pattern.title
 						)}
 					</div>
-					<ConditionalRenderer conditionToTest={!isDummy}>
-						{pattern.isUpsell && (
-							<div
-								className={
-									'tableberg-pattern-library-card-info-header-pro'
-								}
-							>
-								PRO
-							</div>
-						)}
-					</ConditionalRenderer>
+					{!isDummy && pattern.isUpsell && (
+						<div
+							className={
+								'tableberg-pattern-library-card-info-header-pro'
+							}
+						>
+							PRO
+						</div>
+					)}
 				</div>
 				<div className={'tableberg-pattern-library-card-info-footer'}>
 					<div
@@ -156,7 +151,7 @@ const PatternCard: FC<PatternCardProps> = ({
 							'tableberg-pattern-library-card-info-footer-tags'
 						}
 					>
-						<ConditionalRenderer conditionToTest={!isDummy}>
+						{!isDummy && (
 							<div
 								className={
 									'tableberg-pattern-library-card-info-footer-tags-icon'
@@ -164,7 +159,7 @@ const PatternCard: FC<PatternCardProps> = ({
 							>
 								<FontAwesomeIcon icon={faTags} />
 							</div>
-						</ConditionalRenderer>
+						)}
 						<div
 							className={
 								'tableberg-pattern-library-card-info-footer-tags-listing'
