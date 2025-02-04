@@ -237,11 +237,11 @@
     grid-gap: 3rem;
     padding: 2rem;
 
-    @include screen-min($screen-lg) {
+    @media screen and (min-width: 1024px + 1px) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @include screen-min($screen-2xl) {
+    @media screen and (min-width: 1536px + 1px) {
       grid-template-columns: repeat(3, 1fr);
     }
   }
