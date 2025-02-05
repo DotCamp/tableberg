@@ -33,6 +33,7 @@ if (!defined('TABLEBERG_PRO_PLUGIN_FILE')) {
     define('TABLEBERG_PRO_PLUGIN_FILE', __FILE__);
 }
 
+use Tableberg\Patterns\RegisterPatterns;
 use Tableberg\Pro\Assets;
 use Tableberg\Pro\Blocks;
 
@@ -146,15 +147,24 @@ function tp_fs_init()
                     new Blocks\Icon();
                     new Blocks\Ribbon();
                     new Blocks\Toggle();
-
                     new Assets();
 
-                    \Tableberg\Patterns\RegisterPatterns::from_dir(__DIR__ . '/includes/patterns');
-                }
-            }
-            if (tp_fs()->can_use_premium_code()) {
-                new Tableberg_Pro_Main();
-            }
+					add_action('init', array($this, 'init_actions'));
+				}
+
+				/**
+				 * Init lifecycle related actions.
+				 *
+				 * @return void
+				 */
+				public function init_actions(  ) {
+					RegisterPatterns::from_dir(__DIR__ . '/includes/patterns');
+				}
+			}
+
+			if (tp_fs()->can_use_premium_code()) {
+				new Tableberg_Pro_Main();
+			}
         }
     } else {
         // Parent is inactive, add your error handling here.

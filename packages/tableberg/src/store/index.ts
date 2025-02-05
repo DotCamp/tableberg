@@ -1,167 +1,182 @@
-import { createReduxStore, register } from "@wordpress/data";
-import { TablebergCellInstance } from "@tableberg/shared/types";
+import { createReduxStore, register } from '@wordpress/data';
+import { TablebergCellInstance } from '@tableberg/shared/types';
 
 interface ITBStoreState {
-    tableId: string;
-    minRow: number;
-    maxRow: number;
-    minCol: number;
-    maxCol: number;
+	tableId: string;
+	minRow: number;
+	maxRow: number;
+	minCol: number;
+	maxCol: number;
 
-    indexes: number[];
+	indexes: number[];
+	patterns: object[];
+	categories: object[];
 }
 
-
 const DEFAULT_STATE: ITBStoreState = {
-    tableId: '',
-    indexes: [],
+	tableId: '',
+	indexes: [],
 
-    minRow: Number.MAX_VALUE,
-    maxRow: -1,
+	minRow: Number.MAX_VALUE,
+	maxRow: -1,
 
-    minCol: Number.MAX_VALUE,
-    maxCol: -1,
+	minCol: Number.MAX_VALUE,
+	maxCol: -1,
+	patterns: [],
+	categories: [],
 };
 
-export const store = createReduxStore("tableberg-store", {
-    reducer(state: ITBStoreState = DEFAULT_STATE, action) {
-        switch (action.type) {
-            case "TOGGLE_CELL_SELECTION":
-                const cells = action.cells as TablebergCellInstance[];
+const context = (self || global) as typeof window & typeof global;
+const tablebergPatterns = context.tablebergPatterns || [];
+const tablebergCategories = context.tablebergPatternCategories || [];
+DEFAULT_STATE.patterns = tablebergPatterns;
+DEFAULT_STATE.categories = tablebergCategories;
 
-                // @ts-ignore
-                const newState: ITBStoreState = {
-                    tableId: action.tableId,
-                    minRow: action.from.row,
-                    maxRow: action.to.row,
+export const store = createReduxStore('tableberg-store', {
+	reducer(state: ITBStoreState = DEFAULT_STATE, action) {
+		switch (action.type) {
+			case 'TOGGLE_CELL_SELECTION':
+				const cells = action.cells as TablebergCellInstance[];
 
-                    minCol: action.from.col,
-                    maxCol: action.to.col,
-                };
+				// @ts-ignore
+				const newState: ITBStoreState = {
+					tableId: action.tableId,
+					minRow: action.from.row,
+					maxRow: action.to.row,
 
-                const reCalculateState = (): number[] => {
-                    const selectedIndexes: number[] = [];
-                    for (let i = 0; i < cells.length; i++) {
-                        const { row, col, colspan, rowspan } =
-                            cells[i].attributes;
+					minCol: action.from.col,
+					maxCol: action.to.col,
+				};
 
-                        if (row >= newState.minRow && row < newState.maxRow) {
-                            if (
-                                col < newState.minCol &&
-                                col + colspan > newState.minCol
-                            ) {
-                                newState.minCol = col;
-                                return reCalculateState();
-                            }
-                            if (
-                                col < newState.maxCol &&
-                                col + colspan > newState.maxCol
-                            ) {
-                                newState.maxCol = col + colspan;
-                                return reCalculateState();
-                            }
-                        }
+				const reCalculateState = (): number[] => {
+					const selectedIndexes: number[] = [];
+					for (let i = 0; i < cells.length; i++) {
+						const { row, col, colspan, rowspan } =
+							cells[i].attributes;
 
-                        if (col >= newState.minCol && col < newState.maxCol) {
-                            if (
-                                row < newState.minRow &&
-                                row + rowspan > newState.minRow
-                            ) {
-                                newState.minRow = row;
-                                return reCalculateState();
-                            }
-                            if (
-                                row < newState.maxRow &&
-                                row + rowspan > newState.maxRow
-                            ) {
-                                newState.maxRow = row + rowspan;
-                                return reCalculateState();
-                            }
-                        }
+						if (row >= newState.minRow && row < newState.maxRow) {
+							if (
+								col < newState.minCol &&
+								col + colspan > newState.minCol
+							) {
+								newState.minCol = col;
+								return reCalculateState();
+							}
+							if (
+								col < newState.maxCol &&
+								col + colspan > newState.maxCol
+							) {
+								newState.maxCol = col + colspan;
+								return reCalculateState();
+							}
+						}
 
-                        if (
-                            col >= newState.minCol &&
-                            col < newState.maxCol &&
-                            row >= newState.minRow &&
-                            row < newState.maxRow
-                        ) {
-                            selectedIndexes.push(i);
-                        }
-                    }
-                    return selectedIndexes;
-                };
+						if (col >= newState.minCol && col < newState.maxCol) {
+							if (
+								row < newState.minRow &&
+								row + rowspan > newState.minRow
+							) {
+								newState.minRow = row;
+								return reCalculateState();
+							}
+							if (
+								row < newState.maxRow &&
+								row + rowspan > newState.maxRow
+							) {
+								newState.maxRow = row + rowspan;
+								return reCalculateState();
+							}
+						}
 
-                newState.indexes = reCalculateState();
-                return newState;
+						if (
+							col >= newState.minCol &&
+							col < newState.maxCol &&
+							row >= newState.minRow &&
+							row < newState.maxRow
+						) {
+							selectedIndexes.push(i);
+						}
+					}
+					return selectedIndexes;
+				};
 
-            case "END_CELL_MULTI_SELECT":
-                return {...DEFAULT_STATE};
-        }
+				newState.indexes = reCalculateState();
+				return newState;
 
-        return state;
-    },
+			case 'END_CELL_MULTI_SELECT':
+				return { ...DEFAULT_STATE };
+		}
 
-    actions: {
-        selectForMerge(
-            tableId: string,
-            cells: TablebergCellInstance[],
-            from: {
-                row: number;
-                col: number;
-            },
-            to: {
-                row: number;
-                col: number;
-            }
-        ) {
-            return {
-                type: "TOGGLE_CELL_SELECTION",
-                tableId,
-                cells,
-                from,
-                to,
-            };
-        },
-        endCellMultiSelect(tableId: string) {
-            return {
-                type: "END_CELL_MULTI_SELECT",
-                tableId,
-            };
-        },
-    },
+		return state;
+	},
 
-    selectors: {
-        isCellSelected(
-            state: ITBStoreState,
-            tableId: string,
-            row: number,
-            col: number
-        ): boolean {
-            
-            return (
-                state.tableId === tableId &&
-                state.minCol <= col &&
-                state.maxCol > col &&
-                state.minRow <= row &&
-                state.maxRow > row
-            );
-        },
-        getSpans(
-            state: ITBStoreState,
-        ): { row: number; col: number } {
-            return {
-                row: state.maxRow - state.minRow,
-                col: state.maxCol - state.minCol,
-            };
-        },
+	actions: {
+		selectForMerge(
+			tableId: string,
+			cells: TablebergCellInstance[],
+			from: {
+				row: number;
+				col: number;
+			},
+			to: {
+				row: number;
+				col: number;
+			}
+		) {
+			return {
+				type: 'TOGGLE_CELL_SELECTION',
+				tableId,
+				cells,
+				from,
+				to,
+			};
+		},
+		endCellMultiSelect(tableId: string) {
+			return {
+				type: 'END_CELL_MULTI_SELECT',
+				tableId,
+			};
+		},
+	},
 
-        getIndexes(state: ITBStoreState, tableId: string): number[] | undefined {
-            if (state.tableId !== tableId) {
-                return;
-            }
-            return state.indexes;
-        },
-    },
+	selectors: {
+		isCellSelected(
+			state: ITBStoreState,
+			tableId: string,
+			row: number,
+			col: number
+		): boolean {
+			return (
+				state.tableId === tableId &&
+				state.minCol <= col &&
+				state.maxCol > col &&
+				state.minRow <= row &&
+				state.maxRow > row
+			);
+		},
+		getSpans(state: ITBStoreState): { row: number; col: number } {
+			return {
+				row: state.maxRow - state.minRow,
+				col: state.maxCol - state.minCol,
+			};
+		},
+
+		getIndexes(
+			state: ITBStoreState,
+			tableId: string
+		): number[] | undefined {
+			if (state.tableId !== tableId) {
+				return;
+			}
+			return state.indexes;
+		},
+		getPatterns(state: ITBStoreState): object[] {
+			return state.patterns;
+		},
+		getPatternCategories(state: ITBStoreState): object[] {
+			return state.categories;
+		},
+	},
 });
 
 register(store);

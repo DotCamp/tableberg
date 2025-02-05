@@ -153,5 +153,9 @@ if (!class_exists('Tableberg')) {
 		load_tableberg_textdomain();
 
 		// wp_set_script_translations("tableberg-script","tableberg", dirname(plugin_basename(__FILE__)) . '/languages');
+	},1);
+
+	add_action('rest_api_init', function() {
+		Tableberg\Patterns\RegisterPatterns::register_pattern_custom_rest_fields();
 	});
 }

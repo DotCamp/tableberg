@@ -21,7 +21,7 @@ import {
     TextControl,
 } from "@wordpress/components";
 import { useDispatch } from "@wordpress/data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import metadata from "../../block.json";
 import PatternsLibrary from "./Patterns";
 

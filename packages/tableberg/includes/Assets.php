@@ -8,6 +8,8 @@
 
 namespace Tableberg;
 
+use Tableberg\Patterns\RegisterPatterns;
+
 /**
  * Handle plugin assets
  */
@@ -76,6 +78,13 @@ class Assets
 		);
 
 		self::pass_data_to_js('tableberg-script');
+
+		$tableberg_patterns = RegisterPatterns::get_all_registered_tableberg_patterns();
+		$tableberg_pattern_categories = RegisterPatterns::get_all_registered_tableberg_pattern_categories();
+
+		wp_localize_script('tableberg-script', 'tablebergPatterns', $tableberg_patterns);
+		wp_localize_script('tableberg-script', 'tablebergPatternCategories', $tableberg_pattern_categories);
+
 	}
 	/**
 	 * Enqueue Admin assets
