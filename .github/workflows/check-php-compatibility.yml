@@ -18,4 +18,4 @@ jobs:
           test-versions: 7.0-
           paths: ${{ github.workspace }}
           extensions: php
-          ignore: "*/vendor/php-stubs/*, __tests__/**/*.*"
+          ignore: "*/vendor/php-stubs/*"
