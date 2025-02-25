@@ -1,5 +1,6 @@
-import { createReduxStore, register } from '@wordpress/data';
-import { TablebergCellInstance } from '@tableberg/shared/types';
+import { createReduxStore, register } from "@wordpress/data";
+import { TablebergCellInstance } from "@tableberg/shared/types";
+import { TablebergRenderMode } from "..";
 
 interface ITBStoreState {
 	tableId: string;
@@ -8,9 +9,10 @@ interface ITBStoreState {
 	minCol: number;
 	maxCol: number;
 
-	indexes: number[];
+    indexes: number[];
 	patterns: object[];
 	categories: object[];
+    renderMode: TablebergRenderMode;
 }
 
 const DEFAULT_STATE: ITBStoreState = {
@@ -20,10 +22,12 @@ const DEFAULT_STATE: ITBStoreState = {
 	minRow: Number.MAX_VALUE,
 	maxRow: -1,
 
-	minCol: Number.MAX_VALUE,
-	maxCol: -1,
+    minCol: Number.MAX_VALUE,
+    maxCol: -1,
 	patterns: [],
 	categories: [],
+
+    renderMode: "primary",
 };
 
 const context = (self || global) as typeof window & typeof global;
@@ -35,6 +39,11 @@ DEFAULT_STATE.categories = tablebergCategories;
 export const store = createReduxStore('tableberg-store', {
 	reducer(state: ITBStoreState = DEFAULT_STATE, action) {
 		switch (action.type) {
+            case "SET_RENDER_MODE":
+                return {
+                    ...state,
+                    renderMode: action.renderMode
+                }
 			case 'TOGGLE_CELL_SELECTION':
 				const cells = action.cells as TablebergCellInstance[];
 
@@ -102,7 +111,6 @@ export const store = createReduxStore('tableberg-store', {
 
 				newState.indexes = reCalculateState();
 				return newState;
-
 			case 'END_CELL_MULTI_SELECT':
 				return { ...DEFAULT_STATE };
 		}
@@ -111,6 +119,12 @@ export const store = createReduxStore('tableberg-store', {
 	},
 
 	actions: {
+        setRenderMode(renderMode: TablebergRenderMode) {
+            return {
+                type: "SET_RENDER_MODE",
+                renderMode
+            }
+        },
 		selectForMerge(
 			tableId: string,
 			cells: TablebergCellInstance[],
@@ -140,6 +154,9 @@ export const store = createReduxStore('tableberg-store', {
 	},
 
 	selectors: {
+        getRenderMode(state: ITBStoreState) {
+            return state.renderMode
+        },
 		isCellSelected(
 			state: ITBStoreState,
 			tableId: string,

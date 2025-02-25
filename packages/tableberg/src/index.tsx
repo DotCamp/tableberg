@@ -17,16 +17,16 @@ import {
     createBlocksFromInnerBlocksTemplate,
     registerBlockType,
     BlockInstance,
-    createBlock,
 } from "@wordpress/blocks";
 /**
  * Internal Imports
  */
 import "./style.scss";
 import metadata from "./block.json";
-import { useEffect, useRef, useState, createContext } from "react";
+import { useEffect, useRef } from "react";
 import TablebergControls from "./controls";
 import {
+    Breakpoint,
     TablebergBlockAttrs,
     TablebergCellInstance,
 } from "@tableberg/shared/types";
@@ -38,20 +38,12 @@ import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
 import { createPortal } from "react-dom";
 import { SidebarUpsell } from "./components/SidebarUpsell";
-import {
-    getBorderCSS,
-    getBorderRadiusCSS,
-} from "@tableberg/shared/utils/styling-helpers";
 import { __ } from "@wordpress/i18n";
 import TableCreator from "./table/creator";
+import { store as tbStore } from "./store";
+import transforms from "./transforms";
 
-export type TablebergRenderMode = "primary" | "stack-row" | "stack-col";
-interface TablebergCtx {
-    rootEl?: HTMLElement;
-    render?: TablebergRenderMode;
-}
-
-export const TablebergCtx = createContext<TablebergCtx>({});
+export type TablebergRenderMode = "" | "primary" | "stack-row" | "stack-col";
 
 const removeFirstRow = (
     innrBlocks: TablebergCellInstance[],
@@ -297,29 +289,72 @@ const useUndoRedo = (
     }
 };
 
+const usePreventCellDelete = (rootRef: React.RefObject<HTMLTableElement | undefined>) => {
+    useSelect(
+        (select) => {
+            rootRef.current?.addEventListener(
+                "keydown",
+                (evt: KeyboardEvent) => {
+                    if (evt.key !== "Backspace" && evt.key !== "Delete") {
+                        return;
+                    }
+                    const cur: TablebergCellInstance = (
+                        select("core/block-editor") as any
+                    ).getSelectedBlock();
+
+                    if (cur.name === "tableberg/cell") {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        return;
+                    }
+                },
+                {
+                    capture: true,
+                },
+            );
+        },
+        [rootRef.current],
+    );
+};
+
+function useRenderMode(
+    breakpoints: {
+        desktop?: Breakpoint;
+        tablet?: Breakpoint;
+        mobile?: Breakpoint;
+    },
+    previewDevice: keyof TablebergBlockAttrs["responsive"]["breakpoints"]
+) {
+    let breakpoint = breakpoints?.[previewDevice];
+
+    if (!breakpoint && previewDevice === "mobile") {
+        breakpoint = breakpoints?.tablet;
+    }
+
+    const renderMode = useSelect((select) => {
+        return select(tbStore).getRenderMode();
+    }, []);
+    const { setRenderMode } = useDispatch(tbStore);
+
+    if (previewDevice === "desktop" || !breakpoint || !breakpoint.enabled) {
+        setRenderMode("primary");
+    }
+
+    if (breakpoint?.enabled && breakpoint?.mode === "stack") {
+        setRenderMode(`stack-${breakpoint.direction}` as "stack-row" | "stack-col");
+    }
+
+    const isScrollMode = breakpoint?.enabled && breakpoint?.mode === "scroll";
+    if (isScrollMode) {
+        setRenderMode("primary");
+    }
+
+    return { renderMode, isScrollMode, breakpoint }
+}
+
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
-    // @ts-ignore
-    registerTablebergPreviewDeviceChangeObserver();
     const { attributes, setAttributes, clientId } = props;
     const rootRef = useRef<HTMLTableElement>();
-
-    const [isScrollMode, setIsScrollMode] = useState<boolean>(false);
-
-    const blockProps = useBlockProps({
-        ref: rootRef,
-        className: classNames("wp-block-tableberg-wrapper", {
-            "tableberg-scroll-x": isScrollMode,
-            [`justify-table-${attributes.tableAlignment}`]:
-                !!attributes.tableAlignment,
-            "tableberg-sticky-top-row": attributes.stickyTopRow,
-            "tableberg-sticky-first-col": attributes.stickyFirstCol,
-            "tableberg-cell-no-outside-border":
-                attributes.hideCellOutsideBorders,
-            "tableberg-border-col-only": attributes.innerBorderType === "col",
-            "tableberg-border-row-only": attributes.innerBorderType === "row",
-            "tableberg-theme-disabled": attributes.disableThemeStyle,
-        }),
-    });
 
     const storeActions: BlockEditorStoreActions = useDispatch(
         blockEditorStore,
@@ -339,10 +374,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, []);
     useUndoRedo(attributes, tableBlock.innerBlocks.length, setAttributes);
 
-    const [previewDevice, updatePreview] = useState<
-        keyof TablebergBlockAttrs["responsive"]["breakpoints"]
-        // @ts-ignore
-    >(tablebergGetLastDevice() || "desktop");
+    const previewDevice: keyof TablebergBlockAttrs["responsive"]["breakpoints"]
+        = useSelect((select) => {
+            // @ts-ignore
+            return select("core/editor").getDeviceType().toLowerCase();
+        }, []);
 
     useEffect(() => {
         if (
@@ -378,83 +414,32 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
                 version: metadata.version,
             });
         }
-        const localUpdater = (evt: any) => {
-            updatePreview(evt.detail.currentPreview);
-        };
-        document.addEventListener("TablebergPreviewDeviceChange", localUpdater);
-        return () =>
-            document.removeEventListener(
-                "TablebergPreviewDeviceChange",
-                localUpdater,
-            );
     }, []);
 
     useTableHeaderFooter(tableBlock, storeActions);
 
-    const [renderMode, setRenderMode] =
-        useState<TablebergRenderMode>("primary");
-    const prevRenderMode = useRef<TablebergRenderMode>("primary");
-    useSelect((select) => {
-        // @ts-ignore
-        const getDevice: () => string = select("core/editor").getDeviceType;
-        if (getDevice) {
-            updatePreview(getDevice().toLowerCase() as any);
-        }
-    }, []);
-
-    useEffect(() => {
-        let newRMode: TablebergRenderMode = "primary";
-        if (previewDevice === "desktop") {
-            newRMode = "primary";
-        } else {
-            let breakpoint =
-                attributes.responsive?.breakpoints?.[previewDevice];
-            if (!breakpoint && previewDevice === "mobile") {
-                breakpoint = attributes.responsive?.breakpoints?.tablet;
-            }
-            if (!breakpoint) {
-                newRMode = "primary";
-                setIsScrollMode(false);
-            } else if (breakpoint.enabled) {
-                if (breakpoint.mode === "stack") {
-                    newRMode = `stack-${breakpoint.direction}` as any;
-                } else {
-                    setIsScrollMode(true);
-                }
-            }
-        }
-
-        if (newRMode !== prevRenderMode.current) {
-            setRenderMode(newRMode);
-            prevRenderMode.current = newRMode;
-        }
-    }, [previewDevice, attributes.responsive.breakpoints]);
-
-    useSelect(
-        (select) => {
-            rootRef.current?.addEventListener(
-                "keydown",
-                (evt: KeyboardEvent) => {
-                    if (evt.key !== "Backspace" && evt.key !== "Delete") {
-                        return;
-                    }
-                    const cur: TablebergCellInstance = (
-                        select("core/block-editor") as any
-                    ).getSelectedBlock();
-
-                    if (cur.name === "tableberg/cell") {
-                        evt.preventDefault();
-                        evt.stopPropagation();
-                        return;
-                    }
-                },
-                {
-                    capture: true,
-                },
-            );
-        },
-        [rootRef.current],
+    const { renderMode, isScrollMode, breakpoint } = useRenderMode(
+        attributes.responsive.breakpoints,
+        previewDevice
     );
+
+    const blockProps = useBlockProps({
+        ref: rootRef,
+        className: classNames("wp-block-tableberg-wrapper", {
+            "tableberg-scroll-x": isScrollMode,
+            [`justify-table-${attributes.tableAlignment}`]:
+                !!attributes.tableAlignment,
+            "tableberg-sticky-top-row": attributes.stickyTopRow,
+            "tableberg-sticky-first-col": attributes.stickyFirstCol,
+            "tableberg-cell-no-outside-border":
+                attributes.hideCellOutsideBorders,
+            "tableberg-border-col-only": attributes.innerBorderType === "col",
+            "tableberg-border-row-only": attributes.innerBorderType === "row",
+            "tableberg-theme-disabled": attributes.disableThemeStyle,
+        }),
+    });
+
+    usePreventCellDelete(rootRef);
 
     const targetEl = document.querySelector(".interface-complementary-area");
 
@@ -493,29 +478,24 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     return (
         <>
             <div {...blockProps}>
-                <TablebergCtx.Provider
-                    value={{
-                        render: renderMode as any,
-                    }}
-                >
-                    {(renderMode === "primary" && (
-                        <PrimaryTable {...props} tableBlock={tableBlock} />
+                {(renderMode === "primary" && (
+                    <PrimaryTable {...props} tableBlock={tableBlock} />
+                )) ||
+                    (renderMode === "stack-row" && breakpoint && (
+                        <StackRowTable
+                            {...props}
+                            tableBlock={tableBlock}
+                            preview={previewDevice}
+                        />
                     )) ||
-                        (renderMode === "stack-row" && (
-                            <StackRowTable
-                                {...props}
-                                tableBlock={tableBlock}
-                                preview={previewDevice}
-                            />
-                        )) ||
-                        (renderMode === "stack-col" && (
-                            <StackColTable
-                                {...props}
-                                tableBlock={tableBlock}
-                                preview={previewDevice}
-                            />
-                        ))}
-                </TablebergCtx.Provider>
+                    (renderMode === "stack-col" && breakpoint && (
+                        <StackColTable
+                            {...props}
+                            tableBlock={tableBlock}
+                            stackCount={breakpoint?.stackCount}
+                            headerAsCol={breakpoint?.headerAsCol}
+                        />
+                    ))}
             </div>
             <TablebergControls
                 clientId={clientId}
@@ -544,169 +524,5 @@ registerBlockType(metadata.name, {
     attributes: metadata.attributes,
     edit,
     save,
-    transforms: {
-        from: [
-            {
-                type: "block",
-                blocks: ["core/table"],
-                transform: (data: any) => {
-                    const innerBlocks: TablebergCellInstance[] = [];
-                    const attrs: Partial<TablebergBlockAttrs> & {
-                        cells: number;
-                        rows: number;
-                        cols: number;
-                    } = {
-                        version: metadata.version,
-                        cells: 0,
-                        responsive: {
-                            target: "window",
-                            last: "",
-                            breakpoints: {},
-                        },
-                        rows: 0,
-                        cols: 0,
-                    };
-
-                    if (data.textColor) {
-                        const textColor = window
-                            .getComputedStyle(document.body)
-                            .getPropertyValue(
-                                "--wp--preset--color--" + data.textColor,
-                            );
-                        attrs.fontColor = textColor;
-                    }
-
-                    if (data.backgroundColor) {
-                        const backgroundColor = window
-                            .getComputedStyle(document.body)
-                            .getPropertyValue(
-                                "--wp--preset--color--" + data.backgroundColor,
-                            );
-                        attrs.headerBackgroundColor = backgroundColor;
-                        attrs.oddRowBackgroundColor = backgroundColor;
-                        attrs.evenRowBackgroundColor = backgroundColor;
-                        attrs.footerBackgroundColor = backgroundColor;
-                    }
-
-                    if (data.borderColor) {
-                        const borderColor = window
-                            .getComputedStyle(document.body)
-                            .getPropertyValue(
-                                "--wp--preset--color--" + data.borderColor,
-                            );
-                        attrs.innerBorder = {
-                            color: borderColor,
-                        };
-                        attrs.tableBorder = {
-                            color: borderColor,
-                        };
-                    }
-
-                    if (data.fontSize) {
-                        attrs.fontSize = (
-                            {
-                                small: "0.9rem",
-                                medium: "1.05rem",
-                                large: "1.85rem",
-                                "x-large": "2.5rem",
-                                "xx-large": "3.27rem",
-                            } as any
-                        )[data.fontSize];
-                    }
-
-                    if (data.style?.border?.width) {
-                        const innerBorder = attrs.innerBorder || {};
-                        innerBorder.width = data.style.border.width;
-
-                        const tableBorder = attrs.tableBorder || {};
-                        tableBorder.width = data.style.border.width;
-                    }
-
-                    if (/is\-style\-stripes/.test(data.className)) {
-                        attrs.evenRowBackgroundColor = "#f0f0f0";
-                    }
-
-                    const head = data.head[0]?.cells;
-                    if (head) {
-                        attrs.cols = head.length;
-                        attrs.enableTableHeader = "converted";
-                        head.forEach((cell: any, colIdx: number) => {
-                            attrs.cells++;
-                            innerBlocks.push(
-                                createBlock(
-                                    "tableberg/cell",
-                                    {
-                                        row: 0,
-                                        col: colIdx,
-                                        tagName: "th",
-                                    },
-                                    [
-                                        createBlock("core/paragraph", {
-                                            content: cell.content,
-                                        }),
-                                    ],
-                                ) as any,
-                            );
-                        });
-                        attrs.rows++;
-                    }
-
-                    data.body.forEach((row: any, rowIdx: number) => {
-                        attrs.cols = row.cells.length;
-                        row.cells.forEach((cell: any, colIdx: number) => {
-                            // @ts-ignore
-                            attrs.cells++;
-                            innerBlocks.push(
-                                createBlock(
-                                    "tableberg/cell",
-                                    {
-                                        row: attrs.rows,
-                                        col: colIdx,
-                                        tagName: "td",
-                                    },
-                                    [
-                                        createBlock("core/paragraph", {
-                                            content: cell.content,
-                                        }),
-                                    ],
-                                ) as any,
-                            );
-                        });
-                        attrs.rows++;
-                    });
-
-                    const foot = data.foot[0]?.cells;
-                    if (foot) {
-                        attrs.cols = foot.length;
-                        attrs.enableTableFooter = "converted";
-                        foot.forEach((cell: any, colIdx: number) => {
-                            attrs.cells++;
-                            innerBlocks.push(
-                                createBlock(
-                                    "tableberg/cell",
-                                    {
-                                        row: attrs.rows,
-                                        col: colIdx,
-                                        tagName: "td",
-                                    },
-                                    [
-                                        createBlock("core/paragraph", {
-                                            content: cell.content,
-                                        }),
-                                    ],
-                                ) as any,
-                            );
-                        });
-                        attrs.rows++;
-                    }
-
-                    if (attrs.cells === 0) {
-                        return createBlock("tableberg/table");
-                    }
-                    return createBlock("tableberg/table", attrs, innerBlocks);
-                },
-            },
-        ],
-        to: [],
-    },
+    transforms,
 });

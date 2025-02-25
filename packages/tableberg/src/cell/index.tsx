@@ -41,7 +41,6 @@ import {
 import classNames from "classnames";
 
 import { store as tbStore } from "../store";
-import { TablebergCtx } from "../";
 
 import "./style.scss";
 import "./editor.scss";
@@ -1050,85 +1049,84 @@ function edit(
 
     const rootEl = cellRef.current?.closest(".wp-block-tableberg-wrapper");
 
+    const { renderMode } = useSelect(
+        (select) => {
+            const { getRenderMode } = select(tbStore);
+            return {
+                renderMode: getRenderMode(),
+            };
+        },
+        [],
+    );
+
+    let targetEl;
+    if (renderMode === "primary" && !attributes.isTmp) {
+        targetEl = rootEl?.querySelector("tbody")?.children?.[attributes.row];
+    } else if (attributes.responsiveTarget) {
+        targetEl = rootEl?.querySelector(attributes.responsiveTarget);
+    }
+
     return (
         <>
-            <TablebergCtx.Consumer>
-                {({ render }) => {
-                    let targetEl;
-                    if (render === "primary") {
-                        if (!attributes.isTmp)
-                            targetEl =
-                                rootEl?.querySelector("tbody")?.children?.[
-                                attributes.row
-                                ];
-                    } else if (attributes.responsiveTarget) {
-                        targetEl = rootEl?.querySelector(
-                            attributes.responsiveTarget,
-                        );
-                    }
-
-                    return targetEl ? (
-                        createPortal(
-                            <TagName
-                                {...blockProps}
-                                rowSpan={attributes.rowspan}
-                                colSpan={attributes.colspan}
-                            >
-                                <div {...innerBlocksProps} />
-                                {hSort?.enabled && !attributes.col && (
-                                    <button
-                                        type="button"
-                                        className={classNames({
-                                            "tableberg-h-sorter": true,
-                                            [`tableberg-${hSort.order}`]:
-                                                hSort?.row === attributes.row,
-                                        })}
-                                        onPointerDown={(evt) => {
-                                            evt.stopPropagation();
-                                            evt.preventDefault();
-                                            sortTableH(
-                                                rootEl! as HTMLElement,
-                                                tableBlock.clientId,
-                                                attributes.row,
-                                                storeSelect,
-                                                storeActions,
-                                            );
-                                        }}
-                                    />
-                                )}
-                                {vSort?.enabled && !attributes.row && (
-                                    <button
-                                        type="button"
-                                        className={classNames({
-                                            "tableberg-v-sorter": true,
-                                            [`tableberg-${vSort.order}`]:
-                                                vSort?.col === attributes.col,
-                                        })}
-                                        onPointerDown={(evt) => {
-                                            evt.stopPropagation();
-                                            evt.preventDefault();
-                                            sortTableV(
-                                                rootEl! as HTMLElement,
-                                                tableBlock.clientId,
-                                                attributes.col,
-                                                storeSelect,
-                                                storeActions,
-                                            );
-                                        }}
-                                    />
-                                )}
-                            </TagName>,
-                            targetEl,
-                        )
-                    ) : (
-                        <TagName
-                            {...blockProps}
-                            rowSpan={attributes.rowspan}
-                            colSpan={attributes.colspan}
+            {targetEl ? (
+                createPortal(<TagName
+                    {...blockProps}
+                    rowSpan={attributes.rowspan}
+                    colSpan={attributes.colspan}
+                >
+                    <div {...innerBlocksProps} />
+                    {hSort?.enabled && !attributes.col && (
+                        <button
+                            type="button"
+                            className={classNames({
+                                "tableberg-h-sorter": true,
+                                [`tableberg-${hSort.order}`]:
+                                    hSort?.row === attributes.row,
+                            })}
+                            onPointerDown={(evt) => {
+                                evt.stopPropagation();
+                                evt.preventDefault();
+                                sortTableH(
+                                    rootEl! as HTMLElement,
+                                    tableBlock.clientId,
+                                    attributes.row,
+                                    storeSelect,
+                                    storeActions,
+                                );
+                            }}
                         />
-                    );
-                }}
-            </TablebergCtx.Consumer>
+                    )}
+                    {vSort?.enabled && !attributes.row && (
+                        <button
+                            type="button"
+                            className={classNames({
+                                "tableberg-v-sorter": true,
+                                [`tableberg-${vSort.order}`]:
+                                    vSort?.col === attributes.col,
+                            })}
+                            onPointerDown={(evt) => {
+                                evt.stopPropagation();
+                                evt.preventDefault();
+                                sortTableV(
+                                    rootEl! as HTMLElement,
+                                    tableBlock.clientId,
+                                    attributes.col,
+                                    storeSelect,
+                                    storeActions,
+                                );
+                            }}
+                        />
+                    )}
+                </TagName>,
+                    targetEl,
+                )
+            ) : (
+                <TagName
+                    {...blockProps}
+                    rowSpan={attributes.rowspan}
+                    colSpan={attributes.colspan}
+                />
+            )}
             {cellRef.current &&
                 (isSelected || (hasSelected && !isParagraphSelected)) &&
                 createPortal(
