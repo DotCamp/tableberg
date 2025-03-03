@@ -142,7 +142,7 @@ class Table
 			$str .= 'data-tableberg-' . $device . '-direction="' . $deviceOpts["direction"] . '" ';
 			$str .= 'data-tableberg-' . $device . '-count="' . $deviceOpts["stackCount"] . '" ';
 
-			if ($deviceOpts["headerAsCol"] && $attributes['enableTableHeader']) {
+			if ($deviceOpts["headerAsCol"]) {
 				$str .= 'data-tableberg-' . $device . '-header="' . $deviceOpts["headerAsCol"] . '" ';
 			}
 		}
