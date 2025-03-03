@@ -214,134 +214,109 @@
     /**
      *
      * @param {HTMLTableElement} table
-     * @param {boolean} header
-     * @param {number} count
+     * @param {boolean} headerAsCol
+     * @param {number} stackCount
      * @param {string} tag
      */
 
-    function toColStack(table, header, count, tag) {
+    function toColStack(table, headerAsCol, stackCount, tag) {
         const oldMode = table.dataset.tablebergLast;
         if (oldMode === tag) {
             return;
         }
-        if (!header) {
-            return;
-        }
-        count = parseInt(count);
         reviveTable(table);
 
         table.setAttribute("data-tableberg-last", tag);
 
         setTableClassName(table, "tableberg-colstack-table");
 
-        const cells = Array.from(table.querySelectorAll("th,td"));
+        let cells = Array.from(table.querySelectorAll("th,td"));
 
         if (oldMode && oldMode.match("stack-row")) {
             cells.sort((a, b) => {
-                const aRow = parseInt(a.dataset.tablebergRow);
-                const bRow = parseInt(b.dataset.tablebergRow);
-                const diff1 = aRow - bRow;
-                if (diff1 !== 0) {
-                    return diff1;
-                }
-                const aCol = parseInt(a.dataset.tablebergCol);
-                const bCol = parseInt(b.dataset.tablebergCol);
-                return aCol - bCol;
+                const { dataset: { tablebergRow: aRow, tablebergCol: aCol } } = a;
+                const { dataset: { tablebergRow: bRow, tablebergCol: bCol } } = b;
+
+                return (aRow === bRow) ?
+                    parseInt(aCol) - parseInt(bCol) :
+                    parseInt(aRow) - parseInt(bRow);
             });
         }
 
         const tbody = table.querySelector("tbody") || table;
         tbody.innerHTML = "";
 
-        const headerArr = [];
-        let stackRowCount = Math.max(count || 1, 1);
+        stackCount = Math.max(parseInt(stackCount) || 1, 1);
 
-        let rowIdxStart = 0;
-        let rowCount = -1,
-            lastRow = -1,
-            stackTrack = 0,
-            lastRowEl;
+        const tableCols = parseInt(table.dataset.tablebergCols);
+        const tableRows = parseInt(table.dataset.tablebergRows);
 
-        if (header) {
-            stackRowCount++;
-            rowCount++;
-            lastRowEl = document.createElement("tr");
-            markRow(lastRowEl, "header");
-            tbody.appendChild(lastRowEl);
-            stackTrack++;
+        const cols = headerAsCol ? tableCols - 1 : tableCols;
+        const rowsToGenerate = tableRows * Math.ceil(cols / stackCount);
 
-            for (; rowIdxStart < cells.length; rowIdxStart++) {
-                const cell = cells[rowIdxStart];
-                if (cell.dataset.tablebergRow > 0) {
-                    break;
-                }
-                lastRowEl.appendChild(cell);
-                headerArr.push(cell);
-            }
-        }
+        let tableMarkup = "";
+        const rowMarkups = Array.from({ length: rowsToGenerate }, () => "");
 
-        const footer = table.dataset.tablebergFooter;
-        const footerArr = [];
-
-        if (footer) {
-            const fRow = parseInt(table.dataset.tablebergRows) - 1;
-            let i = cells.length - 1;
-            for (; i > -1; i--) {
-                if (cells[i].dataset.tablebergRow < fRow) {
-                    break;
-                }
-                footerArr.unshift(cells[i]);
-            }
-            cells.splice(i + 1);
-        }
-
-        for (let idx = rowIdxStart; idx < cells.length; idx++) {
-            const cell = cells[idx];
-
-            if (lastRow != cell.dataset.tablebergRow) {
-                lastRow = cell.dataset.tablebergRow;
-
-                let row = parseInt(lastRow);
-
-                if (header) {
-                    row++;
-                    if (stackTrack == stackRowCount) {
-                        rowCount++;
-
-                        lastRowEl = document.createElement("tr");
-                        markRow(lastRowEl, "header");
-                        lastRowEl.setAttribute("data-tableberg-tmp", "1");
-                        tbody.appendChild(lastRowEl);
-
-                        stackTrack = 1;
-
-                        for (const cell of headerArr) {
-                            lastRowEl.appendChild(cell.cloneNode(true));
-                        }
-                    }
-                }
-                rowCount++;
-                lastRowEl = document.createElement("tr");
-
-                if (row % 2) {
-                    markRow(lastRowEl, "even-row");
-                } else {
-                    markRow(lastRowEl, "odd-row");
-                }
-                tbody.appendChild(lastRowEl);
-                stackTrack++;
+        (function addLeftColToEachStack() {
+            if (!headerAsCol) {
+                return;
             }
 
-            lastRowEl.appendChild(cell);
+            const leftColCells = cells.filter(cell => parseInt(cell.dataset.tablebergCol) === 0);
+            const cellsExcludingLeftCol = cells.filter(cell => parseInt(cell.dataset.tablebergCol) !== 0);
+
+            cells = cellsExcludingLeftCol;
+
+            for (let row = 0; row < rowsToGenerate; row++) {
+                const cell = leftColCells[row % tableRows]
+
+                if (row > tableRows - 1) {
+                    cell.setAttribute("data-tableberg-tmp", "1");
+                }
+                rowMarkups[row] += cell.outerHTML;
+            }
+        })();
+
+        (function generateCellMarkup() {
+            for (const cell of cells) {
+                const coli = headerAsCol ? parseInt(cell.dataset.tablebergCol) - 1 : parseInt(cell.dataset.tablebergCol);
+                const rowi = parseInt(cell.dataset.tablebergRow);
+
+                let targetRow = tableRows * (Math.ceil((coli + 1) / stackCount) - 1) + rowi;
+
+                rowMarkups[targetRow] += cell.outerHTML;
+            }
+        })();
+
+        (function generateRows() {
+            for (let i = 0; i < rowsToGenerate; i++) {
+                const createRow = (rowClass = "row") => `<tr
+                    className=tableberg-${rowClass}
+                >
+                    ${rowMarkups[i]}
+                </tr>`;
+
+                const isHeaderRow = i % tableRows === 0;
+                const isFooterRow = i % tableRows === tableRows - 1;
+
+                if (parseInt(table.dataset.enableTableHeader) && isHeaderRow) {
+                    tableMarkup += createRow("header");
+                } else if (parseInt(table.dataset.enableTableFooter) && isFooterRow) {
+                    tableMarkup += createRow("footer");
+                } else if (i % 2 === 0) {
+                    tableMarkup += createRow("even-row");
+                } else if (i % 2 !== 0) {
+                    tableMarkup += createRow("odd-row");
+                }
+            }
+        })();
+
+        const colGroup = table.querySelector("colgroup");
+        if (colGroup) {
+            colGroup.remove();
         }
 
-        if (footerArr.length > 0) {
-            lastRowEl = document.createElement("tr");
-            markRow(lastRowEl, "footer");
-            tbody.appendChild(lastRowEl);
-
-            footerArr.forEach((cell) => lastRowEl.appendChild(cell));
-        }
+        tbody.innerHTML = tableMarkup;
     }
 
     /**
