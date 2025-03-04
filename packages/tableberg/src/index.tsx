@@ -380,42 +380,6 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
             return select("core/editor").getDeviceType().toLowerCase();
         }, []);
 
-    useEffect(() => {
-        if (
-            tableBlock.attributes.version &&
-            tableBlock.attributes.version < "0.5.3"
-        ) {
-            // REMOVE IN 0.5.4
-            const rowStyles: TablebergBlockAttrs["rowStyles"] = {};
-            // @ts-ignore
-            const heights = tableBlock.attributes.rowHeights || [];
-            for (let i = 0; i < heights.length; i++) {
-                if (heights[i]) {
-                    rowStyles[i] = {
-                        height: heights[i],
-                    };
-                }
-            }
-
-            const colStyles: TablebergBlockAttrs["colStyles"] = {};
-            // @ts-ignore
-            const widths = tableBlock.attributes.colWidths || [];
-            for (let i = 0; i < widths.length; i++) {
-                if (widths[i]) {
-                    colStyles[i] = {
-                        width: widths[i],
-                    };
-                }
-            }
-
-            setAttributes({
-                rowStyles,
-                colStyles,
-                version: metadata.version,
-            });
-        }
-    }, []);
-
     useTableHeaderFooter(tableBlock, storeActions);
 
     const { renderMode, isScrollMode, breakpoint } = useRenderMode(
