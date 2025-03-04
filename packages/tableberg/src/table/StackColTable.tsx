@@ -116,14 +116,27 @@ export default function StackColTable(
             const cellsExcludingLeftCol = cells.filter(cell => cell.attributes.col !== 0);
             cells = cellsExcludingLeftCol;
 
+            const leftColCellsWithGapsForRowspan: Array<TablebergCellInstance | "gap"> = [];
+            leftColCells.forEach(cell => {
+                leftColCellsWithGapsForRowspan.push(cell);
+                for (let i = 1; i < cell.attributes.rowspan; i++) {
+                    leftColCellsWithGapsForRowspan.push("gap");
+                }
+            })
+
             for (let row = 0; row < template.length; row++) {
-                const col1Cell = cloneBlock(leftColCells[row % attributes.rows]) as TablebergCellInstance;
+                const col1Cell = leftColCellsWithGapsForRowspan[row % attributes.rows];
+                if (col1Cell === "gap") {
+                    continue;
+                }
                 if (col1Cell.attributes.isTmp) {
                     continue;
                 }
 
+                const clonedCol1Cell = cloneBlock(col1Cell) as TablebergCellInstance;
+
                 const setTemp = row > (attributes.rows - 1) ? true : false;
-                newCells.push(setRowPortalTarget(col1Cell, row, setTemp));
+                newCells.push(setRowPortalTarget(clonedCol1Cell, row, setTemp));
             }
         })();
 
