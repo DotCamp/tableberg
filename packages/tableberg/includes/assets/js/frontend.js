@@ -257,6 +257,22 @@
         let tableMarkup = "";
         const rowMarkups = Array.from({ length: rowsToGenerate }, () => "");
 
+        function markCell(cell) {
+            const rowi = parseInt(cell.dataset.tablebergRow);
+            if (table.dataset.tablebergHeader !== "" && cell.dataset.tablebergRow === "0") {
+                markRowCell(cell, "header");
+            } else if (
+                table.dataset.tablebergFooter !== "" &&
+                rowi === parseInt(table.dataset.tablebergRows) - 1
+            ) {
+                markRowCell(cell, "footer");
+            } else if (rowi % 2 === 0) {
+                markRowCell(cell, "even-row");
+            } else if (rowi % 2 !== 0) {
+                markRowCell(cell, "odd-row");
+            }
+        }
+
         (function addLeftColToEachStack() {
             if (!headerAsCol) {
                 return;
@@ -273,6 +289,8 @@
                 if (row > tableRows - 1) {
                     cell.setAttribute("data-tableberg-tmp", "1");
                 }
+
+                markCell(cell);
                 rowMarkups[row] += cell.outerHTML;
             }
         })();
@@ -283,6 +301,8 @@
                 const rowi = parseInt(cell.dataset.tablebergRow);
 
                 let targetRow = tableRows * (Math.ceil((coli + 1) / stackCount) - 1) + rowi;
+
+                markCell(cell);
 
                 rowMarkups[targetRow] += cell.outerHTML;
             }
@@ -299,9 +319,9 @@
                 const isHeaderRow = i % tableRows === 0;
                 const isFooterRow = i % tableRows === tableRows - 1;
 
-                if (parseInt(table.dataset.enableTableHeader) && isHeaderRow) {
+                if (table.dataset.tablebergHeader !== "" && isHeaderRow) {
                     tableMarkup += createRow("header");
-                } else if (parseInt(table.dataset.enableTableFooter) && isFooterRow) {
+                } else if (table.dataset.tablebergFooter !== "" && isFooterRow) {
                     tableMarkup += createRow("footer");
                 } else if (i % 2 === 0) {
                     tableMarkup += createRow("even-row");
