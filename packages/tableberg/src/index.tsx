@@ -40,10 +40,12 @@ import { createPortal } from "react-dom";
 import { SidebarUpsell } from "./components/SidebarUpsell";
 import { __ } from "@wordpress/i18n";
 import TableCreator from "./table/creator";
-import { store as tbStore } from "./store";
+import { createPrivateStore } from "./store";
 import transforms from "./transforms";
 
 export type TablebergRenderMode = "" | "primary" | "stack-row" | "stack-col";
+
+export const privateStores: Record<string, ReturnType<typeof createPrivateStore>> = {};
 
 const removeFirstRow = (
     innrBlocks: TablebergCellInstance[],
@@ -323,8 +325,11 @@ function useRenderMode(
         tablet?: Breakpoint;
         mobile?: Breakpoint;
     },
-    previewDevice: keyof TablebergBlockAttrs["responsive"]["breakpoints"]
+    previewDevice: keyof TablebergBlockAttrs["responsive"]["breakpoints"],
+    clientId: string
 ) {
+    const privateStore = privateStores[clientId];
+
     let breakpoint = breakpoints?.[previewDevice];
 
     if (!breakpoint && previewDevice === "mobile") {
@@ -332,9 +337,9 @@ function useRenderMode(
     }
 
     const renderMode = useSelect((select) => {
-        return select(tbStore).getRenderMode();
+        return select(privateStore).getRenderMode();
     }, []);
-    const { setRenderMode } = useDispatch(tbStore);
+    const { setRenderMode } = useDispatch(privateStore);
 
     if (previewDevice === "desktop" || !breakpoint || !breakpoint.enabled) {
         setRenderMode("primary");
@@ -355,6 +360,10 @@ function useRenderMode(
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { attributes, setAttributes, clientId } = props;
     const rootRef = useRef<HTMLTableElement>();
+
+    if (!privateStores[clientId]) {
+        privateStores[clientId] = createPrivateStore(clientId);
+    }
 
     const storeActions: BlockEditorStoreActions = useDispatch(
         blockEditorStore,
@@ -420,7 +429,8 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 
     const { renderMode, isScrollMode, breakpoint } = useRenderMode(
         attributes.responsive.breakpoints,
-        previewDevice
+        previewDevice,
+        clientId
     );
 
     const blockProps = useBlockProps({

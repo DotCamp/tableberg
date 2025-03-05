@@ -21,7 +21,7 @@ export const ResponsiveControls = ({ preview, attributes, setTableAttributes }: 
         },
         mobile: {
             enabled: false,
-            headerAsCol: true,
+            headerAsCol: false,
             maxWidth: 700,
             mode: "",
             direction: "col",
@@ -29,7 +29,7 @@ export const ResponsiveControls = ({ preview, attributes, setTableAttributes }: 
         },
         tablet: {
             enabled: false,
-            headerAsCol: true,
+            headerAsCol: false,
             maxWidth: 1024,
             mode: "",
             direction: "col",
