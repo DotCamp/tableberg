@@ -1,5 +1,3 @@
-// @ts-ignore
-import { BlockPreview } from '@wordpress/block-editor';
 import type { BlockInstance } from '@wordpress/blocks';
 import { useEffect, useState, type FC, useRef, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -37,7 +35,6 @@ const PatternCard: FC<PatternCardProps> = ({
 	useInView = false,
 	viewRatio = 0.1,
 }) => {
-	const [useImagePreview, setUseImagePreview] = useState(false);
 	const [isBusy, setIsBusy] = useState(true);
 	const [isInView, setIsInView] = useState(!useInView);
 
@@ -85,7 +82,6 @@ const PatternCard: FC<PatternCardProps> = ({
 	};
 
 	const handleImageError = () => {
-		setUseImagePreview(false);
 		handleBusyStatus(false);
 	};
 
@@ -109,10 +105,6 @@ const PatternCard: FC<PatternCardProps> = ({
 		}
 	};
 
-	useEffect(() => {
-		setUseImagePreview(pattern.screenshotUrl !== undefined);
-	}, [pattern]);
-
 	return (
 		<div
 			role={'gridcell'}
@@ -135,7 +127,7 @@ const PatternCard: FC<PatternCardProps> = ({
 						}
 						ref={wrapperRef}
 					>
-						{isInView && useImagePreview ? (
+						{isInView && (
 							<img
 								data-tableberg-preview-loaded={!isBusy}
 								alt={pattern.title}
@@ -147,17 +139,6 @@ const PatternCard: FC<PatternCardProps> = ({
 								src={pattern.screenshotUrl}
 								role={'presentation'}
 							/>
-						) : (
-							<div
-								className={
-									'tableberg-pattern-library-card-preview-wrapper-block_preview_wrapper'
-								}
-							>
-								<BlockPreview
-									blocks={pattern.blocks}
-									viewportWidth={pattern.viewportWidth}
-								/>
-							</div>
 						)}
 					</div>
 				)}
