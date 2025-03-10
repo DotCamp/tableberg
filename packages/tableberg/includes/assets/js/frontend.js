@@ -281,10 +281,23 @@
             const leftColCells = cells.filter(cell => parseInt(cell.dataset.tablebergCol) === 0);
             const cellsExcludingLeftCol = cells.filter(cell => parseInt(cell.dataset.tablebergCol) !== 0);
 
+            const leftColCellsWithGapsForRowspan = [];
+            leftColCells.forEach(cell => {
+                leftColCellsWithGapsForRowspan.push(cell);
+                if (cell.attributes.rowspan) {
+                    for (let i = 1; i < parseInt(cell.attributes.rowspan.value); i++) {
+                        leftColCellsWithGapsForRowspan.push("gap");
+                    }
+                }
+            })
+
             cells = cellsExcludingLeftCol;
 
             for (let row = 0; row < rowsToGenerate; row++) {
-                const cell = leftColCells[row % tableRows]
+                const cell = leftColCellsWithGapsForRowspan[row % tableRows]
+                if (cell === "gap") {
+                    continue;
+                }
 
                 if (row > tableRows - 1) {
                     cell.setAttribute("data-tableberg-tmp", "1");
