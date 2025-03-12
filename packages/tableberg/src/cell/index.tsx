@@ -55,6 +55,7 @@ import {
     TablebergCellBlockAttrs,
     TablebergCellInstance,
 } from "@tableberg/shared/types";
+import { privateStores } from "..";
 
 import {
     DuplicateRowIcon,
@@ -1051,7 +1052,7 @@ function edit(
 
     const { renderMode } = useSelect(
         (select) => {
-            const { getRenderMode } = select(tbStore);
+            const { getRenderMode } = select(privateStores[tableBlock.clientId]);
             return {
                 renderMode: getRenderMode(),
             };

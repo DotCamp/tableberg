@@ -145,12 +145,9 @@
             border-left-color: #c5c5c5;
         }
     }
-
-
-    
 }
 
-.tableberg-rowstack-table {
+.tableberg-colstack-table, .tableberg-rowstack-table {
     .wp-block-tableberg-cell {
         &.tableberg-odd-row-cell {
             background: var(--tableberg-odd-bg);
