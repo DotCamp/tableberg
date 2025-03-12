@@ -68,6 +68,12 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 
 == Changelog ==
 
+= 0.6.0 =
+* FIX: Column stacking in responsive mode.
+* FIX: An issue where tables made with some older versions won't work.
+* FIX: Performance issues in the patterns/prebuilt tables viewer.
+* FIX: Table sometimes disappears in editor; especially during changing preview device.
+
 = 0.5.9 =
 * PRO: NEW: Toggle block
 * FIX: Table disappearing when changing preview device, reloading posts etc.
