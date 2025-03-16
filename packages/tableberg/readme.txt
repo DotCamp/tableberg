@@ -73,6 +73,7 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 * FIX: An issue where tables made with some older versions won't work.
 * FIX: Performance issues in the patterns/prebuilt tables viewer.
 * FIX: Table sometimes disappears in editor; especially during changing preview device.
+* FIX: Fixed size column widths won't persist after reload in editor.
 
 = 0.5.9 =
 * PRO: NEW: Toggle block
