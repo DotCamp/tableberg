@@ -74,10 +74,7 @@ declare const TABLEBERG_CFG: {
     IS_PRO: boolean;
 }
 
-declare global {
-    interface Window {
-        tablebergPatterns: object[];
-        tablebergPatternCategories: object[];
-    }
+interface Window {
+    tablebergPatterns: object[];
+    tablebergPatternCategories: object[];
 }
-
