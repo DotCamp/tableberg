@@ -11,6 +11,11 @@ class ComposerStaticInit5c4d43dcdd3f5361bd26ecb40ba79213
         array (
             'Tableberg\\' => 10,
         ),
+        'D' => 
+        array (
+            'DotCamp\\Promoter\\Tests\\' => 23,
+            'DotCamp\\Promoter\\' => 17,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -18,6 +23,15 @@ class ComposerStaticInit5c4d43dcdd3f5361bd26ecb40ba79213
         array (
             0 => __DIR__ . '/../..' . '/',
             1 => __DIR__ . '/../..' . '/includes',
+        ),
+        'DotCamp\\Promoter\\Tests\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dotcamp/promoter/__tests__',
+        ),
+        'DotCamp\\Promoter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dotcamp/promoter/inc',
+            1 => __DIR__ . '/..' . '/dotcamp/promoter/__tests__/php/unit/inc',
         ),
     );
 

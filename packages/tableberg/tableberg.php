@@ -16,6 +16,8 @@
  * @package Tableberg
  */
 
+use DotCamp\Promoter\Promoter;
+
 if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
@@ -159,3 +161,8 @@ if (!class_exists('Tableberg')) {
 		Tableberg\Patterns\RegisterPatterns::register_pattern_custom_rest_fields();
 	});
 }
+
+
+// Promoter initialization.
+$default_promotions = Promoter::generate_default_promotions(TABLEBERG_PLUGIN_FILE, 'Tableberg', 'tableberg/tableberg.php');
+Promoter::add_promotions($default_promotions, TABLEBERG_PLUGIN_FILE);

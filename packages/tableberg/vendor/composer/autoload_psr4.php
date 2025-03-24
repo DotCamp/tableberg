@@ -7,4 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Tableberg\\' => array($baseDir . '/', $baseDir . '/includes'),
+    'DotCamp\\Promoter\\Tests\\' => array($vendorDir . '/dotcamp/promoter/__tests__'),
+    'DotCamp\\Promoter\\' => array($vendorDir . '/dotcamp/promoter/inc', $vendorDir . '/dotcamp/promoter/__tests__/php/unit/inc'),
 );

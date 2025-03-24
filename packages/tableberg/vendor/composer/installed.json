@@ -1,6 +1,73 @@
 {
     "packages": [
         {
+            "name": "dotcamp/promoter",
+            "version": "1.0.2",
+            "version_normalized": "1.0.2.0",
+            "dist": {
+                "type": "path",
+                "url": "vendor/dotcamp/promoter",
+                "reference": "21ea2cfe94cbb0ac999865fe9934be6ae2dd0ab8"
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "brain/monkey": "^2.6",
+                "phpcompatibility/phpcompatibility-wp": "*",
+                "phpunit/phpunit": "^12.0",
+                "wp-coding-standards/wpcs": "^3.0"
+            },
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DotCamp\\Promoter\\": [
+                        "inc/",
+                        "__tests__/php/unit/inc"
+                    ],
+                    "DotCamp\\Promoter\\Tests\\": "__tests__/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ],
+                "lint": [
+                    "@phpcs-check"
+                ],
+                "lint-fix": [
+                    "@phpcs-fix"
+                ],
+                "phpcs-check": [
+                    "phpcs -p --standard=.phpcs.xml --extensions=php __tests__ inc"
+                ],
+                "phpcs-fix": [
+                    "phpcbf -p --standard=.phpcs.xml --extensions=php __tests__ inc"
+                ],
+                "compress": [
+                    "composer archive --format=zip --dir=./zip --file=./dotcamp-promoter"
+                ],
+                "release": [
+                    "pnpm run production && composer run test && composer run lint-fix && composer run compress"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Erdem Bircan",
+                    "email": "erdem.erdembircan@gmail.com"
+                }
+            ],
+            "description": "Promoter library for DotCamp products.",
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../dotcamp/promoter"
+        },
+        {
             "name": "php-stubs/wordpress-stubs",
             "version": "v6.4.1",
             "version_normalized": "6.4.1.0",

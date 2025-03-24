@@ -1,6 +1,9 @@
 {
     "name": "dotcamp/tableberg",
     "description": "Tableberg plugin by Dotcamp.",
+    "require": {
+        "dotcamp/promoter": "^1.0"
+    },
     "require-dev": {
         "php-stubs/wordpress-stubs": "^6.4"
     },
@@ -16,5 +19,11 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "vendor/dotcamp/promoter"
+        }
+    ]
 }
