@@ -157,7 +157,7 @@ class Button
 				' ',
 				array(
 					'wp-block-tableberg-button',
-					$align ? "block-align-{$align}" : '',
+					$align ? "block-align-" . esc_attr($align) : '',
 					$width ? "has-custom-width wp-block-button__width-{$width}" : '',
 					$font_size ? 'has-custom-font-size' : '',
 					$this->get_classes($attributes),
