@@ -157,6 +157,10 @@ class Version_Control extends Version_Sync_Base {
 
 		if ( is_wp_error( $plugin_remote_info ) ) {
 			$all_versions = array();
+		} if ( !isset( $plugin_remote_info->versions ) ) {
+			$all_versions = array();
+		} if ( $plugin_remote_info->versions == null ) {
+			$all_versions = array();
 		} else {
 			$all_versions = $plugin_remote_info->versions;
 			unset( $all_versions['trunk'] );
