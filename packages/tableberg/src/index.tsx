@@ -446,7 +446,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     if (attributes.cells === 0) {
         return (
             <div {...blockProps}>
-                <TableCreator clientId={clientId} />
+                <TableCreator clientId={clientId} proProps={props.proProps} />
             </div>
         );
     }
@@ -455,9 +455,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         <>
             <div {...blockProps}>
                 {(renderMode === "primary" && (
-                    attributes.dynamic ? 
-                        <DynamicTable {...props} tableBlock={tableBlock} /> :
-                        <PrimaryTable {...props} tableBlock={tableBlock} />
+                    <PrimaryTable {...props} tableBlock={tableBlock} privateStore={privateStores[clientId]} />
                 )) ||
                     (renderMode === "stack-row" && breakpoint && (
                         <StackRowTable

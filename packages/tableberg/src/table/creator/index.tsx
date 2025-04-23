@@ -21,7 +21,7 @@ import {
     TextControl,
 } from "@wordpress/components";
 import { useDispatch } from "@wordpress/data";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import metadata from "../../block.json";
 import PatternsLibrary from "./Patterns";
 
@@ -29,7 +29,7 @@ interface Props {
     clientId: string;
 }
 
-export default function TableCreator({ clientId }: Props) {
+export default function TableCreator({ clientId, proProps }: Props) {
     const storeActions: BlockEditorStoreActions = useDispatch(store) as any;
 
     const [rows, setRows] = useState<number | undefined>(4);
@@ -59,36 +59,12 @@ export default function TableCreator({ clientId }: Props) {
 
     };
 
-    const onCreateWooTable = () => {
-        const rows = 1;
-        const cols = 4;
-
-        let initialInnerBlocks: InnerBlockTemplate[] = [];
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-                initialInnerBlocks.push(["tableberg/cell", { row: i, col: j, dynamicProps: {} }, [["core/paragraph"]]]);
-            }
-        }
-
-        storeActions.replaceInnerBlocks(clientId, createBlocksFromInnerBlocksTemplate(initialInnerBlocks));
-
-        storeActions.updateBlockAttributes(clientId, {
-            version: metadata.version,
-            cells: initialInnerBlocks.length,
-            rows,
-            cols,
-            dynamic: true
-        });
-
-    };
-
     return (
         <div className="tableberg-table-creator">
             <Placeholder
                 label={"Tableberg"}
                 icon={<BlockIcon icon={TablebergIcon} />}
             >
-
                 <div className="tableberg-table-creator-heading">Create Blank Table</div>
                 <Flex gap="10px" justify="center" align="end">
                     <TextControl
@@ -137,7 +113,7 @@ export default function TableCreator({ clientId }: Props) {
                     </button>
                     <button
                         className="tableberg-table-creator-btn"
-                        onClick={onCreateWooTable}
+                        onClick={() => proProps.onCreateWooTable(storeActions)}
                     >
                         <div className="tableberg-table-creator-btn-icon">
                             {WooTableIcon}
