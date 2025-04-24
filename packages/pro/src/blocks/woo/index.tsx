@@ -1,58 +1,40 @@
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 import metadata from "./block.json";
 import blockIcon from "@tableberg/shared/icons/tableberg";
-import { BlockIcon, useBlockProps, useInnerBlocksProps, store, InnerBlocks, InspectorControls } from "@wordpress/block-editor";
-import { Button, Placeholder, SelectControl } from "@wordpress/components";
+import {
+    BlockIcon,
+    useBlockProps,
+    useInnerBlocksProps,
+    store,
+    InnerBlocks,
+    InspectorControls
+} from "@wordpress/block-editor";
+import {
+    Button,
+    PanelBody,
+    Placeholder,
+    SelectControl,
+    __experimentalNumberControl as NumberControl,
+    ToggleControl
+} from "@wordpress/components";
 import TablebergIcon from "@tableberg/shared/icons/tableberg";
-import { useEffect, useRef, useState } from "react";
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import {
+    QueryClient,
+    QueryClientProvider,
+    useQuery
+} from "@tanstack/react-query";
 import apiFetch from "@wordpress/api-fetch";
 import { useDispatch, useSelect } from "@wordpress/data";
 
 const queryClient = new QueryClient();
 
-const FieldSelector = ({ fields, onChange }: {
-    fields: string[];
-    onChange: (value: string) => void
+const FieldSelector = ({ selectedFields, onChange, onDelete }: {
+    selectedFields: string[];
+    onChange: (fields: string) => void;
+    onDelete: (fieldToDelete: string) => void;
 }) => {
-    return <SelectControl
-        __next40pxDefaultSize
-        __nextHasNoMarginBottom
-        onChange={onChange}
-        options={[
-            {
-                label: "Choose a field",
-                value: ""
-            },
-            ...fields.map(field => ({
-                label: field,
-                value: field,
-            }))
-        ]}
-    />
-}
-
-const SelectedField = ({ field, onDelete }: {
-    field: string;
-    onDelete: (field: string) => void
-}) => <div style={{
-    backgroundColor: "#f3f3f3",
-    fontWeight: 600,
-    padding: "1rem",
-    display: "flex",
-    justifyContent: "space-between",
-    marginBottom: ".25rem"
-}}>
-        <div>{field}</div>
-        <div
-            style={{ cursor: "pointer" }}
-            onClick={() => onDelete(field)}
-        >x</div>
-    </div>;
-
-function WooTableCreator({ onCreate }: { onCreate: (selectedFields: string[]) => void }) {
     const [selectedField, setSelectedField] = useState<string>("");
-    const [selectedFields, setSelectedFields] = useState<string[]>([]);
 
     const { data: products } = useQuery<Record<string, any>[]>({
         queryKey: ['wooKeys'],
@@ -79,6 +61,68 @@ function WooTableCreator({ onCreate }: { onCreate: (selectedFields: string[]) =>
     });
 
     const validFields = Array.from(fields);
+
+    return <div style={{ width: "100%" }}>
+        {selectedFields.map(field => <SelectedField
+            field={field}
+            key={field}
+            onDelete={onDelete}
+        />)}
+        <div style={{ display: "flex" }}>
+            <div style={{ width: "100%", marginRight: "5px" }}>
+                <SelectControl
+                    __next40pxDefaultSize
+                    __nextHasNoMarginBottom
+                    onChange={(value) => setSelectedField(value)}
+                    options={[
+                        {
+                            label: "Choose a field",
+                            value: ""
+                        },
+                        ...validFields.filter(el => !selectedFields.includes(el)).map(field => ({
+                            label: field,
+                            value: field,
+                        }))
+                    ]}
+                />
+            </div>
+            <Button
+                variant="secondary"
+                onClick={() => {
+                    if (selectedField !== "") {
+                        onChange(selectedField)
+                    }
+                    setSelectedField("");
+                }}
+                style={{ minHeight: "40px" }}
+            >
+                Add
+            </Button>
+        </div>
+    </div>
+}
+
+const SelectedField = ({ field, onDelete }: {
+    field: string;
+    onDelete: (field: string) => void
+}) => <div style={{
+    backgroundColor: "#f3f3f3",
+    fontWeight: 600,
+    padding: "1rem",
+    display: "flex",
+    justifyContent: "space-between",
+    marginBottom: ".25rem"
+}}>
+        <div>{field}</div>
+        <div
+            style={{ cursor: "pointer" }}
+            onClick={() => onDelete(field)}
+        >x</div>
+    </div>;
+
+function WooTableCreator({ onCreate }: { onCreate: (selectedFields: string[]) => void }) {
+    const [fields, setFields] = useState<string[]>([]);
+
     return (
         <div className="tableberg-table-creator">
             <Placeholder
@@ -88,43 +132,21 @@ function WooTableCreator({ onCreate }: { onCreate: (selectedFields: string[]) =>
                 <div className="tableberg-table-creator-heading">
                     Select WooCommerce table columns
                 </div>
-                <div style={{ width: "100%" }}>
-                    {selectedFields.map(field => <SelectedField
-                        field={field}
-                        key={field}
-                        onDelete={(fieldToDelete) => {
-                            setSelectedFields(selectedFields.filter(field =>
-                                field !== fieldToDelete
-                            ))
-                        }}
-                    />)}
-                    <div style={{ display: "flex" }}>
-                        <div style={{ width: "100%", marginRight: "5px" }}>
-                            <FieldSelector
-                                fields={validFields.filter(el => !selectedFields.includes(el))}
-                                onChange={(value) => setSelectedField(value)}
-                            />
-                        </div>
-                        <Button
-                            variant="secondary"
-                            onClick={() => {
-                                if (selectedField !== "") {
-                                    setSelectedFields(
-                                        fields => [...fields, selectedField]
-                                    );
-                                }
-                                setSelectedField("");
-                            }}
-                            style={{ minHeight: "40px" }}
-                        >
-                            Add
-                        </Button>
-                    </div>
-                </div>
+                <FieldSelector
+                    selectedFields={fields}
+                    onChange={(field) => setFields(
+                        fields => [...fields, field]
+                    )}
+                    onDelete={(fieldToDelete) => {
+                        setFields(fields.filter(field =>
+                            field !== fieldToDelete
+                        ))
+                    }}
+                />
                 <Button
                     className="blocks-table__placeholder-button"
                     variant="primary"
-                    onClick={() => onCreate(selectedFields)}
+                    onClick={() => onCreate(fields)}
                     type="button"
                 >
                     Create WooCommerce Table
@@ -135,14 +157,20 @@ function WooTableCreator({ onCreate }: { onCreate: (selectedFields: string[]) =>
 }
 
 interface WooBlockAttrs {
-    fields: string[]
+    fields: string[];
+    filters: {
+        limit: number;
+        featured: boolean;
+        on_sale: boolean;
+    };
 }
 
 function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
     const { attributes, setAttributes } = props;
     const blockProps = useBlockProps();
 
-    const { fields } = attributes;
+    const { fields, filters } = attributes;
+    const { featured, on_sale, limit } = filters;
 
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
         allowedBlocks: ["tableberg/table"],
@@ -170,15 +198,17 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
     });
 
     let { data: products } = useQuery<Record<string, any>[]>({
-        queryKey: ['wooKeys', fields],
+        queryKey: ['wooKeys', fields, filters],
         queryFn: async () => {
-            const per_page = 10, page = 1;
+            const page = 1;
 
             const queryParams = new URLSearchParams({
-                per_page: per_page.toString(),
+                per_page: limit.toString(),
                 page: page.toString(),
                 _fields: fields.join(','),
-            }).toString();
+            });
+            if (featured) { queryParams.set("featured", "true"); }
+            if (on_sale) { queryParams.set("on_sale", "true"); }
 
             return await apiFetch({
                 path: `/wc/v3/products?${queryParams}`,
@@ -206,8 +236,6 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         useDispatch(privateStore) :
         { setDynamicData: undefined };
 
-    const inputRef = useRef<HTMLInputElement>(null);
-
     if (fields.length === 0) {
         return <WooTableCreator
             onCreate={(fields) => {
@@ -233,14 +261,53 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
             <div {...innerBlocksProps} />
         </div>
         <InspectorControls>
-            <input ref={inputRef} />
-            <Button
-                onClick={() => {
-                    setAttributes({ fields: JSON.parse(inputRef.current?.value!) });
-                }}
-            >
-                Update fields
-            </Button>
+            <PanelBody title="WooCommerce fields">
+                <FieldSelector
+                    selectedFields={fields}
+                    onChange={(field) => setAttributes(
+                        { fields: [...fields, field] }
+                    )}
+                    onDelete={(fieldToDelete) => {
+                        setAttributes({
+                            fields: fields.filter(field =>
+                                field !== fieldToDelete
+                            )
+                        })
+                    }}
+                />
+            </PanelBody>
+            <PanelBody title="Items filtering">
+                <NumberControl
+                    __next40pxDefaultSize
+                    label="Number of items"
+                    value={limit}
+                    onChange={(newLimit) => {
+                        setAttributes({
+                            filters: { ...filters, limit: Number(newLimit) }
+                        })
+                    }}
+                />
+                <ToggleControl
+                    __nextHasNoMarginBottom
+                    checked={featured}
+                    label="Show only featured products"
+                    onChange={(val) => {
+                        setAttributes({
+                            filters: { ...filters, featured: val }
+                        })
+                    }}
+                />
+                <ToggleControl
+                    __nextHasNoMarginBottom
+                    checked={on_sale}
+                    label="Show only products on sale"
+                    onChange={(val) => {
+                        setAttributes({
+                            filters: { ...filters, on_sale: val }
+                        })
+                    }}
+                />
+            </PanelBody>
         </InspectorControls>
     </>
 }
