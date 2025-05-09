@@ -1,4 +1,4 @@
-import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
+import { BlockEditProps, createBlocksFromInnerBlocksTemplate, InnerBlockTemplate, registerBlockType } from "@wordpress/blocks";
 import metadata from "./block.json";
 import blockIcon from "@tableberg/shared/icons/tableberg";
 import {
@@ -18,7 +18,7 @@ import {
     ToggleControl
 } from "@wordpress/components";
 import TablebergIcon from "@tableberg/shared/icons/tableberg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     QueryClient,
     QueryClientProvider,
@@ -26,6 +26,7 @@ import {
 } from "@tanstack/react-query";
 import apiFetch from "@wordpress/api-fetch";
 import { useDispatch, useSelect } from "@wordpress/data";
+import { TablebergBlockAttrs } from "@tableberg/shared/types";
 
 const queryClient = new QueryClient();
 
@@ -188,7 +189,7 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                     "tableberg/cell",
                     { col, tagName: "th" },
                     [
-                        ["core/paragraph", { content: field }],
+                        ["tableberg/dynamic-field", { value: field, target: "paragraph" }],
                     ]
                 ]
             })
@@ -197,7 +198,25 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         renderAppender: false,
     });
 
-    let { data: products } = useQuery<Record<string, any>[]>({
+    const tableBlock = useSelect((select) => {
+        const { getBlock } = select(store) as BlockEditorStoreSelectors;
+
+        const innerBlocks = getBlock(props.clientId)?.innerBlocks;
+
+        if (innerBlocks?.length !== 1) {
+            return;
+        }
+
+        return innerBlocks[0];
+    }, []);
+
+    const {
+        updateBlockAttributes,
+        removeBlocks,
+        insertBlocks,
+    } = useDispatch(store) as any as BlockEditorStoreActions;
+
+    let { isLoading: isLoadingProducts, data: products } = useQuery<Record<string, any>[]>({
         queryKey: ['wooKeys', fields, filters],
         queryFn: async () => {
             const page = 1;
@@ -217,24 +236,139 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         }
     })
 
-    const tableBlockId = useSelect((select) => {
-        const { getBlock } = select(store) as BlockEditorStoreSelectors;
+    // if (!isLoadingProducts && tableBlock && products && products.length >= 1) {
+    //     const cellBlocks = tableBlock.innerBlocks;
 
-        const innerBlocks = getBlock(props.clientId)?.innerBlocks;
+    //     fields.forEach((field, idx) => {
+    //         const targetCell = cellBlocks.find(
+    //             ({ attributes: { row, col } }) => row === 0 && col === idx
+    //         );
 
-        if (innerBlocks?.length !== 1) {
+    //         const targetDynamicField = targetCell?.innerBlocks.find(
+    //             block => block.name === "tableberg/dynamic-field"
+    //         );
+
+    //         if (targetDynamicField) {
+    //             updateBlockAttributes(targetDynamicField.clientId, { value: field });
+    //         }
+    //     });
+
+    //     products.forEach((product, pRow) => {
+    //         fields.forEach((field, col) => {
+    //             const row = pRow + 1;
+
+    //             const targetCell = cellBlocks.find(
+    //                 ({ attributes }) => attributes.row === row &&
+    //                     attributes.col === col
+    //             );
+
+    //             const targetDynamicField = targetCell?.innerBlocks.find(
+    //                 block => block.name === "tableberg/dynamic-field"
+    //             );
+
+    //             if (targetDynamicField) {
+    //                 updateBlockAttributes(targetDynamicField.clientId, { value: product[field] });
+    //             }
+    //         });
+    //     });
+    // }
+
+    useEffect(() => {
+        if (!tableBlock || !products || isLoadingProducts) {
+            console.log("!tableBlock || !products || isLoadingProducts", { tableBlock, products, isLoadingProducts });
             return;
         }
 
-        return innerBlocks[0].clientId;
-    }, []);
+        console.log("useEffect running", { tableBlock, products, isLoadingProducts });
 
-    const privateStore = tableBlockId ?
-        window.tablebergPrivateStores[tableBlockId] :
-        null;
-    const privateStoreActions = (privateStore !== null) ?
-        useDispatch(privateStore) :
-        { setDynamicData: undefined };
+        const currentCols = tableBlock?.attributes.cols;
+        const currentRows = tableBlock?.attributes.rows;
+
+        console.log("checking rows and cols", { currentCols, currentRows });
+
+        console.log({ fields, products });
+
+        if (currentCols > fields.length) {
+            console.log("removing cols");
+            const toRemoves = tableBlock.innerBlocks.filter(cell => cell.attributes.col >= fields.length);
+
+            try {
+                removeBlocks(toRemoves.map(cell => cell.clientId), false);
+            } catch (e) {}
+
+            updateBlockAttributes(tableBlock.clientId, {
+                cols: fields.length,
+                cells: tableBlock.attributes.cells - toRemoves.length
+            });
+        }
+
+        if (currentRows > products.length + 1) {
+            console.log("removing rows");
+            const toRemoves = tableBlock.innerBlocks.filter(cell => cell.attributes.row >= products.length + 1);
+
+            try {
+                removeBlocks(toRemoves.map(cell => cell.clientId), false);
+            } catch (e) {}
+
+            updateBlockAttributes(tableBlock.clientId, {
+                rows: products.length + 1,
+                cells: tableBlock.attributes.cells - toRemoves.length
+            });
+        }
+
+        if (currentCols < fields.length) {
+            console.log("adding cols");
+            const toAdds: InnerBlockTemplate[] = [];
+            for (let col = currentCols; col < fields.length; col++) {
+                toAdds.push([
+                    "tableberg/cell",
+                    { col, row: 0, tagName: "th" },
+                    [
+                        ["tableberg/dynamic-field", { value: fields[col], target: "paragraph" }]
+                    ]
+                ]);
+
+                for (let row = 1; row < currentRows; row++) {
+                    console.log(products[row - 1], { row });
+                    toAdds.push([
+                        "tableberg/cell",
+                        { col, row, tagName: "td" },
+                        [
+                            ["tableberg/dynamic-field", { value: products[row - 1][fields[col]], target: "paragraph" }]
+                        ]
+                    ]);
+                }
+            }
+
+            insertBlocks(createBlocksFromInnerBlocksTemplate(toAdds), undefined, tableBlock.clientId, false);
+            updateBlockAttributes(tableBlock.clientId, {
+                cols: fields.length,
+                cells: tableBlock.attributes.cells + toAdds.length
+            });
+        }
+
+        if (currentRows < products.length + 1) {
+            console.log("adding rows");
+            const toAdds: InnerBlockTemplate[] = [];
+            for (let row = currentRows; row < products.length + 1; row++) {
+                for (let col = 0; col < fields.length; col++) {
+                    toAdds.push([
+                        "tableberg/cell",
+                        { row, col, tagName: "td" },
+                        [
+                            ["tableberg/dynamic-field", { value: products[row - 1][fields[col]], target: "paragraph" }]
+                        ]
+                    ]);
+                }
+            }
+
+            insertBlocks(createBlocksFromInnerBlocksTemplate(toAdds), undefined, tableBlock.clientId, false);
+            updateBlockAttributes(tableBlock.clientId, {
+                rows: products.length + 1,
+                cells: tableBlock.attributes.cells + toAdds.length
+            });
+        }
+    }, [fields, products, isLoadingProducts, tableBlock]);
 
     if (fields.length === 0) {
         return <WooTableCreator
@@ -245,28 +379,19 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         />
     }
 
-    if (!products) {
-        products = [];
-    }
-
-    if (privateStoreActions.setDynamicData) {
-        privateStoreActions.setDynamicData({
-            fields,
-            rows: products,
-        });
-    }
-
     return <>
-        <div {...blockProps} className="tableberg-pro-woo-block">
+        <div {...blockProps}>
             <div {...innerBlocksProps} />
         </div>
         <InspectorControls>
             <PanelBody title="WooCommerce fields">
                 <FieldSelector
                     selectedFields={fields}
-                    onChange={(field) => setAttributes(
-                        { fields: [...fields, field] }
-                    )}
+                    onChange={(field) => {
+                        setAttributes(
+                            { fields: [...fields, field] }
+                        );
+                    }}
                     onDelete={(fieldToDelete) => {
                         setAttributes({
                             fields: fields.filter(field =>

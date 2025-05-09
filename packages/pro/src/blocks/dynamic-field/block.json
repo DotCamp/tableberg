@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "version": "0.0.1",
+    "name": "tableberg/dynamic-field",
+    "parent": ["tableberg/cell"],
+    "allowedBlocks": [
+        "core/list",
+        "core/paragraph",
+        "tableberg/image",
+        "tableberg/button",
+        "tableberg/icon",
+        "tableberg/html",
+        "tableberg/styled-list",
+        "tableberg/star-rating",
+        "tableberg/ribbon"
+    ],
+    "title": "Dynamic content block for Tableberg",
+    "category": "layout",
+    "description": "",
+    "keywords": ["dynamic"],
+    "supports": {},
+    "attributes": {
+        "value": {
+            "type": "string",
+            "default": ""
+        },
+        "target": {
+            "enum": ["paragraph", "button", "image"]
+        }
+    },
+    "example": {},
+    "viewScript": "tableberg-pro-frontend",
+    "editorScript": "tableberg-pro-block-script",
+    "editorStyle": "tableberg-pro-editor-style",
+    "style": "tableberg-pro-frontend-style",
+    "textdomain": "tableberg-pro"
+}

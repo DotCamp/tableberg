@@ -148,6 +148,7 @@ function tp_fs_init()
                     new Blocks\Ribbon();
                     new Blocks\Toggle();
                     new Blocks\Woo();
+                    new Blocks\DynamicField();
                     new Assets();
 
 					add_action('init', array($this, 'init_actions'));

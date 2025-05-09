@@ -7,7 +7,7 @@ namespace Tableberg\Pro\Blocks;
  *@package Tableberg_pro 
  */
 
-class Woo
+class DynamicField
 {
 
     public function __construct()
@@ -17,7 +17,7 @@ class Woo
 
     public function register_block()
     {
-        $json = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/woo/block.json';
+        $json = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/dynamic-field/block.json';
         $attrs = json_decode(file_get_contents($json), true)['attributes'];
 
         register_block_type_from_metadata(

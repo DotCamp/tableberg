@@ -1,8 +1,6 @@
 import {
     BlockEditProps,
     BlockInstance,
-    createBlocksFromInnerBlocksTemplate,
-    InnerBlockTemplate
 } from "@wordpress/blocks";
 import { TablebergBlockAttrs } from "@tableberg/shared/types";
 import { createArray } from "../utils";
@@ -14,7 +12,7 @@ import {
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
-import { useDispatch, useSelect } from "@wordpress/data";
+import { useDispatch } from "@wordpress/data";
 import {
     getBorderCSS,
     getBorderRadiusCSS,
@@ -54,53 +52,9 @@ export const PrimaryTable = (
 
     const [colUpt, setColUpt] = useState(0);
 
-    const dynamicData = useSelect((select) => select(props.privateStore).getDynamicData(), []);
-
     const {
-        replaceInnerBlocks,
-        updateBlockAttributes,
+        removeBlocks,
     } = useDispatch(blockEditorStore) as any as BlockEditorStoreActions;
-
-    useEffect(() => {
-        if (!attributes.dynamic || !dynamicData) {
-            return;
-        }
-
-        const { fields, rows: products } = dynamicData;
-
-        const innerBlocksTemplate: InnerBlockTemplate[] = fields.map(
-            (field, col) => [
-                "tableberg/cell",
-                { col, tagName: "th" },
-                [
-                    ["core/paragraph", { content: field }],
-                ]
-            ]
-        );
-
-        products.forEach((product, i) => {
-            fields.forEach((field, col) => {
-                innerBlocksTemplate.push([
-                    "tableberg/cell",
-                    { row: i + 1, col },
-                    [
-                        ["core/paragraph", { content: String(product[field]) }],
-                    ]
-                ]);
-            })
-        });
-
-        replaceInnerBlocks(
-            props.clientId,
-            createBlocksFromInnerBlocksTemplate(innerBlocksTemplate),
-        );
-
-        updateBlockAttributes(props.clientId, {
-            cells: innerBlocksTemplate.length,
-            cols: fields.length,
-            rows: products.length + 1,
-        });
-    }, [dynamicData]);
 
     const lastRowCount = useRef(attributes.rows);
     useEffect(() => {
@@ -120,7 +74,7 @@ export const PrimaryTable = (
     });
 
     try {
-        useDispatch(blockEditorStore).removeBlocks(toRemoves);
+        removeBlocks(toRemoves);
     } catch (e) {
         console.warn(
             "Tableberg: Tried to call removeBlocks before the previous call has returned. React might be running in development mode.",

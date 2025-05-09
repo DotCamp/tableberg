@@ -13,5 +13,6 @@ import "./blocks/icon";
 import "./blocks/ribbon";
 import "./blocks/toggle";
 import "./blocks/woo";
+import "./blocks/dynamic-field";
 
 import "./block-enhancements";
