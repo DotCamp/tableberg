@@ -310,7 +310,7 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         isLoading: isLoadingProducts,
         data: products
     } = useQuery<Record<string, any>[]>({
-        queryKey: ['wooKeys', fields, filters],
+        queryKey: ['wooProducts', fields, filters],
         queryFn: async () => {
             const page = 1;
 
@@ -449,8 +449,39 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
             });
         }
 
+        queryClient.invalidateQueries(
+            { queryKey: ['wooProducts', fields, filters] }
+        );
+
         setOldFields(fields);
     }, [fields, products, isLoadingProducts, tableBlock]);
+
+    useEffect(() => {
+        if (!products) {
+            return;
+        }
+
+        products.forEach((product, r) => {
+            fields.forEach((field, c) => {
+                const dfAttrs = getDynamicFieldAttrs(
+                    field, product[field]
+                );
+
+                const dynamicField = tableBlock?.innerBlocks.find(
+                    cell => {
+                        const { col, row } = cell.attributes;
+                        return col === c && row === r + 1;
+                    }
+                )?.innerBlocks.find(
+                    block => block.name === "tableberg/dynamic-field"
+                );
+
+                if (dynamicField) {
+                    updateBlockAttributes(dynamicField.clientId, dfAttrs);
+                }
+            });
+        });
+    }, [products]);
 
     const setFilters = (filters: {
         limit: number;
