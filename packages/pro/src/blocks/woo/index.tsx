@@ -247,7 +247,7 @@ const getDynamicFieldAttrs = (field: string, value: any) => {
             return {
                 target: "tableberg/image",
                 targetAttribute: "media",
-                value: { url: value[0].src }
+                value: { url: value.length > 0 ? value[0].src : "" }
             };
         default:
             return { value: value.toString() };
