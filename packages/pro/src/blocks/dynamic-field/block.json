@@ -22,7 +22,7 @@
     "supports": {},
     "attributes": {
         "value": {
-            "type": "string",
+            "type": ["string", "object", "array", "number", "boolean", "null"],
             "default": ""
         },
         "target": {

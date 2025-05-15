@@ -33,27 +33,24 @@ function edit({ attributes, clientId }: BlockEditProps<DynamicFieldBlockAttr>) {
         ]
     });
 
-    const { content, targetBlockId } = useSelect((select) => {
+    const targetBlock = useSelect((select) => {
         const { getBlock } = select(store) as BlockEditorStoreSelectors;
 
         const block = getBlock(clientId);
 
-        const targetBlock = block?.innerBlocks.find(
+        return block?.innerBlocks.find(
             ({name}) => name === target
         );
-
-        return {
-            content: targetBlock?.attributes.content,
-            targetBlockId: targetBlock?.clientId
-        }
     }, []);
 
     const {
         updateBlockAttributes
     } = useDispatch(store) as any as BlockEditorStoreActions;
 
-    if (content != value && targetBlockId) {
-        updateBlockAttributes(targetBlockId, { [targetAttribute]: value });
+    if (targetBlock) {
+        if (targetBlock.attributes[targetAttribute] != value) {
+            updateBlockAttributes(targetBlock.clientId, { [targetAttribute]: value });
+        }
     }
 
     return <div {...innerBlocksProps}></div>;
