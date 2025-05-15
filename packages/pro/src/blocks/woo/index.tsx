@@ -188,6 +188,8 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
     const { fields, filters } = attributes;
     const { featured, on_sale, limit } = filters;
 
+    const [oldFields, setOldFields] = useState<string[]>([]);
+
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
         allowedBlocks: ["tableberg/table"],
         template: [[
@@ -263,13 +265,27 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         const currentRows = tableBlock?.attributes.rows;
 
         if (currentCols > fields.length) {
+            const removedIndices = oldFields
+                .filter(field => !fields.includes(field))
+                .map(field => oldFields.indexOf(field));
+
             const toRemoves = tableBlock.innerBlocks.filter(
-                cell => cell.attributes.col >= fields.length
+                cell => removedIndices.includes(cell.attributes.col)
             );
 
             try {
                 removeBlocks(toRemoves.map(cell => cell.clientId), false);
-            } catch (e) {}
+            } catch (e) { }
+
+            removedIndices.forEach(index => {
+                tableBlock.innerBlocks.forEach(cell => {
+                    if (cell.attributes.col > index) {
+                        updateBlockAttributes(cell.clientId, {
+                            col: cell.attributes.col - 1
+                        });
+                    }
+                });
+            });
 
             updateBlockAttributes(tableBlock.clientId, {
                 cols: fields.length,
@@ -359,6 +375,8 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                 cells: tableBlock.attributes.cells + toAdds.length
             });
         }
+
+        setOldFields(fields);
     }, [fields, products, isLoadingProducts, tableBlock]);
 
     if (fields.length === 0) {
