@@ -121,10 +121,79 @@ const SelectedField = ({ field, onDelete }: {
         >x</div>
     </div>;
 
+function FilterSelector({ filters, onChange }: {
+    filters: {
+        limit: number;
+        featured: boolean;
+        on_sale: boolean;
+    };
+    onChange: (filters: {
+        limit: number;
+        featured: boolean;
+        on_sale: boolean;
+    }) => void;
+}) {
+    const { limit, featured, on_sale } = filters;
+
+    return <div style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px"
+    }}>
+        <NumberControl
+            __next40pxDefaultSize
+            label="Number of items"
+            value={limit}
+            onChange={(newLimit) => {
+                onChange({
+                    ...filters,
+                    limit: Number(newLimit)
+                })
+            }}
+        />
+        <ToggleControl
+            __nextHasNoMarginBottom
+            checked={featured}
+            label="Show only featured products"
+            onChange={(val) => {
+                onChange({
+                    ...filters,
+                    featured: val
+                })
+            }}
+        />
+        <ToggleControl
+            __nextHasNoMarginBottom
+            checked={on_sale}
+            label="Show only products on sale"
+            onChange={(val) => {
+                onChange({
+                    ...filters,
+                    on_sale: val
+                })
+            }}
+        />
+    </div>;
+}
+
 function WooTableCreator({ onCreate }: {
-    onCreate: (selectedFields: string[]) => void
+    onCreate: (selectedFields: string[], filters: {
+        limit: number;
+        featured: boolean;
+        on_sale: boolean;
+    }) => void
 }) {
     const [fields, setFields] = useState<string[]>([]);
+    const [filters, setFilters] = useState<{
+        limit: number;
+        featured: boolean;
+        on_sale: boolean;
+    }>({
+        limit: 10,
+        featured: false,
+        on_sale: false
+    });
 
     return (
         <div className="tableberg-table-creator">
@@ -146,10 +215,14 @@ function WooTableCreator({ onCreate }: {
                         ))
                     }}
                 />
+                <FilterSelector
+                    filters={filters}
+                    onChange={setFilters}
+                />
                 <Button
                     className="blocks-table__placeholder-button"
                     variant="primary"
-                    onClick={() => onCreate(fields)}
+                    onClick={() => onCreate(fields, filters)}
                     type="button"
                 >
                     Create WooCommerce Table
@@ -300,7 +373,7 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
 
             try {
                 removeBlocks(toRemoves.map(cell => cell.clientId), false);
-            } catch (e) {}
+            } catch (e) { }
 
             updateBlockAttributes(tableBlock.clientId, {
                 rows: products.length + 1,
@@ -379,10 +452,18 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         setOldFields(fields);
     }, [fields, products, isLoadingProducts, tableBlock]);
 
+    const setFilters = (filters: {
+        limit: number;
+        featured: boolean;
+        on_sale: boolean;
+    }) => {
+        setAttributes({ filters });
+    }
+
     if (fields.length === 0) {
         return <WooTableCreator
-            onCreate={(fields) => {
-                setAttributes({ fields });
+            onCreate={(fields, filters) => {
+                setAttributes({ fields, filters });
             }}
             {...blockProps}
         />
@@ -411,35 +492,9 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                 />
             </PanelBody>
             <PanelBody title="Items filtering">
-                <NumberControl
-                    __next40pxDefaultSize
-                    label="Number of items"
-                    value={limit}
-                    onChange={(newLimit) => {
-                        setAttributes({
-                            filters: { ...filters, limit: Number(newLimit) }
-                        })
-                    }}
-                />
-                <ToggleControl
-                    __nextHasNoMarginBottom
-                    checked={featured}
-                    label="Show only featured products"
-                    onChange={(val) => {
-                        setAttributes({
-                            filters: { ...filters, featured: val }
-                        })
-                    }}
-                />
-                <ToggleControl
-                    __nextHasNoMarginBottom
-                    checked={on_sale}
-                    label="Show only products on sale"
-                    onChange={(val) => {
-                        setAttributes({
-                            filters: { ...filters, on_sale: val }
-                        })
-                    }}
+                <FilterSelector
+                    filters={filters}
+                    onChange={setFilters}
                 />
             </PanelBody>
         </InspectorControls>
