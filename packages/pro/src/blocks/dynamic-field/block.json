@@ -26,7 +26,12 @@
             "default": ""
         },
         "target": {
-            "enum": ["paragraph", "button", "image"]
+            "enum": ["core/paragraph", "tableberg/button", "tableberg/image"],
+            "default": "core/paragraph"
+        },
+        "targetAttribute": {
+            "type": "string",
+            "default": "content"
         }
     },
     "example": {},

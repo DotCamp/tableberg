@@ -121,7 +121,9 @@ const SelectedField = ({ field, onDelete }: {
         >x</div>
     </div>;
 
-function WooTableCreator({ onCreate }: { onCreate: (selectedFields: string[]) => void }) {
+function WooTableCreator({ onCreate }: {
+    onCreate: (selectedFields: string[]) => void
+}) {
     const [fields, setFields] = useState<string[]>([]);
 
     return (
@@ -166,6 +168,19 @@ interface WooBlockAttrs {
     };
 }
 
+const getDynamicFieldAttrs = (field: string, value: any) => {
+    switch (field) {
+        case "images":
+            return {
+                target: "tableberg/image",
+                targetAttribute: "media",
+                value: { url: value[0].src }
+            };
+        default:
+            return { value: value.toString() };
+    }
+}
+
 function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
     const { attributes, setAttributes } = props;
     const blockProps = useBlockProps();
@@ -189,7 +204,7 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                     "tableberg/cell",
                     { col, tagName: "th" },
                     [
-                        ["tableberg/dynamic-field", { value: field, target: "paragraph" }],
+                        ["tableberg/dynamic-field", { value: field }],
                     ]
                 ]
             })
@@ -216,7 +231,10 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         insertBlocks,
     } = useDispatch(store) as any as BlockEditorStoreActions;
 
-    let { isLoading: isLoadingProducts, data: products } = useQuery<Record<string, any>[]>({
+    let {
+        isLoading: isLoadingProducts,
+        data: products
+    } = useQuery<Record<string, any>[]>({
         queryKey: ['wooKeys', fields, filters],
         queryFn: async () => {
             const page = 1;
@@ -236,61 +254,18 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         }
     })
 
-    // if (!isLoadingProducts && tableBlock && products && products.length >= 1) {
-    //     const cellBlocks = tableBlock.innerBlocks;
-
-    //     fields.forEach((field, idx) => {
-    //         const targetCell = cellBlocks.find(
-    //             ({ attributes: { row, col } }) => row === 0 && col === idx
-    //         );
-
-    //         const targetDynamicField = targetCell?.innerBlocks.find(
-    //             block => block.name === "tableberg/dynamic-field"
-    //         );
-
-    //         if (targetDynamicField) {
-    //             updateBlockAttributes(targetDynamicField.clientId, { value: field });
-    //         }
-    //     });
-
-    //     products.forEach((product, pRow) => {
-    //         fields.forEach((field, col) => {
-    //             const row = pRow + 1;
-
-    //             const targetCell = cellBlocks.find(
-    //                 ({ attributes }) => attributes.row === row &&
-    //                     attributes.col === col
-    //             );
-
-    //             const targetDynamicField = targetCell?.innerBlocks.find(
-    //                 block => block.name === "tableberg/dynamic-field"
-    //             );
-
-    //             if (targetDynamicField) {
-    //                 updateBlockAttributes(targetDynamicField.clientId, { value: product[field] });
-    //             }
-    //         });
-    //     });
-    // }
-
     useEffect(() => {
         if (!tableBlock || !products || isLoadingProducts) {
-            console.log("!tableBlock || !products || isLoadingProducts", { tableBlock, products, isLoadingProducts });
             return;
         }
-
-        console.log("useEffect running", { tableBlock, products, isLoadingProducts });
 
         const currentCols = tableBlock?.attributes.cols;
         const currentRows = tableBlock?.attributes.rows;
 
-        console.log("checking rows and cols", { currentCols, currentRows });
-
-        console.log({ fields, products });
-
         if (currentCols > fields.length) {
-            console.log("removing cols");
-            const toRemoves = tableBlock.innerBlocks.filter(cell => cell.attributes.col >= fields.length);
+            const toRemoves = tableBlock.innerBlocks.filter(
+                cell => cell.attributes.col >= fields.length
+            );
 
             try {
                 removeBlocks(toRemoves.map(cell => cell.clientId), false);
@@ -303,8 +278,9 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         }
 
         if (currentRows > products.length + 1) {
-            console.log("removing rows");
-            const toRemoves = tableBlock.innerBlocks.filter(cell => cell.attributes.row >= products.length + 1);
+            const toRemoves = tableBlock.innerBlocks.filter(
+                cell => cell.attributes.row >= products.length + 1
+            );
 
             try {
                 removeBlocks(toRemoves.map(cell => cell.clientId), false);
@@ -317,30 +293,37 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         }
 
         if (currentCols < fields.length) {
-            console.log("adding cols");
             const toAdds: InnerBlockTemplate[] = [];
             for (let col = currentCols; col < fields.length; col++) {
                 toAdds.push([
                     "tableberg/cell",
                     { col, row: 0, tagName: "th" },
                     [
-                        ["tableberg/dynamic-field", { value: fields[col], target: "paragraph" }]
+                        ["tableberg/dynamic-field", { value: fields[col] }]
                     ]
                 ]);
 
                 for (let row = 1; row < currentRows; row++) {
-                    console.log(products[row - 1], { row });
+                    const dfAttrs = getDynamicFieldAttrs(
+                        fields[col], products[row - 1][fields[col]]
+                    );
+
                     toAdds.push([
                         "tableberg/cell",
                         { col, row, tagName: "td" },
                         [
-                            ["tableberg/dynamic-field", { value: products[row - 1][fields[col]], target: "paragraph" }]
+                            ["tableberg/dynamic-field", dfAttrs]
                         ]
                     ]);
                 }
             }
 
-            insertBlocks(createBlocksFromInnerBlocksTemplate(toAdds), undefined, tableBlock.clientId, false);
+            insertBlocks(
+                createBlocksFromInnerBlocksTemplate(toAdds),
+                undefined,
+                tableBlock.clientId,
+                false
+            );
             updateBlockAttributes(tableBlock.clientId, {
                 cols: fields.length,
                 cells: tableBlock.attributes.cells + toAdds.length
@@ -348,21 +331,29 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         }
 
         if (currentRows < products.length + 1) {
-            console.log("adding rows");
             const toAdds: InnerBlockTemplate[] = [];
             for (let row = currentRows; row < products.length + 1; row++) {
                 for (let col = 0; col < fields.length; col++) {
+                    const dfAttrs = getDynamicFieldAttrs(
+                        fields[col], products[row - 1][fields[col]]
+                    );
+
                     toAdds.push([
                         "tableberg/cell",
                         { row, col, tagName: "td" },
                         [
-                            ["tableberg/dynamic-field", { value: products[row - 1][fields[col]], target: "paragraph" }]
+                            ["tableberg/dynamic-field", dfAttrs]
                         ]
                     ]);
                 }
             }
 
-            insertBlocks(createBlocksFromInnerBlocksTemplate(toAdds), undefined, tableBlock.clientId, false);
+            insertBlocks(
+                createBlocksFromInnerBlocksTemplate(toAdds),
+                undefined,
+                tableBlock.clientId,
+                false
+            );
             updateBlockAttributes(tableBlock.clientId, {
                 rows: products.length + 1,
                 cells: tableBlock.attributes.cells + toAdds.length

@@ -1,4 +1,4 @@
-import { BlockEditProps, createBlocksFromInnerBlocksTemplate, InnerBlockTemplate, registerBlockType } from "@wordpress/blocks";
+import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
 import metadata from "./block.json";
 import blockIcon from "@tableberg/shared/icons/tableberg";
 import {
@@ -9,27 +9,27 @@ import {
 } from "@wordpress/block-editor";
 import { useDispatch, useSelect } from "@wordpress/data";
 
+const allowedBlocks = [
+    "core/paragraph",
+    "tableberg/button",
+    "tableberg/image"
+] as const;
+
 type DynamicFieldBlockAttr = {
     value: string;
-    target: "paragraph" | "button" | "image";
+    target: typeof allowedBlocks[number];
+    targetAttribute: string;
 }
 
-const blockMappings = new Map([
-    ["paragraph", "core/paragraph"],
-    ["button", "tableberg/button"],
-    ["image", "tableberg/image"]
-]);
-
-function edit({ attributes, setAttributes, clientId }: BlockEditProps<DynamicFieldBlockAttr>) {
-    const { value, target } = attributes;
-
-    const targetBlockType = blockMappings.get(target);
+function edit({ attributes, clientId }: BlockEditProps<DynamicFieldBlockAttr>) {
+    const { value, target, targetAttribute } = attributes;
 
     const blockProps = useBlockProps();
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
-        allowedBlocks: ["core/paragraph"],
+        // @ts-ignore
+        allowedBlocks: allowedBlocks,
         template: [
-            ["core/paragraph", {}]
+            [target, { [targetAttribute]: value }]
         ]
     });
 
@@ -38,18 +38,22 @@ function edit({ attributes, setAttributes, clientId }: BlockEditProps<DynamicFie
 
         const block = getBlock(clientId);
 
-        const targetBlock = block?.innerBlocks.find(({name}) => name === targetBlockType);
+        const targetBlock = block?.innerBlocks.find(
+            ({name}) => name === target
+        );
 
         return {
             content: targetBlock?.attributes.content,
-            targetBlockId: targetBlock?.clientId,
+            targetBlockId: targetBlock?.clientId
         }
     }, []);
 
-    const { updateBlockAttributes } = useDispatch(store) as any as BlockEditorStoreActions;
+    const {
+        updateBlockAttributes
+    } = useDispatch(store) as any as BlockEditorStoreActions;
 
     if (content != value && targetBlockId) {
-        updateBlockAttributes(targetBlockId, { content: value });
+        updateBlockAttributes(targetBlockId, { [targetAttribute]: value });
     }
 
     return <div {...innerBlocksProps}></div>;
