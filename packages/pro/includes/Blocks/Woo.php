@@ -88,14 +88,22 @@ class Woo
         }
 
         $per_page = $request->get_param('per_page');
-        $fields = $request->get_param('_fields');
         $featured = $request->get_param('featured');
         $on_sale = $request->get_param('on_sale');
+
+        $fields = explode(',', $request->get_param('_fields'));
+
+        if (sizeof($fields) === 1 && $fields[0] === '') {
+            $fields = [];
+        }
+
+        $additional_fields = ['id', 'permalink', 'name'];
+        $merged_fields = array_merge($fields, $additional_fields);
 
         $request = new \WP_REST_Request('GET', '/wc/v3/products');
         $request->set_query_params([
             'per_page' => $per_page,
-            '_fields' => $fields,
+            '_fields' => empty($fields) ? '' : implode(',', $merged_fields),
             'featured' => $featured,
             'on_sale' => $on_sale,
         ]);
@@ -103,13 +111,31 @@ class Woo
 
         $products = $this->add_additional_fields($products);
         $products = $this->transform_products($products);
+        $products = $this->remove_unwanted_fields($products, $fields);
 
         return new \WP_REST_Response($products, 200);
+    }
+
+    private function remove_unwanted_fields($products, $fields) {
+        if (empty($fields)) {
+            return $products;
+        }
+
+        foreach ($products as &$product) {
+            foreach ($product as $key => $value) {
+                if (!in_array($key, $fields)) {
+                    unset($product[$key]);
+                }
+            }
+        }
+
+        return $products;
     }
 
     private function add_additional_fields($products) {
         foreach ($products as &$product) {
             $product['add_to_cart'] = strval($product['id']);
+            $product['name_with_link'] = '<a href="' . $product['permalink'] . '">' . $product['name'] . '</a>';
         }
 
         return $products;
