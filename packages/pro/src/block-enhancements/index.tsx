@@ -25,3 +25,23 @@ const ProEnhancements = createHigherOrderComponent((BlockEdit) => {
 }, "tableberg/pro-enhancements");
 
 addFilter("editor.BlockEdit", "tableberg/cell", ProEnhancements);
+
+function addWooCartButtonIdAttribute(settings: any, name: string) {
+	if ( name === 'tableberg/button' ) {
+		settings.attributes = {
+			...settings.attributes,
+			wooCartButtonId: {
+				type: ['number', 'null'],
+				default: null,
+			},
+		};
+	}
+
+	return settings;
+}
+
+addFilter(
+	'blocks.registerBlockType',
+	'tableberg-pro/button-block-pro',
+	addWooCartButtonIdAttribute
+);

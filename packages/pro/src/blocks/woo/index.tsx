@@ -45,7 +45,7 @@ const FieldSelector = ({ selectedFields, onChange, onDelete }: {
             }).toString();
 
             return await apiFetch({
-                path: `/wc/v3/products?${queryParams}`,
+                path: `/tableberg/v1/woo/products?${queryParams}`,
                 method: 'GET',
             });
         }
@@ -247,10 +247,16 @@ const getDynamicFieldAttrs = (field: string, value: any) => {
             return {
                 target: "tableberg/image",
                 targetAttribute: "media",
-                value: { url: value.length > 0 ? value[0].src : "" }
+                value
+            };
+        case "add_to_cart":
+            return {
+                target: "tableberg/button",
+                targetAttribute: "wooCartButtonId",
+                value
             };
         default:
-            return { value: value.toString() };
+            return { value };
     }
 }
 
@@ -323,7 +329,7 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
             if (on_sale) { queryParams.set("on_sale", "true"); }
 
             return await apiFetch({
-                path: `/wc/v3/products?${queryParams}`,
+                path: `/tableberg/v1/woo/products?${queryParams}`,
                 method: 'GET',
             });
         }
