@@ -30,6 +30,40 @@ import { TablebergBlockAttrs } from "@tableberg/shared/types";
 
 const queryClient = new QueryClient();
 
+const getFieldPrettyName = (field: string, showKey: boolean = false) => {
+    const fieldNames = new Map<string, string>([
+        ["sku", "SKU"],
+        ["id", "ID"],
+        ["name", "Name"],
+        ["name_with_link", "Name with link"],
+        ["description", "Description"],
+        ["short_description", "Short Description"],
+        ["date_created", "Date"],
+        ["categories", "Categories"],
+        ["tags", "Tags"],
+        ["images", "Image"],
+        ["average_rating", "Reviews"],
+        ["stock_quantity", "Stock"],
+        ["weight", "Weight"],
+        ["dimensions", "Dimensions"],
+        ["price", "Price"],
+        ["add_to_cart", "Add to Cart"],
+        ["attributes", "Attributes"],
+    ]);
+
+    const prettyName = fieldNames.get(field);
+
+    if (!prettyName) {
+        return field;
+    }
+
+    if (showKey) {
+        return `${prettyName} (${field})`;
+    }
+
+    return prettyName;
+}
+
 const FieldSelector = ({ selectedFields, onChange, onDelete }: {
     selectedFields: string[];
     onChange: (fields: string) => void;
@@ -55,7 +89,27 @@ const FieldSelector = ({ selectedFields, onChange, onDelete }: {
         return;
     }
 
-    const fields = new Set<string>();
+    const defaultFields = [
+        "sku",
+        "id",
+        "name",
+        "name_with_link",
+        "description",
+        "short_description",
+        "date_created",
+        "categories",
+        "tags",
+        "images",
+        "average_rating",
+        "stock_quantity",
+        "weight",
+        "dimensions",
+        "price",
+        "add_to_cart",
+        "attributes",
+    ];
+
+    const fields = new Set<string>(defaultFields);
 
     products.forEach(product => {
         Object.keys(product).forEach(key => fields.add(key));
@@ -81,7 +135,7 @@ const FieldSelector = ({ selectedFields, onChange, onDelete }: {
                             value: ""
                         },
                         ...validFields.filter(el => !selectedFields.includes(el)).map(field => ({
-                            label: field,
+                            label: getFieldPrettyName(field, true),
                             value: field,
                         }))
                     ]}
@@ -114,7 +168,7 @@ const SelectedField = ({ field, onDelete }: {
     justifyContent: "space-between",
     marginBottom: ".25rem"
 }}>
-        <div>{field}</div>
+        <div>{getFieldPrettyName(field, true)}</div>
         <div
             style={{ cursor: "pointer" }}
             onClick={() => onDelete(field)}
@@ -285,7 +339,9 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                     "tableberg/cell",
                     { col, tagName: "th" },
                     [
-                        ["tableberg/dynamic-field", { value: field }],
+                        ["tableberg/dynamic-field", {
+                            value: getFieldPrettyName(field)
+                        }],
                     ]
                 ]
             })
@@ -394,7 +450,9 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                     "tableberg/cell",
                     { col, row: 0, tagName: "th" },
                     [
-                        ["tableberg/dynamic-field", { value: fields[col] }]
+                        ["tableberg/dynamic-field", {
+                            value: getFieldPrettyName(fields[col])
+                        }]
                     ]
                 ]);
 
