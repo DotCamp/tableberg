@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, SelectControl, CheckboxControl } from '@wordpress/components';
+import { Modal, SelectControl, CheckboxControl, Button } from '@wordpress/components';
 import TablebergIcon from '@tableberg/shared/icons/tableberg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
@@ -105,6 +105,16 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 							/>
 						))}
 					</div>
+					{schemaProperties.length > 0 && (
+						<Button
+							className="blocks-table__placeholder-button"
+							variant="primary"
+							onClick={() => {}}
+							type="button"
+						>
+							Create
+						</Button>
+					)}
 				</div>
 			</div>
 		</Modal>
