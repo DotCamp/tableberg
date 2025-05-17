@@ -5,7 +5,7 @@
 /**
  * WordPress Imports
  */
-import { useDispatch, useSelect, withDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	useBlockProps,
 	useInnerBlocksProps,
@@ -38,7 +38,6 @@ import StackColTable from './table/StackColTable';
 import classNames from 'classnames';
 import { createPortal } from 'react-dom';
 import { SidebarUpsell } from './components/SidebarUpsell';
-import { __ } from '@wordpress/i18n';
 import TableCreator from './table/creator';
 import { createPrivateStore } from './store';
 import transforms from './transforms';
@@ -445,14 +444,14 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 		return <img src={exampleImage} style={{ maxWidth: '100%' }}></img>;
 	}
 
-	if (attributes.cells === 0) {
-		const privateStoreToUse = privateStores[clientId];
-		const currentModal = useSelect((select) =>
-			select(privateStoreToUse).getModalScreen()
-		);
-		const { setModalScreen, closeModalScreen } =
-			useDispatch(privateStoreToUse);
+	// TableCreator related store connections
+	const privateStoreToUse = privateStores[clientId];
+	const currentModal = useSelect((select) =>
+		select(privateStoreToUse).getModalScreen()
+	);
+	const { setModalScreen, closeModalScreen } = useDispatch(privateStoreToUse);
 
+	if (attributes.cells === 0) {
 		return (
 			<div {...blockProps}>
 				<TableCreator
