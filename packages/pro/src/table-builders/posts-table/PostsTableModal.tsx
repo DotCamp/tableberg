@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, SelectControl, CheckboxControl, Button } from '@wordpress/components';
+import {
+	Modal,
+	SelectControl,
+	CheckboxControl,
+	Button,
+} from '@wordpress/components';
 import TablebergIcon from '@tableberg/shared/icons/tableberg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
@@ -29,6 +34,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 	const [selectedPostSlug, setSelectedPostSlug] = useState('');
 	const [selectionList, setSelectionList] = useState([selectionHeader]);
 	const [schemaProperties, setSchemaProperties] = useState([]);
+	const [selectedColumns, setSelectedColumns] = useState<Array<string>>([]);
 
 	const postTypes: Array<PostType> = useSelect((select) => {
 		const rawPostTypes = select('core').getPostTypes();
@@ -63,6 +69,19 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 			});
 		}
 	}, [selectedPostSlug]);
+
+	const handleCheckboxChange = (columnId: string, status: boolean) => {
+		const currentSelectedColumns = [...selectedColumns];
+		if (status) {
+			currentSelectedColumns.push(columnId);
+		} else {
+			const index = currentSelectedColumns.indexOf(columnId);
+			if (index > -1) {
+				currentSelectedColumns.splice(index, 1);
+			}
+		}
+		setSelectedColumns(currentSelectedColumns);
+	};
 
 	return (
 		<Modal
@@ -100,8 +119,10 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 							<CheckboxControl
 								key={p}
 								label={p}
-								checked={false}
-								onChange={() => {}}
+								checked={selectedColumns.includes(p)}
+								onChange={(val) => {
+									handleCheckboxChange(p, val);
+								}}
 							/>
 						))}
 					</div>
