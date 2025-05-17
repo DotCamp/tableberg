@@ -1,11 +1,18 @@
-import React from 'react';
-import { Modal } from '@wordpress/components';
+import React, { useState, useEffect } from 'react';
+import { Modal, SelectControl, CheckboxControl } from '@wordpress/components';
 import TablebergIcon from '@tableberg/shared/icons/tableberg';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faClose} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
+import { useSelect } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
 
 interface PostsTableModalProps {
 	onClose: () => void;
+}
+
+interface PostType {
+	name: string;
+	slug: string;
 }
 
 /**
@@ -17,6 +24,46 @@ interface PostsTableModalProps {
  * @param props.onClose Function to close the modal.
  */
 const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
+	const selectionHeader = { label: '--Select--', value: '', disabled: true };
+
+	const [selectedPostSlug, setSelectedPostSlug] = useState('');
+	const [selectionList, setSelectionList] = useState([selectionHeader]);
+	const [schemaProperties, setSchemaProperties] = useState([]);
+
+	const postTypes: Array<PostType> = useSelect((select) => {
+		const rawPostTypes = select('core').getPostTypes();
+		return rawPostTypes
+			? rawPostTypes.map(({ name, rest_base }) => ({
+					name,
+					slug: rest_base,
+				}))
+			: [];
+	}, []);
+
+	useEffect(() => {
+		if (postTypes.length) {
+			const parsedPostTypes = postTypes.map((pT) => ({
+				label: pT.name,
+				value: pT.slug,
+			}));
+			setSelectionList([selectionHeader, ...parsedPostTypes]);
+		}
+	}, [postTypes]);
+
+	useEffect(() => {
+		if (selectedPostSlug) {
+			apiFetch({
+				path: `wp/v2/${selectedPostSlug}`,
+				method: 'OPTIONS',
+			}).then((resp) => {
+				const rawSchemaProperties = resp.schema.properties;
+				const parsedSchemaProperties = Object.keys(rawSchemaProperties);
+
+				setSchemaProperties(parsedSchemaProperties);
+			});
+		}
+	}, [selectedPostSlug]);
+
 	return (
 		<Modal
 			onRequestClose={onClose}
@@ -36,6 +83,28 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 					</div>
 				</div>
 				<div className="tableberg-posts-table-modal__main__content">
+					<div className="tableberg-posts-table-modal__main__content__post-type">
+						<SelectControl
+							label="Post Type"
+							labelPosition={'side'}
+							value={selectedPostSlug}
+							onChange={(value) => {
+								setSelectedPostSlug(value);
+							}}
+							options={selectionList}
+						/>
+					</div>
+					{schemaProperties.length > 0 && <h3>Select Columns</h3>}
+					<div className="tableberg-posts-table-modal__main__content__schema-properties">
+						{schemaProperties.map((p) => (
+							<CheckboxControl
+								key={p}
+								label={p}
+								checked={false}
+								onChange={() => {}}
+							/>
+						))}
+					</div>
 				</div>
 			</div>
 		</Modal>

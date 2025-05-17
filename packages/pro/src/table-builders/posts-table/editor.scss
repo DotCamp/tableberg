@@ -61,5 +61,25 @@
         }
       }
     }
+
+    &__content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 10px;
+
+      &__post-type {
+        width: fit-content;
+      }
+
+      &__schema-properties {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-flow: wrap;
+        gap: 10px;
+      }
+    }
   }
 }

@@ -33,6 +33,7 @@
         "@wordpress/blob": "^3.37.0",
         "@wordpress/components": "^25.3.0",
         "@wordpress/compose": "^6.18.0",
+        "@wordpress/core-data": "^7.23.0",
         "@wordpress/data": "^9.7.0",
         "@wordpress/editor": "^13.25.0",
         "@wordpress/i18n": "^4.37.0",
