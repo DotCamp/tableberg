@@ -450,7 +450,8 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
 		const currentModal = useSelect((select) =>
 			select(privateStoreToUse).getModalScreen()
 		);
-        const {setModalScreen, closeModalScreen} = useDispatch(privateStoreToUse);
+		const { setModalScreen, closeModalScreen } =
+			useDispatch(privateStoreToUse);
 
 		return (
 			<div {...blockProps}>

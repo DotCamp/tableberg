@@ -6,7 +6,6 @@ import {
 	PreBuiltTableIcon,
 	WooTableIcon,
 } from '@tableberg/shared/icons/table-creation';
-import { TablebergBlockAttrs } from '@tableberg/shared/types';
 import { BlockIcon, store } from '@wordpress/block-editor';
 import {
 	InnerBlockTemplate,
