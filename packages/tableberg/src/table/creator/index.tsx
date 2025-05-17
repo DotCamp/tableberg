@@ -20,10 +20,11 @@ import {
     Placeholder,
     TextControl,
 } from "@wordpress/components";
-import { useDispatch } from "@wordpress/data";
+import { useDispatch, useSelect } from "@wordpress/data";
 import { useState, useEffect } from "react";
 import metadata from "../../block.json";
 import PatternsLibrary from "./Patterns";
+import { store as tablebergGeneralStore} from '../../store';
 
 interface Props {
     clientId: string;
@@ -31,6 +32,8 @@ interface Props {
 
 export default function TableCreator({ clientId }: Props) {
     const storeActions: BlockEditorStoreActions = useDispatch(store) as any;
+
+    const proStatus = useSelect(tablebergGeneralStore).getProStatus();
 
     const [rows, setRows] = useState<number | undefined>(4);
     const [cols, setCols] = useState<number | undefined>(4);
@@ -112,7 +115,7 @@ export default function TableCreator({ clientId }: Props) {
                         </div>
                         <span>Pre-Built Table</span>
                     </button>
-                    <button className={`tableberg-table-creator-btn ${TABLEBERG_CFG.IS_PRO ? "tableberg-pro" : "tableberg-pro-locked"}`}>
+                    <button className={`tableberg-table-creator-btn ${proStatus ? "tableberg-pro" : "tableberg-pro-locked"}`}>
                         <div className="tableberg-table-creator-btn-icon">
                             {PostsTableIcon}
                         </div>
