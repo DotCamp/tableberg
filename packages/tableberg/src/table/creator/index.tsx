@@ -126,7 +126,7 @@ export default function TableCreator({
 					</button>
 					<button
 						className={`tableberg-table-creator-btn ${proStatus ? 'tableberg-pro' : 'tableberg-pro-locked'}`}
-						onClick={() => proStatus && setModalScreen('patterns')}
+						onClick={() => proStatus && setModalScreen('posts')}
 					>
 						<div className="tableberg-table-creator-btn-icon">
 							{PostsTableIcon}
