@@ -1,0 +1,50 @@
+import React from 'react';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { ProBlockProps } from '../../block-enhancements';
+import { TablebergBlockAttrs } from '@tableberg/shared/types';
+import PostsTableModal from './PostsTableModal';
+
+/**
+ * Posts table listener component.
+ *
+ * This component is used to add various creation options to the posts table.
+ * Will only be used before the table is created.
+ *
+ * @param props           Component props.
+ * @param props.props     Block edit props.
+ * @param props.BlockEdit Block edit component.
+ */
+const PostsTableListener = ({
+	props,
+	BlockEdit,
+}: ProBlockProps<TablebergBlockAttrs>) => {
+	const { clientId } = props;
+	const storeId = `tableberg-private-store-${clientId}`;
+
+	if (props.isSelected) {
+		const currentModal = useSelect(
+			(
+				select: (store: string) => {
+					getModalScreen: () => string | null;
+				}
+			) => {
+				return select(storeId).getModalScreen();
+			}
+		);
+
+		const { closeModalScreen } = useDispatch(storeId);
+
+		return (
+			<>
+				{currentModal === 'posts' && (
+					<PostsTableModal onClose={closeModalScreen} />
+				)}
+				<BlockEdit {...props} />
+			</>
+		);
+	}
+
+	return <BlockEdit {...props} />;
+};
+
+export default PostsTableListener;

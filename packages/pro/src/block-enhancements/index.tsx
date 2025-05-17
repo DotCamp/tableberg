@@ -4,6 +4,7 @@ import { BlockEditProps } from '@wordpress/blocks';
 
 import { CellBlockPro } from './cell';
 import TableBlockPro from './table';
+import PostsTableListener from '../table-builders/posts-table/PostsTableListener';
 
 export interface ProBlockProps<T extends Record<string, any>> {
 	props: BlockEditProps<T>;
@@ -24,11 +25,12 @@ const ProEnhancements = createHigherOrderComponent((BlockEdit) => {
 	};
 }, 'tableberg/pro-enhancements');
 
-const PostsTableListener = createHigherOrderComponent((BlockEdit) => {
+// This is a higher-order component that intercepts the block edit process for the posts table.
+const PostsTableBuilderListener = createHigherOrderComponent((BlockEdit) => {
 	return (props) => {
-		//Only intercept tableberg table on creation screen
+		//Only intercept tableberg table on the creation screen
 		if (props.name === 'tableberg/table' && props.attributes.cells === 0) {
-			return <BlockEdit {...props} />;
+			return <PostsTableListener props={props} BlockEdit={BlockEdit} />;
 		}
 
 		return <BlockEdit {...props} />;
@@ -36,4 +38,8 @@ const PostsTableListener = createHigherOrderComponent((BlockEdit) => {
 }, 'tableberg/posts-table-listener');
 
 addFilter('editor.BlockEdit', 'tableberg/cell', ProEnhancements);
-addFilter('editor.BlockEdit', 'tableberg/posts-table', PostsTableListener);
+addFilter(
+	'editor.BlockEdit',
+	'tableberg/posts-table-listener',
+	PostsTableBuilderListener
+);
