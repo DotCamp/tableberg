@@ -15,6 +15,7 @@ interface ITBStoreState {
     renderMode: TablebergRenderMode;
 
     testmessage: string;
+    proStatus: boolean;
 }
 
 const DEFAULT_STATE: ITBStoreState = {
@@ -32,6 +33,7 @@ const DEFAULT_STATE: ITBStoreState = {
     renderMode: "primary",
 
     testmessage: "none",
+    proStatus: !!TABLEBERG_CFG.IS_PRO,
 };
 
 const context = (self || global) as typeof window & typeof global;
@@ -267,6 +269,9 @@ export const store = createReduxStore('tableberg-store', {
         },
         getPatternCategories(state: ITBStoreState): object[] {
             return state.categories;
+        },
+        getProStatus(state: ITBStoreState): boolean {
+            return state.proStatus;
         },
     },
 });

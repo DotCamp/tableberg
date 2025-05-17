@@ -112,6 +112,12 @@ export default function TableCreator({ clientId }: Props) {
                         </div>
                         <span>Pre-Built Table</span>
                     </button>
+                    <button className={`tableberg-table-creator-btn ${TABLEBERG_CFG.IS_PRO ? "tableberg-pro" : "tableberg-pro-locked"}`}>
+                        <div className="tableberg-table-creator-btn-icon">
+                            {PostsTableIcon}
+                        </div>
+                        <span>Posts Table</span>
+                    </button>
                     <button className="tableberg-table-creator-btn tableberg-upcoming">
                         <div className="tableberg-table-creator-btn-icon">
                             {DataTableIcon}
@@ -129,12 +135,6 @@ export default function TableCreator({ clientId }: Props) {
                             {AITableIcon}
                         </div>
                         <span>AI Table</span>
-                    </button>
-                    <button className="tableberg-table-creator-btn tableberg-upcoming">
-                        <div className="tableberg-table-creator-btn-icon">
-                            {PostsTableIcon}
-                        </div>
-                        <span>Posts Table</span>
                     </button>
                 </div>
             </Placeholder>
