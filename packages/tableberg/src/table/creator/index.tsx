@@ -11,15 +11,13 @@ import { BlockIcon, store } from '@wordpress/block-editor';
 import {
 	InnerBlockTemplate,
 	cloneBlock,
-	createBlock,
 	createBlocksFromInnerBlocksTemplate,
 } from '@wordpress/blocks';
 import { Button, Flex, Placeholder, TextControl } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useEffect } from 'react';
+import { useDispatch } from '@wordpress/data';
+import { useState } from 'react';
 import metadata from '../../block.json';
 import PatternsLibrary from './Patterns';
-import { store as tablebergGeneralStore } from '../../store';
 
 interface Props {
 	clientId: string;
@@ -129,6 +127,7 @@ export default function TableCreator({
 					</button>
 					<button
 						className={`tableberg-table-creator-btn ${proStatus ? 'tableberg-pro' : 'tableberg-pro-locked'}`}
+						onClick={() => proStatus && setModalScreen('patterns')}
 					>
 						<div className="tableberg-table-creator-btn-icon">
 							{PostsTableIcon}
