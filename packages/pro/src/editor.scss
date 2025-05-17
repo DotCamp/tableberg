@@ -5,7 +5,12 @@
 @import "./blocks/html/editor.scss";
 @import "./block-enhancements/cell/editor.scss";
 @import "./blocks/toggle/editor.scss";
-/***
-* Components
-***/
+/**
+ * Components
+ */
 @import "./node_modules/@tableberg/components/icon-library/style.scss";
+/**
+ * Builders
+ */
+
+@import "./table-builders/posts-table/editor.scss";
