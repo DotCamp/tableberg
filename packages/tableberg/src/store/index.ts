@@ -16,6 +16,7 @@ interface ITBStoreState {
 
     testmessage: string;
     proStatus: boolean;
+
 }
 
 const DEFAULT_STATE: ITBStoreState = {
@@ -34,6 +35,7 @@ const DEFAULT_STATE: ITBStoreState = {
 
     testmessage: "none",
     proStatus: !!TABLEBERG_CFG.IS_PRO,
+
 };
 
 const context = (self || global) as typeof window & typeof global;
@@ -45,10 +47,12 @@ DEFAULT_STATE.categories = tablebergCategories;
 interface ITBPrivateStoreState {
     renderMode: TablebergRenderMode;
     testmessage: string;
+    modalScreen: null | string
 }
 const PRIVATE_STORE_DEFAULT_STATE: ITBPrivateStoreState = {
     renderMode: "primary",
     testmessage: "none",
+    modalScreen: null,
 };
 export const createPrivateStore = (clientId: string) => {
     const store = createReduxStore('tableberg-private-store-' + clientId, {
@@ -64,6 +68,11 @@ export const createPrivateStore = (clientId: string) => {
                         ...state,
                         renderMode: action.renderMode
                     }
+                    case "SET_MODAL_SCREEN":
+                        return {
+                            ...state,
+                            modalScreen: action.modalScreen
+                        }
             }
 
             return state;
@@ -82,6 +91,18 @@ export const createPrivateStore = (clientId: string) => {
                     renderMode
                 }
             },
+            setModalScreen(modalScreen: string) {
+                return {
+                    type: "SET_MODAL_SCREEN",
+                    modalScreen
+                }
+            },
+            closeModalScreen() {
+                return {
+                    type: "SET_MODAL_SCREEN",
+                    modalScreen: null
+                }
+            }
         },
 
         selectors: {
@@ -91,6 +112,9 @@ export const createPrivateStore = (clientId: string) => {
             getRenderMode(state: ITBPrivateStoreState) {
                 return state.renderMode
             },
+            getModalScreen(state: ITBPrivateStoreState) {
+                return state.modalScreen
+            }
         },
     })
 
