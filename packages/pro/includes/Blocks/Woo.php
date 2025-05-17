@@ -110,7 +110,7 @@ class Woo
         $products = rest_do_request($request)->get_data();
 
         $products = $this->add_additional_fields($products);
-        $products = $this->transform_products($products);
+        $products = $this->transform_fields($products);
         $products = $this->remove_unwanted_fields($products, $fields);
 
         return new \WP_REST_Response($products, 200);
@@ -141,7 +141,7 @@ class Woo
         return $products;
     }
 
-    private function transform_products($products) {
+    private function transform_fields($products) {
         foreach ($products as &$product) {
             foreach ($product as $key => $value) {
                 switch ($key) {
@@ -149,6 +149,9 @@ class Woo
                         $product[$key] = sizeof($value) > 0 ?
                             [ 'url' => $value[0]['src'] ] :
                             [ 'url' => '' ];
+                        break;
+                    case "price":
+                        $product[$key] = get_woocommerce_currency_symbol() . $value;
                         break;
                     default:
                         if (!is_array($value) && !is_object($value)) {
