@@ -14,10 +14,6 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Props for the PostsTableModal component.
  *
- * This interface is used to define the properties required by the
- * PostsTableModal component. It ensures the necessary callback
- * function is provided for handling the closure of the modal.
- *
  * @interface
  */
 interface PostsTableModalProps {
@@ -27,8 +23,7 @@ interface PostsTableModalProps {
 /**
  * Represents the structure of a post type object.
  *
- * This interface defines the essential properties associated with a post type,
- * which include its name, a unique slug, and a base path for REST API endpoints.
+ * This interface defines the essential properties associated with a post type for REST API endpoints.
  *
  * @interface
  */
