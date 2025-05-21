@@ -144,15 +144,17 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 					const rawSchemaProperties = response.schema.properties;
 					const parsedSchemaProperties = Object.entries(
 						rawSchemaProperties
-					).map(([key, value]) => {
-						const parsedValue = value as SchemaPropertyFromApi;
-						return {
-							key,
-							description: parsedValue.description,
-							type: parsedValue.type,
-							format: parsedValue.format,
-						};
-					});
+					)
+						.map(([key, value]) => {
+							const parsedValue = value as SchemaPropertyFromApi;
+							return {
+								key,
+								description: parsedValue.description,
+								type: parsedValue.type,
+								format: parsedValue.format,
+							};
+						})
+						.sort((a, b) => a.key.localeCompare(b.key));
 
 					setSchemaProperties(parsedSchemaProperties);
 				}

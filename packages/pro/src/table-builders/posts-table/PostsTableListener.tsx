@@ -22,6 +22,10 @@ const PostsTableListener = ({
 	const storeId = `tableberg-private-store-${clientId}`;
 
 	if (props.isSelected) {
+		// Need to call hook inside a conditional statement since the target store will not be
+		// available till the main block is selected
+		// @ts-ignore
+		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const currentModal = useSelect(
 			(
 				select: (store: string) => {
@@ -32,6 +36,9 @@ const PostsTableListener = ({
 			}
 		);
 
+		// Need to call hook inside a conditional statement since the target store will not be
+		// available till the main block is selected
+		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const { closeModalScreen } = useDispatch(storeId);
 
 		return (
