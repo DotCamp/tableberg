@@ -11,14 +11,69 @@ import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 
+/**
+ * Props for the PostsTableModal component.
+ *
+ * This interface is used to define the properties required by the
+ * PostsTableModal component. It ensures the necessary callback
+ * function is provided for handling the closure of the modal.
+ *
+ * @interface
+ */
 interface PostsTableModalProps {
 	onClose: () => void;
 }
 
+/**
+ * Represents the structure of a post type object.
+ *
+ * This interface defines the essential properties associated with a post type,
+ * which include its name, a unique slug, and a base path for REST API endpoints.
+ *
+ * @interface
+ */
 interface PostType {
 	name: string;
 	slug: string;
 	rest_base: string;
+}
+
+/**
+ * Represents the possible types of properties in a schema definition.
+ *
+ * The `SchemaPropertyType` defines the allowed data types that can be used
+ * for a property within a schema. It restricts the values to a predefined set
+ * of types, ensuring consistency and validation within the schema framework.
+ *
+ * @interface
+ */
+type SchemaPropertyType = 'string' | 'null' | 'object' | 'integer' | 'array';
+
+/**
+ * Represents a property schema retrieved from an API.
+ *
+ * This interface is used to define the structure of a property within a
+ * schema, including its description, type, and optional format.
+ *
+ * @interface
+ */
+interface SchemaPropertyFromApi {
+	description: string;
+	type: SchemaPropertyType | Array<SchemaPropertyType>;
+	format?: string;
+}
+
+/**
+ * The SchemaProperty interface extends SchemaPropertyFromApi and represents
+ * a structure for defining schema properties with an additional key field.
+ *
+ * It is used to represent individual schema properties with a unique key,
+ * inheriting any additional fields from SchemaPropertyFromApi.
+ *
+ * @interface
+ */
+interface SchemaProperty extends SchemaPropertyFromApi {
+	key: string;
 }
 
 /**
@@ -34,7 +89,9 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 
 	const [selectedPostSlug, setSelectedPostSlug] = useState('');
 	const [selectionList, setSelectionList] = useState([selectionHeader]);
-	const [schemaProperties, setSchemaProperties] = useState<string[]>([]);
+	const [schemaProperties, setSchemaProperties] = useState<SchemaProperty[]>(
+		[]
+	);
 	const [selectedColumns, setSelectedColumns] = useState<Array<string>>([]);
 
 	const postTypes: Array<PostType> = useSelect((select) => {
@@ -71,12 +128,25 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 				method: 'OPTIONS',
 			}).then((resp) => {
 				const response = resp as {
-					schema: { properties: Record<string, unknown> };
+					schema?: { properties: Record<string, object> };
 				};
-				const rawSchemaProperties = response.schema.properties;
-				const parsedSchemaProperties = Object.keys(rawSchemaProperties);
 
-				setSchemaProperties(parsedSchemaProperties);
+				if (response.schema && response.schema.properties) {
+					const rawSchemaProperties = response.schema.properties;
+					const parsedSchemaProperties = Object.entries(
+						rawSchemaProperties
+					).map(([key, value]) => {
+						const parsedValue = value as SchemaPropertyFromApi;
+						return {
+							key,
+							description: parsedValue.description,
+							type: parsedValue.type,
+							format: parsedValue.format,
+						};
+					});
+
+					setSchemaProperties(parsedSchemaProperties);
+				}
 			});
 		}
 	}, [selectedPostSlug]);
@@ -128,11 +198,11 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 					<div className="tableberg-posts-table-modal__main__content__schema-properties">
 						{schemaProperties.map((p) => (
 							<CheckboxControl
-								key={p}
-								label={p}
-								checked={selectedColumns.includes(p)}
+								key={p.key}
+								label={p.key}
+								checked={selectedColumns.includes(p.key)}
 								onChange={(val) => {
-									handleCheckboxChange(p, val);
+									handleCheckboxChange(p.key, val);
 								}}
 							/>
 						))}
