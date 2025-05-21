@@ -21,7 +21,7 @@ interface PostsTableModalProps {
 }
 
 /**
- * Represents the structure of a post type object.
+ * Represents the structure of a post-type object.
  *
  * This interface defines the essential properties associated with a post type for REST API endpoints.
  *
@@ -80,9 +80,10 @@ interface SchemaProperty extends SchemaPropertyFromApi {
  * @param props.onClose Function to close the modal.
  */
 const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
+	// Header for the selection list.
 	const selectionHeader = { label: '--Select--', value: '', disabled: true };
 
-	// List of post types to be excluded from the selection.
+	// List of post-types to be excluded from the selection.
 	const postTypeBlackList = [
 		'menu-items',
 		'blocks',
