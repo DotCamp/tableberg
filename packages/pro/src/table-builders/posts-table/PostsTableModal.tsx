@@ -82,6 +82,17 @@ interface SchemaProperty extends SchemaPropertyFromApi {
 const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 	const selectionHeader = { label: '--Select--', value: '', disabled: true };
 
+	// List of post types to be excluded from the selection.
+	const postTypeBlackList = [
+		'menu-items',
+		'blocks',
+		'templates',
+		'template-parts',
+		'global-styles',
+		'navigation',
+		'font-families',
+	];
+
 	const [selectedPostSlug, setSelectedPostSlug] = useState('');
 	const [selectionList, setSelectionList] = useState([selectionHeader]);
 	const [schemaProperties, setSchemaProperties] = useState<SchemaProperty[]>(
@@ -107,11 +118,13 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 
 	useEffect(() => {
 		if (postTypes.length) {
-			const parsedPostTypes = postTypes.map((pT) => ({
-				label: pT.name,
-				value: pT.slug,
-				disabled: false,
-			}));
+			const parsedPostTypes = postTypes
+				.map((pT) => ({
+					label: pT.name,
+					value: pT.slug,
+					disabled: false,
+				}))
+				.filter(({ value }) => !postTypeBlackList.includes(value));
 			setSelectionList([selectionHeader, ...parsedPostTypes]);
 		}
 	}, [postTypes]);
