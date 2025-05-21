@@ -18,6 +18,7 @@ import apiFetch from '@wordpress/api-fetch';
  */
 interface PostsTableModalProps {
 	onClose: () => void;
+	onCreate: () => void;
 }
 
 /**
@@ -76,10 +77,14 @@ interface SchemaProperty extends SchemaPropertyFromApi {
  *
  * This component is used to display the posts table modal on generation phase.
  *
- * @param props         Component props.
- * @param props.onClose Function to close the modal.
+ * @param props          Component props.
+ * @param props.onClose  Function to close the modal.
+ * @param props.onCreate Callback function when create operation is triggered.
  */
-const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
+const PostsTableModal: React.FC<PostsTableModalProps> = ({
+	onClose,
+	onCreate,
+}) => {
 	// Header for the selection list.
 	const selectionHeader = { label: '--Select--', value: '', disabled: true };
 
@@ -175,6 +180,10 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 		setSelectedColumns(currentSelectedColumns);
 	};
 
+	const handleCreate = () => {
+		onCreate();
+	};
+
 	return (
 		<Modal
 			onRequestClose={onClose}
@@ -225,7 +234,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 					<Button
 						className="blocks-table__placeholder-button"
 						variant="primary"
-						onClick={() => {}}
+						onClick={handleCreate}
 						type="button"
 						disabled={selectedColumns.length === 0}
 					>

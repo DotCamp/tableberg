@@ -44,7 +44,14 @@ const PostsTableListener = ({
 		return (
 			<>
 				{currentModal === 'posts' && (
-					<PostsTableModal onClose={closeModalScreen} />
+					<PostsTableModal
+						onClose={closeModalScreen}
+						onCreate={() => {
+							// TODO [ErdemBircan] remove for production
+							console.log('create triggered');
+							closeModalScreen();
+						}}
+					/>
 				)}
 				<BlockEdit {...props} />
 			</>
