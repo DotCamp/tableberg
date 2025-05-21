@@ -68,16 +68,18 @@
       justify-content: center;
       flex-direction: column;
       gap: 10px;
+      height: 100%;
 
       &__post-type {
         width: fit-content;
       }
 
       &__schema-properties {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-flow: wrap;
+        padding: 10px;
+        width: 100%;
+        display: grid;
+        align-content: center;
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
         border-bottom: 1px solid #ccc;
       }

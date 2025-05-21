@@ -115,7 +115,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 			const parsedPostTypes = postTypes.map((pT) => ({
 				label: pT.name,
 				value: pT.slug,
-				disabled: true,
+				disabled: false,
 			}));
 			setSelectionList([selectionHeader, ...parsedPostTypes]);
 		}
@@ -204,6 +204,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 								onChange={(val) => {
 									handleCheckboxChange(p.key, val);
 								}}
+								help={p.description}
 							/>
 						))}
 					</div>
