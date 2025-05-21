@@ -99,6 +99,9 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 		'font-families',
 	];
 
+	// List of column types to be excluded from the schema properties.
+	const columnTypeBlackList = ['object', 'array'];
+
 	const [selectedPostSlug, setSelectedPostSlug] = useState('');
 	const [selectionList, setSelectionList] = useState([selectionHeader]);
 	const [schemaProperties, setSchemaProperties] = useState<SchemaProperty[]>(
@@ -158,6 +161,16 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 								type: parsedValue.type,
 								format: parsedValue.format,
 							};
+						})
+						.filter(({ type }) => {
+							let typeToUse = type;
+							if (!Array.isArray(typeToUse)) {
+								typeToUse = [typeToUse];
+							}
+
+							return typeToUse.some(
+								(t) => !columnTypeBlackList.includes(t)
+							);
 						})
 						.sort((a, b) => a.key.localeCompare(b.key));
 
