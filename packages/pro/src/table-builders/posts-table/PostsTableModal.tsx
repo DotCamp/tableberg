@@ -18,6 +18,7 @@ interface PostsTableModalProps {
 interface PostType {
 	name: string;
 	slug: string;
+	rest_base: string;
 }
 
 /**
@@ -33,17 +34,23 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 
 	const [selectedPostSlug, setSelectedPostSlug] = useState('');
 	const [selectionList, setSelectionList] = useState([selectionHeader]);
-	const [schemaProperties, setSchemaProperties] = useState([]);
+	const [schemaProperties, setSchemaProperties] = useState<string[]>([]);
 	const [selectedColumns, setSelectedColumns] = useState<Array<string>>([]);
 
 	const postTypes: Array<PostType> = useSelect((select) => {
-		const rawPostTypes = select('core').getPostTypes();
+		const rawPostTypes = (
+			select('core') as { getPostTypes: () => any[] }
+		).getPostTypes();
+
+		/* eslint-disable camelcase */
 		return rawPostTypes
 			? rawPostTypes.map(({ name, rest_base }) => ({
 					name,
 					slug: rest_base,
+					rest_base,
 				}))
 			: [];
+		/* eslint-enable camelcase */
 	}, []);
 
 	useEffect(() => {
@@ -51,6 +58,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 			const parsedPostTypes = postTypes.map((pT) => ({
 				label: pT.name,
 				value: pT.slug,
+				disabled: true,
 			}));
 			setSelectionList([selectionHeader, ...parsedPostTypes]);
 		}
@@ -62,7 +70,10 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 				path: `wp/v2/${selectedPostSlug}`,
 				method: 'OPTIONS',
 			}).then((resp) => {
-				const rawSchemaProperties = resp.schema.properties;
+				const response = resp as {
+					schema: { properties: Record<string, unknown> };
+				};
+				const rawSchemaProperties = response.schema.properties;
 				const parsedSchemaProperties = Object.keys(rawSchemaProperties);
 
 				setSchemaProperties(parsedSchemaProperties);
