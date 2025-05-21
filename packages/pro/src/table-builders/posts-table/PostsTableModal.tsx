@@ -170,6 +170,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 			className={'tableberg-posts-table-modal'}
 			__experimentalHideHeader
 			size={'medium'}
+			bodyOpenClassName={'modal-body'}
 		>
 			<div className="tableberg-posts-table-modal__main">
 				<div className="tableberg-posts-table-modal__main__header">
@@ -208,16 +209,17 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({ onClose }) => {
 							/>
 						))}
 					</div>
-					{schemaProperties.length > 0 && (
-						<Button
-							className="blocks-table__placeholder-button"
-							variant="primary"
-							onClick={() => {}}
-							type="button"
-						>
-							Create
-						</Button>
-					)}
+				</div>
+				<div className="tableberg-posts-table-modal__main__footer">
+					<Button
+						className="blocks-table__placeholder-button"
+						variant="primary"
+						onClick={() => {}}
+						type="button"
+						disabled={selectedColumns.length === 0}
+					>
+						Create
+					</Button>
 				</div>
 			</div>
 		</Modal>

@@ -1,11 +1,22 @@
 
 .tableberg-posts-table-modal {
+  min-height: 50%;
+  max-height: 50%;
+  height: 50%;
 
   .components-modal__content {
     padding: 0;
+
+    > div {
+      height: 100%;
+    }
   }
 
   &__main {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
 
     > div {
       padding: 10px;
@@ -65,10 +76,12 @@
     &__content {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       flex-direction: column;
       gap: 10px;
       height: 100%;
+      border-bottom: 1px solid #ccc;
+      overflow: scroll;
 
       &__post-type {
         width: fit-content;
@@ -81,8 +94,13 @@
         align-content: center;
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
-        border-bottom: 1px solid #ccc;
       }
+    }
+
+    &__footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 }
