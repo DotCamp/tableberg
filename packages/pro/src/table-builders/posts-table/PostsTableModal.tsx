@@ -124,7 +124,9 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 
 	const postTypes: Array<PostType> = useSelect((select) => {
 		const rawPostTypes = (
-			select('core') as { getPostTypes: () => any[] }
+			select('core') as {
+				getPostTypes: () => Array<{ name: string; rest_base: string }>;
+			}
 		).getPostTypes();
 
 		/* eslint-disable camelcase */

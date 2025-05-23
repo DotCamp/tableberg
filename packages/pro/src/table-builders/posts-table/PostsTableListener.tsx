@@ -28,9 +28,11 @@ const PostsTableListener = ({
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const currentModal = useSelect(
 			(
-				select: (store: string) => null | {
-					getModalScreen: () => string | null;
-				}
+				select: (store: string) =>
+					| undefined
+					| {
+							getModalScreen: () => string | null;
+					  }
 			) => {
 				return select(storeId)?.getModalScreen();
 			}
