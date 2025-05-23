@@ -102,6 +102,15 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 	// List of column types to be excluded from the schema properties.
 	const columnTypeBlackList = ['object', 'array'];
 
+	// List of column IDs to be excluded from the schema properties.
+	const columnIdBlackList = [
+		'password',
+		'sticky',
+		'template',
+		'ping_status',
+		'comment_status',
+	];
+
 	const [selectedPostSlug, setSelectedPostSlug] = useState('');
 	const [selectionList, setSelectionList] = useState([selectionHeader]);
 	const [schemaProperties, setSchemaProperties] = useState<SchemaProperty[]>(
@@ -162,15 +171,20 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 								format: parsedValue.format,
 							};
 						})
-						.filter(({ type }) => {
+						.filter(({ type, key }) => {
+							// Filter out unwanted columns.
+							const keyFilter = !columnIdBlackList.includes(key);
+
+							// Filter out unwanted types.
 							let typeToUse = type;
 							if (!Array.isArray(typeToUse)) {
 								typeToUse = [typeToUse];
 							}
-
-							return typeToUse.some(
+							const typeFilter = typeToUse.some(
 								(t) => !columnTypeBlackList.includes(t)
 							);
+
+							return keyFilter && typeFilter;
 						})
 						.sort((a, b) => a.key.localeCompare(b.key));
 
