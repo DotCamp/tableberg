@@ -28,18 +28,18 @@ const PostsTableListener = ({
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const currentModal = useSelect(
 			(
-				select: (store: string) => {
+				select: (store: string) => null | {
 					getModalScreen: () => string | null;
 				}
 			) => {
-				return select(storeId).getModalScreen();
+				return select(storeId)?.getModalScreen();
 			}
 		);
 
 		// Need to call hook inside a conditional statement since the target store will not be
 		// available till the main block is selected
 		// eslint-disable-next-line react-hooks/rules-of-hooks
-		const { closeModalScreen } = useDispatch(storeId);
+		const closeModalScreen = useDispatch(storeId)?.closeModalScreen;
 
 		return (
 			<>
@@ -47,8 +47,6 @@ const PostsTableListener = ({
 					<PostsTableModal
 						onClose={closeModalScreen}
 						onCreate={() => {
-							// TODO [ErdemBircan] remove for production
-							console.log('create triggered');
 							closeModalScreen();
 						}}
 					/>
