@@ -109,8 +109,12 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 		'template',
 		'ping_status',
 		'comment_status',
+		'modified_gmt',
+		'date_gmt',
+		'format',
 	];
 
+	// State variables for managing the modal's internal state.
 	const [selectedPostSlug, setSelectedPostSlug] = useState('');
 	const [selectionList, setSelectionList] = useState([selectionHeader]);
 	const [schemaProperties, setSchemaProperties] = useState<SchemaProperty[]>(
@@ -194,6 +198,12 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 		}
 	}, [selectedPostSlug]);
 
+	/**
+	 * Handles the change event of a checkbox and updates the list of selected columns accordingly.
+	 *
+	 * @param columnId The unique identifier of the column associated with the checkbox.
+	 * @param status   The new state of the checkbox (true if checked, false if unchecked).
+	 */
 	const handleCheckboxChange = (columnId: string, status: boolean) => {
 		const currentSelectedColumns = [...selectedColumns];
 		if (status) {
@@ -207,6 +217,9 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 		setSelectedColumns(currentSelectedColumns);
 	};
 
+	/**
+	 * Handles the creation trigger of the posts table.
+	 */
 	const handleCreate = () => {
 		onCreate();
 	};
