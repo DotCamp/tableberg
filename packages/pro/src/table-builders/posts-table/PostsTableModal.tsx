@@ -131,6 +131,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 			}
 		).getPostTypes();
 
+		// Resolve status for post type store selector.
 		const status = (
 			select('core/data') as {
 				isResolving: (
