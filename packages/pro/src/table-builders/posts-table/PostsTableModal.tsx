@@ -4,6 +4,7 @@ import {
 	SelectControl,
 	CheckboxControl,
 	Button,
+	Spinner,
 } from '@wordpress/components';
 import TablebergIcon from '@tableberg/shared/icons/tableberg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -166,48 +167,58 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 
 	useEffect(() => {
 		if (selectedPostSlug) {
+			// Clear out any previously selected columns.
+			setSelectedColumns([]);
+
+			setModalBusy(true);
 			apiFetch({
 				path: `wp/v2/${selectedPostSlug}`,
 				method: 'OPTIONS',
-			}).then((resp) => {
-				const response = resp as {
-					schema?: { properties: Record<string, object> };
-				};
+			})
+				.then((resp) => {
+					const response = resp as {
+						schema?: { properties: Record<string, object> };
+					};
 
-				if (response.schema && response.schema.properties) {
-					const rawSchemaProperties = response.schema.properties;
-					const parsedSchemaProperties = Object.entries(
-						rawSchemaProperties
-					)
-						.map(([key, value]) => {
-							const parsedValue = value as SchemaPropertyFromApi;
-							return {
-								key,
-								description: parsedValue.description,
-								type: parsedValue.type,
-								format: parsedValue.format,
-							};
-						})
-						.filter(({ type, key }) => {
-							// Filter out unwanted columns.
-							const keyFilter = !columnIdBlackList.includes(key);
+					if (response.schema && response.schema.properties) {
+						const rawSchemaProperties = response.schema.properties;
+						const parsedSchemaProperties = Object.entries(
+							rawSchemaProperties
+						)
+							.map(([key, value]) => {
+								const parsedValue =
+									value as SchemaPropertyFromApi;
+								return {
+									key,
+									description: parsedValue.description,
+									type: parsedValue.type,
+									format: parsedValue.format,
+								};
+							})
+							.filter(({ type, key }) => {
+								// Filter out unwanted columns.
+								const keyFilter =
+									!columnIdBlackList.includes(key);
 
-							// Filter out unwanted types.
-							let typeToUse = type;
-							if (!Array.isArray(typeToUse)) {
-								typeToUse = [typeToUse];
-							}
-							const typeFilter = typeToUse.some(
-								(t) => !columnTypeBlackList.includes(t)
-							);
+								// Filter out unwanted types.
+								let typeToUse = type;
+								if (!Array.isArray(typeToUse)) {
+									typeToUse = [typeToUse];
+								}
+								const typeFilter = typeToUse.some(
+									(t) => !columnTypeBlackList.includes(t)
+								);
 
-							return keyFilter && typeFilter;
-						})
-						.sort((a, b) => a.key.localeCompare(b.key));
+								return keyFilter && typeFilter;
+							})
+							.sort((a, b) => a.key.localeCompare(b.key));
 
-					setSchemaProperties(parsedSchemaProperties);
-				}
-			});
+						setSchemaProperties(parsedSchemaProperties);
+					}
+				})
+				.finally(() => {
+					setModalBusy(false);
+				});
 		}
 	}, [selectedPostSlug]);
 
@@ -257,6 +268,11 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 					</div>
 				</div>
 				<div className="tableberg-posts-table-modal__main__content">
+					{modalBusy && (
+						<div className="tableberg-posts-table-modal__main__content__spinner">
+							<Spinner />
+						</div>
+					)}
 					<div className="tableberg-posts-table-modal__main__content__post-type">
 						<SelectControl
 							label="Post Type"
@@ -290,7 +306,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 						variant="primary"
 						onClick={handleCreate}
 						type="button"
-						disabled={selectedColumns.length === 0}
+						disabled={modalBusy && selectedColumns.length === 0}
 					>
 						Create
 					</Button>
