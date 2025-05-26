@@ -121,6 +121,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 		[]
 	);
 	const [selectedColumns, setSelectedColumns] = useState<Array<string>>([]);
+	const [modalBusy, setModalBusy] = useState(false);
 
 	const postTypes: Array<PostType> = useSelect((select) => {
 		const rawPostTypes = (
@@ -128,6 +129,16 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 				getPostTypes: () => Array<{ name: string; rest_base: string }>;
 			}
 		).getPostTypes();
+
+		const status = (
+			select('core/data') as {
+				isResolving: (
+					targetStore: string,
+					selectorId: string
+				) => boolean;
+			}
+		).isResolving('core', 'getPostTypes');
+		setModalBusy(status);
 
 		/* eslint-disable camelcase */
 		return rawPostTypes
@@ -255,6 +266,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 								setSelectedPostSlug(value);
 							}}
 							options={selectionList}
+							disabled={modalBusy}
 						/>
 					</div>
 					{schemaProperties.length > 0 && <h3>Select Columns</h3>}
