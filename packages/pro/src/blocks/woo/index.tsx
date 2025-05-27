@@ -129,7 +129,12 @@ interface WooBlockAttrs {
     };
 }
 
-const getDynamicFieldAttrs = (field: string, value: any) => {
+const getDynamicFieldAttrs = (field: string, value: any): {
+    target?: string;
+    targetAttribute?: string;
+    value: any;
+    fetchParams?: string;
+} => {
     switch (field) {
         case "images":
             return {
@@ -295,6 +300,8 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                         fields[col], products[row - 1][fields[col]]
                     );
 
+                    dfAttrs.fetchParams = `${fields[col]}:${row-1}:${featured}:${on_sale}`;
+
                     toAdds.push([
                         "tableberg/cell",
                         { col, row, tagName: "td" },
@@ -324,6 +331,8 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                     const dfAttrs = getDynamicFieldAttrs(
                         fields[col], products[row - 1][fields[col]]
                     );
+
+                    dfAttrs.fetchParams = `${fields[col]}:${row-1}:${featured}:${on_sale}`;
 
                     toAdds.push([
                         "tableberg/cell",
@@ -360,6 +369,8 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                 const dfAttrs = getDynamicFieldAttrs(
                     field, product[field]
                 );
+
+                dfAttrs.fetchParams = `${field}:${r}:${featured}:${on_sale}`;
 
                 const dynamicField = tableBlock?.innerBlocks.find(
                     cell => {

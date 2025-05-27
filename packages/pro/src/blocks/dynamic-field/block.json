@@ -32,6 +32,9 @@
         "targetAttribute": {
             "type": "string",
             "default": "content"
+        },
+        "fetchParams": {
+            "type": "string"
         }
     },
     "example": {},
