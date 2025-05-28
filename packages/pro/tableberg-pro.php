@@ -147,6 +147,7 @@ function tp_fs_init()
                     new Blocks\Icon();
                     new Blocks\Ribbon();
                     new Blocks\Toggle();
+					new Blocks\Posts();
                     new Assets();
 
 					add_action('init', array($this, 'init_actions'));

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "0.1.0",
+  "name": "tableberg/posts-table",
+  "title": "Posts Table",
+  "category": "design",
+  "keywords": ["tableberg", "Posts", "Post", "table"],
+  "attributes": {},
+  "supports": {
+  },
+  "editorScript": "tableberg-pro-block-script",
+  "editorStyle": "tableberg-pro-editor-style",
+  "style": "tableberg-pro-frontend-style"
+}

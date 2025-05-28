@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { store as BlockEditorStore } from '@wordpress/block-editor';
+import { createBlock } from '@wordpress/blocks';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { ProBlockProps } from '../../block-enhancements';
 import { TablebergBlockAttrs } from '@tableberg/shared/types';
@@ -43,12 +45,28 @@ const PostsTableListener = ({
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const closeModalScreen = useDispatch(storeId)?.closeModalScreen;
 
+		// Need to call hook inside a conditional statement since the target store will not be
+		// available till the main block is selected
+		// eslint-disable-next-line react-hooks/rules-of-hooks
+		const storeActions: BlockEditorStoreActions = useDispatch(
+			BlockEditorStore
+		) as any;
+
+		// Need to call hook inside a conditional statement since the target store will not be
+		// available till the main block is selected
+		// eslint-disable-next-line react-hooks/rules-of-hooks
+		const handleCreateNew = () => {
+			const postsTableBlock = createBlock('tableberg/posts-table', {});
+			storeActions.replaceBlock(clientId, postsTableBlock);
+		};
+
 		return (
 			<>
 				{currentModal === 'posts' && (
 					<PostsTableModal
 						onClose={closeModalScreen}
 						onCreate={() => {
+							handleCreateNew();
 							closeModalScreen();
 						}}
 					/>
