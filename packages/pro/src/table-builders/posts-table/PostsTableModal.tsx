@@ -276,18 +276,41 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 						</div>
 					)}
 					<div className="tableberg-posts-table-modal__main__content__post-type">
-						<SelectControl
-							label="Post Type"
-							labelPosition={'side'}
-							value={selectedPostSlug}
-							onChange={(value) => {
-								setSelectedPostSlug(value);
-							}}
-							options={selectionList}
-							disabled={modalBusy}
-						/>
+						<div className="tableberg-posts-table-modal__main__content__post-type__left-container">
+							<SelectControl
+								label="Post Type"
+								labelPosition={'side'}
+								value={selectedPostSlug}
+								onChange={(value) => {
+									setSelectedPostSlug(value);
+								}}
+								options={selectionList}
+								disabled={modalBusy}
+							/>
+						</div>
+						<div className="tableberg-posts-table-modal__main__content__post-type__right-container">
+							<div className="tableberg-posts-table-modal__main__content__post-type__right-container__selected-columns">
+								{selectedColumns.length > 0 && (
+									<>
+										<span
+											className={
+												'tableberg-posts-table-modal__main__content__post-type__right-container__selected-columns__label'
+											}
+										>
+											Columns:{' '}
+										</span>
+										<div
+											className={
+												'tableberg-posts-table-modal__main__content__post-type__right-container__selected-columns__content'
+											}
+										>
+											{selectedColumns.join(', ')}
+										</div>
+									</>
+								)}
+							</div>
+						</div>
 					</div>
-					{schemaProperties.length > 0 && <h3>Select Columns</h3>}
 					<div className="tableberg-posts-table-modal__main__content__schema-properties">
 						{schemaProperties.map((p) => (
 							<CheckboxControl

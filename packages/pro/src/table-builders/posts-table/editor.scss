@@ -74,15 +74,14 @@
     }
 
     &__content {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      flex-direction: column;
-      gap: 10px;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(min-content, max-content) 1fr;
+      grid-gap: 20px;
       height: 100%;
       border-bottom: 1px solid #ccc;
-      overflow: scroll;
       position: relative;
+      overflow: hidden;
 
       &__spinner {
         display: flex;
@@ -99,16 +98,33 @@
       }
 
       &__post-type {
-        width: fit-content;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+
+        &__right-container, &__left-container {
+          flex: 0.5 0.5 50%;
+        }
+
+        &__right-container {
+          &__selected-columns {
+            font-weight: 600;
+
+            &__content {
+              color: #671FEB;
+            }
+          }
+        }
       }
 
       &__schema-properties {
         padding: 10px;
         width: 100%;
         display: grid;
-        align-content: center;
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
+        overflow: scroll;
       }
     }
 
