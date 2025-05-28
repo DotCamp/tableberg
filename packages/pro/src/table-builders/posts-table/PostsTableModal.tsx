@@ -271,6 +271,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 				<div className="tableberg-posts-table-modal__main__content">
 					{modalBusy && (
 						<div className="tableberg-posts-table-modal__main__content__spinner">
+							{/*@ts-ignore*/}
 							<Spinner />
 						</div>
 					)}
