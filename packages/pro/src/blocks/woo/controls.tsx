@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import apiFetch from "@wordpress/api-fetch";
 import {
     Button,
     SelectControl,
@@ -16,25 +14,7 @@ export const FieldSelector = ({ selectedFields, onChange, onDelete }: {
 }) => {
     const [selectedField, setSelectedField] = useState<string>("");
 
-    const { data: products } = useQuery<Record<string, any>[]>({
-        queryKey: ['wooKeys'],
-        queryFn: async () => {
-            const queryParams = new URLSearchParams({
-                per_page: "-1",
-            }).toString();
-
-            return await apiFetch({
-                path: `/tableberg/v1/woo/products?${queryParams}`,
-                method: 'GET',
-            });
-        }
-    })
-
-    if (!products) {
-        return;
-    }
-
-    const defaultFields = [
+    const validFields = [
         "sku",
         "id",
         "name",
@@ -53,14 +33,6 @@ export const FieldSelector = ({ selectedFields, onChange, onDelete }: {
         "add_to_cart",
         "attributes",
     ];
-
-    const fields = new Set<string>(defaultFields);
-
-    products.forEach(product => {
-        Object.keys(product).forEach(key => fields.add(key));
-    });
-
-    const validFields = Array.from(fields);
 
     return <div style={{ width: "100%" }}>
         {selectedFields.map(field => <SelectedField
