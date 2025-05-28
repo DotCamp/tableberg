@@ -19,7 +19,7 @@ import apiFetch from '@wordpress/api-fetch';
  */
 interface PostsTableModalProps {
 	onClose: () => void;
-	onCreate: () => void;
+	onCreate: (postType: string, columns: string[]) => void;
 }
 
 /**
@@ -246,7 +246,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 	 * Handles the creation trigger of the posts table.
 	 */
 	const handleCreate = () => {
-		onCreate();
+		onCreate(selectedPostSlug, selectedColumns);
 	};
 
 	return (
@@ -331,9 +331,20 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 						variant="primary"
 						onClick={handleCreate}
 						type="button"
-						disabled={modalBusy && selectedColumns.length === 0}
+						disabled={modalBusy || selectedColumns.length === 0}
 					>
 						Create
+					</Button>
+
+					<Button
+						className="blocks-table__placeholder-button"
+						variant="primary"
+						isDestructive={true}
+						onClick={onClose}
+						type="button"
+						disabled={modalBusy}
+					>
+						Cancel
 					</Button>
 				</div>
 			</div>

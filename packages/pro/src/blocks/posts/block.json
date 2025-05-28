@@ -5,9 +5,24 @@
   "name": "tableberg/posts-table",
   "title": "Posts Table",
   "category": "design",
-  "keywords": ["tableberg", "Posts", "Post", "table"],
-  "attributes": {},
+  "keywords": [
+    "tableberg",
+    "Posts",
+    "Post",
+    "table"
+  ],
+  "attributes": {
+    "postType": {
+      "type": "string",
+      "default": "post"
+    },
+    "columns": {
+      "type": "array",
+      "default": []
+    }
+  },
   "supports": {
+    "inserter": false
   },
   "editorScript": "tableberg-pro-block-script",
   "editorStyle": "tableberg-pro-editor-style",

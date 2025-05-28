@@ -1,4 +1,3 @@
-import React, { useCallback } from 'react';
 import { store as BlockEditorStore } from '@wordpress/block-editor';
 import { createBlock } from '@wordpress/blocks';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -55,8 +54,12 @@ const PostsTableListener = ({
 		// Need to call hook inside a conditional statement since the target store will not be
 		// available till the main block is selected
 		// eslint-disable-next-line react-hooks/rules-of-hooks
-		const handleCreateNew = () => {
-			const postsTableBlock = createBlock('tableberg/posts-table', {});
+		const handleCreateNew = (postType: string, columns: string[]) => {
+			const postsTableBlock = createBlock('tableberg/posts-tables', {
+				postType,
+				columns,
+			});
+
 			storeActions.replaceBlock(clientId, postsTableBlock);
 		};
 
@@ -65,10 +68,7 @@ const PostsTableListener = ({
 				{currentModal === 'posts' && (
 					<PostsTableModal
 						onClose={closeModalScreen}
-						onCreate={() => {
-							handleCreateNew();
-							closeModalScreen();
-						}}
+						onCreate={handleCreateNew}
 					/>
 				)}
 				<BlockEdit {...props} />
