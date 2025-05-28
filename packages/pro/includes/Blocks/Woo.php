@@ -101,14 +101,22 @@ class Woo
         $additional_fields = ['id', 'permalink', 'name'];
         $merged_fields = array_merge($fields, $additional_fields);
 
-        $request = new \WP_REST_Request('GET', '/wc/v3/products');
-        $request->set_query_params([
+        $params = [
             'per_page' => $per_page,
             'page' => $page,
             '_fields' => empty($fields) ? '' : implode(',', $merged_fields),
-            'featured' => $featured,
-            'on_sale' => $on_sale,
-        ]);
+        ];
+
+        if ($featured) {
+            $params['featured'] = true;
+        }
+
+        if ($on_sale) {
+            $params['on_sale'] = true;
+        }
+
+        $request = new \WP_REST_Request('GET', '/wc/v3/products');
+        $request->set_query_params($params);
         $products = rest_do_request($request)->get_data();
 
         $products = $this->add_additional_fields($products);

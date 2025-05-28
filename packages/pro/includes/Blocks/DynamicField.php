@@ -37,13 +37,25 @@ class DynamicField
         $fetchParams = explode(':', $attrs['fetchParams']);
         $field = $fetchParams[0];
         $offset = $fetchParams[1];
+        $featured = $fetchParams[2];
+        $on_sale = $fetchParams[3];
 
-        $request = new \WP_REST_Request('GET', '/tableberg/v1/woo/products');
-        $request->set_query_params([
+        $params = [
             'per_page' => 1,
             'page' => $offset + 1,
             '_fields' => $field,
-        ]);
+        ];
+
+        if ($featured === 'true') {
+            $params['featured'] = true;
+        }
+
+        if ($on_sale === 'true') {
+            $params['on_sale'] = true;
+        }
+
+        $request = new \WP_REST_Request('GET', '/tableberg/v1/woo/products');
+        $request->set_query_params($params);
 
         $value = rest_do_request($request)->get_data()[0][$field];
 
