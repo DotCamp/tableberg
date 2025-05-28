@@ -29,7 +29,9 @@ function edit({ attributes, clientId }: BlockEditProps<DynamicFieldBlockAttr>) {
         // @ts-ignore
         allowedBlocks: allowedBlocks,
         template: [
-            [target, { [targetAttribute]: value }]
+            target === "tableberg/button" ?
+                [target, { [targetAttribute]: value, text: "Add to cart" }] :
+                [target, { [targetAttribute]: value }]
         ]
     });
 
@@ -39,7 +41,7 @@ function edit({ attributes, clientId }: BlockEditProps<DynamicFieldBlockAttr>) {
         const block = getBlock(clientId);
 
         return block?.innerBlocks.find(
-            ({name}) => name === target
+            ({ name }) => name === target
         );
     }, []);
 
