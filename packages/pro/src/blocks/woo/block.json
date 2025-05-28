@@ -4,7 +4,7 @@
     "version": "0.0.1",
     "name": "tableberg-pro/woo",
     "allowedBlocks": ["tableberg/table"],
-    "title": "WooCommerce Block for Tableberg",
+    "title": "Product Table by Tableberg",
     "category": "layout",
     "description": "",
     "keywords": ["WooCommerce", "Table", "Layout"],
