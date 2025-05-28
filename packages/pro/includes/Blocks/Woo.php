@@ -88,6 +88,7 @@ class Woo
         }
 
         $per_page = $request->get_param('per_page');
+        $page = $request->get_param('page');
         $featured = $request->get_param('featured');
         $on_sale = $request->get_param('on_sale');
 
@@ -103,6 +104,7 @@ class Woo
         $request = new \WP_REST_Request('GET', '/wc/v3/products');
         $request->set_query_params([
             'per_page' => $per_page,
+            'page' => $page,
             '_fields' => empty($fields) ? '' : implode(',', $merged_fields),
             'featured' => $featured,
             'on_sale' => $on_sale,
