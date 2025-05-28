@@ -153,7 +153,7 @@ class Woo
                             [ 'url' => '' ];
                         break;
                     case "price":
-                        $product[$key] = get_woocommerce_currency_symbol() . $value;
+                        $product[$key] = html_entity_decode(get_woocommerce_currency_symbol()) . $value;
                         break;
                     default:
                         if (!is_array($value) && !is_object($value)) {
