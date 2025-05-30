@@ -101,7 +101,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 	];
 
 	// List of column types to be excluded from the schema properties.
-	const columnTypeBlackList = ['object', 'array'];
+	const columnTypeBlackList = ['array'];
 
 	// List of column IDs to be excluded from the schema properties.
 	const columnIdBlackList = [

@@ -20,6 +20,10 @@ interface PostsTableAttributes {
 	columns: string[];
 }
 
+const objectPropertyMapping = {
+	title: 'rendered',
+};
+
 function edit(props: BlockEditProps<PostsTableAttributes>) {
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const blockProps = useBlockProps();
@@ -45,7 +49,7 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 					'core/paragraph',
 					{
 						content: String(content) || 'empty',
-						fontSize: 'medium',
+						fontSize: 'small',
 					},
 				],
 			],
@@ -64,7 +68,7 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 				[
 					'core/image',
 					{
-						url: '',
+						imageId,
 						alt: 'Image',
 						caption: '',
 						sizeSlug: 'large',
@@ -89,6 +93,8 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 			path: `wp/v2/${postType}`,
 			method: 'GET',
 		}).then((resp) => {
+			// TODO [ErdemBircan] remove for production
+			console.log(resp);
 			const initialInnerBlocks: InnerBlockTemplate[] = [];
 
 			initialInnerBlocks.push(...generateTitle(columns));
@@ -97,7 +103,15 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 				for (let j = 0; j < columns.length; j++) {
 					const currentColumn = columns[j];
 					// @ts-ignore
-					const currentCellContent = resp[i][currentColumn] || '';
+					let currentCellContent = resp[i][currentColumn] || '';
+
+					if (objectPropertyMapping[currentColumn]) {
+						// @ts-ignore
+						currentCellContent =
+							resp[i][currentColumn][
+								objectPropertyMapping[currentColumn]
+							];
+					}
 
 					const isImage =
 						currentColumn === 'featured_media' &&
@@ -119,6 +133,7 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 					cells: initialInnerBlocks.length,
 					enableTableHeader: true,
 					headerBackgroundColor: '#f1f1f1',
+					evenRowBackgroundColor: 'rgba(0, 0, 0, 0.04)',
 				},
 				createBlocksFromInnerBlocksTemplate(initialInnerBlocks)
 			);
