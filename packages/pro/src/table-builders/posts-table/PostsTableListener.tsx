@@ -55,7 +55,7 @@ const PostsTableListener = ({
 		// available till the main block is selected
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const handleCreateNew = (postType: string, columns: string[]) => {
-			const postsTableBlock = createBlock('tableberg/posts-tables', {
+			const postsTableBlock = createBlock('tableberg/posts-table', {
 				postType,
 				columns,
 			});
