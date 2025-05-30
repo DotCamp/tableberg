@@ -183,12 +183,14 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 
 					if (response.schema && response.schema.properties) {
 						const rawSchemaProperties = response.schema.properties;
+
 						const parsedSchemaProperties = Object.entries(
 							rawSchemaProperties
 						)
 							.map(([key, value]) => {
 								const parsedValue =
 									value as SchemaPropertyFromApi;
+
 								return {
 									key,
 									description: parsedValue.description,
@@ -213,6 +215,23 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 								return keyFilter && typeFilter;
 							})
 							.sort((a, b) => a.key.localeCompare(b.key));
+
+						if (rawSchemaProperties.acf) {
+							const acfProperties = Object.keys(
+								rawSchemaProperties.acf.properties
+							);
+
+							const acfSchemaProperties = acfProperties.map(
+								(acfKey) => ({
+									key: `${acfKey}_acf`,
+									description: acfKey,
+									type: 'text',
+									format: 'acf_standard',
+								})
+							);
+
+							parsedSchemaProperties.push(...acfSchemaProperties);
+						}
 
 						setSchemaProperties(parsedSchemaProperties);
 					}

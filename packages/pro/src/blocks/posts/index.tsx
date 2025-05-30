@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import apiFetch from '@wordpress/api-fetch';
+import { PostsTableIcon } from '@tableberg/shared/icons/table-creation';
 import {
 	BlockEditProps,
 	createBlock,
@@ -14,6 +15,7 @@ import {
 	store as BlockEditorStore,
 } from '@wordpress/block-editor';
 import { useDispatch, select, useSelect } from '@wordpress/data';
+import PostsTableInspectorControls from './PostsTableInspectorControls';
 
 interface PostsTableAttributes {
 	postType: string;
@@ -30,6 +32,7 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 
 	const { attributes, clientId } = props;
 	const { postType, columns } = attributes;
+	const [currentAssingments, setCurrentAssingments] = useState({});
 
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const storeActions: BlockEditorStoreActions = useDispatch(
@@ -81,10 +84,57 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 	const generateTitle = (columnIds: string[]) => {
 		return columnIds.map((column, index) => {
 			const capitalizedColumn = column
+				.replace('_acf', '')
 				.replace(/_/g, ' ')
 				.replace(/\b\w/g, (char) => char.toUpperCase());
+
 			return textCell(capitalizedColumn, 0, index);
 		});
+	};
+
+	const getAssignment = (columnId) => {
+		return currentAssingments[columnId] || 'text';
+	};
+
+	const handleAssignmentChange = (columnId: string, value: string) => {
+		const newAssignments = { ...currentAssingments, [columnId]: value };
+		setCurrentAssingments(newAssignments);
+	};
+
+	const getCell = (
+		columnId: string,
+		row: number,
+		col: number,
+		rawContent
+	) => {
+		const columnAssignedType = getAssignment(columnId);
+
+		switch (columnAssignedType) {
+			case 'date':
+				return textCell(
+					new Date(rawContent).toLocaleDateString(),
+					row,
+					col
+				);
+			case 'image':
+				return generateImageCell(rawContent, row, col);
+			case 'rating':
+				return [
+					'tableberg/cell',
+					{ row, col },
+					[
+						[
+							'tableberg/star-rating',
+							{
+								selectedStars: rawContent,
+							},
+						],
+					],
+				];
+
+			default:
+				return textCell(rawContent, row, col);
+		}
 	};
 
 	// eslint-disable-next-line react-hooks/rules-of-hooks
@@ -93,8 +143,6 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 			path: `wp/v2/${postType}`,
 			method: 'GET',
 		}).then((resp) => {
-			// TODO [ErdemBircan] remove for production
-			console.log(resp);
 			const initialInnerBlocks: InnerBlockTemplate[] = [];
 
 			initialInnerBlocks.push(...generateTitle(columns));
@@ -113,14 +161,18 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 							];
 					}
 
-					const isImage =
-						currentColumn === 'featured_media' &&
-						currentCellContent;
+					if (currentColumn.includes('_acf')) {
+						currentCellContent =
+							resp[i].acf[currentColumn.replace('_acf', '')];
+					}
 
 					initialInnerBlocks.push(
-						isImage
-							? generateImageCell(currentCellContent, i + 1, j)
-							: textCell(currentCellContent, i + 1, j)
+						getCell(
+							currentColumn,
+							i + 1, // +1 to account for header row
+							j,
+							currentCellContent
+						)
 					);
 				}
 			}
@@ -140,18 +192,24 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 
 			storeActions.replaceInnerBlocks(clientId, [freshTable], true);
 		});
-	}, [postType, columns]);
+	}, [postType, columns, currentAssingments]);
 
 	return (
 		<div {...blockProps} className="tableberg-posts-table-block">
 			<div>
 				<InnerBlocks />
 			</div>
+			<PostsTableInspectorControls
+				columnIds={columns}
+				assignments={currentAssingments}
+				handleAssignment={handleAssignmentChange}
+			/>
 		</div>
 	);
 }
 
 registerBlockType(metadata as any, {
+	icon: PostsTableIcon,
 	attributes: metadata.attributes as any,
 	edit,
 	save: () => null,
