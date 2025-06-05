@@ -78,4 +78,5 @@ class AssignmentFactory {
 	};
 }
 
+// Export as a singleton instance.
 export default new AssignmentFactory(assignmentBlocks);

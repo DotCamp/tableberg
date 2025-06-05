@@ -2,12 +2,12 @@ import React, { useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl } from '@wordpress/components';
-import { AssignmentType } from './inc/AssignmentFactory';
+import { AssignmentType, AssignmentTypeId } from './inc/AssignmentFactory';
 
 interface PostsTableInspectorControlsProps {
 	columnIds: string[];
-	assignments: Record<string, string>;
-	handleAssignment: (columnId: string, value: string) => void;
+	assignments: Record<string, AssignmentTypeId>;
+	handleAssignment: (columnId: string, value: AssignmentTypeId) => void;
 	assignmentTypeList: Array<AssignmentType>;
 }
 
@@ -46,7 +46,9 @@ const PostsTableInspectorControls: React.FC<
 							key={cId}
 							value={assignments[cId] || 'text'}
 							options={assignmentTypes}
-							onChange={(value) => handleAssignment(cId, value)}
+							onChange={(value) =>
+								handleAssignment(cId, value as AssignmentTypeId)
+							}
 						/>
 					))}
 				</PanelBody>
