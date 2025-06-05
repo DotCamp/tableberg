@@ -14,10 +14,9 @@ import {
 	useBlockProps,
 	store as BlockEditorStore,
 } from '@wordpress/block-editor';
-import { useDispatch, select, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import PostsTableInspectorControls from './PostsTableInspectorControls';
 import AssignmentFactory, { AssignmentTypeId } from './inc/AssignmentFactory';
-import { assign } from 'lodash';
 
 interface PostsTableAttributes {
 	postType: string;
