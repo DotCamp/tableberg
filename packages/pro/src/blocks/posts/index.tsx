@@ -41,12 +41,20 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 		BlockEditorStore
 	) as any;
 
+	/**
+	 * Generates a tableberg cell block template.
+	 *
+	 * @param row           Row index.
+	 * @param column        Column index.
+	 * @param assignmentId  Assignment type ID.
+	 * @param propertyValue Value to assign to the cell.
+	 */
 	const generateTablebergCell = (
 		row: number,
 		column: number,
 		assignmentId: AssignmentTypeId,
 		propertyValue: string | number | boolean
-	) => {
+	): InnerBlockTemplate => {
 		const assignedBlockTemplate = AssignmentFactory.generateBlock(
 			assignmentId,
 			propertyValue
@@ -179,6 +187,7 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 				columnIds={columns}
 				assignments={currentAssingments}
 				handleAssignment={handleAssignmentChange}
+				assignmentTypeList={AssignmentFactory.getAvailableAssignmentTypes()}
 			/>
 		</div>
 	);

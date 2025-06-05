@@ -1,8 +1,8 @@
 import AssignedBlock from './AssignedBlock';
 
-export type AssignmentTypeId = 'text' | 'image' | 'rating';
+export type AssignmentTypeId = 'text' | 'image' | 'rating' | 'date';
 
-interface AssignmentType {
+export interface AssignmentType {
 	label: string;
 	id: AssignmentTypeId;
 }
@@ -10,6 +10,7 @@ interface AssignmentType {
 // List of available assignment types.
 const availableAssignmentTypes: Array<AssignmentType> = [
 	{ label: 'text', id: 'text' },
+	{ label: 'date', id: 'date' },
 	{ label: 'image', id: 'image' },
 	{ label: 'star rating', id: 'rating' },
 ];
@@ -17,6 +18,7 @@ const availableAssignmentTypes: Array<AssignmentType> = [
 // List of assigned blocks with their properties.
 const assignmentBlocks: Array<AssignedBlock> = [
 	new AssignedBlock('core/paragraph', 'text', 'content'),
+	new AssignedBlock('core/paragraph', 'date', 'content'),
 	new AssignedBlock('core/image', 'image', 'imageId'),
 	new AssignedBlock('tableberg/star-rating', 'rating', 'selectedStars'),
 ];

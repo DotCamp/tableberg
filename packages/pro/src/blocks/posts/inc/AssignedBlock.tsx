@@ -7,19 +7,12 @@ import { InnerBlockTemplate } from '@wordpress/blocks';
  * This class represents a block assigned to a specific column in a posts table.
  */
 class AssignedBlock {
-	blockId: string;
-	assignmentId: AssignmentTypeId;
-	propertyKey: string;
-
+	// eslint-disable-next-line no-useless-constructor
 	constructor(
-		blockId: string,
-		assignmentId: AssignmentTypeId,
-		propertyKey: string
-	) {
-		this.blockId = blockId;
-		this.assignmentId = assignmentId;
-		this.propertyKey = propertyKey;
-	}
+		public blockId: string,
+		public assignmentId: AssignmentTypeId,
+		public propertyKey: string
+	) {}
 
 	/**
 	 * Generates a block template for the assigned block.
