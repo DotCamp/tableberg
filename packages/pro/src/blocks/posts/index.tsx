@@ -78,7 +78,7 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 		});
 	};
 
-	const getAssignment = (columnId) => {
+	const getAssignment = (columnId: string): AssignmentTypeId => {
 		return currentAssingments[columnId] || 'text';
 	};
 

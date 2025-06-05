@@ -26,7 +26,7 @@ const assignmentBlocks: Array<AssignedBlock> = [
 /**
  * AssignmentFactory.
  *
- * This factory generates block templates based on the assignment type.
+ * This factory generates block templates based on the assignment types.
  */
 class AssignmentFactory {
 	defaultAssignmentType: AssignmentTypeId;
