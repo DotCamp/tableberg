@@ -33,7 +33,9 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 
 	const { attributes, clientId } = props;
 	const { postType, columns } = attributes;
-	const [currentAssingments, setCurrentAssingments] = useState({});
+	const [currentAssingments, setCurrentAssingments] = useState<
+		Record<string, AssignmentTypeId>
+	>({});
 
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const storeActions: BlockEditorStoreActions = useDispatch(
@@ -82,7 +84,10 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 		return currentAssingments[columnId] || 'text';
 	};
 
-	const handleAssignmentChange = (columnId: string, value: string) => {
+	const handleAssignmentChange = (
+		columnId: string,
+		value: AssignmentTypeId
+	) => {
 		const newAssignments = { ...currentAssingments, [columnId]: value };
 		setCurrentAssingments(newAssignments);
 	};

@@ -1,8 +1,8 @@
+import React, { useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl } from '@wordpress/components';
 import { AssignmentType } from './inc/AssignmentFactory';
-import { useMemo } from 'react';
 
 interface PostsTableInspectorControlsProps {
 	columnIds: string[];
@@ -25,7 +25,13 @@ const PostsTableInspectorControls: React.FC<
 > = ({ columnIds, assignments, assignmentTypeList, handleAssignment }) => {
 	const assignmentTypes = useMemo(() => {
 		return assignmentTypeList.map((type) => ({
-			label: type.label.charAt(0).toUpperCase() + type.label.slice(1),
+			label: type.label
+				.split(' ')
+				.map(
+					(labelPart) =>
+						labelPart.charAt(0).toUpperCase() + labelPart.slice(1)
+				)
+				.join(' '),
 			value: type.id,
 		}));
 	}, [assignmentTypeList]);
