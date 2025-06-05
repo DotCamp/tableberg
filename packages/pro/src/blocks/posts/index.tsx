@@ -16,6 +16,8 @@ import {
 } from '@wordpress/block-editor';
 import { useDispatch, select, useSelect } from '@wordpress/data';
 import PostsTableInspectorControls from './PostsTableInspectorControls';
+import AssignmentFactory, { AssignmentTypeId } from './inc/AssignmentFactory';
+import { assign } from 'lodash';
 
 interface PostsTableAttributes {
 	postType: string;
@@ -39,45 +41,21 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 		BlockEditorStore
 	) as any;
 
-	const textCell = (
-		content: string,
+	const generateTablebergCell = (
 		row: number,
-		col: number
-	): InnerBlockTemplate => {
-		return [
-			'tableberg/cell',
-			{ row, col },
-			[
-				[
-					'core/paragraph',
-					{
-						content: String(content) || 'empty',
-						fontSize: 'small',
-					},
-				],
-			],
-		];
-	};
+		column: number,
+		assignmentId: AssignmentTypeId,
+		propertyValue: string | number | boolean
+	) => {
+		const assignedBlockTemplate = AssignmentFactory.generateBlock(
+			assignmentId,
+			propertyValue
+		);
 
-	const generateImageCell = (
-		imageId: number,
-		row: number,
-		col: number
-	): InnerBlockTemplate => {
 		return [
 			'tableberg/cell',
-			{ row, col },
-			[
-				[
-					'core/image',
-					{
-						imageId,
-						alt: 'Image',
-						caption: '',
-						sizeSlug: 'large',
-					},
-				],
-			],
+			{ row, col: column },
+			[[...assignedBlockTemplate]],
 		];
 	};
 
@@ -88,7 +66,8 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 				.replace(/_/g, ' ')
 				.replace(/\b\w/g, (char) => char.toUpperCase());
 
-			return textCell(capitalizedColumn, 0, index);
+			// return textCell(capitalizedColumn, 0, index);
+			return generateTablebergCell(0, index, 'text', capitalizedColumn);
 		});
 	};
 
@@ -105,35 +84,32 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 		columnId: string,
 		row: number,
 		col: number,
-		rawContent
+		rawContent: string | number
 	) => {
 		const columnAssignedType = getAssignment(columnId);
 
 		switch (columnAssignedType) {
 			case 'date':
-				return textCell(
-					new Date(rawContent).toLocaleDateString(),
+				return generateTablebergCell(
 					row,
-					col
+					col,
+					'text',
+					new Date(rawContent).toLocaleDateString()
 				);
-			case 'image':
-				return generateImageCell(rawContent, row, col);
-			case 'rating':
-				return [
-					'tableberg/cell',
-					{ row, col },
-					[
-						[
-							'tableberg/star-rating',
-							{
-								selectedStars: rawContent,
-							},
-						],
-					],
-				];
-
+			case 'text':
+				return generateTablebergCell(
+					row,
+					col,
+					'text',
+					String(rawContent)
+				);
 			default:
-				return textCell(rawContent, row, col);
+				return generateTablebergCell(
+					row,
+					col,
+					columnAssignedType,
+					rawContent
+				);
 		}
 	};
 

@@ -1,12 +1,24 @@
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, SelectControl, TextControl } from '@wordpress/components';
+import { PanelBody, SelectControl } from '@wordpress/components';
 
-const PostsTableInspectorControls: React.FC = ({
-	columnIds,
-	assignments,
-	handleAssignment,
-}) => {
+interface PostsTableInspectorControlsProps {
+	columnIds: string[];
+	assignments: Record<string, string>;
+	handleAssignment: (columnId: string, value: string) => void;
+}
+
+/**
+ * Inspector controls for the Posts Table block.
+ *
+ * @param props                  Component properties.
+ * @param props.columnIds        Column ids.
+ * @param props.assignments      Assignments for each column.
+ * @param props.handleAssignment Function to handle assignment changes.
+ */
+const PostsTableInspectorControls: React.FC<
+	PostsTableInspectorControlsProps
+> = ({ columnIds, assignments, handleAssignment }) => {
 	return (
 		<>
 			<InspectorControls>
