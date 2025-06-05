@@ -68,7 +68,14 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 		];
 	};
 
-	const generateTitle = (columnIds: string[]) => {
+	/**
+	 * Generates the title row for the table.
+	 *
+	 * @param columnIds Array of column IDs.
+	 *
+	 * @return Title row block template.
+	 */
+	const generateTitle = (columnIds: string[]): Array<InnerBlockTemplate> => {
 		return columnIds.map((column, index) => {
 			const capitalizedColumn = column
 				.replace('_acf', '')
@@ -80,10 +87,23 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 		});
 	};
 
+	/**
+	 * Gets the assignment type for a given column ID.
+	 *
+	 * @param columnId The ID of the column.
+	 *
+	 * @return The assignment type ID for the column.
+	 */
 	const getAssignment = (columnId: string): AssignmentTypeId => {
 		return currentAssingments[columnId] || 'text';
 	};
 
+	/**
+	 * Handles changes to the assignment type for a column.
+	 *
+	 * @param columnId The ID of the column to change.
+	 * @param value    The new assignment type ID to set for the column.
+	 */
 	const handleAssignmentChange = (
 		columnId: string,
 		value: AssignmentTypeId
@@ -92,12 +112,22 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
 		setCurrentAssingments(newAssignments);
 	};
 
+	/**
+	 * Generates a cell block for the table based on target column.
+	 *
+	 * @param columnId   The ID of the column to generate the cell for.
+	 * @param row        Row index.
+	 * @param col        Column index.
+	 * @param rawContent The raw content to be displayed in the cell.
+	 *
+	 * @return Block template for the cell.
+	 */
 	const getCell = (
 		columnId: string,
 		row: number,
 		col: number,
 		rawContent: string | number
-	) => {
+	): InnerBlockTemplate => {
 		const columnAssignedType = getAssignment(columnId);
 
 		switch (columnAssignedType) {
