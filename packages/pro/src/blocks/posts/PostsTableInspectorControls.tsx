@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react';
-import { __ } from '@wordpress/i18n';
-import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, SelectControl } from '@wordpress/components';
-import { AssignmentType, AssignmentTypeId } from './inc/AssignmentFactory';
+import React, { useMemo } from "react";
+import { __ } from "@wordpress/i18n";
+import { InspectorControls } from "@wordpress/block-editor";
+import { PanelBody, SelectControl } from "@wordpress/components";
+import { AssignmentType, AssignmentTypeId } from "./inc/AssignmentFactory";
 
 interface PostsTableInspectorControlsProps {
-	columnIds: string[];
-	assignments: Record<string, AssignmentTypeId>;
-	handleAssignment: (columnId: string, value: AssignmentTypeId) => void;
-	assignmentTypeList: Array<AssignmentType>;
+    columnIds: string[];
+    assignments: Record<string, AssignmentTypeId>;
+    handleAssignment: (columnId: string, value: AssignmentTypeId) => void;
+    assignmentTypeList: Array<AssignmentType>;
 }
 
 /**
@@ -21,40 +21,40 @@ interface PostsTableInspectorControlsProps {
  * @param props.handleAssignment   Function to handle assignment changes.
  */
 const PostsTableInspectorControls: React.FC<
-	PostsTableInspectorControlsProps
+    PostsTableInspectorControlsProps
 > = ({ columnIds, assignments, assignmentTypeList, handleAssignment }) => {
-	const assignmentTypes = useMemo(() => {
-		return assignmentTypeList.map((type) => ({
-			label: type.label
-				.split(' ')
-				.map(
-					(labelPart) =>
-						labelPart.charAt(0).toUpperCase() + labelPart.slice(1)
-				)
-				.join(' '),
-			value: type.id,
-		}));
-	}, [assignmentTypeList]);
+    const assignmentTypes = useMemo(() => {
+        return assignmentTypeList.map((type) => ({
+            label: type.label
+                .split(" ")
+                .map(
+                    (labelPart) =>
+                        labelPart.charAt(0).toUpperCase() + labelPart.slice(1)
+                )
+                .join(" "),
+            value: type.id,
+        }));
+    }, [assignmentTypeList]);
 
-	return (
-		<>
-			<InspectorControls>
-				<PanelBody title={__('Posts Table Settings', 'tableberg-pro')}>
-					{columnIds.map((cId) => (
-						<SelectControl
-							label={cId}
-							key={cId}
-							value={assignments[cId] || 'text'}
-							options={assignmentTypes}
-							onChange={(value) =>
-								handleAssignment(cId, value as AssignmentTypeId)
-							}
-						/>
-					))}
-				</PanelBody>
-			</InspectorControls>
-		</>
-	);
+    return (
+        <>
+            <InspectorControls>
+                <PanelBody title={__("Posts Table Settings", "tableberg-pro")}>
+                    {columnIds.map((cId) => (
+                        <SelectControl
+                            label={cId}
+                            key={cId}
+                            value={assignments[cId] || "text"}
+                            options={assignmentTypes}
+                            onChange={(value) =>
+                                handleAssignment(cId, value as AssignmentTypeId)
+                            }
+                        />
+                    ))}
+                </PanelBody>
+            </InspectorControls>
+        </>
+    );
 };
 
 export default PostsTableInspectorControls;
