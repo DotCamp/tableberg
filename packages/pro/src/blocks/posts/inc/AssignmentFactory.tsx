@@ -26,7 +26,7 @@ const assignmentBlocks: Array<AssignedBlock> = [
 /**
  * AssignmentFactory.
  *
- * This factory generates block templates based on the assignment types.
+ * This factory handle various operations related to column assignments.
  */
 class AssignmentFactory {
     defaultAssignmentType: AssignmentTypeId;
@@ -51,7 +51,7 @@ class AssignmentFactory {
      *
      * @return A block template array.
      */
-    generateBlock = (
+    generateBlockTemplate = (
         assignmentId: AssignmentTypeId,
         propertyValue: string | number | boolean
     ) => {
@@ -59,6 +59,7 @@ class AssignmentFactory {
             (block) => block.assignmentId === assignmentId
         ) as AssignedBlock;
 
+        // Fallback to the default assignment type if not found.
         if (!assignmentBlock) {
             assignmentBlock = this.blockAssignments.find(
                 (block) => block.assignmentId === this.defaultAssignmentType

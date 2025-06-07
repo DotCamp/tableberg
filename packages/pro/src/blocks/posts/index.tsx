@@ -56,7 +56,7 @@ function edit(props: BlockEditProps<PostsTableAttributes>) {
         assignmentId: AssignmentTypeId,
         propertyValue: string | number | boolean
     ): InnerBlockTemplate => {
-        const assignedBlockTemplate = AssignmentFactory.generateBlock(
+        const assignedBlockTemplate = AssignmentFactory.generateBlockTemplate(
             assignmentId,
             propertyValue
         );
