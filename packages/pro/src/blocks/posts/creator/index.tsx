@@ -56,6 +56,7 @@ function EditComponent(props: PostsTableCreatorEditComponentProps) {
     );
 }
 
+// Let's inject some additional props to the edit component.
 const edit = compose(
     withDispatch(
         (
