@@ -13,11 +13,11 @@ import { useSelect } from "@wordpress/data";
 import apiFetch from "@wordpress/api-fetch";
 
 /**
- * Props for the PostsTableModal component.
+ * Props for the posts table creator component.
  *
  * @interface
  */
-interface PostsTableModalProps {
+interface PostsTableCreatorProps {
     onCancel: () => void;
     onCreate: (postType: string, columns: string[]) => void;
 }
@@ -74,15 +74,13 @@ interface SchemaProperty extends SchemaPropertyFromApi {
 }
 
 /**
- * Posts table modal component.
- *
- * This component is used to display the posts table modal on generation phase.
+ * Posts table creator component.
  *
  * @param props          Component props.
  * @param props.onCancel Function to cancel operation.
  * @param props.onCreate Callback function when create operation is triggered.
  */
-const PostsTableCreator: React.FC<PostsTableModalProps> = ({
+const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
     onCancel,
     onCreate,
 }) => {

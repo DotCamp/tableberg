@@ -48,7 +48,9 @@ function EditComponent(props: PostsTableCreatorEditComponentProps) {
      * Handles the cancellation of the posts table creation.
      */
     const handleCancel = () => {
-        // TODO [ErdemBircan] cancel the creation of the posts table block and return to default creation screen
+        const postsTableBlock = createBlock("tableberg/table");
+
+        replaceCurrentBlock(postsTableBlock);
     };
 
     return (
