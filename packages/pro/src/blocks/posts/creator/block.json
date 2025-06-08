@@ -12,14 +12,6 @@
     "table"
   ],
   "attributes": {
-    "postType": {
-      "type": "string",
-      "default": "post"
-    },
-    "columns": {
-      "type": "array",
-      "default": []
-    }
   },
   "supports": {
     "inserter": false

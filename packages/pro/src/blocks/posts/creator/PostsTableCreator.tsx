@@ -18,7 +18,7 @@ import apiFetch from "@wordpress/api-fetch";
  * @interface
  */
 interface PostsTableModalProps {
-    onClose: () => void;
+    onCancel: () => void;
     onCreate: (postType: string, columns: string[]) => void;
 }
 
@@ -79,11 +79,11 @@ interface SchemaProperty extends SchemaPropertyFromApi {
  * This component is used to display the posts table modal on generation phase.
  *
  * @param props          Component props.
- * @param props.onClose  Function to close the modal.
+ * @param props.onCancel Function to cancel operation.
  * @param props.onCreate Callback function when create operation is triggered.
  */
-const PostsTableModal: React.FC<PostsTableModalProps> = ({
-    onClose,
+const PostsTableCreator: React.FC<PostsTableModalProps> = ({
+    onCancel,
     onCreate,
 }) => {
     // Header for the selection list.
@@ -270,7 +270,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
 
     return (
         <Modal
-            onRequestClose={onClose}
+            onRequestClose={onCancel}
             className={"tableberg-posts-table-modal"}
             __experimentalHideHeader
             size={"medium"}
@@ -282,7 +282,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
                         {TablebergIcon} <h2>Tableberg Posts Table</h2>
                     </div>
                     <div className="tableberg-posts-table-modal__main__header__close">
-                        <button onClick={onClose}>
+                        <button onClick={onCancel}>
                             <FontAwesomeIcon icon={faClose} />
                         </button>
                     </div>
@@ -359,7 +359,7 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
                         className="blocks-table__placeholder-button"
                         variant="primary"
                         isDestructive={true}
-                        onClick={onClose}
+                        onClick={onCancel}
                         type="button"
                         disabled={modalBusy}
                     >
@@ -371,4 +371,4 @@ const PostsTableModal: React.FC<PostsTableModalProps> = ({
     );
 };
 
-export default PostsTableModal;
+export default PostsTableCreator;

@@ -4,7 +4,6 @@ import { createBlock } from "@wordpress/blocks";
 import { useSelect, useDispatch } from "@wordpress/data";
 import { ProBlockProps } from "../../../block-enhancements";
 import { TablebergBlockAttrs } from "@tableberg/shared/types";
-import PostsTableModal from "./PostsTableModal";
 
 /**
  * Posts table listener component.
@@ -43,26 +42,9 @@ const PostsTableListener = ({
         // Need to call hook inside a conditional statement since the target store will not be
         // available till the main block is selected
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        const closeModalScreen = useDispatch(storeId)?.closeModalScreen;
-
-        // Need to call hook inside a conditional statement since the target store will not be
-        // available till the main block is selected
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         const storeActions: BlockEditorStoreActions = useDispatch(
             BlockEditorStore
         ) as any;
-
-        // Need to call hook inside a conditional statement since the target store will not be
-        // available till the main block is selected
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const handleCreateNew = (postType: string, columns: string[]) => {
-            const postsTableBlock = createBlock("tableberg-pro/posts-table", {
-                postType,
-                columns,
-            });
-
-            storeActions.replaceBlock(clientId, postsTableBlock);
-        };
 
         const handleCreateCreator = () => {
             const postsTableCreatorBlock = createBlock(
