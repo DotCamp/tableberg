@@ -16,6 +16,9 @@ import {
 } from "@wordpress/block-editor";
 import { compose } from "@wordpress/compose";
 
+/**
+ * Props for the posts table creator edit component.
+ */
 type PostsTableCreatorEditComponentProps = BlockEditProps<{}> & {
     replaceCurrentBlock: (block: BlockInstance) => void;
 };
@@ -48,6 +51,7 @@ function EditComponent(props: PostsTableCreatorEditComponentProps) {
      * Handles the cancellation of the posts table creation.
      */
     const handleCancel = () => {
+        // If the user cancels the creation process, we replace the current block with a new empty table block to start from scratch.
         const postsTableBlock = createBlock("tableberg/table");
 
         replaceCurrentBlock(postsTableBlock);
@@ -70,6 +74,10 @@ const edit = compose(
             const { clientId } = ownProps;
             const { replaceBlock } = dispatch(BlockEditorStore);
 
+            /**
+             * Replaces the current block with a new block instance.
+             * @param block
+             */
             const replaceCurrentBlock = (block: BlockInstance) => {
                 replaceBlock(clientId, block);
             };

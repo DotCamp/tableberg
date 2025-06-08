@@ -11,6 +11,11 @@ import { TablebergBlockAttrs } from "@tableberg/shared/types";
  * This component is used to add various creation options to the posts table.
  * Will only be used before the table is created.
  *
+ *
+ * __IMPORTANT_NOTE__: This component is temporary and probably will be removed in the future. Zahin's (@permafrost06) approach to feed the pro related table creation options and callbacks into the main block edit component is more elegant.
+ * https://github.com/DotCamp/tableberg/blob/woo-table/packages/pro/src/block-enhancements/table/index.tsx
+ *
+ *
  * @param props           Component props.
  * @param props.props     Block edit props.
  * @param props.BlockEdit Block edit component.
@@ -22,51 +27,42 @@ const PostsTableListener = ({
     const { clientId } = props;
     const storeId = `tableberg-private-store-${clientId}`;
 
-    if (props.isSelected) {
-        // Need to call hook inside a conditional statement since the target store will not be
-        // available till the main block is selected
-        // @ts-ignore
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const currentModal = useSelect(
-            (
-                select: (store: string) =>
-                    | undefined
-                    | {
-                          getModalScreen: () => string | null;
-                      }
-            ) => {
-                return select(storeId)?.getModalScreen();
-            }
+    const currentModal = useSelect(
+        (
+            select: (store: string) =>
+                | undefined
+                | {
+                      getModalScreen: () => string | null;
+                  }
+        ) => {
+            return select(storeId)?.getModalScreen();
+        },
+        [storeId]
+    );
+
+    const storeActions: BlockEditorStoreActions = useDispatch(
+        BlockEditorStore
+    ) as any;
+
+    /**
+     * Handles the creation of a new posts table creator block.
+     *
+     * The most innovative function name ever.
+     */
+    const handleCreateCreator = () => {
+        const postsTableCreatorBlock = createBlock(
+            "tableberg-pro/posts-table-creator"
         );
 
-        // Need to call hook inside a conditional statement since the target store will not be
-        // available till the main block is selected
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const storeActions: BlockEditorStoreActions = useDispatch(
-            BlockEditorStore
-        ) as any;
+        storeActions.replaceBlock(clientId, postsTableCreatorBlock);
+    };
 
-        const handleCreateCreator = () => {
-            const postsTableCreatorBlock = createBlock(
-                "tableberg-pro/posts-table-creator"
-            );
-
-            storeActions.replaceBlock(clientId, postsTableCreatorBlock);
-        };
-
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useEffect(() => {
-            if (currentModal === "posts") {
-                handleCreateCreator();
-            }
-        }, [currentModal]);
-
-        return (
-            <>
-                <BlockEdit {...props} />
-            </>
-        );
-    }
+    useEffect(() => {
+        if (currentModal === "posts") {
+            handleCreateCreator();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentModal]);
 
     return <BlockEdit {...props} />;
 };
