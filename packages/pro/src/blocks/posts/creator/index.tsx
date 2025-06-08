@@ -1,5 +1,7 @@
+import { ComponentType } from "react";
 import {
     BlockEditProps,
+    BlockInstance,
     createBlock,
     registerBlockType,
 } from "@wordpress/blocks";
@@ -7,16 +9,19 @@ import metadata from "./block.json";
 import postsTableMetadata from "../block.json";
 import { PostsTableIcon } from "@tableberg/shared/icons/table-creation";
 import PostsTableCreator from "./PostsTableCreator";
-import { useDispatch } from "@wordpress/data";
-import { store as BlockEditorStore } from "@wordpress/block-editor";
+import { withDispatch } from "@wordpress/data";
+import {
+    store as BlockEditorStore,
+    BlockEditorStoreDescriptor,
+} from "@wordpress/block-editor";
+import { compose } from "@wordpress/compose";
 
-function edit(props: BlockEditProps<never>) {
-    const { clientId } = props;
+type PostsTableCreatorEditComponentProps = BlockEditProps<{}> & {
+    replaceCurrentBlock: (block: BlockInstance) => void;
+};
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const storeActions: BlockEditorStoreActions = useDispatch(
-        BlockEditorStore
-    ) as any;
+function EditComponent(props: PostsTableCreatorEditComponentProps) {
+    const { replaceCurrentBlock } = props;
 
     /**
      * Handles the creation of a new posts table block.
@@ -30,7 +35,7 @@ function edit(props: BlockEditProps<never>) {
             columns,
         });
 
-        storeActions.replaceBlock(clientId, postsTableBlock);
+        replaceCurrentBlock(postsTableBlock);
     };
 
     /**
@@ -44,6 +49,27 @@ function edit(props: BlockEditProps<never>) {
         <PostsTableCreator onCreate={handleCreateNew} onCancel={handleCancel} />
     );
 }
+
+const edit = compose(
+    withDispatch(
+        (
+            dispatch: (arg0: BlockEditorStoreDescriptor) => {
+                replaceBlock: (clientId: string, block: BlockInstance) => void;
+            },
+            ownProps: BlockEditProps<{}>
+        ) => {
+            const { clientId } = ownProps;
+            const { replaceBlock } = dispatch(BlockEditorStore);
+
+            const replaceCurrentBlock = (block: BlockInstance) => {
+                replaceBlock(clientId, block);
+            };
+            return {
+                replaceCurrentBlock,
+            };
+        }
+    )
+)(EditComponent) as ComponentType<BlockEditProps<{}>>;
 
 registerBlockType(metadata as any, {
     icon: PostsTableIcon,
