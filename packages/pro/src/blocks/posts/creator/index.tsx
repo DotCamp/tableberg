@@ -20,6 +20,12 @@ type PostsTableCreatorEditComponentProps = BlockEditProps<{}> & {
     replaceCurrentBlock: (block: BlockInstance) => void;
 };
 
+/**
+ * Edit component for the posts table creator block.
+ *
+ * @param props Component props.
+ * @return JSX Element for the posts table creator edit component.
+ */
 function EditComponent(props: PostsTableCreatorEditComponentProps) {
     const { replaceCurrentBlock } = props;
 
