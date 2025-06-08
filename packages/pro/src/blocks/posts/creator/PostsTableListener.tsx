@@ -1,7 +1,8 @@
+import { useEffect } from "react";
 import { store as BlockEditorStore } from "@wordpress/block-editor";
 import { createBlock } from "@wordpress/blocks";
 import { useSelect, useDispatch } from "@wordpress/data";
-import { ProBlockProps } from "../../block-enhancements";
+import { ProBlockProps } from "../../../block-enhancements";
 import { TablebergBlockAttrs } from "@tableberg/shared/types";
 import PostsTableModal from "./PostsTableModal";
 
@@ -55,7 +56,7 @@ const PostsTableListener = ({
         // available till the main block is selected
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const handleCreateNew = (postType: string, columns: string[]) => {
-            const postsTableBlock = createBlock("tableberg/posts-table", {
+            const postsTableBlock = createBlock("tableberg-pro/posts-table", {
                 postType,
                 columns,
             });
@@ -63,14 +64,23 @@ const PostsTableListener = ({
             storeActions.replaceBlock(clientId, postsTableBlock);
         };
 
+        const handleCreateCreator = () => {
+            const postsTableCreatorBlock = createBlock(
+                "tableberg-pro/posts-table-creator"
+            );
+
+            storeActions.replaceBlock(clientId, postsTableCreatorBlock);
+        };
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+            if (currentModal === "posts") {
+                handleCreateCreator();
+            }
+        }, [currentModal]);
+
         return (
             <>
-                {currentModal === "posts" && (
-                    <PostsTableModal
-                        onClose={closeModalScreen}
-                        onCreate={handleCreateNew}
-                    />
-                )}
                 <BlockEdit {...props} />
             </>
         );

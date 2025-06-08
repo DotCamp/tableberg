@@ -13,5 +13,6 @@ import './blocks/icon';
 import './blocks/ribbon';
 import './blocks/toggle';
 import './blocks/posts';
+import './blocks/posts/creator';
 
 import './block-enhancements';

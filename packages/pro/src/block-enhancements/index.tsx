@@ -4,7 +4,7 @@ import { BlockEditProps } from "@wordpress/blocks";
 
 import { CellBlockPro } from "./cell";
 import TableBlockPro from "./table";
-import PostsTableListener from "../table-builders/posts-table/PostsTableListener";
+import PostsTableListener from "../blocks/posts/creator/PostsTableListener";
 
 export interface ProBlockProps<T extends Record<string, any>> {
     props: BlockEditProps<T>;
