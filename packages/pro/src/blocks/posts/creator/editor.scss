@@ -1,138 +1,31 @@
+.tableberg-selected-option-row {
+  width: 100%;
+  background-color: #f3f3f3;
+  font-weight: 600;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .25rem;
+  box-sizing: border-box;
 
-.tableberg-posts-table-modal {
-  min-height: 50%;
-  max-height: 50%;
-  height: 50%;
+  &__delete-button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #9CA3AF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.2s ease-in;
 
-  .components-modal__content {
-    padding: 0;
-
-    > div {
-      height: 100%;
-    }
-  }
-
-  &__main {
-    height: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
-
-    > div {
-      padding: 10px;
-    }
-
-    &__header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #ccc;
-      height: 60px;
-      min-height: 60px;
-      max-height: 60px;
-
-      &__logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        svg {
-          height: 40px;
-          width: 40px;
-        }
-
-        h2 {
-          font-size: 1.4rem;
-        }
-      }
-
-      &__close {
-        display: flex;
-        align-items: center;
-
-        button {
-          position: absolute;
-          right: 20px;
-          background: none;
-          border: none;
-          cursor: pointer;
-
-          &:hover {
-            color: rgb(51, 0, 0);
-          }
-        }
-
-        .components-base-control__field {
-          margin: 0;
-
-          button {
-            top: 5px;
-            right: 0;
-          }
-        }
-      }
+    &:hover {
+      color: inherit;
     }
 
-    &__content {
-      display: grid;
-      grid-template-columns: 1fr;
-      grid-template-rows: minmax(min-content, max-content) 1fr;
-      grid-gap: 20px;
-      height: 100%;
-      border-bottom: 1px solid #ccc;
-      position: relative;
-      overflow: hidden;
-
-      &__spinner {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1000;
-        background-color: rgba(255, 255, 255, 0.6);
-        pointer-events: none;
-      }
-
-      &__post-type {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 20px;
-
-        &__right-container, &__left-container {
-          flex: 0.5 0.5 50%;
-        }
-
-        &__right-container {
-          &__selected-columns {
-            font-weight: 600;
-
-            &__content {
-              color: #671FEB;
-            }
-          }
-        }
-      }
-
-      &__schema-properties {
-        padding: 10px;
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        overflow: scroll;
-      }
-    }
-
-    &__footer {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
+    &__icon {
+      width: 15px;
+      height: 15px;
     }
   }
 }

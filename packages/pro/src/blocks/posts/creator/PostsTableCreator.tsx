@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-    Modal,
-    SelectControl,
-    CheckboxControl,
-    Button,
-    Spinner,
-} from "@wordpress/components";
-import TablebergIcon from "@tableberg/shared/icons/tableberg";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { Button, Placeholder } from "@wordpress/components";
 import { useSelect } from "@wordpress/data";
 import apiFetch from "@wordpress/api-fetch";
+import { PostsTableIcon } from "@tableberg/shared/icons/table-creation";
+import { BlockIcon } from "@wordpress/block-editor";
+import SelectionControlRow, {
+    SelectControlOption,
+    SelectedOptionRow,
+} from "./controls";
 
 /**
  * Props for the posts table creator component.
@@ -84,8 +81,18 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
     onCancel,
     onCreate,
 }) => {
-    // Header for the selection list.
-    const selectionHeader = { label: "--Select--", value: "", disabled: true };
+    // Header for the post selection list.
+    const postTypeSelectionHeader: SelectControlOption = {
+        label: "--Select Post Type--",
+        value: "",
+        disabled: true,
+    };
+
+    // Header for the column selection list.
+    const columnSelectionHeader: SelectControlOption = {
+        ...postTypeSelectionHeader,
+        label: "--Select Column--",
+    };
 
     // List of post-types to be excluded from the selection.
     const postTypeBlackList = [
@@ -115,10 +122,16 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
 
     // State variables for managing the modal's internal state.
     const [selectedPostSlug, setSelectedPostSlug] = useState("");
-    const [selectionList, setSelectionList] = useState([selectionHeader]);
+    const [postTypeSelectionList, setPostTypeSelectionList] = useState<
+        Array<SelectControlOption>
+    >([postTypeSelectionHeader]);
     const [schemaProperties, setSchemaProperties] = useState<SchemaProperty[]>(
         []
     );
+    const [columnSelectionList, setColumnSelectionList] = useState<
+        Array<SelectControlOption>
+    >([columnSelectionHeader]);
+    const [currentColumnSelection, setCurrentColumnSelection] = useState("");
     const [selectedColumns, setSelectedColumns] = useState<Array<string>>([]);
     const [modalBusy, setModalBusy] = useState(false);
 
@@ -160,9 +173,24 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
                     disabled: false,
                 }))
                 .filter(({ value }) => !postTypeBlackList.includes(value));
-            setSelectionList([selectionHeader, ...parsedPostTypes]);
+            setPostTypeSelectionList([
+                postTypeSelectionHeader,
+                ...parsedPostTypes,
+            ]);
         }
     }, [postTypes]);
+
+    useEffect(() => {
+        const parsedColumns: Array<SelectControlOption> = schemaProperties.map(
+            ({ key, description }) => ({
+                label: `${key} --- ${description}`,
+                value: key,
+                disabled: false,
+            })
+        );
+
+        setColumnSelectionList([columnSelectionHeader, ...parsedColumns]);
+    }, [schemaProperties]);
 
     useEffect(() => {
         if (selectedPostSlug) {
@@ -246,7 +274,7 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
      * @param columnId The unique identifier of the column associated with the checkbox.
      * @param status   The new state of the checkbox (true if checked, false if unchecked).
      */
-    const handleCheckboxChange = (columnId: string, status: boolean) => {
+    const handleColumnSelectionChange = (columnId: string, status: boolean) => {
         const currentSelectedColumns = [...selectedColumns];
         if (status) {
             currentSelectedColumns.push(columnId);
@@ -267,105 +295,78 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
     };
 
     return (
-        <Modal
-            onRequestClose={onCancel}
-            className={"tableberg-posts-table-modal"}
-            __experimentalHideHeader
-            size={"medium"}
-            bodyOpenClassName={"modal-body"}
-        >
-            <div className="tableberg-posts-table-modal__main">
-                <div className="tableberg-posts-table-modal__main__header">
-                    <div className="tableberg-posts-table-modal__main__header__logo">
-                        {TablebergIcon} <h2>Tableberg Posts Table</h2>
-                    </div>
-                    <div className="tableberg-posts-table-modal__main__header__close">
-                        <button onClick={onCancel}>
-                            <FontAwesomeIcon icon={faClose} />
-                        </button>
-                    </div>
-                </div>
-                <div className="tableberg-posts-table-modal__main__content">
-                    {modalBusy && (
-                        <div className="tableberg-posts-table-modal__main__content__spinner">
-                            {/*@ts-ignore*/}
-                            <Spinner />
+        <div className="tableberg-table-creator tableberg-posts-table-creator">
+            <Placeholder
+                label={"Tableberg Posts Table"}
+                icon={<BlockIcon icon={PostsTableIcon} />}
+            >
+                <SelectionControlRow
+                    value={selectedPostSlug}
+                    label="Post Type"
+                    onChange={(value) => {
+                        setSelectedPostSlug(value);
+                    }}
+                    options={postTypeSelectionList}
+                    disabled={modalBusy}
+                />
+                {schemaProperties.length > 0 && (
+                    <>
+                        <div
+                            style={{
+                                width: "100%",
+                                marginTop: "20px",
+                            }}
+                        >
+                            {selectedColumns.map((columnId) => (
+                                <SelectedOptionRow
+                                    key={columnId}
+                                    label={columnId}
+                                    value={columnId}
+                                    onDelete={(val) =>
+                                        handleColumnSelectionChange(val, false)
+                                    }
+                                />
+                            ))}
                         </div>
-                    )}
-                    <div className="tableberg-posts-table-modal__main__content__post-type">
-                        <div className="tableberg-posts-table-modal__main__content__post-type__left-container">
-                            <SelectControl
-                                label="Post Type"
-                                labelPosition={"side"}
-                                value={selectedPostSlug}
-                                onChange={(value) => {
-                                    setSelectedPostSlug(value);
-                                }}
-                                options={selectionList}
-                                disabled={modalBusy}
-                            />
-                        </div>
-                        <div className="tableberg-posts-table-modal__main__content__post-type__right-container">
-                            <div className="tableberg-posts-table-modal__main__content__post-type__right-container__selected-columns">
-                                {selectedColumns.length > 0 && (
-                                    <>
-                                        <span
-                                            className={
-                                                "tableberg-posts-table-modal__main__content__post-type__right-container__selected-columns__label"
-                                            }
-                                        >
-                                            Columns:{" "}
-                                        </span>
-                                        <div
-                                            className={
-                                                "tableberg-posts-table-modal__main__content__post-type__right-container__selected-columns__content"
-                                            }
-                                        >
-                                            {selectedColumns.join(", ")}
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="tableberg-posts-table-modal__main__content__schema-properties">
-                        {schemaProperties.map((p) => (
-                            <CheckboxControl
-                                key={p.key}
-                                label={p.key}
-                                checked={selectedColumns.includes(p.key)}
-                                onChange={(val) => {
-                                    handleCheckboxChange(p.key, val);
-                                }}
-                                help={p.description}
-                            />
-                        ))}
-                    </div>
-                </div>
-                <div className="tableberg-posts-table-modal__main__footer">
-                    <Button
-                        className="blocks-table__placeholder-button"
-                        variant="primary"
-                        onClick={handleCreate}
-                        type="button"
-                        disabled={modalBusy || selectedColumns.length === 0}
-                    >
-                        Create
-                    </Button>
-
-                    <Button
-                        className="blocks-table__placeholder-button"
-                        variant="primary"
-                        isDestructive={true}
-                        onClick={onCancel}
-                        type="button"
-                        disabled={modalBusy}
-                    >
-                        Cancel
-                    </Button>
-                </div>
-            </div>
-        </Modal>
+                        <SelectionControlRow
+                            type={"withButton"}
+                            value={currentColumnSelection}
+                            onChange={setCurrentColumnSelection}
+                            options={columnSelectionList}
+                            disabled={modalBusy}
+                            onButtonClick={() => {
+                                handleColumnSelectionChange(
+                                    currentColumnSelection,
+                                    true
+                                );
+                                setCurrentColumnSelection("");
+                            }}
+                            buttonDisabled={
+                                currentColumnSelection === "" || modalBusy
+                            }
+                        />
+                    </>
+                )}
+                <Button
+                    className="blocks-table__placeholder-button"
+                    variant="primary"
+                    onClick={handleCreate}
+                    type="button"
+                    disabled={modalBusy || selectedColumns.length === 0}
+                >
+                    Create
+                </Button>
+                <Button
+                    className="blocks-table__placeholder-button"
+                    variant="primary"
+                    onClick={onCancel}
+                    isDestructive={true}
+                    type="button"
+                >
+                    Cancel
+                </Button>
+            </Placeholder>
+        </div>
     );
 };
 
