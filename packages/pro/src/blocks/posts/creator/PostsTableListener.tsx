@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { store as BlockEditorStore } from "@wordpress/block-editor";
 import { createBlock } from "@wordpress/blocks";
 import { useSelect, useDispatch } from "@wordpress/data";
-import { ProBlockProps } from "../../../block-enhancements";
 import { TablebergBlockAttrs } from "@tableberg/shared/types";
+import { ProBlockProps } from "../../../block-enhancements";
 
 /**
  * Posts table listener component.

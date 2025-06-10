@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
+import apiFetch from "@wordpress/api-fetch";
+import { BlockIcon } from "@wordpress/block-editor";
 import { Button, Placeholder } from "@wordpress/components";
 import { useSelect } from "@wordpress/data";
-import apiFetch from "@wordpress/api-fetch";
 import { PostsTableIcon } from "@tableberg/shared/icons/table-creation";
-import { BlockIcon } from "@wordpress/block-editor";
 import SelectionControlRow, {
     SelectControlOption,
     SelectedOptionRow,
@@ -17,6 +17,10 @@ import SelectionControlRow, {
 interface PostsTableCreatorProps {
     onCancel: () => void;
     onCreate: (postType: string, columns: string[]) => void;
+    postType: string;
+    onPostTypeChange: (postType: string) => void;
+    selectedColumns?: Array<string>;
+    onSelectColumnsChange: (columns: Array<string>) => void;
 }
 
 /**
@@ -39,7 +43,6 @@ interface PostType {
  * for a property within a schema. It restricts the values to a predefined set
  * of types, ensuring consistency and validation within the schema framework.
  *
- * @interface
  */
 type SchemaPropertyType = "string" | "null" | "object" | "integer" | "array";
 
@@ -73,13 +76,21 @@ interface SchemaProperty extends SchemaPropertyFromApi {
 /**
  * Posts table creator component.
  *
- * @param props          Component props.
- * @param props.onCancel Function to cancel operation.
- * @param props.onCreate Callback function when create operation is triggered.
+ * @param props                       Component props.
+ * @param props.onCancel              Function to cancel operation.
+ * @param props.onCreate              Callback function when create operation is triggered.
+ * @param props.postType              The post type to be used for the posts table creator.
+ * @param props.onPostTypeChange      Callback function to handle post type changes.
+ * @param [props.selectedColumns=[]]  Selected column IDs.
+ * @param props.onSelectColumnsChange Callback function to handle changes in selected columns.
  */
 const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
     onCancel,
     onCreate,
+    postType = "",
+    onPostTypeChange,
+    selectedColumns = [],
+    onSelectColumnsChange,
 }) => {
     // Header for the post selection list.
     const postTypeSelectionHeader: SelectControlOption = {
@@ -121,7 +132,7 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
     ];
 
     // State variables for managing the modal's internal state.
-    const [selectedPostSlug, setSelectedPostSlug] = useState("");
+    const [selectedPostSlug, setSelectedPostSlug] = useState(postType);
     const [postTypeSelectionList, setPostTypeSelectionList] = useState<
         Array<SelectControlOption>
     >([postTypeSelectionHeader]);
@@ -132,7 +143,8 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
         Array<SelectControlOption>
     >([columnSelectionHeader]);
     const [currentColumnSelection, setCurrentColumnSelection] = useState("");
-    const [selectedColumns, setSelectedColumns] = useState<Array<string>>([]);
+    const [userSelectedColumns, setUserSelectedColumns] =
+        useState<Array<string>>(selectedColumns);
     const [modalBusy, setModalBusy] = useState(false);
 
     const postTypes: Array<PostType> = useSelect((select) => {
@@ -142,7 +154,7 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
             }
         ).getPostTypes();
 
-        // Resolve status for post type store selector.
+        // Resolve status for post-type store selector.
         const status = (
             select("core/data") as {
                 isResolving: (
@@ -165,6 +177,7 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
     }, []);
 
     useEffect(() => {
+        // Prepare the post type selection list based on the available post-types.
         if (postTypes.length) {
             const parsedPostTypes = postTypes
                 .map((pT) => ({
@@ -181,6 +194,7 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
     }, [postTypes]);
 
     useEffect(() => {
+        // Prepare the column selection list based on the schema properties.
         const parsedColumns: Array<SelectControlOption> = schemaProperties.map(
             ({ key, description }) => ({
                 label: `${key} --- ${description}`,
@@ -188,23 +202,35 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
                 disabled: false,
             })
         );
-
         setColumnSelectionList([columnSelectionHeader, ...parsedColumns]);
+
+        if (parsedColumns.length) {
+            // Filter out selected columns that are not available in the newly selected post-type.
+            const filteredUserSelectedColumns = userSelectedColumns.filter(
+                (col) => parsedColumns.some((option) => option.value === col)
+            );
+            setUserSelectedColumns(filteredUserSelectedColumns);
+        }
     }, [schemaProperties]);
 
     // Memoized list of column selection options. This memo function will filter out the already selected columns from the column selection list.
     const columnSelectionListMemo: Array<SelectControlOption> = useMemo(() => {
         return columnSelectionList.filter(
-            (option) => !selectedColumns.includes(option.value)
+            (option) => !userSelectedColumns.includes(option.value)
         );
-    }, [columnSelectionList, selectedColumns]);
+    }, [columnSelectionList, userSelectedColumns]);
+
+    useEffect(() => {
+        onSelectColumnsChange(userSelectedColumns);
+    }, [userSelectedColumns]);
 
     useEffect(() => {
         if (selectedPostSlug) {
-            // Clear out any previously selected columns.
-            setSelectedColumns([]);
+            onPostTypeChange(selectedPostSlug);
 
             setModalBusy(true);
+
+            // Let's get more information about the selected post-type.
             apiFetch({
                 path: `wp/v2/${selectedPostSlug}`,
                 method: "OPTIONS",
@@ -283,7 +309,7 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
      * @param status   The new state of the checkbox (true if checked, false if unchecked).
      */
     const handleColumnSelectionChange = (columnId: string, status: boolean) => {
-        const currentSelectedColumns = [...selectedColumns];
+        const currentSelectedColumns = [...userSelectedColumns];
         if (status) {
             currentSelectedColumns.push(columnId);
         } else {
@@ -292,14 +318,14 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
                 currentSelectedColumns.splice(index, 1);
             }
         }
-        setSelectedColumns(currentSelectedColumns);
+        setUserSelectedColumns(currentSelectedColumns);
     };
 
     /**
      * Handles the creation trigger of the posts table.
      */
     const handleCreate = () => {
-        onCreate(selectedPostSlug, selectedColumns);
+        onCreate(selectedPostSlug, userSelectedColumns);
     };
 
     return (
@@ -325,7 +351,7 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
                                 marginTop: "20px",
                             }}
                         >
-                            {selectedColumns.map((columnId) => (
+                            {userSelectedColumns.map((columnId) => (
                                 <SelectedOptionRow
                                     key={columnId}
                                     label={columnId}
@@ -360,7 +386,7 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
                     variant="primary"
                     onClick={handleCreate}
                     type="button"
-                    disabled={modalBusy || selectedColumns.length === 0}
+                    disabled={modalBusy || userSelectedColumns.length === 0}
                 >
                     Create
                 </Button>

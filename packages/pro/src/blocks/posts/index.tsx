@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import apiFetch from "@wordpress/api-fetch";
-import { PostsTableIcon } from "@tableberg/shared/icons/table-creation";
+import {
+    InnerBlocks,
+    useBlockProps,
+    store as BlockEditorStore,
+} from "@wordpress/block-editor";
 import {
     BlockEditProps,
     createBlock,
@@ -8,15 +12,11 @@ import {
     InnerBlockTemplate,
     registerBlockType,
 } from "@wordpress/blocks";
-import metadata from "./block.json";
-import {
-    InnerBlocks,
-    useBlockProps,
-    store as BlockEditorStore,
-} from "@wordpress/block-editor";
 import { useDispatch } from "@wordpress/data";
-import PostsTableInspectorControls from "./PostsTableInspectorControls";
+import { PostsTableIcon } from "@tableberg/shared/icons/table-creation";
+import metadata from "./block.json";
 import AssignmentFactory, { AssignmentTypeId } from "./inc/AssignmentFactory";
+import PostsTableInspectorControls from "./PostsTableInspectorControls";
 
 interface PostsTableAttributes {
     postType: string;

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { __ } from "@wordpress/i18n";
 import { InspectorControls } from "@wordpress/block-editor";
 import { PanelBody, SelectControl } from "@wordpress/components";
+import { __ } from "@wordpress/i18n";
 import { AssignmentType, AssignmentTypeId } from "./inc/AssignmentFactory";
 
 interface PostsTableInspectorControlsProps {

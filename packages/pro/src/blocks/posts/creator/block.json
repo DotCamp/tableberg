@@ -12,6 +12,14 @@
     "table"
   ],
   "attributes": {
+    "postType": {
+      "type": "string",
+      "default": ""
+    },
+    "selectedColumns": {
+      "type": "array",
+      "default": []
+    }
   },
   "supports": {
     "inserter": false

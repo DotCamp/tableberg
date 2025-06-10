@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, SelectControl } from "@wordpress/components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, SelectControl } from "@wordpress/components";
 
 /**
  * Represents the structure of a select control option.

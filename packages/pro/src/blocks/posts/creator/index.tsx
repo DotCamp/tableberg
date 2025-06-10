@@ -1,27 +1,39 @@
 import { ComponentType } from "react";
 import {
+    store as BlockEditorStore,
+    BlockEditorStoreDescriptor,
+    useBlockProps,
+} from "@wordpress/block-editor";
+import {
     BlockEditProps,
     BlockInstance,
     createBlock,
     registerBlockType,
 } from "@wordpress/blocks";
-import metadata from "./block.json";
-import postsTableMetadata from "../block.json";
-import { PostsTableIcon } from "@tableberg/shared/icons/table-creation";
-import PostsTableCreator from "./PostsTableCreator";
-import { withDispatch } from "@wordpress/data";
-import {
-    store as BlockEditorStore,
-    BlockEditorStoreDescriptor,
-} from "@wordpress/block-editor";
 import { compose } from "@wordpress/compose";
+import { withDispatch } from "@wordpress/data";
+import { PostsTableIcon } from "@tableberg/shared/icons/table-creation";
+import postsTableMetadata from "../block.json";
+import metadata from "./block.json";
+import PostsTableCreator from "./PostsTableCreator";
+
+/**
+ * Attributes for the posts table creator block.
+ *
+ * @interface
+ */
+interface PostsTableCreatorAttributes {
+    postType: string;
+    selectedColumns: Array<string>;
+}
 
 /**
  * Props for the posts table creator edit component.
  */
-type PostsTableCreatorEditComponentProps = BlockEditProps<{}> & {
-    replaceCurrentBlock: (block: BlockInstance) => void;
-};
+type PostsTableCreatorEditComponentProps =
+    BlockEditProps<PostsTableCreatorAttributes> & {
+        replaceCurrentBlock: (block: BlockInstance) => void;
+    };
 
 /**
  * Edit component for the posts table creator block.
@@ -30,17 +42,18 @@ type PostsTableCreatorEditComponentProps = BlockEditProps<{}> & {
  * @return JSX Element for the posts table creator edit component.
  */
 function EditComponent(props: PostsTableCreatorEditComponentProps) {
-    const { replaceCurrentBlock } = props;
+    const { replaceCurrentBlock, attributes, setAttributes } = props;
+    const { postType, selectedColumns } = attributes;
 
     /**
      * Handles the creation of a new posts table block.
      *
-     * @param postType Post type id.
-     * @param columns  Column ids to be used in the posts table.
+     * @param pType   Post type id.
+     * @param columns Column ids to be used in the posts table.
      */
-    const handleCreateNew = (postType: string, columns: string[]) => {
+    const handleCreateNew = (pType: string, columns: string[]) => {
         const postsTableBlock = createBlock(postsTableMetadata.name, {
-            postType,
+            pType,
             columns,
         });
 
@@ -58,7 +71,20 @@ function EditComponent(props: PostsTableCreatorEditComponentProps) {
     };
 
     return (
-        <PostsTableCreator onCreate={handleCreateNew} onCancel={handleCancel} />
+        <div {...useBlockProps()}>
+            <PostsTableCreator
+                onCreate={handleCreateNew}
+                onCancel={handleCancel}
+                postType={postType}
+                onPostTypeChange={(newPostType: string) => {
+                    setAttributes({ postType: newPostType });
+                }}
+                selectedColumns={selectedColumns}
+                onSelectColumnsChange={(newSelectedColumns: string[]) => {
+                    setAttributes({ selectedColumns: newSelectedColumns });
+                }}
+            />
+        </div>
     );
 }
 
@@ -92,5 +118,7 @@ registerBlockType(metadata as any, {
     icon: PostsTableIcon,
     attributes: metadata.attributes as any,
     edit,
-    save: () => null,
+    save: () => {
+        return null;
+    },
 });
