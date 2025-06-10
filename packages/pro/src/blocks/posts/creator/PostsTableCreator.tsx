@@ -249,22 +249,23 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
                             })
                             .sort((a, b) => a.key.localeCompare(b.key));
 
-                        if (rawSchemaProperties.acf) {
-                            const acfProperties = Object.keys(
-                                rawSchemaProperties.acf.properties
-                            );
-
-                            const acfSchemaProperties = acfProperties.map(
-                                (acfKey) => ({
-                                    key: `${acfKey}_acf`,
-                                    description: acfKey,
-                                    type: "text",
-                                    format: "acf_standard",
-                                })
-                            );
-
-                            parsedSchemaProperties.push(...acfSchemaProperties);
-                        }
+                        // TODO [ErdemBircan] a better way to handle ACF should be implemented.
+                        // if (rawSchemaProperties.acf) {
+                        //     const acfProperties = Object.keys(
+                        //         rawSchemaProperties.acf.properties
+                        //     );
+                        //
+                        //     const acfSchemaProperties = acfProperties.map(
+                        //         (acfKey) => ({
+                        //             key: `${acfKey}_acf`,
+                        //             description: acfKey,
+                        //             type: "text",
+                        //             format: "acf_standard",
+                        //         })
+                        //     );
+                        //
+                        //     parsedSchemaProperties.push(...acfSchemaProperties);
+                        // }
 
                         setSchemaProperties(parsedSchemaProperties);
                     }
