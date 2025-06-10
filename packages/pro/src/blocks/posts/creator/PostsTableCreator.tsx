@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Button, Placeholder } from "@wordpress/components";
 import { useSelect } from "@wordpress/data";
 import apiFetch from "@wordpress/api-fetch";
@@ -192,6 +192,13 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
         setColumnSelectionList([columnSelectionHeader, ...parsedColumns]);
     }, [schemaProperties]);
 
+    // Memoized list of column selection options. This memo function will filter out the already selected columns from the column selection list.
+    const columnSelectionListMemo: Array<SelectControlOption> = useMemo(() => {
+        return columnSelectionList.filter(
+            (option) => !selectedColumns.includes(option.value)
+        );
+    }, [columnSelectionList, selectedColumns]);
+
     useEffect(() => {
         if (selectedPostSlug) {
             // Clear out any previously selected columns.
@@ -332,7 +339,7 @@ const PostsTableCreator: React.FC<PostsTableCreatorProps> = ({
                             type={"withButton"}
                             value={currentColumnSelection}
                             onChange={setCurrentColumnSelection}
-                            options={columnSelectionList}
+                            options={columnSelectionListMemo}
                             disabled={modalBusy}
                             onButtonClick={() => {
                                 handleColumnSelectionChange(
