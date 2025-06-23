@@ -52,6 +52,61 @@ class Cell
 		return Utils::generate_css_string($styles);
 	}
 
+	private static function getCellBorders($attributes) {
+		$border = $attributes['border'] ?? null;
+
+		if (
+			$border && (
+				isset($border['style']) ||
+				isset($border['color']) ||
+				isset($border['width'])
+			)) {
+			return [
+				'border' => "1px solid black",
+				'border-style' => $border['style'],
+				'border-color' => $border['color'],
+				'border-width' => $border['width'],
+			];
+		}
+
+		if (
+			$border && (
+				isset($border['top']) ||
+				isset($border['bottom']) ||
+				isset($border['left']) ||
+				isset($border['right'])
+			)
+		) {
+			$borderStyles = [
+				'border' => "1px solid black",
+			];
+
+			foreach ($border as $side => $sideBorder) {
+				$borderStyles["border-{$side}-style"] = $sideBorder['style'];
+				$borderStyles["border-{$side}-color"] = $sideBorder['color'];
+				$borderStyles["border-{$side}-width"] = $sideBorder['width'];
+			}
+
+			return $borderStyles;
+		}
+
+		return [];
+	}
+
+	private static function getCellBorderRadius($attributes) {
+		$radius = $attributes['borderRadius'] ?? null;
+
+		if ($radius && isset($radius['topLeft'])) {
+			return [
+				'border-top-left-radius' => $radius['topLeft'],
+				'border-bottom-left-radius' => $radius['bottomLeft'],
+				'border-top-right-radius' => $radius['topRight'],
+				'border-bottom-right-radius' => $radius['bottomRight'],
+			];
+		}
+
+		return [];
+	}
 	
 	public function render_tableberg_cell_block($attributes, $content, $block)
 	{
@@ -77,7 +132,12 @@ class Cell
 
 		$tagName = isset($attributes['tagName']) ? esc_attr($attributes['tagName']) : 'td';
 
+		$borderStyles = Utils::generate_css_string(self::getCellBorders($attributes));
+		$borderRadiusStyles = Utils::generate_css_string(self::getCellBorderRadius($attributes));
+
 		$content = HtmlUtils::append_attr_value($content, $tagName, self::getStyles($attributes), 'style');
+		$content = HtmlUtils::append_attr_value($content, $tagName, $borderStyles, 'style');
+		$content = HtmlUtils::append_attr_value($content, $tagName, $borderRadiusStyles, 'style');
 
 		$content = HtmlUtils::append_attr_value($content, $tagName, ' ' . $classes, 'class');
 
