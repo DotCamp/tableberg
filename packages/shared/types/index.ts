@@ -1,4 +1,6 @@
 import { BlockInstance } from "@wordpress/blocks";
+import { Border } from "@wordpress/components/build-types/border-control/types";
+import { Borders } from "@wordpress/components/build-types/border-box-control/types";
 
 export type ResponsiveMode = "" | "stack" | "scroll";
 
@@ -113,6 +115,13 @@ export interface TablebergCellBlockAttrs {
     wrapItems: boolean;
     isEmpty: boolean;
     isTmp: boolean;
+    border: Border | Borders;
+    borderRadius: {
+        topLeft: string;
+        topRight: string;
+        bottomRight: string;
+        bottomLeft: string;
+    }
 }
 
 export type TablebergCellInstance = BlockInstance<TablebergCellBlockAttrs>;

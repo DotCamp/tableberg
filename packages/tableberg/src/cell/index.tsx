@@ -826,6 +826,50 @@ function edit(
         [isSelected],
     );
 
+    function getCellBorders() {
+        const border = attributes.border;
+
+        if (border && 'style' in border) {
+            return {
+                border: "1px solid black",
+                borderStyle: border.style,
+                borderColor: border.color,
+                borderWidth: border.width,
+            }
+        }
+
+        if (border && 'top' in border) {
+            const borderStyles: Record<string, any> = {
+                border: "1px solid black",
+            };
+
+            for (const side in border) {
+                borderStyles[`border-${side}-style`] = border[side].style;
+                borderStyles[`border-${side}-color`] = border[side].color;
+                borderStyles[`border-${side}-width`] = border[side].width;
+            }
+
+            return borderStyles;
+        }
+
+        return {}
+    }
+
+    function getCellBorderRadius() {
+        const radius = attributes.borderRadius;
+
+        if (radius && 'topLeft' in radius) {
+            return {
+                borderTopLeftRadius: radius.topLeft,
+                borderBottomLeftRadius: radius.bottomLeft,
+                borderTopRightRadius: radius.topRight,
+                borderBottomRightRadius: radius.bottomRight,
+            }
+        }
+
+        return {}
+    }
+
     const blockProps = useBlockProps({
         style: {
             verticalAlign:
@@ -840,6 +884,8 @@ function edit(
             ...rowBorders,
             ...colRadius,
             ...rowRadius,
+            ...getCellBorders(),
+            ...getCellBorderRadius(),
         },
         ref: cellRef,
         className: classNames({
