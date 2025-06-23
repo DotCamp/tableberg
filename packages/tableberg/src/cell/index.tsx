@@ -826,10 +826,14 @@ function edit(
         [isSelected],
     );
 
-    function getCellBorders() {
-        const border = attributes.border;
-
-        if (border && 'style' in border) {
+    function getCellBorders(border: TablebergCellBlockAttrs["border"]) {
+        if (
+            border && (
+                'style' in border || 
+                'color' in border || 
+                'width' in border
+            )
+        ) {
             return {
                 border: "1px solid black",
                 borderStyle: border.style,
@@ -838,7 +842,14 @@ function edit(
             }
         }
 
-        if (border && 'top' in border) {
+        if (
+            border && (
+                'top' in border ||
+                'bottom' in border ||
+                'left' in border ||
+                'right' in border
+            )
+        ) {
             const borderStyles: Record<string, any> = {
                 border: "1px solid black",
             };
@@ -855,15 +866,13 @@ function edit(
         return {}
     }
 
-    function getCellBorderRadius() {
-        const radius = attributes.borderRadius;
-
-        if (radius && 'topLeft' in radius) {
+    function getCellBorderRadius(borderRadius: TablebergCellBlockAttrs["borderRadius"]) {
+        if (borderRadius && 'topLeft' in borderRadius) {
             return {
-                borderTopLeftRadius: radius.topLeft,
-                borderBottomLeftRadius: radius.bottomLeft,
-                borderTopRightRadius: radius.topRight,
-                borderBottomRightRadius: radius.bottomRight,
+                borderTopLeftRadius: borderRadius.topLeft,
+                borderBottomLeftRadius: borderRadius.bottomLeft,
+                borderTopRightRadius: borderRadius.topRight,
+                borderBottomRightRadius: borderRadius.bottomRight,
             }
         }
 
@@ -884,8 +893,8 @@ function edit(
             ...rowBorders,
             ...colRadius,
             ...rowRadius,
-            ...getCellBorders(),
-            ...getCellBorderRadius(),
+            ...getCellBorders(attributes.border),
+            ...getCellBorderRadius(attributes.borderRadius),
         },
         ref: cellRef,
         className: classNames({
