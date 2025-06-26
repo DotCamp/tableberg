@@ -263,6 +263,13 @@ function TablebergControls({
                                     }
                                     disabled={tableAttributes.fixedColWidth}
                                 />
+                                {!!tableAttributes.fixedColWidth &&
+                                    <p style={{ marginBottom: 0 }}>
+                                        To change the column width,
+                                        disable the ‘Fixed width cells’
+                                        option above.
+                                    </p>
+                                }
                             </ToolsPanelItem>
                             <ToolsPanelItem
                                 label={__("Row Height", "tableberg")}
