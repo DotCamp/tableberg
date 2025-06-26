@@ -44,7 +44,7 @@
         },
         "colStyles": {
             "type": "object",
-            "default": {}
+            "default": {".": {}}
         },
         "rowStyles": {
             "type": "object",
