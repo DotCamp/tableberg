@@ -8,6 +8,7 @@
 namespace Tableberg;
 
 use Tableberg\includes\traits\Manager_Base_Trait;
+use Tableberg\Admin_Notices_Manager;
 require_once TABLEBERG_DIR_PATH . 'includes/traits/Manager_Base_Trait.php';
 use WP_Error;
 use function add_filter;
