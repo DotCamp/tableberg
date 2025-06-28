@@ -409,6 +409,19 @@ export const CellBlockPro = ({
                     <InspectorControls group="border">
                         <BorderWithRadiusControl
                             isShownByDefault={false}
+                            label="[PRO] Cell Border"
+                            value={attrs.border}
+                            onChange={(border) => {
+                                props.setAttributes({ border });
+                            }}
+                            radiusValue={attrs.borderRadius}
+                            onRadiusChange={(borderRadius) => {
+                                props.setAttributes({ borderRadius });
+                            }}
+                            onDeselect={() => null}
+                        />
+                        <BorderWithRadiusControl
+                            isShownByDefault={false}
                             label="[PRO] Row Border"
                             value={rowStyle?.border}
                             onChange={(border) => {

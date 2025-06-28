@@ -826,6 +826,59 @@ function edit(
         [isSelected],
     );
 
+    function getCellBorders(border: TablebergCellBlockAttrs["border"]) {
+        if (
+            border && (
+                'style' in border || 
+                'color' in border || 
+                'width' in border
+            )
+        ) {
+            return {
+                border: "1px solid black",
+                borderStyle: border.style,
+                borderColor: border.color,
+                borderWidth: border.width,
+            }
+        }
+
+        if (
+            border && (
+                'top' in border ||
+                'bottom' in border ||
+                'left' in border ||
+                'right' in border
+            )
+        ) {
+            const borderStyles: Record<string, any> = {
+                border: "1px solid black",
+            };
+
+            for (const side in border) {
+                borderStyles[`border-${side}-style`] = border[side].style;
+                borderStyles[`border-${side}-color`] = border[side].color;
+                borderStyles[`border-${side}-width`] = border[side].width;
+            }
+
+            return borderStyles;
+        }
+
+        return {}
+    }
+
+    function getCellBorderRadius(borderRadius: TablebergCellBlockAttrs["borderRadius"]) {
+        if (borderRadius && 'topLeft' in borderRadius) {
+            return {
+                borderTopLeftRadius: borderRadius.topLeft,
+                borderBottomLeftRadius: borderRadius.bottomLeft,
+                borderTopRightRadius: borderRadius.topRight,
+                borderBottomRightRadius: borderRadius.bottomRight,
+            }
+        }
+
+        return {}
+    }
+
     const blockProps = useBlockProps({
         style: {
             verticalAlign:
@@ -840,6 +893,8 @@ function edit(
             ...rowBorders,
             ...colRadius,
             ...rowRadius,
+            ...getCellBorders(attributes.border),
+            ...getCellBorderRadius(attributes.borderRadius),
         },
         ref: cellRef,
         className: classNames({

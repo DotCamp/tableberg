@@ -79,6 +79,14 @@
         "isTmp": {
             "type": "boolean",
             "default": false
+        },
+        "border": {
+            "type": "object",
+            "default": {}
+        },
+        "borderRadius": {
+            "type": "object",
+            "default": {}
         }
     },
     "supports": {
