@@ -28,8 +28,8 @@ class WooVariationPicker
         );
     }
 
-    public function render_block($attrs)
+    public function render_block()
     {
-        return '<div>test</div>';
+        return '<div class="tableberg-woo-variation-picker"></div>';
     }
 }

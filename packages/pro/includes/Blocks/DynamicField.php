@@ -89,8 +89,11 @@ class DynamicField
             return $dom->saveHTML();
         }
 
-        if ($target === 'tableberg/woo-variation-picker') {
-            // inject product attributes to html
+        if ($target === 'tableberg-pro/woo-variation-picker') {
+            $pickerDiv = $tags->query("//div[contains(@class, 'tableberg-woo-variation-picker')]")[0];
+            $pickerDiv->setAttribute('data-tableberg-woo-variation-props', json_encode($value));
+
+            return $dom->saveHTML();
         }
 
         return $content;
