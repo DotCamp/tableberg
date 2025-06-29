@@ -87,6 +87,10 @@
         "borderRadius": {
             "type": "object",
             "default": {}
+        },
+        "dynamicProps": {
+            "type": "object",
+            "default": {}
         }
     },
     "supports": {

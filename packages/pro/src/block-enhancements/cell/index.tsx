@@ -3,7 +3,12 @@ import {
     InspectorControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import { ToolbarDropdownMenu } from "@wordpress/components";
+import {
+    ToolbarDropdownMenu,
+    PanelBody,
+    BaseControl,
+    SelectControl,
+} from "@wordpress/components";
 import { BorderWithRadiusControl, ColorControl } from "@tableberg/components";
 
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -28,6 +33,8 @@ import { ProBlockProps } from "..";
 import RowColOnlyBorderControl from "../../shared/RowColOnlyBorderControl";
 import { DragNDropSorting, moveCol, moveRow } from "./drag-sort";
 import TableAndCellControl from "../TableAndCellControl";
+import { useEffect, useState } from "react";
+import apiFetch from '@wordpress/api-fetch';
 
 const duplicateRow = (
     tableBlock: BlockInstance<TablebergBlockAttrs>,
@@ -187,6 +194,7 @@ export const CellBlockPro = ({
 
     const {
         storeSelect,
+        tableBlockId,
         tableAttrs,
         setTableAttrs,
         tableBlock,
@@ -205,6 +213,7 @@ export const CellBlockPro = ({
         const tableAttrs = tableBlock.attributes as TablebergBlockAttrs;
 
         return {
+            tableBlockId,
             storeSelect,
             tableBlock,
             tableAttrs,
@@ -213,6 +222,9 @@ export const CellBlockPro = ({
             colStyle: tableAttrs.colStyles[props.attributes.col],
         };
     }, []);
+
+    const privateStore = window.tablebergPrivateStores[tableBlockId];
+    const { setDynamicField } = useDispatch(privateStore);
 
     const attrs = props.attributes;
 
@@ -334,6 +346,36 @@ export const CellBlockPro = ({
             isDisabled: props.attributes.row == tableAttrs.rows - 1,
         },
     ];
+
+    const [validFields, setValidFields] = useState<string[]>([]);
+
+    useEffect(() => {
+        async function fetchProducts() {
+            const queryParams = new URLSearchParams({
+                per_page: "-1",
+            }).toString();
+
+            const products: Record<string, any> = await apiFetch({
+                path: `/wc/v3/products?${queryParams}`,
+                method: 'GET',
+            });
+
+            const fields = new Set<string>();
+
+            if (!products) {
+                return;
+            }
+
+            products.forEach(product => {
+                Object.keys(product).forEach(key => fields.add(key));
+            })
+
+            setValidFields(Array.from(fields));
+        }
+
+        fetchProducts();
+    }, []);
+
     return (
         <>
             {props.isSelected && (
@@ -346,6 +388,21 @@ export const CellBlockPro = ({
             <BlockEdit {...props} proProps={proProps} />
             {props.isSelected && (
                 <>
+                    {props.attributes.dynamicProps.colName !== "" && <InspectorControls group="settings">
+                    <PanelBody title="Dynamic table settings" initialOpen={true}>
+                        <BaseControl __nextHasNoMarginBottom>
+                            <SelectControl
+                                label="Dynamic Field"
+                                value={props.attributes.dynamicProps.colName}
+                                onChange={(colName: string) => {
+                                    setDynamicField(props.attributes.col, colName)
+                                    props.setAttributes({ dynamicProps: { colName } })
+                                }}
+                                options={validFields.map(f => ({ value: f, label: f }))}
+                            />
+                        </BaseControl>
+                    </PanelBody>
+                    </InspectorControls>}
                     <InspectorControls group="color">
                         <ColorControl
                             allowGradient

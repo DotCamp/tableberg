@@ -43,10 +43,16 @@ DEFAULT_STATE.categories = tablebergCategories;
 interface ITBPrivateStoreState {
     renderMode: TablebergRenderMode;
     testmessage: string;
+    dynamicProps: {
+        fields: string[];
+    }
 }
 const PRIVATE_STORE_DEFAULT_STATE: ITBPrivateStoreState = {
     renderMode: "primary",
     testmessage: "none",
+    dynamicProps: {
+        fields: []
+    }
 };
 export const createPrivateStore = (clientId: string) => {
     const store = createReduxStore('tableberg-private-store-' + clientId, {
@@ -62,6 +68,15 @@ export const createPrivateStore = (clientId: string) => {
                         ...state,
                         renderMode: action.renderMode
                     }
+                case "SET_DYNAMIC_FIELD":
+                    const newFields = JSON.parse(JSON.stringify(state.dynamicProps.fields));
+                    newFields[action.col] = action.field;
+                    return {
+                        ...state,
+                        dynamicProps: {
+                            fields: newFields,
+                        }
+                    };
             }
 
             return state;
@@ -80,15 +95,25 @@ export const createPrivateStore = (clientId: string) => {
                     renderMode
                 }
             },
+            setDynamicField(col: number, field: string)  {
+                return {
+                    type: "SET_DYNAMIC_FIELD",
+                    col,
+                    field
+                }
+            }
         },
 
         selectors: {
             getTestMessage(state: ITBPrivateStoreState) {
-                return state.testmessage
+                return state.testmessage;
             },
             getRenderMode(state: ITBPrivateStoreState) {
-                return state.renderMode
+                return state.renderMode;
             },
+            getDynamicFields(state: ITBPrivateStoreState) {
+                return state.dynamicProps.fields;
+            }
         },
     })
 

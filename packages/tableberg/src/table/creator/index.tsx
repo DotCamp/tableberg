@@ -59,6 +59,29 @@ export default function TableCreator({ clientId }: Props) {
 
     };
 
+    const onCreateWooTable = () => {
+        const rows = 1;
+        const cols = 4;
+
+        let initialInnerBlocks: InnerBlockTemplate[] = [];
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                initialInnerBlocks.push(["tableberg/cell", { row: i, col: j, dynamicProps: {} }, [["core/paragraph"]]]);
+            }
+        }
+
+        storeActions.replaceInnerBlocks(clientId, createBlocksFromInnerBlocksTemplate(initialInnerBlocks));
+
+        storeActions.updateBlockAttributes(clientId, {
+            version: metadata.version,
+            cells: initialInnerBlocks.length,
+            rows,
+            cols,
+            dynamic: true
+        });
+
+    };
+
     return (
         <div className="tableberg-table-creator">
             <Placeholder
@@ -112,17 +135,20 @@ export default function TableCreator({ clientId }: Props) {
                         </div>
                         <span>Pre-Built Table</span>
                     </button>
+                    <button
+                        className="tableberg-table-creator-btn"
+                        onClick={onCreateWooTable}
+                    >
+                        <div className="tableberg-table-creator-btn-icon">
+                            {WooTableIcon}
+                        </div>
+                        <span>WooCommerce Table</span>
+                    </button>
                     <button className="tableberg-table-creator-btn tableberg-upcoming">
                         <div className="tableberg-table-creator-btn-icon">
                             {DataTableIcon}
                         </div>
                         <span>Data Table (CSV, XML)</span>
-                    </button>
-                    <button className="tableberg-table-creator-btn tableberg-upcoming">
-                        <div className="tableberg-table-creator-btn-icon">
-                            {WooTableIcon}
-                        </div>
-                        <span>WooCommerce Table</span>
                     </button>
                     <button className="tableberg-table-creator-btn tableberg-upcoming">
                         <div className="tableberg-table-creator-btn-icon">

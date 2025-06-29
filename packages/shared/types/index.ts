@@ -97,6 +97,8 @@ export interface TablebergBlockAttrs {
             row: number;
         };
     };
+
+    dynamic: boolean;
 }
 
 export interface TablebergCellBlockAttrs {
@@ -121,6 +123,10 @@ export interface TablebergCellBlockAttrs {
         topRight: string;
         bottomRight: string;
         bottomLeft: string;
+    }
+    dynamicProps: {
+        colName: string;
+        colItemId?: string;
     }
 }
 
