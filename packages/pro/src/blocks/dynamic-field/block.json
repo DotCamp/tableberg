@@ -13,7 +13,8 @@
         "tableberg/html",
         "tableberg/styled-list",
         "tableberg/star-rating",
-        "tableberg/ribbon"
+        "tableberg/ribbon",
+        "tableberg-pro/woo-variation-picker"
     ],
     "title": "Dynamic content block for Tableberg",
     "category": "layout",

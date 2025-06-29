@@ -44,6 +44,7 @@ export const getFieldPrettyName = (field: string, showKey: boolean = false) => {
         ["weight", "Weight"],
         ["dimensions", "Dimensions"],
         ["price", "Price"],
+        ["variation_picker", "Select Options"],
         ["add_to_cart", "Add to Cart"],
         ["attributes", "Attributes"],
     ]);
@@ -146,6 +147,12 @@ const getDynamicFieldAttrs = (field: string, value: any): {
             return {
                 target: "tableberg/button",
                 targetAttribute: "wooCartButtonId",
+                value
+            };
+        case "variation_picker":
+            return {
+                target: "tableberg-pro/woo-variation-picker",
+                targetAttribute: "variationProps",
                 value
             };
         default:

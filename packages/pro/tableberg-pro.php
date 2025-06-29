@@ -150,6 +150,7 @@ function tp_fs_init()
                     new Blocks\Woo();
                     new Blocks\DynamicField();
                     new Blocks\Button();
+                    new Blocks\WooVariationPicker();
                     new Assets();
 
 					add_action('init', array($this, 'init_actions'));

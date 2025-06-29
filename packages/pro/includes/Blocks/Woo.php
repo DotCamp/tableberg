@@ -146,9 +146,80 @@ class Woo
         foreach ($products as &$product) {
             $product['add_to_cart'] = strval($product['id']);
             $product['name_with_link'] = '<a href="' . $product['permalink'] . '">' . $product['name'] . '</a>';
+            $product['variation_picker'] = $this->get_product_variations($product['id']);
         }
 
         return $products;
+    }
+
+    public function get_product_variations($id) {
+        $product = wc_get_product($id);
+
+        if (!$product->is_type('variable')) {
+            return [];
+        }
+
+        $options = $product->get_variation_attributes();
+
+        $variation_props = [];
+
+        foreach ($options as $attribute => $variations) {
+            $attr_label = wc_attribute_label($attribute);
+
+            $variation_props['attributes'][] = [
+                'slug' => $attribute,
+                'label' => $attr_label,
+                'options' => array_map(function($variation) use ($attribute) {
+                    return $this->get_term_object($variation, $attribute);
+                }, $variations),
+            ];
+        }
+
+        $variations = $product->get_available_variations();
+
+        foreach ($variations as $variation) {
+            $attributes = [];
+            foreach ($variation['attributes'] as $attribute => $value) {
+                if ($value === '') {
+                    $value = '*';
+                }
+
+                $attr_slug = str_replace('attribute_', '', $attribute);
+                $attributes[$attr_slug] = $value;
+            }
+
+            $variation_props['variations'][] = [
+                'id' => $variation['variation_id'],
+                'attributes' => $attributes,
+            ];
+        }
+
+        return $variation_props;
+    }
+
+    private function get_term_object($variation, $attribute) {
+        $terms = get_terms([
+            'taxonomy' => $attribute,
+            'hide_empty' => false,
+        ]);
+
+        if (is_wp_error($terms) || empty($terms)) {
+            return [
+                'slug' => $variation,
+                'name' => $variation,
+            ];
+        }
+
+        $term = array_values(
+            array_filter($terms, function($term) use ($variation) {
+                return $term->slug === $variation;
+            })
+        )[0];
+
+        return [
+            'slug' => $variation,
+            'name' => $term->name,
+        ];
     }
 
     private function transform_fields($products) {

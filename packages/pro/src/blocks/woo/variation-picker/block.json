@@ -1,0 +1,23 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "version": "0.0.1",
+    "name": "tableberg-pro/woo-variation-picker",
+    "title": "Variation Picker by Tableberg",
+    "category": "widgets",
+    "description": "A variation picker for WooCommerce products.",
+    "keywords": ["WooCommerce", "Variation", "Picker"],
+    "supports": {},
+    "attributes": {
+        "variationProps": {
+            "type": "object",
+            "default": {}
+        }
+    },
+    "example": {},
+    "viewScript": "tableberg-pro-frontend",
+    "editorScript": "tableberg-pro-block-script",
+    "editorStyle": "tableberg-pro-editor-style",
+    "style": "tableberg-pro-frontend-style",
+    "textdomain": "tableberg-pro"
+}

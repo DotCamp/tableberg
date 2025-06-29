@@ -31,6 +31,7 @@ export const FieldSelector = ({ selectedFields, onChange, onDelete }: {
         "dimensions",
         "price",
         "add_to_cart",
+        "variation_picker",
         "attributes",
     ];
 
