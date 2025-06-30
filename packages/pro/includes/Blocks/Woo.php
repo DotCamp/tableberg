@@ -169,9 +169,7 @@ class Woo
             $variation_props['attributes'][] = [
                 'slug' => $attribute,
                 'label' => $attr_label,
-                'options' => array_map(function($variation) use ($attribute) {
-                    return $this->get_term_object($variation, $attribute);
-                }, $variations),
+                'options' => $this->get_term_objects($variations, $attribute)
             ];
         }
 
@@ -197,29 +195,33 @@ class Woo
         return $variation_props;
     }
 
-    private function get_term_object($variation, $attribute) {
-        $terms = get_terms([
-            'taxonomy' => $attribute,
-            'hide_empty' => false,
-        ]);
+    private function get_term_objects($variations, $attribute) {
+        $term_objects = array_map(function($variation) use ($attribute) {
+            $terms = get_terms([
+                'taxonomy' => $attribute,
+                'hide_empty' => false,
+            ]);
 
-        if (is_wp_error($terms) || empty($terms)) {
+            if (is_wp_error($terms) || empty($terms)) {
+                return [
+                    'slug' => $variation,
+                    'name' => $variation,
+                ];
+            }
+
+            $term = array_values(
+                array_filter($terms, function($term) use ($variation) {
+                    return $term->slug === $variation;
+                })
+            )[0];
+
             return [
                 'slug' => $variation,
-                'name' => $variation,
+                'name' => $term->name,
             ];
-        }
+        }, $variations);
 
-        $term = array_values(
-            array_filter($terms, function($term) use ($variation) {
-                return $term->slug === $variation;
-            })
-        )[0];
-
-        return [
-            'slug' => $variation,
-            'name' => $term->name,
-        ];
+        return array_values($term_objects);
     }
 
     private function transform_fields($products) {
