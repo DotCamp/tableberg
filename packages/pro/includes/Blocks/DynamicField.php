@@ -77,7 +77,9 @@ class DynamicField
             $url = $value['url'];
 
             $imgTag = $tags->query("//img")[0];
-            $imgTag->setAttribute('src', $url);
+            if (!empty($imgTag)) {
+                $imgTag->setAttribute('src', $url);
+            }
 
             return $dom->saveHTML();
         }
