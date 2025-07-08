@@ -12,5 +12,8 @@ import "./blocks/html";
 import "./blocks/icon";
 import "./blocks/ribbon";
 import "./blocks/toggle";
+import "./blocks/woo";
+import "./blocks/dynamic-field";
+import "./blocks/woo/variation-picker";
 
 import "./block-enhancements";

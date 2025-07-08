@@ -195,7 +195,15 @@ class Button
 		) :
 			sprintf('<div %1$s>%2$s</div>', $button_attrs, wp_kses_post($text));
 
-		return sprintf('<div class="%1$s" id="%2$s">%3$s</div>', $classes, esc_attr($id), $button);
+		$data_attr = apply_filters('tableberg/button/add-to-cart', "", $attributes);
+
+		return sprintf(
+			'<div class="%1$s" id="%2$s" %3$s>%4$s</div>',
+			$classes,
+			esc_attr($id),
+			$data_attr,
+			$button
+		);
 	}
 
 	/**

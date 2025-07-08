@@ -1,0 +1,32 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "version": "0.0.1",
+    "name": "tableberg-pro/woo",
+    "allowedBlocks": ["tableberg/table"],
+    "title": "Product Table by Tableberg",
+    "category": "layout",
+    "description": "",
+    "keywords": ["WooCommerce", "Table", "Layout"],
+    "supports": {},
+    "attributes": {
+        "fields": {
+            "type": "array",
+            "default": []
+        },
+        "filters": {
+            "type": "object",
+            "default": {
+                "limit": 10,
+                "featured": false,
+                "on_sale": false
+            }
+        }
+    },
+    "example": {},
+    "viewScript": "tableberg-pro-frontend",
+    "editorScript": "tableberg-pro-block-script",
+    "editorStyle": "tableberg-pro-editor-style",
+    "style": "tableberg-pro-frontend-style",
+    "textdomain": "tableberg-pro"
+}

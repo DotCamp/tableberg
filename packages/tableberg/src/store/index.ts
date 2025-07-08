@@ -40,63 +40,6 @@ const tablebergCategories = context.tablebergPatternCategories || [];
 DEFAULT_STATE.patterns = tablebergPatterns;
 DEFAULT_STATE.categories = tablebergCategories;
 
-interface ITBPrivateStoreState {
-    renderMode: TablebergRenderMode;
-    testmessage: string;
-}
-const PRIVATE_STORE_DEFAULT_STATE: ITBPrivateStoreState = {
-    renderMode: "primary",
-    testmessage: "none",
-};
-export const createPrivateStore = (clientId: string) => {
-    const store = createReduxStore('tableberg-private-store-' + clientId, {
-        reducer(state: ITBPrivateStoreState = PRIVATE_STORE_DEFAULT_STATE, action) {
-            switch (action.type) {
-                case "SET_MESSAGE":
-                    return {
-                        ...state,
-                        testmessage: action.message
-                    }
-                case "SET_RENDER_MODE":
-                    return {
-                        ...state,
-                        renderMode: action.renderMode
-                    }
-            }
-
-            return state;
-        },
-
-        actions: {
-            setTestMessage(message: string) {
-                return {
-                    type: "SET_MESSAGE",
-                    message
-                }
-            },
-            setRenderMode(renderMode: TablebergRenderMode) {
-                return {
-                    type: "SET_RENDER_MODE",
-                    renderMode
-                }
-            },
-        },
-
-        selectors: {
-            getTestMessage(state: ITBPrivateStoreState) {
-                return state.testmessage
-            },
-            getRenderMode(state: ITBPrivateStoreState) {
-                return state.renderMode
-            },
-        },
-    })
-
-    register(store);
-
-    return store;
-};
-
 export const store = createReduxStore('tableberg-store', {
     reducer(state: ITBStoreState = DEFAULT_STATE, action) {
         switch (action.type) {
@@ -272,3 +215,97 @@ export const store = createReduxStore('tableberg-store', {
 });
 
 register(store);
+
+type DynamicData = {
+    fields: string[],
+    rows: Record<string, any>[],
+}
+
+interface ITBPrivateStoreState {
+    renderMode: TablebergRenderMode;
+    testmessage: string;
+    dynamicProps: {
+        fields: string[];
+    };
+
+    dynamicData?: DynamicData;
+}
+const PRIVATE_STORE_DEFAULT_STATE: ITBPrivateStoreState = {
+    renderMode: "primary",
+    testmessage: "none",
+    dynamicProps: {
+        fields: []
+    }
+};
+
+export const createPrivateStore = (clientId: string) => {
+    const store = createReduxStore('tableberg-private-store-' + clientId, {
+        reducer(state: ITBPrivateStoreState = PRIVATE_STORE_DEFAULT_STATE, action) {
+            switch (action.type) {
+                case "SET_MESSAGE":
+                    return {
+                        ...state,
+                        testmessage: action.message
+                    }
+                case "SET_RENDER_MODE":
+                    return {
+                        ...state,
+                        renderMode: action.renderMode
+                    }
+                case "SET_DYNAMIC_FIELD":
+                    const newFields = JSON.parse(JSON.stringify(state.dynamicProps.fields));
+                    newFields[action.col] = action.field;
+                    return {
+                        ...state,
+                        dynamicProps: {
+                            fields: newFields,
+                        }
+                    };
+                case "SET_DYNAMIC_DATA":
+                    return {
+                        ...state,
+                        dynamicData: action.data,
+                    };
+            }
+
+            return state;
+        },
+
+        actions: {
+            setTestMessage(message: string) {
+                return {
+                    type: "SET_MESSAGE",
+                    message
+                }
+            },
+            setRenderMode(renderMode: TablebergRenderMode) {
+                return {
+                    type: "SET_RENDER_MODE",
+                    renderMode
+                }
+            },
+            setDynamicData(data: DynamicData) {
+                return {
+                    type: "SET_DYNAMIC_DATA",
+                    data
+                };
+            },
+        },
+
+        selectors: {
+            getTestMessage(state: ITBPrivateStoreState) {
+                return state.testmessage;
+            },
+            getRenderMode(state: ITBPrivateStoreState) {
+                return state.renderMode;
+            },
+            getDynamicData(state: ITBPrivateStoreState): DynamicData | undefined {
+                return state.dynamicData;
+            },
+        },
+    })
+
+    register(store);
+
+    return store;
+};

@@ -74,7 +74,12 @@ declare const TABLEBERG_CFG: {
     IS_PRO: boolean;
 }
 
+const createPrivateStore = await import("@tableberg/src/store").then(x => x.createPrivateStore);
+
+declare type TablebergPrivateStore = ReturnType<typeof createPrivateStore>;
+
 interface Window {
     tablebergPatterns: object[];
     tablebergPatternCategories: object[];
+    tablebergPrivateStores: Record<string, TablebergPrivateStore>;
 }

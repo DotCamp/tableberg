@@ -191,6 +191,10 @@
         "sort": {
             "type": "object",
             "default": {}
+        },
+        "dynamic": {
+            "type": "boolean",
+            "default": false
         }
     },
     "example": {

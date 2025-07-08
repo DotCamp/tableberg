@@ -33,6 +33,7 @@ import {
 import exampleImage from "./example.png";
 import blockIcon from "@tableberg/shared/icons/tableberg";
 import { PrimaryTable } from "./table";
+import DynamicTable from "./table/DynamicTable";
 import StackRowTable from "./table/StackRowTable";
 import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
@@ -46,6 +47,7 @@ import transforms from "./transforms";
 export type TablebergRenderMode = "" | "primary" | "stack-row" | "stack-col";
 
 export const privateStores: Record<string, ReturnType<typeof createPrivateStore>> = {};
+window.tablebergPrivateStores = privateStores;
 
 const removeFirstRow = (
     innrBlocks: TablebergCellInstance[],
@@ -444,7 +446,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     if (attributes.cells === 0) {
         return (
             <div {...blockProps}>
-                <TableCreator clientId={clientId} />
+                <TableCreator clientId={clientId} proProps={props.proProps} />
             </div>
         );
     }
@@ -453,7 +455,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         <>
             <div {...blockProps}>
                 {(renderMode === "primary" && (
-                    <PrimaryTable {...props} tableBlock={tableBlock} />
+                    <PrimaryTable {...props} tableBlock={tableBlock} privateStore={privateStores[clientId]} />
                 )) ||
                     (renderMode === "stack-row" && breakpoint && (
                         <StackRowTable

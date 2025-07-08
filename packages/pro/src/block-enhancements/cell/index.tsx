@@ -3,7 +3,9 @@ import {
     InspectorControls,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import { ToolbarDropdownMenu } from "@wordpress/components";
+import {
+    ToolbarDropdownMenu,
+} from "@wordpress/components";
 import { BorderWithRadiusControl, ColorControl } from "@tableberg/components";
 
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -205,6 +207,7 @@ export const CellBlockPro = ({
         const tableAttrs = tableBlock.attributes as TablebergBlockAttrs;
 
         return {
+            tableBlockId,
             storeSelect,
             tableBlock,
             tableAttrs,
@@ -334,6 +337,7 @@ export const CellBlockPro = ({
             isDisabled: props.attributes.row == tableAttrs.rows - 1,
         },
     ];
+
     return (
         <>
             {props.isSelected && (

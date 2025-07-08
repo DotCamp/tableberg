@@ -1,7 +1,4 @@
-import {
-    BlockEditProps,
-    BlockInstance,
-} from "@wordpress/blocks";
+import { BlockEditProps, BlockInstance, createBlocksFromInnerBlocksTemplate, InnerBlockTemplate } from "@wordpress/blocks";
 import { TablebergBlockAttrs } from "@tableberg/shared/types";
 import { createArray } from "../utils";
 import { useEffect, useRef, useState } from "react";
@@ -12,7 +9,7 @@ import {
 import { getStyles } from "./get-styles";
 import classNames from "classnames";
 import { getStyleClass } from "./get-classes";
-import { useDispatch } from "@wordpress/data";
+import { useSelect, useDispatch } from "@wordpress/data";
 import {
     getBorderCSS,
     getBorderRadiusCSS,
@@ -21,14 +18,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 
-
-export const ALLOWED_BLOCKS = ["tableberg/cell"];
-
-export const PrimaryTable = (
+const DynamicTable = (
     props: BlockEditProps<TablebergBlockAttrs> & {
         tableBlock: BlockInstance<TablebergBlockAttrs>;
-        privateStore: TablebergPrivateStore;
     },
 ) => {
     const { attributes, tableBlock, setAttributes } = props;
@@ -47,15 +41,10 @@ export const PrimaryTable = (
         // @ts-ignore false can obviously be assigned to renderAppender as does
         // wordpress in their own blocks. Need to make a pr to @types/wordpress__block-editor.
         renderAppender: false,
-        allowedBlocks: ALLOWED_BLOCKS,
+        allowedBlocks: ["tableberg/cell"],
     });
 
     const [colUpt, setColUpt] = useState(0);
-
-    const {
-        removeBlocks,
-    } = useDispatch(blockEditorStore) as any as BlockEditorStoreActions;
-
     const lastRowCount = useRef(attributes.rows);
     useEffect(() => {
         if (lastRowCount.current === attributes.rows) {
@@ -66,15 +55,15 @@ export const PrimaryTable = (
     }, [attributes.rows, attributes.cells]);
 
     const toRemoves = tableBlock.innerBlocks
-    .filter((cell) => cell.attributes.isTmp)
-    .map((cell) => cell.clientId);
+        .filter((cell) => cell.attributes.isTmp)
+        .map((cell) => cell.clientId);
 
     setAttributes({
         cells: attributes.cells - toRemoves.length,
     });
 
     try {
-        removeBlocks(toRemoves);
+        useDispatch(blockEditorStore).removeBlocks(toRemoves);
     } catch (e) {
         console.warn(
             "Tableberg: Tried to call removeBlocks before the previous call has returned. React might be running in development mode.",
@@ -98,20 +87,44 @@ export const PrimaryTable = (
         setHiddenRows(vRows);
     }, [search]);
 
-    const rowTemplate = createArray(attributes.rows).map((i) => {
+    const privateStore = window.tablebergPrivateStores[tableBlock.clientId];
+
+    const dynamicFields = useSelect(
+        (select) => {
+            return select(privateStore).getDynamicFields()
+        },
+        []
+    );
+
+    const [products, setProducts] = useState<Record<string, any>[]>([]);
+
+    useEffect(() => {
+        async function fetchProducts() {
+            const per_page = 10, page = 1;
+
+            const queryParams = new URLSearchParams({
+                per_page: per_page.toString(),
+                page: page.toString(),
+                _fields: dynamicFields.length ? dynamicFields.join(',') : "name, price",
+            }).toString();
+
+            const products: Record<string, any>[] = await apiFetch({
+                path: `/wc/v3/products?${queryParams}`,
+                method: 'GET',
+            });
+
+            setProducts(products);
+        }
+
+        fetchProducts();
+    }, [dynamicFields]);
+
+    const dynamicRowTemplate = createArray(products.length).map((i) => {
         let className = "";
         let mustBeShown = false;
 
-        if (i === 0 && attributes.enableTableHeader) {
-            className = "tableberg-header";
-            mustBeShown = true;
-        } else if (i + 1 === attributes.rows && attributes.enableTableFooter) {
-            className = "tableberg-footer";
-            mustBeShown = true;
-        } else {
-            const row = attributes.enableTableHeader ? i + 1 : i;
-            className = row % 2 ? "tableberg-even-row" : "tableberg-odd-row";
-        }
+        const row = attributes.enableTableHeader ? i + 1 : i;
+        className = row % 2 ? "tableberg-odd-row" : "tableberg-even-row";
 
         const rowStyle = attributes.rowStyles[i];
 
@@ -130,6 +143,41 @@ export const PrimaryTable = (
         );
     });
 
+    const { replaceInnerBlocks, updateBlockAttributes } = useDispatch(blockEditorStore);
+
+    useEffect(() => {
+        const innerBlocksTemplate: InnerBlockTemplate[] = [];
+        const headerBlocks = tableBlock.innerBlocks.filter(block => block.attributes.row === 0)
+
+        products.forEach((product, i) => {
+            dynamicFields.forEach((field, col) => {
+                innerBlocksTemplate.push(
+                    [
+                        "tableberg/cell",
+                        { row: i + 1, col },
+                        [
+                            ["core/paragraph", { content: product[field] }],
+                        ]
+                    ]
+                );
+            })
+        })
+
+        replaceInnerBlocks(
+            tableBlock.clientId,
+            [
+                ...headerBlocks,
+                ...createBlocksFromInnerBlocksTemplate(innerBlocksTemplate),
+            ]
+        );
+
+        updateBlockAttributes(tableBlock.clientId, {
+            cells: innerBlocksTemplate.length + headerBlocks.length,
+            rows: products.length + 1,
+            cols: dynamicFields.length,
+        });
+    }, [products, dynamicFields]);
+
     let fixedWidth: any = null;
 
     if (attributes.fixedColWidth) {
@@ -146,7 +194,7 @@ export const PrimaryTable = (
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value.trim())}
-                        placeholder={ attributes.searchPlaceholder !== "Search..." ? attributes.searchPlaceholder : __('Search...', 'tableberg')}
+                        placeholder={attributes.searchPlaceholder !== "Search..." ? attributes.searchPlaceholder : __('Search...', 'tableberg')}
                     />
                     <FontAwesomeIcon icon={faSearch} />
                 </div>
@@ -160,41 +208,34 @@ export const PrimaryTable = (
             >
                 <table {...blockProps}>
                     <colgroup>
-                        {fixedWidth
-                            ? Array(attributes.cols)
-                                  .fill("")
-                                  .map((_, i) => {
-                                      const colStyle = attributes.colStyles[i];
-                                      return (
-                                          <col
-                                              style={{
-                                                  width: fixedWidth,
-                                                  minWidth: fixedWidth,
-                                                  background:
-                                                      colStyle?.bgGradient ||
-                                                      colStyle?.background,
-                                              }}
-                                          />
-                                      );
-                                  })
-                            : Array(attributes.cols)
-                                  .fill("")
-                                  .map((_, i) => {
-                                      const colStyle = attributes.colStyles[i];
-                                      return (
-                                          <col
-                                              style={{
-                                                  width: colStyle?.width,
-                                                  minWidth: colStyle?.width,
-                                                  background:
-                                                      colStyle?.bgGradient ||
-                                                      colStyle?.background,
-                                              }}
-                                          />
-                                      );
-                                  })}
+                        {Array(attributes.cols)
+                            .fill("")
+                            .map((_, i) => {
+                                const colStyle = attributes.colStyles[i];
+                                return (
+                                    <col
+                                        style={{
+                                            width: fixedWidth ? fixedWidth : colStyle?.width,
+                                            minWidth: fixedWidth ? fixedWidth : colStyle?.width,
+                                            background:
+                                                colStyle?.bgGradient ||
+                                                colStyle?.background,
+                                        }}
+                                    />
+                                );
+                            })}
                     </colgroup>
-                    <tbody>{rowTemplate}</tbody>
+                    <tbody>
+                        <tr
+                            style={{
+                                height: attributes.rowStyles[0]?.height,
+                                background: attributes.rowStyles[0]?.bgGradient || attributes.rowStyles[0]?.background,
+                                display: "table-row",
+                            }}
+                            className="tableberg-header"
+                        ></tr>
+                        {dynamicRowTemplate}
+                    </tbody>
                 </table>
             </div>
             <div style={{ display: "none" }} key={colUpt}>
@@ -203,3 +244,5 @@ export const PrimaryTable = (
         </>
     );
 };
+
+export default DynamicTable;
