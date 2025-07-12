@@ -33,7 +33,6 @@ import {
 import exampleImage from "./example.png";
 import blockIcon from "@tableberg/shared/icons/tableberg";
 import { PrimaryTable } from "./table";
-import DynamicTable from "./table/DynamicTable";
 import StackRowTable from "./table/StackRowTable";
 import StackColTable from "./table/StackColTable";
 import classNames from "classnames";
