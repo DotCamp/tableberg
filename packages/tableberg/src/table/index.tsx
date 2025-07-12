@@ -90,7 +90,7 @@ export const PrimaryTable = (
         if (tableRef.current && search.length > 2) {
             const rows = tableRef.current.querySelector("tbody")?.children;
             Array.from(rows!).forEach((row, idx) => {
-                if (!row.textContent?.includes(search)) {
+                if (!row.textContent?.toLowerCase().includes(search.toLowerCase())) {
                     vRows.push(idx);
                 }
             });

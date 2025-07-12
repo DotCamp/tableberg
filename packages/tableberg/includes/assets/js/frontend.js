@@ -505,7 +505,7 @@
         Array.from(rows).forEach((row) => {
             if (
                 row.querySelectorAll("th").length > 1 ||
-                row.textContent?.includes(search)
+                row.textContent?.toLowerCase().includes(search.toLowerCase())
             ) {
                 row.style.display = "table-row";
             } else {
