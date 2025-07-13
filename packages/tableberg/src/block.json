@@ -195,6 +195,14 @@
         "dynamic": {
             "type": "boolean",
             "default": false
+        },
+        "caption": {
+            "type": "string",
+            "default": ""
+        },
+        "showCaption": {
+            "type": "boolean",
+            "default": false
         }
     },
     "example": {

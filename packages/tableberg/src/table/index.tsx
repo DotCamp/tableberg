@@ -66,8 +66,8 @@ export const PrimaryTable = (
     }, [attributes.rows, attributes.cells]);
 
     const toRemoves = tableBlock.innerBlocks
-    .filter((cell) => cell.attributes.isTmp)
-    .map((cell) => cell.clientId);
+        .filter((cell) => cell.attributes.isTmp)
+        .map((cell) => cell.clientId);
 
     setAttributes({
         cells: attributes.cells - toRemoves.length,
@@ -87,7 +87,7 @@ export const PrimaryTable = (
 
     useEffect(() => {
         const vRows: number[] = [];
-        
+
         const highlights = document.querySelectorAll('.tableberg-search-highlight');
         highlights.forEach(highlight => {
             const parent = highlight.parentNode;
@@ -95,7 +95,7 @@ export const PrimaryTable = (
                 parent.replaceChild(document.createTextNode(highlight.textContent || ''), highlight);
             }
         });
-        
+
         if (tableRef.current && search.length > 2) {
             const rows = tableRef.current.querySelector("tbody")?.children;
             Array.from(rows!).forEach((row, idx) => {
@@ -154,6 +154,53 @@ export const PrimaryTable = (
         fixedWidth = `${100 / attributes.cols}%`;
     }
 
+    const table = <div
+        className="tableberg-table-wrapper"
+        style={{
+            ...getBorderCSS(attributes.tableBorder),
+            ...getBorderRadiusCSS(attributes.tableBorderRadius),
+        }}
+    >
+        <table {...blockProps}>
+            <colgroup>
+                {fixedWidth
+                    ? Array(attributes.cols)
+                        .fill("")
+                        .map((_, i) => {
+                            const colStyle = attributes.colStyles[i];
+                            return (
+                                <col
+                                    style={{
+                                        width: fixedWidth,
+                                        minWidth: fixedWidth,
+                                        background:
+                                            colStyle?.bgGradient ||
+                                            colStyle?.background,
+                                    }}
+                                />
+                            );
+                        })
+                    : Array(attributes.cols)
+                        .fill("")
+                        .map((_, i) => {
+                            const colStyle = attributes.colStyles[i];
+                            return (
+                                <col
+                                    style={{
+                                        width: colStyle?.width,
+                                        minWidth: colStyle?.width,
+                                        background:
+                                            colStyle?.bgGradient ||
+                                            colStyle?.background,
+                                    }}
+                                />
+                            );
+                        })}
+            </colgroup>
+            <tbody>{rowTemplate}</tbody>
+        </table>
+    </div>;
+
     return (
         <>
             {attributes.search && (
@@ -164,57 +211,19 @@ export const PrimaryTable = (
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value.trim())}
-                        placeholder={ attributes.searchPlaceholder !== "Search..." ? attributes.searchPlaceholder : __('Search...', 'tableberg')}
+                        placeholder={attributes.searchPlaceholder !== "Search..." ? attributes.searchPlaceholder : __('Search...', 'tableberg')}
                     />
                     <FontAwesomeIcon icon={faSearch} />
                 </div>
             )}
-            <div
-                className="tableberg-table-wrapper"
-                style={{
-                    ...getBorderCSS(attributes.tableBorder),
-                    ...getBorderRadiusCSS(attributes.tableBorderRadius),
-                }}
-            >
-                <table {...blockProps}>
-                    <colgroup>
-                        {fixedWidth
-                            ? Array(attributes.cols)
-                                  .fill("")
-                                  .map((_, i) => {
-                                      const colStyle = attributes.colStyles[i];
-                                      return (
-                                          <col
-                                              style={{
-                                                  width: fixedWidth,
-                                                  minWidth: fixedWidth,
-                                                  background:
-                                                      colStyle?.bgGradient ||
-                                                      colStyle?.background,
-                                              }}
-                                          />
-                                      );
-                                  })
-                            : Array(attributes.cols)
-                                  .fill("")
-                                  .map((_, i) => {
-                                      const colStyle = attributes.colStyles[i];
-                                      return (
-                                          <col
-                                              style={{
-                                                  width: colStyle?.width,
-                                                  minWidth: colStyle?.width,
-                                                  background:
-                                                      colStyle?.bgGradient ||
-                                                      colStyle?.background,
-                                              }}
-                                          />
-                                      );
-                                  })}
-                    </colgroup>
-                    <tbody>{rowTemplate}</tbody>
-                </table>
-            </div>
+            {attributes.showCaption && attributes.caption ? (
+                <figure>
+                    {table}
+                    <figcaption>{attributes.caption}</figcaption>
+                </figure>
+            ) : (
+                table
+            )}
             <div style={{ display: "none" }} key={colUpt}>
                 <div {...innerBlocksProps} />
             </div>

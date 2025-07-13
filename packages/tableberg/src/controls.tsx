@@ -391,6 +391,35 @@ function TablebergControls({
                             });
                         }}
                     />
+                    <ToggleControl
+                        checked={tableAttributes.showCaption}
+                        label={__("Show Caption", "tableberg")}
+                        onChange={(showCaption) => {
+                            setTableAttributes({
+                                showCaption,
+                            });
+                        }}
+                    />
+                    {tableAttributes.showCaption && (
+                        <div style={{ marginTop: "8px" }}>
+                            <textarea
+                                value={tableAttributes.caption}
+                                onChange={(e) =>
+                                    setTableAttributes({ caption: e.target.value })
+                                }
+                                placeholder={__("Enter table caption...", "tableberg")}
+                                style={{
+                                    width: "100%",
+                                    minHeight: "60px",
+                                    padding: "8px",
+                                    border: "1px solid #ddd",
+                                    borderRadius: "4px",
+                                    fontFamily: "inherit",
+                                    fontSize: "14px",
+                                }}
+                            />
+                        </div>
+                    )}
                 </PanelBody>
             </InspectorControls>
 

@@ -99,6 +99,8 @@ export interface TablebergBlockAttrs {
     };
 
     dynamic: boolean;
+    caption: string;
+    showCaption: boolean;
 }
 
 export interface TablebergCellBlockAttrs {

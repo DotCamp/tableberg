@@ -176,6 +176,16 @@ export default function StackColTable(
         });
     }, []);
 
+    const table = <div
+        className="tableberg-table-wrapper"
+        style={{
+            ...getBorderCSS(attributes.tableBorder),
+            ...getBorderRadiusCSS(attributes.tableBorderRadius),
+        }}
+    >
+        <table {...blockProps}>{rowTemplate}</table>
+    </div>;
+
     return (
         <>
             {attributes.search && (
@@ -186,15 +196,14 @@ export default function StackColTable(
                     <FontAwesomeIcon icon={faSearch} />
                 </div>
             )}
-            <div
-                className="tableberg-table-wrapper"
-                style={{
-                    ...getBorderCSS(attributes.tableBorder),
-                    ...getBorderRadiusCSS(attributes.tableBorderRadius),
-                }}
-            >
-                <table {...blockProps}>{rowTemplate}</table>
-            </div>
+            {attributes.showCaption && attributes.caption ? (
+                <figure>
+                    {table}
+                    <figcaption>{attributes.caption}</figcaption>
+                </figure>
+            ) : (
+                table
+            )}
             <table style={{ display: "none" }} key={updateKey}>
                 <tbody>
                     <tr {...innerBlocksProps} />

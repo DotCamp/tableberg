@@ -162,6 +162,16 @@ export default function StackRowTable(
         });
     }, []);
 
+    const table = <div
+        className="tableberg-table-wrapper"
+        style={{
+            ...getBorderCSS(attributes.tableBorder),
+            ...getBorderRadiusCSS(attributes.tableBorderRadius),
+        }}
+    >
+        <table {...blockProps}>{rowTemplates}</table>
+    </div>;
+
     return (
         <>
             {attributes.search && (
@@ -172,15 +182,14 @@ export default function StackRowTable(
                     <FontAwesomeIcon icon={faSearch} />
                 </div>
             )}
-            <div
-                className="tableberg-table-wrapper"
-                style={{
-                    ...getBorderCSS(attributes.tableBorder),
-                    ...getBorderRadiusCSS(attributes.tableBorderRadius),
-                }}
-            >
-                <table {...blockProps}>{rowTemplates}</table>
-            </div>
+            {attributes.showCaption && attributes.caption ? (
+                <figure>
+                    {table}
+                    <figcaption>{attributes.caption}</figcaption>
+                </figure>
+            ) : (
+                table
+            )}
             <div style={{ display: "none" }} key={colUpt}>
                 <div {...innerBlocksProps} />
             </div>
