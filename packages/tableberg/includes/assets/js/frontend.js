@@ -493,6 +493,9 @@
     function searchTable(input) {
         const search = input.value.trim();
         const rows = input.parentElement.parentElement.querySelectorAll("tr");
+        
+        removeHighlights();
+        
         if (!search || search.length < 3) {
             if (input.dataset.isDirty) {
                 input.dataset.isDirty = false;
@@ -508,11 +511,31 @@
                 row.textContent?.toLowerCase().includes(search.toLowerCase())
             ) {
                 row.style.display = "table-row";
+                highlightMatches(row, search);
             } else {
                 row.style.display = "none";
             }
         });
         input.dataset.isDirty = true;
+    }
+
+    function highlightMatches(row, searchTerm) {
+        const cells = row.querySelectorAll('td, th');
+        cells.forEach(cell => {
+            const text = cell.textContent;
+            if (text.toLowerCase().includes(searchTerm.toLowerCase())) {
+                const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                cell.innerHTML = text.replace(regex, '<span class="tableberg-search-highlight">$1</span>');
+            }
+        });
+    }
+
+    function removeHighlights() {
+        const highlights = document.querySelectorAll('.tableberg-search-highlight');
+        highlights.forEach(highlight => {
+            const parent = highlight.parentNode;
+            parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+        });
     }
 
     const vSortBtns = document.querySelectorAll(".tableberg-v-sorter");

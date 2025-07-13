@@ -400,3 +400,11 @@ div.wp-block-tableberg-wrapper {
 .tableberg-responsiveness-device-switcher.is-pressed.components-button {
     box-shadow: inset 0 0 0 1px #1e1e1e;
 }
+
+.tableberg-search-highlight {
+    background-color: #ffeb3b;
+    color: #000;
+    padding: 1px 2px;
+    border-radius: 2px;
+    font-weight: 500;
+}

@@ -87,11 +87,29 @@ export const PrimaryTable = (
 
     useEffect(() => {
         const vRows: number[] = [];
+        
+        const highlights = document.querySelectorAll('.tableberg-search-highlight');
+        highlights.forEach(highlight => {
+            const parent = highlight.parentNode;
+            if (parent) {
+                parent.replaceChild(document.createTextNode(highlight.textContent || ''), highlight);
+            }
+        });
+        
         if (tableRef.current && search.length > 2) {
             const rows = tableRef.current.querySelector("tbody")?.children;
             Array.from(rows!).forEach((row, idx) => {
                 if (!row.textContent?.toLowerCase().includes(search.toLowerCase())) {
                     vRows.push(idx);
+                } else {
+                    const cells = row.querySelectorAll('td, th');
+                    cells.forEach(cell => {
+                        const text = cell.textContent || '';
+                        if (text.toLowerCase().includes(search.toLowerCase())) {
+                            const regex = new RegExp(`(${search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                            cell.innerHTML = text.replace(regex, '<span class="tableberg-search-highlight">$1</span>');
+                        }
+                    });
                 }
             });
         }
