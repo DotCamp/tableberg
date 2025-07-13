@@ -13,9 +13,24 @@
 
     &.tableberg-v-align-top {
         vertical-align: top;
+
+        .tableberg-cell-inner > * {
+            align-self: start;
+        }
+    }
+    &.tableberg-v-align-center {
+        vertical-align: middle;
+
+        .tableberg-cell-inner > * {
+            align-self: center;
+        }
     }
     &.tableberg-v-align-bottom {
         vertical-align: bottom;
+
+        .tableberg-cell-inner > * {
+            align-self: end;
+        }
     }
 
     .tableberg-header &,

@@ -881,8 +881,6 @@ function edit(
 
     const blockProps = useBlockProps({
         style: {
-            verticalAlign:
-                attributes.vAlign === "center" ? "middle" : attributes.vAlign,
             height: rowStyle.height,
             background: attributes.bgGradient || attributes.background,
             "--tableberg-block-spacing":
@@ -908,7 +906,7 @@ function edit(
                 attributes.row,
                 attributes.col,
             ),
-        }),
+        }, `tableberg-v-align-${attributes.vAlign}`),
     });
 
     const innerBlocksProps = useInnerBlocksProps({
