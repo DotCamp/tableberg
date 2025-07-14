@@ -112,6 +112,7 @@ When updating plugin version, modify in:
 -   **Main branch**: Published version
 -   **Develop branch**: Next release (all changes go here first)
 -   **Feature branches**: For larger changes, create PR to develop
+-   **IMPORTANT**: When committing changes, DO NOT push to remote unless explicitly requested. Commit locally only.
 
 ### Code Style
 

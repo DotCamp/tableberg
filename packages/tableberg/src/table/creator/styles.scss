@@ -77,6 +77,36 @@
         z-index: 2;
       }
     }
+    
+    &.tableberg-pro-feature {
+      position: relative;
+      
+      &:after {
+        content: "PRO";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 10px;
+        font-weight: 600;
+        background: #7a00df;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 3px;
+      }
+    }
+  }
+  
+  &-btn-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    background: #7a00df;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
   }
 
   &-heading {

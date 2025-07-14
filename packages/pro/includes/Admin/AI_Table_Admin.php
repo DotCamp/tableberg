@@ -18,7 +18,9 @@ class AI_Table_Admin {
     public function __construct() {
         add_action('wp_ajax_tableberg_test_ai_connection', array($this, 'test_ai_connection'));
         add_action('wp_ajax_tableberg_save_ai_settings', array($this, 'save_ai_settings'));
+        add_action('wp_ajax_tableberg_generate_ai_table', array($this, 'generate_ai_table'));
         add_filter('tableberg/filter/admin_settings_menu_data', array($this, 'add_ai_settings_data'), 10, 1);
+        add_action('rest_api_init', array($this, 'register_rest_routes'));
     }
     
     /**
@@ -58,6 +60,11 @@ class AI_Table_Admin {
                         'url'    => admin_url('admin-ajax.php'),
                         'action' => 'tableberg_save_ai_settings',
                         'nonce'  => wp_create_nonce('tableberg_save_ai_settings'),
+                    ),
+                    'generateTable' => array(
+                        'url'    => admin_url('admin-ajax.php'),
+                        'action' => 'tableberg_generate_ai_table',
+                        'nonce'  => wp_create_nonce('tableberg_generate_ai_table'),
                     ),
                 ),
             ));
@@ -224,5 +231,138 @@ class AI_Table_Admin {
         
         // If no prefix or unknown format, return empty
         return '';
+    }
+    
+    /**
+     * Handle AI table generation request
+     */
+    public function generate_ai_table() {
+        check_ajax_referer('tableberg_generate_ai_table');
+        
+        if (!current_user_can('edit_posts')) {
+            wp_die(__('Unauthorized', 'tableberg'));
+        }
+        
+        $prompt = isset($_POST['prompt']) ? sanitize_text_field($_POST['prompt']) : '';
+        $method = isset($_POST['method']) ? sanitize_text_field($_POST['method']) : 'prompt';
+        
+        if (empty($prompt) && $method === 'prompt') {
+            wp_send_json_error(array(
+                'message' => __('Please provide a table description', 'tableberg')
+            ));
+        }
+        
+        // Check if API is configured
+        $settings = get_option('tableberg_ai_settings', array());
+        if (empty($settings['api_key'])) {
+            wp_send_json_error(array(
+                'message' => __('Please configure your OpenAI API key first', 'tableberg')
+            ));
+        }
+        
+        // Use the AI service to generate table
+        $service = new \Tableberg\Pro\AI_Table_Service();
+        
+        switch ($method) {
+            case 'prompt':
+                $result = $service->generate_table_from_prompt($prompt);
+                break;
+                
+            // TODO: Add other methods (context, screenshot) in future phases
+            default:
+                wp_send_json_error(array(
+                    'message' => __('Invalid generation method', 'tableberg')
+                ));
+                return;
+        }
+        
+        if (is_wp_error($result)) {
+            wp_send_json_error(array(
+                'message' => $result->get_error_message()
+            ));
+        }
+        
+        wp_send_json_success(array(
+            'message' => __('Table generated successfully!', 'tableberg'),
+            'block' => $result
+        ));
+    }
+    
+    /**
+     * Register REST API routes
+     */
+    public function register_rest_routes() {
+        register_rest_route('tableberg/v1', '/ai/generate-table', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'rest_generate_table'),
+            'permission_callback' => function() {
+                return current_user_can('edit_posts');
+            },
+            'args' => array(
+                'prompt' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'method' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => 'prompt',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            ),
+        ));
+    }
+    
+    /**
+     * REST API handler for table generation
+     */
+    public function rest_generate_table($request) {
+        $prompt = $request->get_param('prompt');
+        $method = $request->get_param('method');
+        
+        if (empty($prompt) && $method === 'prompt') {
+            return new \WP_Error(
+                'missing_prompt',
+                __('Please provide a table description', 'tableberg'),
+                array('status' => 400)
+            );
+        }
+        
+        // Check if API is configured
+        $settings = get_option('tableberg_ai_settings', array());
+        if (empty($settings['api_key'])) {
+            return new \WP_Error(
+                'not_configured',
+                __('Please configure your OpenAI API key first', 'tableberg'),
+                array('status' => 400)
+            );
+        }
+        
+        // Use the AI service to generate table
+        $service = new \Tableberg\Pro\AI_Table_Service();
+        
+        switch ($method) {
+            case 'prompt':
+                $result = $service->generate_table_from_prompt($prompt);
+                break;
+                
+            default:
+                return new \WP_Error(
+                    'invalid_method',
+                    __('Invalid generation method', 'tableberg'),
+                    array('status' => 400)
+                );
+        }
+        
+        if (is_wp_error($result)) {
+            return $result;
+        }
+        
+        return array(
+            'success' => true,
+            'message' => __('Table generated successfully!', 'tableberg'),
+            'block' => $result
+        );
     }
 }

@@ -24,9 +24,12 @@ import { useDispatch } from "@wordpress/data";
 import { useState } from "react";
 import metadata from "../../block.json";
 import PatternsLibrary from "./Patterns";
+import AITableModal from "./AITableModal";
+import UpsellModal from "../../components/UpsellModal";
 
 interface Props {
     clientId: string;
+    proProps?: any;
 }
 
 export default function TableCreator({ clientId, proProps }: Props) {
@@ -35,7 +38,7 @@ export default function TableCreator({ clientId, proProps }: Props) {
     const [rows, setRows] = useState<number | undefined>(4);
     const [cols, setCols] = useState<number | undefined>(4);
 
-    const [modal, setModal] = useState<null | "patterns">(null);
+    const [modal, setModal] = useState<null | "patterns" | "ai" | "ai-upsell">(null);
 
     const onCreateNew = () => {
         if (!rows || !cols) return;
@@ -126,11 +129,23 @@ export default function TableCreator({ clientId, proProps }: Props) {
                         </div>
                         <span>Data Table (CSV, XML)</span>
                     </button>
-                    <button className="tableberg-table-creator-btn tableberg-upcoming">
+                    <button 
+                        className={`tableberg-table-creator-btn ${!TABLEBERG_CFG.IS_PRO ? 'tableberg-pro-feature' : ''}`}
+                        onClick={() => {
+                            if (TABLEBERG_CFG.IS_PRO) {
+                                setModal("ai");
+                            } else {
+                                setModal("ai-upsell");
+                            }
+                        }}
+                    >
                         <div className="tableberg-table-creator-btn-icon">
                             {AITableIcon}
                         </div>
                         <span>AI Table</span>
+                        {TABLEBERG_CFG.IS_PRO && (
+                            <span className="tableberg-table-creator-btn-badge">Pro</span>
+                        )}
                     </button>
                     <button className="tableberg-table-creator-btn tableberg-upcoming">
                         <div className="tableberg-table-creator-btn-icon">
@@ -146,6 +161,20 @@ export default function TableCreator({ clientId, proProps }: Props) {
                     onSelect={(b) =>
                         storeActions.replaceBlock(clientId, cloneBlock(b))
                     }
+                />
+            )}
+            {modal === "ai" && (
+                <AITableModal
+                    onClose={() => setModal(null)}
+                    onInsert={(block) => {
+                        storeActions.replaceBlock(clientId, block);
+                    }}
+                />
+            )}
+            {modal === "ai-upsell" && (
+                <UpsellModal
+                    onClose={() => setModal(null)}
+                    selected="ai-table"
                 />
             )}
         </div>

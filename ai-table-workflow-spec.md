@@ -15,12 +15,15 @@ AI Table is a Pro feature for Tableberg that enables users to create tables usin
 ## Table Creation Methods
 
 ### 1. Context-Aware (From Page Content)
+
 Generate tables based on existing content in the current post/page
 
 ### 2. Prompt-Based (From Description)
+
 Create tables from natural language descriptions
 
 ### 3. Screenshot-Based (From Image)
+
 Recreate tables from uploaded screenshots
 
 ## Initial Setup Flow
@@ -51,139 +54,157 @@ It's like a password that lets Tableberg talk to AI.
 └── [Test Connection]
 ```
 
-**Key Storage**: 
-- Encrypted in WordPress database
-- Never exposed to frontend
-- Validated on save
+**Key Storage**:
+
+-   Encrypted in WordPress database
+-   Never exposed to frontend
+-   Validated on save
 
 ## Detailed Workflows
 
 ### Method 1: Context-Aware Table Generation
 
 #### Entry Point
+
 In the table creator modal, click "AI Table" button
 
 #### User Flow
+
 1. **Selection Screen**
-   ```
-   Create AI Table from Page Content
-   
-   AI will analyze your current page and suggest 
-   a relevant table structure.
-   
-   [Generate Table from Page] [Cancel]
-   ```
+
+    ```
+    Create AI Table from Page Content
+
+    AI will analyze your current page and suggest
+    a relevant table structure.
+
+    [Generate Table from Page] [Cancel]
+    ```
 
 2. **Processing**
-   ```
-   ✨ Analyzing your content...
-   [Progress bar]
-   ```
+
+    ```
+    ✨ Analyzing your content...
+    [Progress bar]
+    ```
 
 3. **Completion**
-   ```
-   ✅ Table inserted! 
-   Edit it using the block controls.
-   ```
+    ```
+    ✅ Table inserted!
+    Edit it using the block controls.
+    ```
 
 #### Behind the Scenes
-- Extract text content from current post/page
-- Identify lists, comparisons, data points
-- Generate appropriate table structure
-- Insert as Tableberg blocks
+
+-   Extract text content from current post/page
+-   Identify lists, comparisons, data points
+-   Generate appropriate table structure
+-   Insert as Tableberg blocks
 
 ### Method 2: Prompt-Based Generation
 
 #### Entry Point
+
 Same table creator modal → "AI Table" button
 
 #### User Flow
+
 1. **Input Screen**
-   ```
-   Create AI Table
-   
-   Describe what table you need:
-   [Large text input area]
-   
-   Examples:
-   • "Pricing table with Basic ($9), Pro ($29), Enterprise ($99)"
-   • "Compare iPhone 15, 15 Pro, and 15 Pro Max features"
-   • "Weekly schedule Monday to Friday, 9am to 5pm"
-   
-   Quick Templates:
-   [Comparison] [Pricing] [Schedule] [Features] [Data]
-   
-   [Generate & Insert Table] [Cancel]
-   ```
+
+    ```
+    Create AI Table
+
+    Describe what table you need:
+    [Large text input area]
+
+    Examples:
+    • "Pricing table with Basic ($9), Pro ($29), Enterprise ($99)"
+    • "Compare iPhone 15, 15 Pro, and 15 Pro Max features"
+    • "Weekly schedule Monday to Friday, 9am to 5pm"
+
+    Quick Templates:
+    [Comparison] [Pricing] [Schedule] [Features] [Data]
+
+    [Generate & Insert Table] [Cancel]
+    ```
 
 2. **Processing**
-   ```
-   ✨ Creating your table...
-   [Progress indicator]
-   ```
+
+    ```
+    ✨ Creating your table...
+    [Progress indicator]
+    ```
 
 3. **Completion**
-   ```
-   ✅ Table inserted!
-   Edit any cell by clicking on it.
-   ```
+    ```
+    ✅ Table inserted!
+    Edit any cell by clicking on it.
+    ```
 
 #### Template System
+
 Clicking a template pre-fills the prompt:
-- **Comparison**: "Create a comparison table for [products] with features like [list key features]"
-- **Pricing**: "Create a pricing table with 3 tiers: Basic, Pro, and Enterprise"
-- **Schedule**: "Create a weekly schedule table for Monday through Friday"
-- **Features**: "Create a feature comparison table with checkmarks"
-- **Data**: "Create a data table with columns for [specify columns]"
+
+-   **Comparison**: "Create a comparison table for [products] with features like [list key features]"
+-   **Pricing**: "Create a pricing table with 3 tiers: Basic, Pro, and Enterprise"
+-   **Schedule**: "Create a weekly schedule table for Monday through Friday"
+-   **Features**: "Create a feature comparison table with checkmarks"
+-   **Data**: "Create a data table with columns for [specify columns]"
 
 ### Method 3: Screenshot-Based Recreation
 
 #### Entry Point
+
 Same as above
 
 #### User Flow
+
 1. **Upload Screen**
-   ```
-   Create AI Table from Screenshot
-   
-   [Drop zone with upload icon]
-   Drop a table screenshot here
-   or click to browse
-   
-   Supported formats: PNG, JPG, GIF
-   Max size: 5MB
-   
-   [Cancel]
-   ```
+
+    ```
+    Create AI Table from Screenshot
+
+    [Drop zone with upload icon]
+    Drop a table screenshot here
+    or click to browse
+
+    Supported formats: PNG, JPG, GIF
+    Max size: 5MB
+
+    [Cancel]
+    ```
 
 2. **Processing Steps**
-   ```
-   ✨ Processing image...
-   → Detecting table structure...
-   → Extracting content...
-   → Creating table blocks...
-   [Progress bar with status updates]
-   ```
+
+    ```
+    ✨ Processing image...
+    → Detecting table structure...
+    → Extracting content...
+    → Creating table blocks...
+    [Progress bar with status updates]
+    ```
 
 3. **Completion**
-   ```
-   ✅ Table recreated!
-   Review and edit as needed.
-   ```
+    ```
+    ✅ Table recreated!
+    Review and edit as needed.
+    ```
 
 ## User Interface Components
 
 ### Table Creator Modal Update
+
 ```
 Current buttons:
 - Pre-Built Table
-- WooCommerce Table  
+- WooCommerce Table
 - Data Table (CSV, XML) [Coming Soon]
 - AI Table [NEW - Pro]
 - Posts Table [Coming Soon]
 ```
 
 ### AI Table Modal Structure
+
 ```
 ┌─────────────────────────────────────┐
 │  AI Table          [Pro]        [X] │
@@ -204,6 +225,7 @@ Current buttons:
 ## Error Handling
 
 ### API Key Errors
+
 ```
 Connection Issue:
 "Hmm, that key didn't work. Let's try again!"
@@ -215,6 +237,7 @@ Missing Key:
 ```
 
 ### Generation Errors
+
 ```
 Failed Generation:
 "Couldn't create the table. Try:"
@@ -226,6 +249,7 @@ Failed Generation:
 ```
 
 ### Cost/Limit Errors
+
 ```
 "Your OpenAI account might be out of credits"
 [Check OpenAI Account] [Learn More]
@@ -236,11 +260,12 @@ Failed Generation:
 ### API Integration
 
 #### Server-Side Proxy
+
 ```php
 // All API calls go through WordPress backend
 class Tableberg_AI_Service {
     private $api_key;
-    
+
     public function generate_table($prompt, $method) {
         // Validate API key
         // Prepare prompt based on method
@@ -252,6 +277,7 @@ class Tableberg_AI_Service {
 ```
 
 #### Block Generation Format
+
 ```javascript
 // AI returns structured data converted to:
 {
@@ -280,6 +306,7 @@ class Tableberg_AI_Service {
 ### API Prompt Templates
 
 #### Context-Aware Prompt
+
 ```
 Given the following WordPress post content:
 [POST_CONTENT]
@@ -289,6 +316,7 @@ Return as structured JSON with rows and columns.
 ```
 
 #### User Prompt Enhancement
+
 ```
 User request: [USER_INPUT]
 
@@ -302,6 +330,7 @@ Format: { headers: [], rows: [[]] }
 ```
 
 #### Screenshot Analysis Prompt
+
 ```
 [Image data]
 
@@ -313,6 +342,7 @@ Return as structured JSON.
 ## Usage Tracking
 
 ### Simple Metrics Display
+
 ```
 AI Usage This Month:
 ▓▓▓▓▓░░░░░ 12 tables created
@@ -322,18 +352,21 @@ AI Usage This Month:
 ```
 
 ### No Complex Analytics
-- Count of tables generated
-- Success/failure rate
-- No token counting shown to users
+
+-   Count of tables generated
+-   Success/failure rate
+-   No token counting shown to users
 
 ## Help & Documentation
 
 ### In-Context Help
+
 1. **Tooltips** on all interactive elements
 2. **Example prompts** in placeholder text
 3. **Status messages** during generation
 
 ### Help Resources
+
 ```
 Need Help?
 • Setup Guide: How to get your API key
@@ -345,78 +378,87 @@ Need Help?
 ## Future Enhancements (Phase 2+)
 
 1. **Additional AI Providers**
-   - Anthropic Claude
-   - Google Gemini
-   - Custom endpoints
+
+    - Anthropic Claude
+    - Google Gemini
+    - Custom endpoints
 
 2. **Advanced Features**
-   - Batch table generation
-   - Table style learning
-   - Custom prompt templates
+
+    - Batch table generation
+    - Table style learning
+    - Custom prompt templates
 
 3. **Community Features**
-   - Share successful prompts
-   - Table template library
-   - Usage best practices
+    - Share successful prompts
+    - Table template library
+    - Usage best practices
 
 ## Development Checklist
 
 ### Phase 1: Core Implementation
-- [ ] API key settings page
-- [ ] Basic prompt-based generation
-- [ ] Server-side OpenAI integration
-- [ ] Block structure generation
-- [ ] Error handling
-- [ ] Basic UI modal
+
+-   [x] API key settings page
+-   [x] Basic prompt-based generation
+-   [x] Server-side OpenAI integration
+-   [x] Basic UI modal
+-   [x] Block structure generation
+-   [x] Error handling
 
 ### Phase 2: Enhanced Features
-- [ ] Context-aware generation
-- [ ] Template system
-- [ ] Usage tracking
-- [ ] Improved error messages
-- [ ] Help documentation
+
+-   [ ] Context-aware generation
+-   [ ] Template system
+-   [ ] Usage tracking
+-   [ ] Improved error messages
+-   [ ] Help documentation
 
 ### Phase 3: Advanced Features
-- [ ] Screenshot upload
-- [ ] OCR integration
-- [ ] Multiple provider support
-- [ ] Advanced templates
-- [ ] Performance optimization
+
+-   [ ] Screenshot upload
+-   [ ] OCR integration
+-   [ ] Multiple provider support
+-   [ ] Advanced templates
+-   [ ] Performance optimization
 
 ## Security Considerations
 
 1. **API Key Security**
-   - Encrypted storage
-   - Server-side only usage
-   - No client exposure
+
+    - Encrypted storage
+    - Server-side only usage
+    - No client exposure
 
 2. **Input Validation**
-   - Sanitize user prompts
-   - Limit prompt length
-   - Rate limiting per user
+
+    - Sanitize user prompts
+    - Limit prompt length
+    - Rate limiting per user
 
 3. **Output Validation**
-   - Verify AI response structure
-   - Sanitize generated content
-   - Limit table size
+    - Verify AI response structure
+    - Sanitize generated content
+    - Limit table size
 
 ## Success Metrics
 
 1. **User Adoption**
-   - % of Pro users using AI Tables
-   - Tables generated per user
-   - Feature retention rate
+
+    - % of Pro users using AI Tables
+    - Tables generated per user
+    - Feature retention rate
 
 2. **Quality Metrics**
-   - Edit rate after generation
-   - Time saved vs manual creation
-   - User satisfaction scores
+
+    - Edit rate after generation
+    - Time saved vs manual creation
+    - User satisfaction scores
 
 3. **Technical Metrics**
-   - API success rate
-   - Average generation time
-   - Error frequency
+    - API success rate
+    - Average generation time
+    - Error frequency
 
 ---
 
-*This document serves as the complete specification for the AI Table feature in Tableberg Pro.*
+_This document serves as the complete specification for the AI Table feature in Tableberg Pro._
