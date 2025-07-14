@@ -2,6 +2,7 @@ import React from "react";
 import Route, { generateRouteArray } from "./Route";
 import WelcomePage from "../pages/WelcomePage";
 import BlocksPage from "../pages/BlocksPage";
+import SettingsContent from "../containers/SettingsContent";
 
 /**
  * Routes for admin menu.
@@ -21,12 +22,11 @@ const routes = [
         title: "Blocks",
         element: <BlocksPage />,
     },
-    // TODO WIll ADD LATER.
-    // {
-    //     path: "settings",
-    //     title: "Settings",
-    //     element: <SettingsContent />,
-    // },
+    {
+        path: "settings",
+        title: "Settings",
+        element: <SettingsContent />,
+    },
     {
         path: "404",
         title: "404",

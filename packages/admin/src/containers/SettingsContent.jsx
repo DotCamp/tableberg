@@ -1,48 +1,36 @@
-import React, { useRef } from "react";
+import React from "react";
 import { __ } from "@wordpress/i18n";
-import { BoxContentAlign } from "../components/BoxContent/BoxContent";
-import UpgradeBoxContent from "../components/UpgradeBoxContent";
-import BooleanSetting from "../components/BooleanSetting";
-import NumberSettings from "../components/NumberSettings";
-import {
-    toggleControl,
-    toggleGlobalControl,
-    toggleIndividualControl,
-    updateBlockProperties,
-} from "../functions";
+import AITableSettings from "../components/AITableSettings";
+import "../components/AITableSettings.css";
 /**
  * Settings content.
  *
  * @class
  */
 function SettingsContent() {
-    const individualData = tablebergAdminMenuData?.individual_control;
-    const globalControl = tablebergAdminMenuData?.global_control;
-    const blockProperties = tablebergAdminMenuData?.block_properties?.data;
-
-    const individualDataProps = {
-        onStatusChange: toggleControl,
-        ...individualData.data[0],
-    };
-    const globalControlDataProps = {
-        onStatusChange: toggleControl,
-        ...globalControl.data[0],
-    };
+    const aiSettings = tablebergAdminMenuData?.ai_settings;
+    const isPro = tablebergAdminMenuData?.is_pro;
 
     return (
         <div className="tableberg-settings-content">
-            <BooleanSetting {...individualDataProps} />
-            {blockProperties.map((property) => {
-                return (
-                    <NumberSettings
-                        {...{
-                            ...property,
-                            onValueChange: updateBlockProperties,
-                        }}
-                    />
-                );
-            })}
-            <BooleanSetting {...globalControlDataProps} />
+            {isPro ? (
+                <AITableSettings 
+                    apiKey={aiSettings?.api_key || ""}
+                    enabled={aiSettings?.enabled || false}
+                    onSettingsChange={(newSettings) => {
+                        // Handle settings change if needed
+                        console.log("AI settings updated:", newSettings);
+                    }}
+                />
+            ) : (
+                <div className="tableberg-pro-notice">
+                    <h3>{__("AI Table Settings", "tableberg")}</h3>
+                    <p>{__("AI Table features are available in Tableberg Pro. Upgrade to unlock AI-powered table generation.", "tableberg")}</p>
+                    <a href="https://tableberg.com/pricing" target="_blank" rel="noopener noreferrer" className="tableberg-button tableberg-button-primary">
+                        {__("Upgrade to Pro", "tableberg")}
+                    </a>
+                </div>
+            )}
         </div>
     );
 }

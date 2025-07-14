@@ -36,6 +36,7 @@ if (!defined('TABLEBERG_PRO_PLUGIN_FILE')) {
 use Tableberg\Patterns\RegisterPatterns;
 use Tableberg\Pro\Assets;
 use Tableberg\Pro\Blocks;
+use Tableberg\Pro\Admin\AI_Table_Admin;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -152,6 +153,7 @@ function tp_fs_init()
                     new Blocks\Button();
                     new Blocks\WooVariationPicker();
                     new Assets();
+                    new AI_Table_Admin();
 
 					add_action('init', array($this, 'init_actions'));
 				}
