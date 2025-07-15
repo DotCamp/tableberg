@@ -125,7 +125,8 @@
 }
 
 // Loading state
-.tableberg-ai-loading {
+.tableberg-ai-loading,
+.tableberg-ai-modal-loading {
     display: flex;
     flex-direction: column;
     align-items: center;

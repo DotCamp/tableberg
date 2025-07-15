@@ -13,6 +13,12 @@ namespace Tableberg\Pro\Admin;
 class AI_Table_Admin {
     
     /**
+     * Flag to track if REST routes have been registered
+     * @var bool
+     */
+    private static $rest_routes_registered = false;
+    
+    /**
      * Constructor
      */
     public function __construct() {
@@ -20,7 +26,8 @@ class AI_Table_Admin {
         add_action('wp_ajax_tableberg_save_ai_settings', array($this, 'save_ai_settings'));
         add_action('wp_ajax_tableberg_generate_ai_table', array($this, 'generate_ai_table'));
         add_filter('tableberg/filter/admin_settings_menu_data', array($this, 'add_ai_settings_data'), 10, 1);
-        add_action('rest_api_init', array($this, 'register_rest_routes'));
+        // Register REST routes with high priority to ensure they're available early
+        add_action('rest_api_init', array($this, 'register_rest_routes'), 5);
     }
     
     /**
@@ -40,8 +47,7 @@ class AI_Table_Admin {
         if ($is_pro) {
             // Get saved AI settings
             $ai_settings = get_option('tableberg_ai_settings', array(
-                'api_key' => '',
-                'enabled' => false
+                'api_key' => ''
             ));
             
             // Decrypt API key for display (if it exists)
@@ -153,14 +159,12 @@ class AI_Table_Admin {
         }
         
         $api_key = isset($settings['api_key']) ? sanitize_text_field($settings['api_key']) : '';
-        $enabled = isset($settings['enabled']) ? (bool) $settings['enabled'] : false;
         
         // Encrypt API key before saving
         $encrypted_key = !empty($api_key) ? $this->encrypt_api_key($api_key) : '';
         
         $saved_settings = array(
-            'api_key' => $encrypted_key,
-            'enabled' => $enabled
+            'api_key' => $encrypted_key
         );
         
         update_option('tableberg_ai_settings', $saved_settings);
@@ -292,6 +296,13 @@ class AI_Table_Admin {
      * Register REST API routes
      */
     public function register_rest_routes() {
+        // Prevent duplicate registration
+        if (self::$rest_routes_registered) {
+            return;
+        }
+        
+        self::$rest_routes_registered = true;
+        
         register_rest_route('tableberg/v1', '/ai/generate-table', array(
             'methods' => 'POST',
             'callback' => array($this, 'rest_generate_table'),
@@ -311,6 +322,15 @@ class AI_Table_Admin {
                     'sanitize_callback' => 'sanitize_text_field',
                 ),
             ),
+        ));
+        
+        // Add endpoint to check AI configuration status
+        register_rest_route('tableberg/v1', '/ai/status', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'rest_get_ai_status'),
+            'permission_callback' => function() {
+                return current_user_can('edit_posts');
+            },
         ));
     }
     
@@ -363,6 +383,37 @@ class AI_Table_Admin {
             'success' => true,
             'message' => __('Table generated successfully!', 'tableberg'),
             'block' => $result
+        );
+    }
+    
+    /**
+     * REST API handler for AI status check
+     */
+    public function rest_get_ai_status() {
+        global $tp_fs;
+        
+        // Check if Pro is active
+        $is_pro = isset($tp_fs) && $tp_fs->is__premium_only() && $tp_fs->can_use_premium_code();
+        
+        if (!$is_pro) {
+            return array(
+                'configured' => false,
+                'is_pro' => false,
+                'message' => __('AI Table feature requires Tableberg Pro', 'tableberg')
+            );
+        }
+        
+        // Check if API key is configured
+        $settings = get_option('tableberg_ai_settings', array());
+        $has_api_key = !empty($settings['api_key']);
+        
+        return array(
+            'configured' => $has_api_key,
+            'is_pro' => true,
+            'has_api_key' => $has_api_key,
+            'message' => !$has_api_key 
+                ? __('Please configure your OpenAI API key in Tableberg settings', 'tableberg')
+                : __('AI Table is ready to use', 'tableberg')
         );
     }
 }

@@ -1,5 +1,11 @@
-import { useState } from "react";
-import { Modal, Button, TextareaControl, Notice } from "@wordpress/components";
+import { useState, useEffect } from "react";
+import {
+    Modal,
+    Button,
+    TextareaControl,
+    Notice,
+    Spinner,
+} from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import apiFetch from "@wordpress/api-fetch";
 import { createBlock } from "@wordpress/blocks";
@@ -35,19 +41,49 @@ declare global {
     }
 }
 
+interface AIStatus {
+    configured: boolean;
+    is_pro: boolean;
+    has_api_key?: boolean;
+    enabled?: boolean;
+    message: string;
+}
+
 export default function AITableModal({ onClose, onInsert }: Props) {
     const [method, setMethod] = useState<GenerationMethod | null>(null);
     const [state, setState] = useState<ModalState>("method-selection");
     const [prompt, setPrompt] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [aiStatus, setAiStatus] = useState<AIStatus | null>(null);
+    const [isCheckingStatus, setIsCheckingStatus] = useState(true);
 
-    // Check if AI is configured
-    const isAIConfigured = () => {
-        // In the block editor, we need to make an API call to check
-        // For now, we'll assume it's configured if user is Pro
-        return TABLEBERG_CFG.IS_PRO;
-    };
+    // Check AI configuration status on mount
+    useEffect(() => {
+        const checkAIStatus = async () => {
+            try {
+                const status = (await apiFetch({
+                    path: "/tableberg/v1/ai/status",
+                    method: "GET",
+                })) as AIStatus;
+                setAiStatus(status);
+            } catch (err) {
+                console.error("Failed to check AI status:", err);
+                // Fallback to checking if user is Pro
+                setAiStatus({
+                    configured: TABLEBERG_CFG.IS_PRO,
+                    is_pro: TABLEBERG_CFG.IS_PRO,
+                    message: TABLEBERG_CFG.IS_PRO
+                        ? __("AI Table is available", "tableberg")
+                        : __("AI Table requires Tableberg Pro", "tableberg"),
+                });
+            } finally {
+                setIsCheckingStatus(false);
+            }
+        };
+
+        checkAIStatus();
+    }, []);
 
     const generateTable = async () => {
         if (!prompt.trim()) {
@@ -60,14 +96,14 @@ export default function AITableModal({ onClose, onInsert }: Props) {
         setError(null);
 
         try {
-            const response = await apiFetch({
+            const response = (await apiFetch({
                 path: "/tableberg/v1/ai/generate-table",
                 method: "POST",
                 data: {
                     prompt: prompt,
                     method: method,
                 },
-            }) as any;
+            })) as any;
 
             console.log("AI Table API Response:", response);
 
@@ -75,48 +111,76 @@ export default function AITableModal({ onClose, onInsert }: Props) {
                 // Recursively create blocks from the response
                 const createBlocksFromData = (blockData: any): any => {
                     if (!blockData) return null;
-                    
+
                     // If it's an array, process each item
                     if (Array.isArray(blockData)) {
-                        return blockData.map(block => createBlocksFromData(block));
+                        return blockData.map((block) =>
+                            createBlocksFromData(block),
+                        );
                     }
-                    
+
                     // Create innerBlocks recursively
-                    const innerBlocks = blockData.innerBlocks 
-                        ? createBlocksFromData(blockData.innerBlocks).filter(Boolean)
+                    const innerBlocks = blockData.innerBlocks
+                        ? createBlocksFromData(blockData.innerBlocks).filter(
+                              Boolean,
+                          )
                         : [];
-                    
+
                     // Create the block with proper structure
                     return createBlock(
                         blockData.name,
                         blockData.attributes || {},
-                        innerBlocks
+                        innerBlocks,
                     );
                 };
-                
+
                 const block = createBlocksFromData(response.block);
                 console.log("Created block:", block);
-                
+
                 if (block) {
                     onInsert(block);
                     onClose();
                 } else {
-                    throw new Error(__("Failed to create block from response", "tableberg"));
+                    throw new Error(
+                        __("Failed to create block from response", "tableberg"),
+                    );
                 }
             } else {
-                throw new Error(response.message || __("Failed to generate table", "tableberg"));
+                throw new Error(
+                    response.message ||
+                        __("Failed to generate table", "tableberg"),
+                );
             }
         } catch (err: any) {
             console.error("AI Table generation error:", err);
             setState("error");
-            
+
             // Check for specific error types
-            if (err.code === 'invalid_json' || err.message?.includes('Unexpected token')) {
-                setError(__("Invalid response from server. Please make sure the AI Table add-on is properly activated.", "tableberg"));
-            } else if (err.code === 'rest_no_route') {
-                setError(__("AI Table service not available. Please make sure the Pro version is activated and refresh the page.", "tableberg"));
+            if (
+                err.code === "invalid_json" ||
+                err.message?.includes("Unexpected token")
+            ) {
+                setError(
+                    __(
+                        "Invalid response from server. Please make sure the AI Table add-on is properly activated.",
+                        "tableberg",
+                    ),
+                );
+            } else if (err.code === "rest_no_route") {
+                setError(
+                    __(
+                        "AI Table service not available. Please make sure the Pro version is activated and refresh the page.",
+                        "tableberg",
+                    ),
+                );
             } else {
-                setError(err.message || __("An error occurred while generating the table", "tableberg"));
+                setError(
+                    err.message ||
+                        __(
+                            "An error occurred while generating the table",
+                            "tableberg",
+                        ),
+                );
             }
         } finally {
             setIsGenerating(false);
@@ -125,7 +189,9 @@ export default function AITableModal({ onClose, onInsert }: Props) {
 
     const renderMethodSelection = () => (
         <div className="tableberg-ai-modal-methods">
-            <h3>{__("How would you like to create your table?", "tableberg")}</h3>
+            <h3>
+                {__("How would you like to create your table?", "tableberg")}
+            </h3>
             <div className="tableberg-ai-modal-method-grid">
                 <button
                     className="tableberg-ai-modal-method"
@@ -142,7 +208,7 @@ export default function AITableModal({ onClose, onInsert }: Props) {
                         {__("Describe the table you want", "tableberg")}
                     </span>
                 </button>
-                
+
                 <button
                     className="tableberg-ai-modal-method tableberg-ai-modal-method--disabled"
                     disabled
@@ -156,7 +222,7 @@ export default function AITableModal({ onClose, onInsert }: Props) {
                         {__("Analyze current page", "tableberg")}
                     </span>
                 </button>
-                
+
                 <button
                     className="tableberg-ai-modal-method tableberg-ai-modal-method--disabled"
                     disabled
@@ -185,25 +251,68 @@ export default function AITableModal({ onClose, onInsert }: Props) {
                 />
             );
         }
-        
+
         // TODO: Add other input methods
         return null;
     };
 
     const renderContent = () => {
-        if (!isAIConfigured()) {
+        if (isCheckingStatus) {
+            return (
+                <div className="tableberg-ai-modal-loading">
+                    <Spinner />
+                    <p>{__("Checking AI configuration...", "tableberg")}</p>
+                </div>
+            );
+        }
+
+        if (!aiStatus?.is_pro) {
             return (
                 <div className="tableberg-ai-modal-configure">
                     <Notice status="warning" isDismissible={false}>
-                        {__("AI Table generation requires an OpenAI API key.", "tableberg")}
+                        {__(
+                            "AI Table feature requires Tableberg Pro",
+                            "tableberg",
+                        )}
                     </Notice>
                     <p>
                         {__(
-                            "Please configure your API key in the Tableberg settings to use AI features.",
-                            "tableberg"
+                            "Upgrade to Tableberg Pro to unlock AI-powered table generation and other premium features.",
+                            "tableberg",
                         )}
                     </p>
-                    <Button variant="primary" href={`${window.location.origin}/wp-admin/admin.php?page=tableberg#/settings`} target="_blank">
+                    <Button
+                        variant="primary"
+                        href="https://dotcamp.com/tableberg"
+                        target="_blank"
+                    >
+                        {__("Upgrade to Pro", "tableberg")}
+                    </Button>
+                </div>
+            );
+        }
+
+        if (!aiStatus?.configured) {
+            return (
+                <div className="tableberg-ai-modal-configure">
+                    <Notice status="warning" isDismissible={false}>
+                        {aiStatus.message ||
+                            __(
+                                "AI Table generation requires configuration.",
+                                "tableberg",
+                            )}
+                    </Notice>
+                    <p>
+                        {__(
+                            "Please configure your OpenAI API key in the Tableberg settings to use AI features.",
+                            "tableberg",
+                        )}
+                    </p>
+                    <Button
+                        variant="primary"
+                        href={`${window.location.origin}/wp-admin/admin.php?page=tableberg-settings&route=settings`}
+                        target="_blank"
+                    >
                         {__("Go to Settings", "tableberg")}
                     </Button>
                 </div>
@@ -213,13 +322,17 @@ export default function AITableModal({ onClose, onInsert }: Props) {
         switch (state) {
             case "method-selection":
                 return renderMethodSelection();
-            
+
             case "input":
                 return renderInput();
-            
+
             case "processing":
-                return <LoadingState message={__("Creating your table...", "tableberg")} />;
-            
+                return (
+                    <LoadingState
+                        message={__("Creating your table...", "tableberg")}
+                    />
+                );
+
             case "error":
                 return (
                     <div className="tableberg-ai-modal-error">
@@ -242,7 +355,7 @@ export default function AITableModal({ onClose, onInsert }: Props) {
                         </div>
                     </div>
                 );
-            
+
             default:
                 return null;
         }
