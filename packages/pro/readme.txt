@@ -70,6 +70,10 @@ If you have any suggestions or have faced any issues, contact us [here](https://
 
 = 0.6.3 =
 * PRO: NEW: Woocommerce products table
+* PRO: NEW: Search highlights matching text
+* PRO: FIX: Search is now case insensitive
+* NEW: Add table caption support
+* FIX: Cell vertical alignment now also aligns inner blocks
 
 = 0.6.2 =
 * PRO: NEW: Add individual cell border control
