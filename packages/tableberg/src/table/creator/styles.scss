@@ -48,6 +48,24 @@
       font-size: 13px;
     }
 
+    &.tableberg-upsell {
+      position: relative;
+
+      &::before {
+        content: "PRO";
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: rgb(103 31 235);
+        color: white;
+        font-size: 0.7rem;
+        font-weight: bold;
+        padding: 4px 10px;
+        border-radius: 10px;
+        box-shadow: 1px 2px 6px #c1c1c1;
+        z-index: 2;
+      }
+    }
 
     &.tableberg-upcoming {
       position: relative;

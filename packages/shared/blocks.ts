@@ -206,4 +206,11 @@ export const ENHANCED_FEATURES = [
         upsellText:
             "<strong>Sorting</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
     },
+    {
+        name: "product-table",
+        title: "Product Table",
+        icon: blockIcon,
+        upsellText:
+            "<strong>Product Table</strong> is not available in the free version. Please get the PRO add-on to unlock all exclusive features.",
+    },
 ] as const;

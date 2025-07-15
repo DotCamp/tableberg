@@ -24,6 +24,7 @@ import { useDispatch } from "@wordpress/data";
 import { useState } from "react";
 import metadata from "../../block.json";
 import PatternsLibrary from "./Patterns";
+import LockedTableType from "../../components/LockedTableType";
 
 interface Props {
     clientId: string;
@@ -56,8 +57,9 @@ export default function TableCreator({ clientId, proProps }: Props) {
             rows,
             cols
         });
-
     };
+
+    const IS_PRO = TABLEBERG_CFG.IS_PRO;
 
     return (
         <div className="tableberg-table-creator">
@@ -73,10 +75,10 @@ export default function TableCreator({ clientId, proProps }: Props) {
                         label={"Column count"}
                         value={String(cols)}
                         onChange={(count) => {
-                            setCols( (count === "") ? undefined : Number(count));
+                            setCols((count === "") ? undefined : Number(count));
                         }}
-                    min="1"
-                    className="blocks-table__placeholder-input"
+                        min="1"
+                        className="blocks-table__placeholder-input"
                     />
                     <TextControl
                         __nextHasNoMarginBottom
@@ -84,7 +86,7 @@ export default function TableCreator({ clientId, proProps }: Props) {
                         label={"Row count"}
                         value={String(rows)}
                         onChange={(count) => {
-                            setRows( (count === "") ? undefined : Number(count));
+                            setRows((count === "") ? undefined : Number(count));
                         }}
                         min="1"
                         className="blocks-table__placeholder-input"
@@ -111,7 +113,12 @@ export default function TableCreator({ clientId, proProps }: Props) {
                         </div>
                         <span>Pre-Built Table</span>
                     </button>
-                    <button
+                    {!IS_PRO ? <LockedTableType
+                        icon={WooTableIcon}
+                        selected={"product-table"}
+                        name={"WooCommerce Table"}
+                        link={"https://tableberg.com/woocommerce-product-table-plugin/"}
+                    /> : <button
                         className="tableberg-table-creator-btn"
                         onClick={() => proProps.onCreateWooTable(storeActions)}
                     >
@@ -119,7 +126,7 @@ export default function TableCreator({ clientId, proProps }: Props) {
                             {WooTableIcon}
                         </div>
                         <span>WooCommerce Table</span>
-                    </button>
+                    </button>}
                     <button className="tableberg-table-creator-btn tableberg-upcoming">
                         <div className="tableberg-table-creator-btn-icon">
                             {DataTableIcon}

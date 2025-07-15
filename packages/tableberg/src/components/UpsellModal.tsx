@@ -18,6 +18,7 @@ PATTERN_UPSELLS.forEach((p) => {
 interface Props {
     onClose: () => void;
     selected?: string;
+    link?: string;
 }
 
 export interface BlockUpsellInfo {
@@ -32,6 +33,7 @@ interface ComponentProps {
     info: BlockUpsellInfo;
     prev?: () => void;
     next?: () => void;
+    link?: string;
 }
 
 export function UpsellModalComponent({
@@ -39,6 +41,7 @@ export function UpsellModalComponent({
     info,
     prev,
     next,
+    link = "https://tableberg.com/pricing/",
 }: ComponentProps) {
     return (
         <div className="tableberg-upsell-modal">
@@ -86,7 +89,7 @@ export function UpsellModalComponent({
                     <div className="tableberg-upsell-modal-footer">
                         <button onClick={onClose}>Cancel</button>
                         <a
-                            href="https://tableberg.com/pricing/"
+                            href={link}
                             target="_blank"
                         >
                             Buy PRO
@@ -106,7 +109,7 @@ export function UpsellModalComponent({
     );
 }
 
-export function UpsellEnhancedModal({ onClose, selected }: Props) {
+export function UpsellEnhancedModal({ onClose, selected, link = "https://tableberg.com/pricing/" }: Props) {
     const [idx, setIdx] = useState(0);
     const info = ENHANCED_FEATURES[idx];
 
@@ -136,6 +139,7 @@ export function UpsellEnhancedModal({ onClose, selected }: Props) {
             info={info}
             prev={prev}
             next={next}
+            link={link}
         />
     );
 }
