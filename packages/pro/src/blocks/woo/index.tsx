@@ -1,6 +1,6 @@
 import { BlockEditProps, createBlocksFromInnerBlocksTemplate, InnerBlockTemplate, registerBlockType } from "@wordpress/blocks";
 import metadata from "./block.json";
-import blockIcon from "@tableberg/shared/icons/tableberg";
+import { WooTableIcon } from "@tableberg/shared/icons/table-creation";
 import {
     BlockIcon,
     useBlockProps,
@@ -443,7 +443,7 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
 
 registerBlockType(metadata as any, {
     attributes: metadata.attributes as any,
-    icon: blockIcon,
+    icon: WooTableIcon,
     edit: (props: BlockEditProps<WooBlockAttrs>) => {
         return <QueryClientProvider client={queryClient}>
             <WooTableEdit {...props} />
