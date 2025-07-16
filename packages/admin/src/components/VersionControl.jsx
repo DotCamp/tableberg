@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useMemo, useState } from "react";
 import VersionControlPopup from "./VersionControlPopup";
 import Portal from "./Portal";

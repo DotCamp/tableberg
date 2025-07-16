@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { __ } from "@wordpress/i18n";

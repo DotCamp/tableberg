@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useRef, useState } from "react";
 
 /**
@@ -27,7 +26,6 @@ function ToggleControl({
     };
 
     return (
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/interactive-supports-focus
         <div
             onClick={clickHandler}
             className={"tableberg-toggle-control"}

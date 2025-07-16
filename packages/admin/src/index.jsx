@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import { createRoot } from "react-dom";
 import AdminMenuContainer from "./containers/AdminMenuContainer";
 import AdminMenuWrapper from "./components/AdminMenuWrapper";
