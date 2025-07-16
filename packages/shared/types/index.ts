@@ -91,7 +91,7 @@ export interface TablebergBlockAttrs {
             order: "asc" | "desc";
             col: number;
         };
-        horizontal?:  {
+        horizontal?: {
             enabled: boolean;
             order: "asc" | "desc";
             row: number;
@@ -125,11 +125,11 @@ export interface TablebergCellBlockAttrs {
         topRight: string;
         bottomRight: string;
         bottomLeft: string;
-    }
+    };
     dynamicProps: {
         colName: string;
         colItemId?: string;
-    }
+    };
 }
 
 export type TablebergCellInstance = BlockInstance<TablebergCellBlockAttrs>;

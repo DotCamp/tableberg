@@ -97,5 +97,4 @@ export const Star = (props: any) => (
     </svg>
 );
 
-
 export default BlockIcon;

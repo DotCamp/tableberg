@@ -115,7 +115,9 @@ function edit({
     const innerStyle = getInnerStyles(attributes);
 
     const blockAlignChange = (newValue: string | undefined) => {
-        setAttributes({ align: (newValue as "left" | "center" | "right" | undefined) });
+        setAttributes({
+            align: newValue as "left" | "center" | "right" | undefined,
+        });
     };
 
     const onToggleOpenInNewTab = (value: boolean | undefined) => {

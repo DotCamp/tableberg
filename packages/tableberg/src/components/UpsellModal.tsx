@@ -88,10 +88,7 @@ export function UpsellModalComponent({
                     </div>
                     <div className="tableberg-upsell-modal-footer">
                         <button onClick={onClose}>Cancel</button>
-                        <a
-                            href={link}
-                            target="_blank"
-                        >
+                        <a href={link} target="_blank">
                             Buy PRO
                         </a>
                     </div>
@@ -109,7 +106,11 @@ export function UpsellModalComponent({
     );
 }
 
-export function UpsellEnhancedModal({ onClose, selected, link = "https://tableberg.com/pricing/" }: Props) {
+export function UpsellEnhancedModal({
+    onClose,
+    selected,
+    link = "https://tableberg.com/pricing/",
+}: Props) {
     const [idx, setIdx] = useState(0);
     const info = ENHANCED_FEATURES[idx];
 

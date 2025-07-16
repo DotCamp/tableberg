@@ -5,7 +5,11 @@ import {
     InnerBlocks,
     InspectorControls,
 } from "@wordpress/block-editor";
-import { BlockEditProps, BlockInstance, registerBlockType } from "@wordpress/blocks";
+import {
+    BlockEditProps,
+    BlockInstance,
+    registerBlockType,
+} from "@wordpress/blocks";
 import metadata from "./block.json";
 import { useSelect, useDispatch } from "@wordpress/data";
 import { createBlock } from "@wordpress/blocks";
@@ -83,7 +87,7 @@ function edit({
     clientId,
     attributes,
     setAttributes,
-    isSelected
+    isSelected,
 }: BlockEditProps<ToggleBlockTypes>) {
     const blockProps = useBlockProps();
     const { children, ...innerBlocksProps } = useInnerBlocksProps(blockProps, {
@@ -128,9 +132,9 @@ function edit({
         useState(false);
     const [deleteIndex, setDeleteIndex] = useState(0);
 
-    const { insertBlock, removeBlock } = (
-        useDispatch(store) as unknown as BlockEditorStoreActions
-    );
+    const { insertBlock, removeBlock } = useDispatch(
+        store,
+    ) as unknown as BlockEditorStoreActions;
 
     function tabAdditionHandler() {
         insertBlock(
@@ -142,10 +146,7 @@ function edit({
 
         setActiveTab(innerBlocksLength!);
         setAttributes({
-            tabs: [
-                ...tabs,
-                `Untitled Tab`,
-            ],
+            tabs: [...tabs, `Untitled Tab`],
         });
     }
 
@@ -153,7 +154,7 @@ function edit({
         if (!innerBlocks || !innerBlocksLength) {
             return;
         }
-        o
+        o;
         removeBlock(innerBlocks[i].clientId, false);
 
         const newTabs = [...tabs.slice(0, i), ...tabs.slice(i + 1)];
@@ -171,195 +172,161 @@ function edit({
             }`;
     }
 
-    const SidebarControls = (<>
-        <InspectorControls>
-            <ToolsPanel
-                label={__(
-                    "Toggle Settings",
-                    "tableberg",
-                )}
-                resetAll={() => { }}
-            >
-                <ToolsPanelItem
-                    label={__("Default Active Tab")}
-                    hasValue={() => true}
+    const SidebarControls = (
+        <>
+            <InspectorControls>
+                <ToolsPanel
+                    label={__("Toggle Settings", "tableberg")}
+                    resetAll={() => {}}
                 >
-                    <TextControl
-                        label="Current Tab Title"
-                        value={tabs[activeTab]}
-                        onChange={(val) => {
-                            const newTabs = [...tabs];
-                            newTabs[activeTab] = val;
-                            setAttributes({
-                                tabs: newTabs,
-                            });
-                        }}
-                    />
-                    <NumberControl
-                        label="Default Active Tab"
-                        value={
-                            defaultActiveTabIndex + 1
-                        }
-                        onChange={(newVal) =>
-                            setAttributes({
-                                defaultActiveTabIndex:
-                                    Math.max(0, Number(newVal || 1,) - 1)
-                            })
-                        }
-                        min={1}
-                        max={tabs.length}
-                    />
-                </ToolsPanelItem>
-                <ToolsPanelItem
-                    label={__("Tabs alignment", "tableberg")}
-                    hasValue={() => true}
-                >
-                    <ToggleGroupControl
-                        __nextHasNoMarginBottom
-                        label={__(
-                            "Tabs alignment",
-                            "tableberg",
-                        )}
-                        value={alignment}
-                        onChange={(newAlignment: any) =>
-                            setAttributes({
-                                alignment: newAlignment,
-                            })
-                        }
+                    <ToolsPanelItem
+                        label={__("Default Active Tab")}
+                        hasValue={() => true}
                     >
-                        {alignmentOptions.map(
-                            ({ icon, title, value }) => (
+                        <TextControl
+                            label="Current Tab Title"
+                            value={tabs[activeTab]}
+                            onChange={(val) => {
+                                const newTabs = [...tabs];
+                                newTabs[activeTab] = val;
+                                setAttributes({
+                                    tabs: newTabs,
+                                });
+                            }}
+                        />
+                        <NumberControl
+                            label="Default Active Tab"
+                            value={defaultActiveTabIndex + 1}
+                            onChange={(newVal) =>
+                                setAttributes({
+                                    defaultActiveTabIndex: Math.max(
+                                        0,
+                                        Number(newVal || 1) - 1,
+                                    ),
+                                })
+                            }
+                            min={1}
+                            max={tabs.length}
+                        />
+                    </ToolsPanelItem>
+                    <ToolsPanelItem
+                        label={__("Tabs alignment", "tableberg")}
+                        hasValue={() => true}
+                    >
+                        <ToggleGroupControl
+                            __nextHasNoMarginBottom
+                            label={__("Tabs alignment", "tableberg")}
+                            value={alignment}
+                            onChange={(newAlignment: any) =>
+                                setAttributes({
+                                    alignment: newAlignment,
+                                })
+                            }
+                        >
+                            {alignmentOptions.map(({ icon, title, value }) => (
                                 <ToggleGroupControlOptionIcon
                                     key={value}
                                     icon={icon}
                                     value={value}
                                     label={title}
                                 />
-                            ),
-                        )}
-                    </ToggleGroupControl>
+                            ))}
+                        </ToggleGroupControl>
+                    </ToolsPanelItem>
+                </ToolsPanel>
+            </InspectorControls>
+            <InspectorControls group="color">
+                <ColorControl
+                    label={__("Active Tab Text Color", "")}
+                    colorValue={activeTabTextColor}
+                    onColorChange={(newColor) =>
+                        setAttributes({
+                            activeTabTextColor: newColor,
+                        })
+                    }
+                    onDeselect={() =>
+                        setAttributes({
+                            activeTabTextColor: "",
+                        })
+                    }
+                />
+                <ColorControl
+                    label={__("Inactive Tab Text Color", "tableberg")}
+                    colorValue={inactiveTabTextColor}
+                    onColorChange={(newColor) =>
+                        setAttributes({
+                            inactiveTabTextColor: newColor,
+                        })
+                    }
+                    onDeselect={() =>
+                        setAttributes({
+                            inactiveTabTextColor: "",
+                        })
+                    }
+                />
+                <ColorControl
+                    label={__("Active Tab Background Color", "tableberg")}
+                    colorValue={activeTabBackgroundColor}
+                    onColorChange={(newColor) =>
+                        setAttributes({
+                            activeTabBackgroundColor: newColor,
+                        })
+                    }
+                    onDeselect={() =>
+                        setAttributes({
+                            activeTabBackgroundColor: "",
+                        })
+                    }
+                />
+                <ColorControl
+                    label={__("Inactive Tab Background Color", "tableberg")}
+                    colorValue={inactiveTabBackgroundColor}
+                    onColorChange={(newColor) =>
+                        setAttributes({
+                            inactiveTabBackgroundColor: newColor,
+                        })
+                    }
+                    onDeselect={() =>
+                        setAttributes({
+                            inactiveTabBackgroundColor: "",
+                        })
+                    }
+                />
+            </InspectorControls>
+            <InspectorControls group="dimensions">
+                <ToolsPanelItem
+                    label={__("Spacing Under Tabs", "tableberg")}
+                    hasValue={() => true}
+                >
+                    <SpacingControlSingle
+                        label={__("Spacing Under Tabs", "tableberg")}
+                        value={gap}
+                        onChange={(newGap) =>
+                            setAttributes({
+                                gap: newGap,
+                            })
+                        }
+                    />
                 </ToolsPanelItem>
-            </ToolsPanel>
-        </InspectorControls>
-        <InspectorControls group="color">
-            <ColorControl
-                label={__(
-                    "Active Tab Text Color",
-                    "",
-                )}
-                colorValue={activeTabTextColor}
-                onColorChange={(newColor) =>
-                    setAttributes({
-                        activeTabTextColor:
-                            newColor,
-                    })
-                }
-                onDeselect={() =>
-                    setAttributes({
-                        activeTabTextColor: "",
-                    })
-                }
-            />
-            <ColorControl
-                label={__(
-                    "Inactive Tab Text Color",
-                    "tableberg",
-                )}
-                colorValue={inactiveTabTextColor}
-                onColorChange={(newColor) =>
-                    setAttributes({
-                        inactiveTabTextColor:
-                            newColor,
-                    })
-                }
-                onDeselect={() =>
-                    setAttributes({
-                        inactiveTabTextColor: "",
-                    })
-                }
-            />
-            <ColorControl
-                label={__(
-                    "Active Tab Background Color",
-                    "tableberg",
-                )}
-                colorValue={
-                    activeTabBackgroundColor
-                }
-                onColorChange={(newColor) =>
-                    setAttributes({
-                        activeTabBackgroundColor:
-                            newColor,
-                    })
-                }
-                onDeselect={() =>
-                    setAttributes({
-                        activeTabBackgroundColor:
-                            "",
-                    })
-                }
-            />
-            <ColorControl
-                label={__(
-                    "Inactive Tab Background Color",
-                    "tableberg",
-                )}
-                colorValue={
-                    inactiveTabBackgroundColor
-                }
-                onColorChange={(newColor) =>
-                    setAttributes({
-                        inactiveTabBackgroundColor:
-                            newColor,
-                    })
-                }
-                onDeselect={() =>
-                    setAttributes({
-                        inactiveTabBackgroundColor:
-                            "",
-                    })
-                }
-            />
-        </InspectorControls>
-        <InspectorControls group="dimensions">
-            <ToolsPanelItem
-                label={__("Spacing Under Tabs", "tableberg")}
-                hasValue={() => true}
-            >
-                <SpacingControlSingle
-                    label={__(
-                        "Spacing Under Tabs",
-                        "tableberg",
-                    )}
-                    value={gap}
-                    onChange={(newGap) =>
-                        setAttributes({
-                            gap: newGap,
-                        })
-                    }
-                />
-            </ToolsPanelItem>
-        </InspectorControls>
-        <InspectorControls group="border">
-            <ToolsPanelItem
-                label={__("Tab Heading Border Radius", "tableberg")}
-                hasValue={() => true}
-            >
-                <SpacingControlSingle
-                    label={__(
-                        "Tab Heading Border Radius",
-                        "tableberg",
-                    )}
-                    value={tabBorderRadius}
-                    onChange={(newValue) =>
-                        setAttributes({
-                            tabBorderRadius: newValue,
-                        })
-                    }
-                />
-            </ToolsPanelItem>
-        </InspectorControls>
-    </>);
+            </InspectorControls>
+            <InspectorControls group="border">
+                <ToolsPanelItem
+                    label={__("Tab Heading Border Radius", "tableberg")}
+                    hasValue={() => true}
+                >
+                    <SpacingControlSingle
+                        label={__("Tab Heading Border Radius", "tableberg")}
+                        value={tabBorderRadius}
+                        onChange={(newValue) =>
+                            setAttributes({
+                                tabBorderRadius: newValue,
+                            })
+                        }
+                    />
+                </ToolsPanelItem>
+            </InspectorControls>
+        </>
+    );
 
     return (
         <div {...blockProps} className="toggle-block">
@@ -370,22 +337,24 @@ function edit({
                     className={`tab-headings ${alignment}`}
                     style={{ marginBottom: getSpacingCssSingle(gap) }}
                 >
-                    {tabs.map((tab, i) => <ToggleTab
-                        active={activeTab === i}
-                        title={tab}
-                        onClick={() => setActiveTab(i)}
-                        onDelete={() => {
-                            setDeleteIndex(i);
-                            setDeleteConfirmDialogIsOpen(true);
-                        }}
-                        styles={{
-                            activeTabBackgroundColor,
-                            inactiveTabBackgroundColor,
-                            activeTabTextColor,
-                            inactiveTabTextColor,
-                            tabBorderRadius
-                        }}
-                    />)}
+                    {tabs.map((tab, i) => (
+                        <ToggleTab
+                            active={activeTab === i}
+                            title={tab}
+                            onClick={() => setActiveTab(i)}
+                            onDelete={() => {
+                                setDeleteIndex(i);
+                                setDeleteConfirmDialogIsOpen(true);
+                            }}
+                            styles={{
+                                activeTabBackgroundColor,
+                                inactiveTabBackgroundColor,
+                                activeTabTextColor,
+                                inactiveTabTextColor,
+                                tabBorderRadius,
+                            }}
+                        />
+                    ))}
 
                     {deleteConfirmDialogIsOpen && (
                         <ConfirmDialog
@@ -400,13 +369,13 @@ function edit({
                         </ConfirmDialog>
                     )}
 
-                    {isSelected && <div className="tab-heading-add">
-                        <Button icon={plus} onClick={tabAdditionHandler} />
-                    </div>}
+                    {isSelected && (
+                        <div className="tab-heading-add">
+                            <Button icon={plus} onClick={tabAdditionHandler} />
+                        </div>
+                    )}
                 </nav>
-                <style>
-                    {innerBlocks?.map(cssTemplate).join("\n")}
-                </style>
+                <style>{innerBlocks?.map(cssTemplate).join("\n")}</style>
                 <div className="tab-content">
                     <div>
                         <div>{children}</div>
@@ -417,7 +386,13 @@ function edit({
     );
 }
 
-function ToggleTab({ title, active = false, styles, onClick, onDelete }: {
+function ToggleTab({
+    title,
+    active = false,
+    styles,
+    onClick,
+    onDelete,
+}: {
     title: string;
     active: boolean;
     onClick: () => void;
@@ -441,25 +416,20 @@ function ToggleTab({ title, active = false, styles, onClick, onDelete }: {
         color: styles.inactiveTabTextColor,
     };
 
-    return <div
-        className={
-            `tab-heading ${active ? "active" : ""}`
-        }
-        onClick={onClick}
-        data-toolbar-trigger="true"
-        style={active ? activeStyles : inactiveStyles}
-    >
-        <p tabIndex={0}>
-            {title}
-        </p>
-        <button
-            className="tab-heading-remove"
-            onClick={onDelete}
+    return (
+        <div
+            className={`tab-heading ${active ? "active" : ""}`}
+            onClick={onClick}
+            data-toolbar-trigger="true"
+            style={active ? activeStyles : inactiveStyles}
         >
-            {/*@ts-expect-error wants unnecessary props*/}
-            <Icon icon={reset} />
-        </button>
-    </div>
+            <p tabIndex={0}>{title}</p>
+            <button className="tab-heading-remove" onClick={onDelete}>
+                {/*@ts-expect-error wants unnecessary props*/}
+                <Icon icon={reset} />
+            </button>
+        </div>
+    );
 }
 
 function save() {

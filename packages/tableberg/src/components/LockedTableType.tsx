@@ -26,9 +26,7 @@ export default function LockedTableType({
                 style={style}
                 onClick={() => setVisibility(true)}
             >
-                <div className="tableberg-table-creator-btn-icon">
-                    {icon}
-                </div>
+                <div className="tableberg-table-creator-btn-icon">{icon}</div>
                 <span>{name}</span>
             </button>
             {showUpsell &&

@@ -27,8 +27,8 @@ const stringDistance = (function () {
                 ? d2 + 1
                 : d0 + 1
             : bx === ay
-            ? d1
-            : d1 + 1;
+              ? d1
+              : d1 + 1;
     }
 
     return function (a: string, b: string) {

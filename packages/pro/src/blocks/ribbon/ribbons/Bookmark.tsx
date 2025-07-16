@@ -1,7 +1,4 @@
-import {
-    InspectorControls,
-    useBlockProps,
-} from "@wordpress/block-editor";
+import { InspectorControls, useBlockProps } from "@wordpress/block-editor";
 import {
     PanelBody,
     __experimentalToolsPanelItem as ToolsPanelItem,
@@ -11,7 +8,12 @@ import {
 import { __ } from "@wordpress/i18n";
 import { CSSProperties } from "react";
 
-import { RANGE_CONFIG_POSITION, RANGE_CONFIG_SIZE, RibbonAttrs, RibbonProps } from "..";
+import {
+    RANGE_CONFIG_POSITION,
+    RANGE_CONFIG_SIZE,
+    RibbonAttrs,
+    RibbonProps,
+} from "..";
 import { SizeControl, SpacingControl } from "@tableberg/components";
 import { getSpacingStyle } from "../../../utils/styling-helpers";
 
@@ -70,7 +72,8 @@ export default function Bookmark({
                 <div
                     className="tableberg-ribbon-bookmark-content"
                     style={{
-                        background: attrs.bgGradient ?? attrs.background ?? "#ffffff",
+                        background:
+                            attrs.bgGradient ?? attrs.background ?? "#ffffff",
                         ...getSpacingStyle(iAttrs.padding, "padding"),
                     }}
                 >

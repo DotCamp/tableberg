@@ -11,16 +11,16 @@ export type VariationProps = {
         id: number;
         attributes: Record<string, string>;
     }[];
-}
+};
 
 document.addEventListener("DOMContentLoaded", () => {
     const variationPickerContainers = document.querySelectorAll<HTMLElement>(
-        ".tableberg-woo-variation-picker"
+        ".tableberg-woo-variation-picker",
     );
 
     variationPickerContainers.forEach((variationPickerContainer) => {
         const variationProps: VariationProps = JSON.parse(
-            variationPickerContainer.dataset.tablebergWooVariationProps || "{}"
+            variationPickerContainer.dataset.tablebergWooVariationProps || "{}",
         );
 
         if (!variationProps.attributes) {

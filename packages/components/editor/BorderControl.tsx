@@ -28,7 +28,7 @@ function BorderControl({
     label,
     isShownByDefault = true,
     value,
-    onChange = () => { },
+    onChange = () => {},
     resetAllFilter,
     onDeselect = () => {},
 }: BorderControlPropTypes) {
@@ -41,7 +41,7 @@ function BorderControl({
             ).getSettings()?.__experimentalFeatures?.color?.palette?.default,
         };
     }, []);
-    
+
     if (!resetAllFilter) {
         resetAllFilter = onDeselect;
     }

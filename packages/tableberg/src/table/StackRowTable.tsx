@@ -162,15 +162,17 @@ export default function StackRowTable(
         });
     }, []);
 
-    const table = <div
-        className="tableberg-table-wrapper"
-        style={{
-            ...getBorderCSS(attributes.tableBorder),
-            ...getBorderRadiusCSS(attributes.tableBorderRadius),
-        }}
-    >
-        <table {...blockProps}>{rowTemplates}</table>
-    </div>;
+    const table = (
+        <div
+            className="tableberg-table-wrapper"
+            style={{
+                ...getBorderCSS(attributes.tableBorder),
+                ...getBorderRadiusCSS(attributes.tableBorderRadius),
+            }}
+        >
+            <table {...blockProps}>{rowTemplates}</table>
+        </div>
+    );
 
     return (
         <>

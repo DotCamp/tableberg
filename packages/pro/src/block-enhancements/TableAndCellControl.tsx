@@ -69,14 +69,14 @@ export default function TableAndCellControl({
                     }}
                 />
 
-                <TextControl 
-                    label={__('Search Placeholder', 'your-text-domain')}
+                <TextControl
+                    label={__("Search Placeholder", "your-text-domain")}
                     onChange={(newPlaceholder) => {
                         setTableAttrs({
-                            searchPlaceholder: newPlaceholder
+                            searchPlaceholder: newPlaceholder,
                         });
-                    } } 
-                    value={tableAttrs.searchPlaceholder}              
+                    }}
+                    value={tableAttrs.searchPlaceholder}
                 />
 
                 {tableAttrs.search && (

@@ -32,7 +32,6 @@ import { Icon, IconPickerMini } from "@tableberg/components/icon-library";
 import { useState } from "react";
 import { link } from "@wordpress/icons";
 
-
 import {
     getSpacingStyle,
     getBorderCSS,

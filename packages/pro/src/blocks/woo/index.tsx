@@ -1,4 +1,9 @@
-import { BlockEditProps, createBlocksFromInnerBlocksTemplate, InnerBlockTemplate, registerBlockType } from "@wordpress/blocks";
+import {
+    BlockEditProps,
+    createBlocksFromInnerBlocksTemplate,
+    InnerBlockTemplate,
+    registerBlockType,
+} from "@wordpress/blocks";
 import metadata from "./block.json";
 import { WooTableIcon } from "@tableberg/shared/icons/table-creation";
 import {
@@ -7,19 +12,15 @@ import {
     useInnerBlocksProps,
     store,
     InnerBlocks,
-    InspectorControls
+    InspectorControls,
 } from "@wordpress/block-editor";
-import {
-    Button,
-    PanelBody,
-    Placeholder,
-} from "@wordpress/components";
+import { Button, PanelBody, Placeholder } from "@wordpress/components";
 import TablebergIcon from "@tableberg/shared/icons/tableberg";
 import { useEffect, useState } from "react";
 import {
     QueryClient,
     QueryClientProvider,
-    useQuery
+    useQuery,
 } from "@tanstack/react-query";
 import apiFetch from "@wordpress/api-fetch";
 import { useDispatch, useSelect } from "@wordpress/data";
@@ -60,14 +61,19 @@ export const getFieldPrettyName = (field: string, showKey: boolean = false) => {
     }
 
     return prettyName;
-}
+};
 
-function WooTableCreator({ onCreate }: {
-    onCreate: (selectedFields: string[], filters: {
-        limit: number;
-        featured: boolean;
-        on_sale: boolean;
-    }) => void
+function WooTableCreator({
+    onCreate,
+}: {
+    onCreate: (
+        selectedFields: string[],
+        filters: {
+            limit: number;
+            featured: boolean;
+            on_sale: boolean;
+        },
+    ) => void;
 }) {
     const [fields, setFields] = useState<string[]>([]);
     const [filters, setFilters] = useState<{
@@ -77,11 +83,11 @@ function WooTableCreator({ onCreate }: {
     }>({
         limit: 10,
         featured: false,
-        on_sale: false
+        on_sale: false,
     });
 
     const blockProps = useBlockProps({
-        className: "tableberg-table-creator"
+        className: "tableberg-table-creator",
     });
 
     return (
@@ -95,19 +101,16 @@ function WooTableCreator({ onCreate }: {
                 </div>
                 <FieldSelector
                     selectedFields={fields}
-                    onChange={(field) => setFields(
-                        fields => [...fields, field]
-                    )}
+                    onChange={(field) =>
+                        setFields((fields) => [...fields, field])
+                    }
                     onDelete={(fieldToDelete) => {
-                        setFields(fields.filter(field =>
-                            field !== fieldToDelete
-                        ))
+                        setFields(
+                            fields.filter((field) => field !== fieldToDelete),
+                        );
                     }}
                 />
-                <FilterSelector
-                    filters={filters}
-                    onChange={setFilters}
-                />
+                <FilterSelector filters={filters} onChange={setFilters} />
                 <Button
                     className="blocks-table__placeholder-button"
                     variant="primary"
@@ -130,7 +133,10 @@ interface WooBlockAttrs {
     };
 }
 
-const getDynamicFieldAttrs = (field: string, value: any): {
+const getDynamicFieldAttrs = (
+    field: string,
+    value: any,
+): {
     target?: string;
     targetAttribute?: string;
     value: any;
@@ -141,24 +147,24 @@ const getDynamicFieldAttrs = (field: string, value: any): {
             return {
                 target: "tableberg/image",
                 targetAttribute: "media",
-                value
+                value,
             };
         case "add_to_cart":
             return {
                 target: "tableberg/button",
                 targetAttribute: "wooCartButtonId",
-                value
+                value,
             };
         case "variation_picker":
             return {
                 target: "tableberg-pro/woo-variation-picker",
                 targetAttribute: "variationProps",
-                value
+                value,
             };
         default:
             return { value };
     }
-}
+};
 
 function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
     const { attributes, setAttributes } = props;
@@ -171,27 +177,32 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
 
     const innerBlocksProps = useInnerBlocksProps(blockProps, {
         allowedBlocks: ["tableberg/table"],
-        template: [[
-            "tableberg/table",
-            {
-                cells: fields.length,
-                rows: 1,
-                cols: fields.length,
-                enableTableHeader: "converted",
-                dynamic: true,
-            },
-            fields.map((field, col) => {
-                return [
-                    "tableberg/cell",
-                    { col, tagName: "th" },
-                    [
-                        ["tableberg/dynamic-field", {
-                            value: getFieldPrettyName(field)
-                        }],
-                    ]
-                ]
-            })
-        ]],
+        template: [
+            [
+                "tableberg/table",
+                {
+                    cells: fields.length,
+                    rows: 1,
+                    cols: fields.length,
+                    enableTableHeader: "converted",
+                    dynamic: true,
+                },
+                fields.map((field, col) => {
+                    return [
+                        "tableberg/cell",
+                        { col, tagName: "th" },
+                        [
+                            [
+                                "tableberg/dynamic-field",
+                                {
+                                    value: getFieldPrettyName(field),
+                                },
+                            ],
+                        ],
+                    ];
+                }),
+            ],
+        ],
         // @ts-ignore
         renderAppender: false,
     });
@@ -208,34 +219,35 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
         return innerBlocks[0];
     }, []);
 
-    const {
-        updateBlockAttributes,
-        removeBlocks,
-        insertBlocks,
-    } = useDispatch(store) as any as BlockEditorStoreActions;
+    const { updateBlockAttributes, removeBlocks, insertBlocks } = useDispatch(
+        store,
+    ) as any as BlockEditorStoreActions;
 
-    let {
-        isLoading: isLoadingProducts,
-        data: products
-    } = useQuery<Record<string, any>[]>({
-        queryKey: ['wooProducts', fields, filters],
+    let { isLoading: isLoadingProducts, data: products } = useQuery<
+        Record<string, any>[]
+    >({
+        queryKey: ["wooProducts", fields, filters],
         queryFn: async () => {
             const page = 1;
 
             const queryParams = new URLSearchParams({
                 per_page: limit.toString(),
                 page: page.toString(),
-                _fields: fields.join(','),
+                _fields: fields.join(","),
             });
-            if (featured) { queryParams.set("featured", "true"); }
-            if (on_sale) { queryParams.set("on_sale", "true"); }
+            if (featured) {
+                queryParams.set("featured", "true");
+            }
+            if (on_sale) {
+                queryParams.set("on_sale", "true");
+            }
 
             return await apiFetch({
                 path: `/tableberg/v1/woo/products?${queryParams}`,
-                method: 'GET',
+                method: "GET",
             });
-        }
-    })
+        },
+    });
 
     useEffect(() => {
         if (!tableBlock || !products || isLoadingProducts) {
@@ -247,22 +259,25 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
 
         if (currentCols > fields.length) {
             const removedIndices = oldFields
-                .filter(field => !fields.includes(field))
-                .map(field => oldFields.indexOf(field));
+                .filter((field) => !fields.includes(field))
+                .map((field) => oldFields.indexOf(field));
 
-            const toRemoves = tableBlock.innerBlocks.filter(
-                cell => removedIndices.includes(cell.attributes.col)
+            const toRemoves = tableBlock.innerBlocks.filter((cell) =>
+                removedIndices.includes(cell.attributes.col),
             );
 
             try {
-                removeBlocks(toRemoves.map(cell => cell.clientId), false);
-            } catch (e) { }
+                removeBlocks(
+                    toRemoves.map((cell) => cell.clientId),
+                    false,
+                );
+            } catch (e) {}
 
-            removedIndices.forEach(index => {
-                tableBlock.innerBlocks.forEach(cell => {
+            removedIndices.forEach((index) => {
+                tableBlock.innerBlocks.forEach((cell) => {
                     if (cell.attributes.col > index) {
                         updateBlockAttributes(cell.clientId, {
-                            col: cell.attributes.col - 1
+                            col: cell.attributes.col - 1,
                         });
                     }
                 });
@@ -270,22 +285,25 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
 
             updateBlockAttributes(tableBlock.clientId, {
                 cols: fields.length,
-                cells: tableBlock.attributes.cells - toRemoves.length
+                cells: tableBlock.attributes.cells - toRemoves.length,
             });
         }
 
         if (currentRows > products.length + 1) {
             const toRemoves = tableBlock.innerBlocks.filter(
-                cell => cell.attributes.row >= products.length + 1
+                (cell) => cell.attributes.row >= products.length + 1,
             );
 
             try {
-                removeBlocks(toRemoves.map(cell => cell.clientId), false);
-            } catch (e) { }
+                removeBlocks(
+                    toRemoves.map((cell) => cell.clientId),
+                    false,
+                );
+            } catch (e) {}
 
             updateBlockAttributes(tableBlock.clientId, {
                 rows: products.length + 1,
-                cells: tableBlock.attributes.cells - toRemoves.length
+                cells: tableBlock.attributes.cells - toRemoves.length,
             });
         }
 
@@ -296,25 +314,27 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                     "tableberg/cell",
                     { col, row: 0, tagName: "th" },
                     [
-                        ["tableberg/dynamic-field", {
-                            value: getFieldPrettyName(fields[col])
-                        }]
-                    ]
+                        [
+                            "tableberg/dynamic-field",
+                            {
+                                value: getFieldPrettyName(fields[col]),
+                            },
+                        ],
+                    ],
                 ]);
 
                 for (let row = 1; row < currentRows; row++) {
                     const dfAttrs = getDynamicFieldAttrs(
-                        fields[col], products[row - 1][fields[col]]
+                        fields[col],
+                        products[row - 1][fields[col]],
                     );
 
-                    dfAttrs.fetchParams = `${fields[col]}:${row-1}:${featured}:${on_sale}`;
+                    dfAttrs.fetchParams = `${fields[col]}:${row - 1}:${featured}:${on_sale}`;
 
                     toAdds.push([
                         "tableberg/cell",
                         { col, row, tagName: "td" },
-                        [
-                            ["tableberg/dynamic-field", dfAttrs]
-                        ]
+                        [["tableberg/dynamic-field", dfAttrs]],
                     ]);
                 }
             }
@@ -323,11 +343,11 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                 createBlocksFromInnerBlocksTemplate(toAdds),
                 undefined,
                 tableBlock.clientId,
-                false
+                false,
             );
             updateBlockAttributes(tableBlock.clientId, {
                 cols: fields.length,
-                cells: tableBlock.attributes.cells + toAdds.length
+                cells: tableBlock.attributes.cells + toAdds.length,
             });
         }
 
@@ -336,17 +356,16 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
             for (let row = currentRows; row < products.length + 1; row++) {
                 for (let col = 0; col < fields.length; col++) {
                     const dfAttrs = getDynamicFieldAttrs(
-                        fields[col], products[row - 1][fields[col]]
+                        fields[col],
+                        products[row - 1][fields[col]],
                     );
 
-                    dfAttrs.fetchParams = `${fields[col]}:${row-1}:${featured}:${on_sale}`;
+                    dfAttrs.fetchParams = `${fields[col]}:${row - 1}:${featured}:${on_sale}`;
 
                     toAdds.push([
                         "tableberg/cell",
                         { row, col, tagName: "td" },
-                        [
-                            ["tableberg/dynamic-field", dfAttrs]
-                        ]
+                        [["tableberg/dynamic-field", dfAttrs]],
                     ]);
                 }
             }
@@ -355,17 +374,17 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
                 createBlocksFromInnerBlocksTemplate(toAdds),
                 undefined,
                 tableBlock.clientId,
-                false
+                false,
             );
             updateBlockAttributes(tableBlock.clientId, {
                 rows: products.length + 1,
-                cells: tableBlock.attributes.cells + toAdds.length
+                cells: tableBlock.attributes.cells + toAdds.length,
             });
         }
 
-        queryClient.invalidateQueries(
-            { queryKey: ['wooProducts', fields, filters] }
-        );
+        queryClient.invalidateQueries({
+            queryKey: ["wooProducts", fields, filters],
+        });
 
         setOldFields(fields);
     }, [fields, products, isLoadingProducts, tableBlock]);
@@ -373,20 +392,18 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
     useEffect(() => {
         products?.forEach((product, r) => {
             fields.forEach((field, c) => {
-                const dfAttrs = getDynamicFieldAttrs(
-                    field, product[field]
-                );
+                const dfAttrs = getDynamicFieldAttrs(field, product[field]);
 
                 dfAttrs.fetchParams = `${field}:${r}:${featured}:${on_sale}`;
 
-                const dynamicField = tableBlock?.innerBlocks.find(
-                    cell => {
+                const dynamicField = tableBlock?.innerBlocks
+                    .find((cell) => {
                         const { col, row } = cell.attributes;
                         return col === c && row === r + 1;
-                    }
-                )?.innerBlocks.find(
-                    block => block.name === "tableberg/dynamic-field"
-                );
+                    })
+                    ?.innerBlocks.find(
+                        (block) => block.name === "tableberg/dynamic-field",
+                    );
 
                 if (dynamicField) {
                     updateBlockAttributes(dynamicField.clientId, dfAttrs);
@@ -396,58 +413,62 @@ function WooTableEdit(props: BlockEditProps<WooBlockAttrs>) {
     }, [products]);
 
     if (fields.length === 0) {
-        return <WooTableCreator
-            onCreate={(fields, filters) => {
-                setAttributes({ fields, filters });
-            }}
-        />
+        return (
+            <WooTableCreator
+                onCreate={(fields, filters) => {
+                    setAttributes({ fields, filters });
+                }}
+            />
+        );
     }
 
-    return <>
-        <div {...blockProps}>
-            <div {...innerBlocksProps} />
-        </div>
-        <InspectorControls>
-            <PanelBody title="WooCommerce fields">
-                <FieldSelector
-                    selectedFields={fields}
-                    onChange={(field) => {
-                        setAttributes(
-                            { fields: [...fields, field] }
-                        );
-                    }}
-                    onDelete={(fieldToDelete) => {
-                        setAttributes({
-                            fields: fields.filter(field =>
-                                field !== fieldToDelete
-                            )
-                        })
-                    }}
-                />
-            </PanelBody>
-            <PanelBody title="Items filtering">
-                <FilterSelector
-                    filters={filters}
-                    onChange={(filters: {
-                        limit: number;
-                        featured: boolean;
-                        on_sale: boolean;
-                    }) => {
-                        setAttributes({ filters });
-                    }}
-                />
-            </PanelBody>
-        </InspectorControls>
-    </>
+    return (
+        <>
+            <div {...blockProps}>
+                <div {...innerBlocksProps} />
+            </div>
+            <InspectorControls>
+                <PanelBody title="WooCommerce fields">
+                    <FieldSelector
+                        selectedFields={fields}
+                        onChange={(field) => {
+                            setAttributes({ fields: [...fields, field] });
+                        }}
+                        onDelete={(fieldToDelete) => {
+                            setAttributes({
+                                fields: fields.filter(
+                                    (field) => field !== fieldToDelete,
+                                ),
+                            });
+                        }}
+                    />
+                </PanelBody>
+                <PanelBody title="Items filtering">
+                    <FilterSelector
+                        filters={filters}
+                        onChange={(filters: {
+                            limit: number;
+                            featured: boolean;
+                            on_sale: boolean;
+                        }) => {
+                            setAttributes({ filters });
+                        }}
+                    />
+                </PanelBody>
+            </InspectorControls>
+        </>
+    );
 }
 
 registerBlockType(metadata as any, {
     attributes: metadata.attributes as any,
     icon: WooTableIcon,
     edit: (props: BlockEditProps<WooBlockAttrs>) => {
-        return <QueryClientProvider client={queryClient}>
-            <WooTableEdit {...props} />
-        </QueryClientProvider>
+        return (
+            <QueryClientProvider client={queryClient}>
+                <WooTableEdit {...props} />
+            </QueryClientProvider>
+        );
     },
     save: () => {
         const blockProps = useBlockProps.save();
@@ -457,5 +478,5 @@ registerBlockType(metadata as any, {
                 <InnerBlocks.Content />
             </div>
         );
-    }
+    },
 });

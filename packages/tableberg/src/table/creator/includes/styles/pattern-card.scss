@@ -1,113 +1,121 @@
-@import 'pattern-card-skeleton';
+@import "pattern-card-skeleton";
 
 :root {
-  --tableberg-pattern-card-preview-width: 450px;
-  --tableberg-pattern-card-preview-height: 270px;
-  --tableberg-pattern-card-default-border-radius: 5px;
-  --tableberg-pattern-card-preview-ratio: calc(var(--tableberg-pattern-card-preview-width) / var(--tableberg-pattern-card-preview-height));
+    --tableberg-pattern-card-preview-width: 450px;
+    --tableberg-pattern-card-preview-height: 270px;
+    --tableberg-pattern-card-default-border-radius: 5px;
+    --tableberg-pattern-card-preview-ratio: calc(
+        var(--tableberg-pattern-card-preview-width) /
+            var(--tableberg-pattern-card-preview-height)
+    );
 }
 
-
 .tableberg-pattern-library-card {
-  display: grid;
-  grid-template: 'preview' auto 'info' auto/ 1fr;
-  overflow: hidden;
-  border: 1px solid #D1D5DB;
-  color: #1F2937;
-  width: 100%;
-  cursor: pointer;
-  transition: 0.2s ease-out;
-  border-radius: var(--tableberg-pattern-card-default-border-radius);
-  font-size: 1rem;
-  line-height: 1.5rem;
-
-  &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  }
-
-  &-preview {
-    position: relative;
-    grid-area: preview;
+    display: grid;
+    grid-template: "preview" auto "info" auto/ 1fr;
     overflow: hidden;
-    min-height: var(--tableberg-pattern-card-preview-height);
-    aspect-ratio: var(--tableberg-pattern-card-preview-ratio);
-    background-color: #E5E7EB;
-    padding: 1rem;
-    border-bottom: 1px solid #D1D5DB;
+    border: 1px solid #d1d5db;
+    color: #1f2937;
+    width: 100%;
+    cursor: pointer;
+    transition: 0.2s ease-out;
+    border-radius: var(--tableberg-pattern-card-default-border-radius);
+    font-size: 1rem;
+    line-height: 1.5rem;
 
-    &-wrapper {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    &:hover {
+        transform: scale(1.02);
+        box-shadow:
+            0 4px 6px -1px rgb(0 0 0 / 0.1),
+            0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
 
-      &-image {
-        opacity: 0;
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        object-position: center;
+    &-preview {
+        position: relative;
+        grid-area: preview;
         overflow: hidden;
-        border-radius: var(--tableberg-pattern-card-default-border-radius);
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        min-height: var(--tableberg-pattern-card-preview-height);
+        aspect-ratio: var(--tableberg-pattern-card-preview-ratio);
+        background-color: #e5e7eb;
+        padding: 1rem;
+        border-bottom: 1px solid #d1d5db;
 
-        &[data-tableberg-preview-loaded=true] {
-          opacity: 1;
+        &-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &-image {
+                opacity: 0;
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                object-position: center;
+                overflow: hidden;
+                border-radius: var(
+                    --tableberg-pattern-card-default-border-radius
+                );
+                box-shadow:
+                    0 4px 6px -1px rgb(0 0 0 / 0.1),
+                    0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+                &[data-tableberg-preview-loaded="true"] {
+                    opacity: 1;
+                }
+            }
+
+            &-block_preview_wrapper {
+                width: 100%;
+                height: 100%;
+            }
         }
-      }
-
-      &-block_preview_wrapper {
-        width: 100%;
-        height: 100%;
-      }
-    }
-  }
-
-  &-info {
-    grid-area: info;
-    padding: 0 1rem;
-
-    &-header {
-      font-size: 0.875rem;
-      line-height: 1.25rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 0;
-
-      &-title {
-        flex: 1;
-      }
-
-      &-pro {
-        color: #671FEB;
-        font-weight: 700;
-      }
     }
 
-    &-footer {
-      font-size: 0.75rem;
-      line-height: 1rem;
-      padding-bottom: 0.5rem;
+    &-info {
+        grid-area: info;
+        padding: 0 1rem;
 
-      &-tags {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        color: #6B7280;
-        text-transform: capitalize;
-        gap: 0.375rem;
+        &-header {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
 
-        &-icon {
-          font-size: 125%;
+            &-title {
+                flex: 1;
+            }
+
+            &-pro {
+                color: #671feb;
+                font-weight: 700;
+            }
         }
 
-        &-listing {
-          flex: 1;
+        &-footer {
+            font-size: 0.75rem;
+            line-height: 1rem;
+            padding-bottom: 0.5rem;
+
+            &-tags {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                color: #6b7280;
+                text-transform: capitalize;
+                gap: 0.375rem;
+
+                &-icon {
+                    font-size: 125%;
+                }
+
+                &-listing {
+                    flex: 1;
+                }
+            }
         }
-      }
     }
-  }
 }

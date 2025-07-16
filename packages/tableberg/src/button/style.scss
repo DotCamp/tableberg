@@ -2,7 +2,7 @@ $blocks-block__margin: 0.5em;
 
 .wp-block-tableberg-button {
     --tableberg-button-text-hover-color: white;
-    
+
     .wp-block-button__link {
         display: inline-block;
         color: white;
@@ -12,7 +12,8 @@ $blocks-block__margin: 0.5em;
         .wp-block-button__link {
             background: var(--tableberg-button-background-color);
 
-            &:hover, &:focus {
+            &:hover,
+            &:focus {
                 background: var(--tableberg-button-hover-background-color);
             }
         }
@@ -21,7 +22,8 @@ $blocks-block__margin: 0.5em;
         .wp-block-button__link {
             color: var(--tableberg-button-text-color);
 
-            &:hover, &:focus {
+            &:hover,
+            &:focus {
                 color: var(--tableberg-button-text-hover-color);
             }
         }

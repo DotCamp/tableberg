@@ -18,21 +18,24 @@ export default [
         title: "List",
         icon: list,
         isPro: false,
-        demoUrl:"https://tableberg.com/docs/how-to-add-a-list-to-a-table-in-wordpress/"
+        demoUrl:
+            "https://tableberg.com/docs/how-to-add-a-list-to-a-table-in-wordpress/",
     },
     {
         name: "tableberg/button",
         title: "Button",
         icon: button,
         isPro: false,
-        demoUrl: "https://tableberg.com/docs/how-to-add-buttons-to-wordpress-tables/"
+        demoUrl:
+            "https://tableberg.com/docs/how-to-add-buttons-to-wordpress-tables/",
     },
     {
         name: "tableberg/image",
         title: "Image",
         icon: image,
         isPro: false,
-        demoUrl: "https://tableberg.com/docs/how-to-add-images-to-a-table-in-wordpress/"
+        demoUrl:
+            "https://tableberg.com/docs/how-to-add-images-to-a-table-in-wordpress/",
     },
     {
         name: "tableberg/styled-list",
@@ -42,7 +45,8 @@ export default [
         image: "styled_list_block_1.png",
         upsellText:
             "Elevate your lists with customizable icons as bullets for a polished look.",
-        demoUrl: "https://tableberg.com/docs/how-to-add-styled-lists-in-wordpress-tables/",
+        demoUrl:
+            "https://tableberg.com/docs/how-to-add-styled-lists-in-wordpress-tables/",
     },
     {
         name: "tableberg/ribbon",
@@ -52,7 +56,8 @@ export default [
         image: "ribbon_block_1.png",
         upsellText:
             "Overlay a decorative ribbon on your table, ideal for highlighting special offers or important notices.",
-        demoUrl: "https://tableberg.com/docs/how-to-add-ribbons-to-wordpress-tables/",
+        demoUrl:
+            "https://tableberg.com/docs/how-to-add-ribbons-to-wordpress-tables/",
     },
     {
         name: "tableberg/html",
@@ -62,7 +67,8 @@ export default [
         image: "html_block_1.png",
         upsellText:
             "Add your own HTML code to create specialized content and integrate custom elements.",
-        demoUrl:"https://tableberg.com/docs/how-to-add-custom-html-to-wordpress-tables/"
+        demoUrl:
+            "https://tableberg.com/docs/how-to-add-custom-html-to-wordpress-tables/",
     },
     {
         name: "tableberg/icon",
@@ -72,7 +78,8 @@ export default [
         image: "icon_block_1.png",
         upsellText:
             "Add scalable icons to your tables to support text and enhance user engagement.",
-        demoUrl: "https://tableberg.com/docs/how-to-add-icons-to-wordpress-tables/"
+        demoUrl:
+            "https://tableberg.com/docs/how-to-add-icons-to-wordpress-tables/",
     },
     {
         name: "tableberg/star-rating",
@@ -82,7 +89,8 @@ export default [
         image: "star_rating_block_1.png",
         upsellText:
             "Add customizable star ratings, perfect for reviews and comparison tables.",
-        demoUrl:"https://tableberg.com/docs/how-to-add-star-rating-in-wordpress/",
+        demoUrl:
+            "https://tableberg.com/docs/how-to-add-star-rating-in-wordpress/",
     },
 ];
 

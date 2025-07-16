@@ -1,6 +1,6 @@
 import {
     TablebergBlockAttrs,
-    TablebergCellInstance
+    TablebergCellInstance,
 } from "@tableberg/shared/types";
 import metadata from "./block.json";
 import { createBlock } from "@wordpress/blocks";
@@ -169,4 +169,4 @@ export default {
         },
     ],
     to: [],
-}
+};

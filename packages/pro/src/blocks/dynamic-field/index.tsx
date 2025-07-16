@@ -12,14 +12,14 @@ import { useDispatch, useSelect } from "@wordpress/data";
 const allowedBlocks = [
     "core/paragraph",
     "tableberg/button",
-    "tableberg/image"
+    "tableberg/image",
 ] as const;
 
 type DynamicFieldBlockAttr = {
     value: string;
-    target: typeof allowedBlocks[number];
+    target: (typeof allowedBlocks)[number];
     targetAttribute: string;
-}
+};
 
 function edit({ attributes, clientId }: BlockEditProps<DynamicFieldBlockAttr>) {
     const { value, target, targetAttribute } = attributes;
@@ -29,10 +29,10 @@ function edit({ attributes, clientId }: BlockEditProps<DynamicFieldBlockAttr>) {
         // @ts-ignore
         allowedBlocks: allowedBlocks,
         template: [
-            target === "tableberg/button" ?
-                [target, { [targetAttribute]: value, text: "Add to cart" }] :
-                [target, { [targetAttribute]: value }]
-        ]
+            target === "tableberg/button"
+                ? [target, { [targetAttribute]: value, text: "Add to cart" }]
+                : [target, { [targetAttribute]: value }],
+        ],
     });
 
     const targetBlock = useSelect((select) => {
@@ -40,18 +40,18 @@ function edit({ attributes, clientId }: BlockEditProps<DynamicFieldBlockAttr>) {
 
         const block = getBlock(clientId);
 
-        return block?.innerBlocks.find(
-            ({ name }) => name === target
-        );
+        return block?.innerBlocks.find(({ name }) => name === target);
     }, []);
 
-    const {
-        updateBlockAttributes
-    } = useDispatch(store) as any as BlockEditorStoreActions;
+    const { updateBlockAttributes } = useDispatch(
+        store,
+    ) as any as BlockEditorStoreActions;
 
     if (targetBlock) {
         if (targetBlock.attributes[targetAttribute] != value) {
-            updateBlockAttributes(targetBlock.clientId, { [targetAttribute]: value });
+            updateBlockAttributes(targetBlock.clientId, {
+                [targetAttribute]: value,
+            });
         }
     }
 
@@ -70,5 +70,5 @@ registerBlockType(metadata as any, {
                 <InnerBlocks.Content />
             </div>
         );
-    }
+    },
 });

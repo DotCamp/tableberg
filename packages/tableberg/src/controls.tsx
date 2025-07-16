@@ -263,13 +263,12 @@ function TablebergControls({
                                     }
                                     disabled={tableAttributes.fixedColWidth}
                                 />
-                                {!!tableAttributes.fixedColWidth &&
+                                {!!tableAttributes.fixedColWidth && (
                                     <p style={{ marginBottom: 0 }}>
-                                        To change the column width,
-                                        disable the ‘Fixed width cells’
-                                        option above.
+                                        To change the column width, disable the
+                                        ‘Fixed width cells’ option above.
                                     </p>
-                                }
+                                )}
                             </ToolsPanelItem>
                             <ToolsPanelItem
                                 label={__("Row Height", "tableberg")}
@@ -405,9 +404,14 @@ function TablebergControls({
                             <textarea
                                 value={tableAttributes.caption}
                                 onChange={(e) =>
-                                    setTableAttributes({ caption: e.target.value })
+                                    setTableAttributes({
+                                        caption: e.target.value,
+                                    })
                                 }
-                                placeholder={__("Enter table caption...", "tableberg")}
+                                placeholder={__(
+                                    "Enter table caption...",
+                                    "tableberg",
+                                )}
                                 style={{
                                     width: "100%",
                                     minHeight: "60px",

@@ -1,9 +1,9 @@
-import { type FC } from 'react';
+import { type FC } from "react";
 
 const SKELETON_WIDTH = {
-	SMALL: 25,
-	MEDIUM: 50,
-	LARGE: 100,
+    SMALL: 25,
+    MEDIUM: 50,
+    LARGE: 100,
 };
 
 type SKELETON_WIDTH = keyof typeof SKELETON_WIDTH;
@@ -19,25 +19,25 @@ type SKELETON_WIDTH = keyof typeof SKELETON_WIDTH;
  * @class
  */
 const PatternCardTextSkeleton: FC<{
-	classNames?: string[];
-	width?: SKELETON_WIDTH;
-}> = ({ classNames = [], width = 'LARGE' }) => {
-	return (
-		<div
-			className={[
-				'tableberg-pattern-library-card-skeleton-text',
-				...classNames,
-			].join(' ')}
-		>
-			<div
-				className={
-					'tableberg-pattern-library-card-skeleton-text-overlay'
-				}
-				style={{ width: `${SKELETON_WIDTH[width]}%` }}
-			/>
-			&#128128;
-		</div>
-	);
+    classNames?: string[];
+    width?: SKELETON_WIDTH;
+}> = ({ classNames = [], width = "LARGE" }) => {
+    return (
+        <div
+            className={[
+                "tableberg-pattern-library-card-skeleton-text",
+                ...classNames,
+            ].join(" ")}
+        >
+            <div
+                className={
+                    "tableberg-pattern-library-card-skeleton-text-overlay"
+                }
+                style={{ width: `${SKELETON_WIDTH[width]}%` }}
+            />
+            &#128128;
+        </div>
+    );
 };
 
 export default PatternCardTextSkeleton;

@@ -118,7 +118,7 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                                 } else {
                                     const sratio = attributes.aspectRatio.split(
                                         "/",
-                                        2
+                                        2,
                                     );
                                     if (sratio.length > 1) {
                                         ratio =
@@ -155,16 +155,16 @@ function Edit(props: BlockEditProps<AttributesTypes>) {
                                     <RichText
                                         identifier="caption"
                                         className={__experimentalGetElementClassName(
-                                            "caption"
+                                            "caption",
                                         )}
                                         tagName="figcaption"
                                         aria-label={__(
                                             "Image caption text",
-                                            "tableberg"
+                                            "tableberg",
                                         )}
                                         placeholder={__(
                                             "Add caption",
-                                            "tableberg"
+                                            "tableberg",
                                         )}
                                         value={caption}
                                         onChange={(value: string) =>

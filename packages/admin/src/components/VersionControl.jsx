@@ -18,7 +18,7 @@ function VersionControl({ pluginVersion, allVersions, onVersionRollBack }) {
 
     const sortedVersions = useMemo(
         () => allVersions.sort().reverse(),
-        [allVersions]
+        [allVersions],
     );
 
     /**

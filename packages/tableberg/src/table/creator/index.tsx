@@ -14,12 +14,7 @@ import {
     createBlock,
     createBlocksFromInnerBlocksTemplate,
 } from "@wordpress/blocks";
-import {
-    Button,
-    Flex,
-    Placeholder,
-    TextControl,
-} from "@wordpress/components";
+import { Button, Flex, Placeholder, TextControl } from "@wordpress/components";
 import { useDispatch } from "@wordpress/data";
 import { useState } from "react";
 import metadata from "../../block.json";
@@ -45,17 +40,24 @@ export default function TableCreator({ clientId, proProps }: Props) {
         let initialInnerBlocks: InnerBlockTemplate[] = [];
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
-                initialInnerBlocks.push(["tableberg/cell", { row: i, col: j }, [["core/paragraph"]]]);
+                initialInnerBlocks.push([
+                    "tableberg/cell",
+                    { row: i, col: j },
+                    [["core/paragraph"]],
+                ]);
             }
         }
 
-        storeActions.replaceInnerBlocks(clientId, createBlocksFromInnerBlocksTemplate(initialInnerBlocks));
+        storeActions.replaceInnerBlocks(
+            clientId,
+            createBlocksFromInnerBlocksTemplate(initialInnerBlocks),
+        );
 
         storeActions.updateBlockAttributes(clientId, {
             version: metadata.version,
             cells: initialInnerBlocks.length,
             rows,
-            cols
+            cols,
         });
     };
 
@@ -67,7 +69,9 @@ export default function TableCreator({ clientId, proProps }: Props) {
                 label={"Tableberg"}
                 icon={<BlockIcon icon={TablebergIcon} />}
             >
-                <div className="tableberg-table-creator-heading">Create Blank Table</div>
+                <div className="tableberg-table-creator-heading">
+                    Create Blank Table
+                </div>
                 <Flex gap="10px" justify="center" align="end">
                     <TextControl
                         __nextHasNoMarginBottom
@@ -75,7 +79,7 @@ export default function TableCreator({ clientId, proProps }: Props) {
                         label={"Column count"}
                         value={String(cols)}
                         onChange={(count) => {
-                            setCols((count === "") ? undefined : Number(count));
+                            setCols(count === "" ? undefined : Number(count));
                         }}
                         min="1"
                         className="blocks-table__placeholder-input"
@@ -86,7 +90,7 @@ export default function TableCreator({ clientId, proProps }: Props) {
                         label={"Row count"}
                         value={String(rows)}
                         onChange={(count) => {
-                            setRows((count === "") ? undefined : Number(count));
+                            setRows(count === "" ? undefined : Number(count));
                         }}
                         min="1"
                         className="blocks-table__placeholder-input"
@@ -113,20 +117,28 @@ export default function TableCreator({ clientId, proProps }: Props) {
                         </div>
                         <span>Pre-Built Table</span>
                     </button>
-                    {!IS_PRO ? <LockedTableType
-                        icon={WooTableIcon}
-                        selected={"product-table"}
-                        name={"WooCommerce Table"}
-                        link={"https://tableberg.com/woocommerce-product-table-plugin/"}
-                    /> : <button
-                        className="tableberg-table-creator-btn"
-                        onClick={() => proProps.onCreateWooTable(storeActions)}
-                    >
-                        <div className="tableberg-table-creator-btn-icon">
-                            {WooTableIcon}
-                        </div>
-                        <span>WooCommerce Table</span>
-                    </button>}
+                    {!IS_PRO ? (
+                        <LockedTableType
+                            icon={WooTableIcon}
+                            selected={"product-table"}
+                            name={"WooCommerce Table"}
+                            link={
+                                "https://tableberg.com/woocommerce-product-table-plugin/"
+                            }
+                        />
+                    ) : (
+                        <button
+                            className="tableberg-table-creator-btn"
+                            onClick={() =>
+                                proProps.onCreateWooTable(storeActions)
+                            }
+                        >
+                            <div className="tableberg-table-creator-btn-icon">
+                                {WooTableIcon}
+                            </div>
+                            <span>WooCommerce Table</span>
+                        </button>
+                    )}
                     <button className="tableberg-table-creator-btn tableberg-upcoming">
                         <div className="tableberg-table-creator-btn-icon">
                             {DataTableIcon}

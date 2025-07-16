@@ -44,7 +44,9 @@ function WelcomePage() {
                                 videoId={youtubeVideoId}
                             />
                         </BoxContentProvider>
-                        {!tablebergAdminMenuData.misc.pro_status && <UpgradeBoxContent />}
+                        {!tablebergAdminMenuData.misc.pro_status && (
+                            <UpgradeBoxContent />
+                        )}
                     </div>
                     <div className={"tableberg-welcome-content__right-sidebar"}>
                         <BoxContentProvider contentId={"documentation"}>

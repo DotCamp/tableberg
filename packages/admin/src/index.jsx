@@ -12,6 +12,6 @@ if (mountPoint) {
     root.render(
         <AdminMenuWrapper>
             <AdminMenuContainer />
-        </AdminMenuWrapper>
+        </AdminMenuWrapper>,
     );
 }

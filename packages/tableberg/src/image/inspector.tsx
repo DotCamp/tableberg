@@ -2,7 +2,8 @@
  * Wordpress Dependencies
  */
 import {
-    InspectorControls, useBlockEditContext,
+    InspectorControls,
+    useBlockEditContext,
     __experimentalBorderRadiusControl as BorderRadiusControl,
 } from "@wordpress/block-editor";
 import { useMemo } from "react";
@@ -154,7 +155,7 @@ function Inspector(props: MainPropTypes) {
                                 min={0}
                                 value={width}
                                 onChange={(
-                                    newWidth: string | number | undefined
+                                    newWidth: string | number | undefined,
                                 ) => setAttributes({ width: newWidth })}
                                 size={"__unstable-large"}
                             />
@@ -175,7 +176,7 @@ function Inspector(props: MainPropTypes) {
                                 min={0}
                                 value={height}
                                 onChange={(
-                                    newHeight: string | number | undefined
+                                    newHeight: string | number | undefined,
                                 ) => setAttributes({ height: newHeight })}
                                 size={"__unstable-large"}
                             />
@@ -202,7 +203,7 @@ function Inspector(props: MainPropTypes) {
                             }
                             help={__(
                                 "Select the size of the source image.",
-                                "tableberg"
+                                "tableberg",
                             )}
                             size={"__unstable-large"}
                         />
@@ -214,8 +215,8 @@ function Inspector(props: MainPropTypes) {
                 <BorderControl
                     value={attributes.border}
                     label={__("Border", "tableberg")}
-                    onChange={
-                        (newBorder) => setAttributes({ border: newBorder })
+                    onChange={(newBorder) =>
+                        setAttributes({ border: newBorder })
                     }
                     onDeselect={() => setAttributes({ border: undefined })}
                 />
@@ -239,13 +240,14 @@ function Inspector(props: MainPropTypes) {
                             values={attributes.borderRadius}
                             onChange={(newBorderRadii: any) => {
                                 setAttributes({
-                                    borderRadius: splitBorderRadius(newBorderRadii),
+                                    borderRadius:
+                                        splitBorderRadius(newBorderRadii),
                                 });
                             }}
                         />
                     </div>
                 </ToolsPanelItem>
-            </InspectorControls >
+            </InspectorControls>
         </>
     );
 }

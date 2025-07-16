@@ -15,7 +15,7 @@ function AdminMenuContainer() {
     const route = url.searchParams.get("route");
 
     const [currentRoutePath, setCurrentRoutePath] = useState(
-        route ?? "welcome"
+        route ?? "welcome",
     );
     return (
         <div className={"tableberg-admin-menu-container"}>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { createPortal } from 'react-dom';
+import React from "react";
+import { createPortal } from "react-dom";
 
 /**
  * Portal component.
@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom';
  * @class
  */
 function Portal({ children, target }) {
-	return createPortal(children, target);
+    return createPortal(children, target);
 }
 
 /**

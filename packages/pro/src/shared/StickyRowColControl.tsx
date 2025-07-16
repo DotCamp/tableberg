@@ -6,7 +6,7 @@ interface Props {
     setAttrs: (attrs: Partial<TablebergBlockAttrs>) => void;
 }
 
-export default function StickyRowColControl({attrs, setAttrs}: Props) {
+export default function StickyRowColControl({ attrs, setAttrs }: Props) {
     return (
         <PanelBody title="[PRO] Table Sticky Row/Col">
             <ToggleControl

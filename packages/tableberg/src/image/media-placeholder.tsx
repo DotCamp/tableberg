@@ -20,7 +20,7 @@ function CustomMediaPlaceholder(props: MainPropTypes) {
                 icon={imageIcon}
                 label={__("Image", "tableberg")}
                 instructions={__(
-                    "Upload an image file, pick one from your media library, or add one with a URL."
+                    "Upload an image file, pick one from your media library, or add one with a URL.",
                 )}
             >
                 {content}

@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 /**
  * Props for InView component.
  */
 interface InViewProps {
-	children: React.ReactNode;
-	viewRatio?: number;
-	classNames?: string[];
+    children: React.ReactNode;
+    viewRatio?: number;
+    classNames?: string[];
 }
 
 /**
@@ -20,55 +20,55 @@ interface InViewProps {
  * @class
  */
 const InView: React.FC<InViewProps> = ({
-	children,
-	viewRatio = 0.1,
-	classNames = [],
+    children,
+    viewRatio = 0.1,
+    classNames = [],
 }) => {
-	const [isInView, setIsInView] = useState(false);
+    const [isInView, setIsInView] = useState(false);
 
-	const wrapperRef = useRef(null);
+    const wrapperRef = useRef(null);
 
-	// Component observer initialization.
-	const observer = useMemo(
-		() =>
-			new IntersectionObserver(
-				([entry]) => {
-					const { isIntersecting } = entry;
+    // Component observer initialization.
+    const observer = useMemo(
+        () =>
+            new IntersectionObserver(
+                ([entry]) => {
+                    const { isIntersecting } = entry;
 
-					// only update state if element is in view
-					if (isIntersecting) {
-						setIsInView(isIntersecting);
-					}
-				},
-				{ threshold: viewRatio }
-			),
-		[viewRatio]
-	);
+                    // only update state if element is in view
+                    if (isIntersecting) {
+                        setIsInView(isIntersecting);
+                    }
+                },
+                { threshold: viewRatio },
+            ),
+        [viewRatio],
+    );
 
-	// Class list for the wrapper.
-	const classList = useMemo(
-		() => ['tableberg-in-view-wrapper', ...classNames].join(' '),
-		[classNames]
-	);
+    // Class list for the wrapper.
+    const classList = useMemo(
+        () => ["tableberg-in-view-wrapper", ...classNames].join(" "),
+        [classNames],
+    );
 
-	useEffect(() => {
-		if (wrapperRef.current) {
-			observer.observe(wrapperRef.current);
-		}
-	}, [observer, wrapperRef]);
+    useEffect(() => {
+        if (wrapperRef.current) {
+            observer.observe(wrapperRef.current);
+        }
+    }, [observer, wrapperRef]);
 
-	// disconnect observer when component is in view to prevent multiple calls
-	useEffect(() => {
-		if (isInView) {
-			observer.disconnect();
-		}
-	}, [observer, isInView]);
+    // disconnect observer when component is in view to prevent multiple calls
+    useEffect(() => {
+        if (isInView) {
+            observer.disconnect();
+        }
+    }, [observer, isInView]);
 
-	return (
-		<div className={classList} ref={wrapperRef}>
-			{isInView && children}
-		</div>
-	);
+    return (
+        <div className={classList} ref={wrapperRef}>
+            {isInView && children}
+        </div>
+    );
 };
 
 export default InView;

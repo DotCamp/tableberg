@@ -84,21 +84,21 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
                             />
                         </div>
                     </RightContainerItem>
-                    {!tablebergAdminMenuData.misc.pro_status && <RightContainerItem>
-                        <AssetProvider assetIds={["proBuyUrl"]}>
-                            {({ proBuyUrl }) => (
-                                <ButtonLink
-                                    url={proBuyUrl}
-                                    title="Upgrade to PRO"
-                                />
-                            )}
-                        </AssetProvider>
-                    </RightContainerItem>}
+                    {!tablebergAdminMenuData.misc.pro_status && (
+                        <RightContainerItem>
+                            <AssetProvider assetIds={["proBuyUrl"]}>
+                                {({ proBuyUrl }) => (
+                                    <ButtonLink
+                                        url={proBuyUrl}
+                                        title="Upgrade to PRO"
+                                    />
+                                )}
+                            </AssetProvider>
+                        </RightContainerItem>
+                    )}
                 </div>
             </div>
-            <div
-                className={"dropdown-navigation"}
-            >
+            <div className={"dropdown-navigation"}>
                 <div className={"dropdown-drawer"}>
                     <Navigation
                         routes={routeObjectsMinus404}

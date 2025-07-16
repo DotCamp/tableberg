@@ -7,9 +7,7 @@ import {
     useBlockEditContext,
     __experimentalBorderRadiusControl as RadiusControl,
 } from "@wordpress/block-editor";
-import {
-    __experimentalToolsPanelItem as ToolsPanelItem,
-} from "@wordpress/components";
+import { __experimentalToolsPanelItem as ToolsPanelItem } from "@wordpress/components";
 
 interface BorderRadiusControlPropTypes {
     label: string;
@@ -46,7 +44,7 @@ function BorderRadiusControl({
             return;
         }
         onChange(value);
-    }
+    };
 
     return (
         <ToolsPanelItem
@@ -57,10 +55,7 @@ function BorderRadiusControl({
             label={label}
             onDeselect={onDeselect}
         >
-            <RadiusControl
-                onChange={handleChange}
-                values={value}
-            />
+            <RadiusControl onChange={handleChange} values={value} />
         </ToolsPanelItem>
     );
 }
