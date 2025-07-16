@@ -7,9 +7,11 @@
         "build": "pnpm --recursive --parallel run build",
         "export": "pnpm --recursive --parallel run export",
         "patterns:get": "node ./scripts/export-patterns.js",
-        "format": "pnpm run format:js",
+        "format": "pnpm run format:js && pnpm run format:php",
         "format:js": "prettier --write \"packages/**/*.{js,jsx,ts,tsx,scss,css}\"",
-        "check:js": "prettier --check \"packages/**/*.{js,jsx,ts,tsx,scss,css}\""
+        "format:php": "composer run format",
+        "check:js": "prettier --check \"packages/**/*.{js,jsx,ts,tsx,scss,css}\"",
+        "check:php": "composer run check"
     },
     "keywords": [],
     "author": "Dotcamp",
