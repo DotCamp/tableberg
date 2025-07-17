@@ -1,14 +1,149 @@
-.tableberg-ai-modal {
-    .components-modal__content {
-        padding: 24px;
-        min-height: 400px;
+// Custom modal backdrop and container
+.tableberg-custom-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 100000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tableberg-custom-modal-container {
+    width: 800px;
+    max-width: 90vw;
+    height: 850px;
+    max-height: 95vh;
+    min-height: 700px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    outline: none;
+}
+
+.tableberg-custom-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #fff;
+}
+
+.tableberg-custom-modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.tableberg-custom-modal-close {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+    padding: 0;
+    
+    &:hover {
+        background: #f0f0f0;
+    }
+}
+
+.tableberg-custom-modal-content {
+    overflow-y: auto;
+    background: #fff;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: 
+        "header"
+        "content"
+        "footer";
+}
+
+// Header section
+.tableberg-ai-modal-header {
+    grid-area: header;
+    padding: 24px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    .tableberg-ai-modal-back {
+        margin-right: 16px;
+        
+        &:hover {
+            color: var(--wp-admin-theme-color);
+        }
+    }
+}
+
+// Breadcrumb navigation
+.tableberg-ai-modal-breadcrumb {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #757575;
+    
+    &-step {
+        color: #757575;
+        cursor: pointer;
+        
+        &:hover {
+            color: var(--wp-admin-theme-color);
+        }
+    }
+    
+    &-separator {
+        margin: 0 8px;
+        color: #ccc;
+    }
+    
+    &-current {
+        color: #1e1e1e;
+        font-weight: 500;
+    }
+}
+
+// Main content section
+.tableberg-ai-modal-content {
+    grid-area: content;
+    padding: 24px;
+    overflow-y: auto;
+    background: #fff;
+}
+
+// Footer section
+.tableberg-ai-modal-footer {
+    grid-area: footer;
+    padding: 20px 24px;
+    border-top: 1px solid #e0e0e0;
+    background: #fff;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    
+    .components-button {
+        min-width: 180px;
+        height: 40px;
     }
 }
 
 // Method selection screen
 .tableberg-ai-modal-methods {
     h3 {
-        margin: 0 0 24px;
+        margin: 0 0 32px;
         font-size: 18px;
         font-weight: 500;
         text-align: center;
@@ -77,32 +212,51 @@
     color: #757575;
 }
 
-// Prompt input
+// Prompt input section
 .tableberg-ai-prompt-input {
     .components-base-control {
         margin-bottom: 20px;
     }
+    
+    .components-base-control__label {
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    
+    .components-textarea-control__input {
+        min-height: 100px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
 }
 
 .tableberg-ai-templates {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     
     &-label {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 500;
         margin: 0 0 8px;
         color: #1e1e1e;
     }
+    
+    .components-flex {
+        gap: 6px;
+    }
+    
+    .components-button {
+        font-size: 12px;
+        height: 30px;
+    }
 }
 
 .tableberg-ai-examples {
-    margin-bottom: 24px;
     padding: 16px;
     background: #f8f9fa;
-    border-radius: 4px;
+    border-radius: 6px;
     
     &-label {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 500;
         margin: 0 0 8px;
         color: #1e1e1e;
@@ -110,12 +264,13 @@
     
     ul {
         margin: 0;
-        padding-left: 20px;
+        padding-left: 18px;
         
         li {
-            font-size: 12px;
-            color: #757575;
-            margin-bottom: 4px;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 6px;
+            line-height: 1.3;
             
             &:last-child {
                 margin-bottom: 0;
@@ -131,7 +286,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
+    height: 100%;
     text-align: center;
     
     .components-spinner {
@@ -155,27 +310,15 @@
         color: #757575;
         animation: fadeInOut 3s infinite;
         
-        &:nth-child(1) {
-            animation-delay: 0s;
-        }
-        
-        &:nth-child(2) {
-            animation-delay: 1s;
-        }
-        
-        &:nth-child(3) {
-            animation-delay: 2s;
-        }
+        &:nth-child(1) { animation-delay: 0s; }
+        &:nth-child(2) { animation-delay: 1s; }
+        &:nth-child(3) { animation-delay: 2s; }
     }
 }
 
 @keyframes fadeInOut {
-    0%, 100% {
-        opacity: 0.4;
-    }
-    33% {
-        opacity: 1;
-    }
+    0%, 100% { opacity: 0.4; }
+    33% { opacity: 1; }
 }
 
 // Error state
@@ -185,30 +328,36 @@
     }
 }
 
-// Actions
+// Actions for error state
 .tableberg-ai-modal-actions {
     display: flex;
     gap: 12px;
-    justify-content: flex-end;
-    margin-top: 24px;
+    justify-content: center;
+    margin-top: 20px;
     
     .components-button {
-        min-width: 100px;
+        min-width: 120px;
     }
 }
 
 // Configuration notice
 .tableberg-ai-modal-configure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
     text-align: center;
-    padding: 20px;
     
     .components-notice {
         margin-bottom: 20px;
+        max-width: 500px;
     }
     
     p {
         font-size: 14px;
-        margin: 0 0 20px;
+        margin: 0 0 24px;
         color: #1e1e1e;
+        max-width: 400px;
     }
 }

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-    Modal,
     Button,
     TextareaControl,
     Notice,
@@ -11,6 +10,7 @@ import apiFetch from "@wordpress/api-fetch";
 import { createBlock } from "@wordpress/blocks";
 import LoadingState from "./components/LoadingState";
 import PromptInput from "./components/PromptInput";
+import CustomModal from "../../components/CustomModal";
 import "./ai-table-modal.scss";
 
 interface Props {
@@ -256,6 +256,69 @@ export default function AITableModal({ onClose, onInsert }: Props) {
         return null;
     };
 
+    const renderHeader = () => {
+        if (isCheckingStatus || !aiStatus?.is_pro || !aiStatus?.configured) {
+            return null;
+        }
+
+        return (
+            <div className="tableberg-ai-modal-header">
+                {state === "input" && (
+                    <Button
+                        variant="tertiary"
+                        onClick={() => {
+                            setState("method-selection");
+                            setMethod(null);
+                            setError(null);
+                        }}
+                        className="tableberg-ai-modal-back"
+                    >
+                        ← {__("Back to methods", "tableberg")}
+                    </Button>
+                )}
+                
+                <div className="tableberg-ai-modal-breadcrumb">
+                    {state === "method-selection" && (
+                        <span className="tableberg-ai-modal-breadcrumb-current">
+                            {__("Choose Method", "tableberg")}
+                        </span>
+                    )}
+                    {state === "input" && method && (
+                        <>
+                            <span className="tableberg-ai-modal-breadcrumb-step">
+                                {__("Choose Method", "tableberg")}
+                            </span>
+                            <span className="tableberg-ai-modal-breadcrumb-separator">›</span>
+                            <span className="tableberg-ai-modal-breadcrumb-current">
+                                {method === "prompt" && __("From Prompt", "tableberg")}
+                                {method === "context" && __("From Page Content", "tableberg")}
+                                {method === "image" && __("From Image", "tableberg")}
+                            </span>
+                        </>
+                    )}
+                    {(state === "processing" || state === "error") && method && (
+                        <>
+                            <span className="tableberg-ai-modal-breadcrumb-step">
+                                {__("Choose Method", "tableberg")}
+                            </span>
+                            <span className="tableberg-ai-modal-breadcrumb-separator">›</span>
+                            <span className="tableberg-ai-modal-breadcrumb-step">
+                                {method === "prompt" && __("From Prompt", "tableberg")}
+                                {method === "context" && __("From Page Content", "tableberg")}
+                                {method === "image" && __("From Image", "tableberg")}
+                            </span>
+                            <span className="tableberg-ai-modal-breadcrumb-separator">›</span>
+                            <span className="tableberg-ai-modal-breadcrumb-current">
+                                {state === "processing" && __("Generating", "tableberg")}
+                                {state === "error" && __("Error", "tableberg")}
+                            </span>
+                        </>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
     const renderContent = () => {
         if (isCheckingStatus) {
             return (
@@ -319,50 +382,77 @@ export default function AITableModal({ onClose, onInsert }: Props) {
             );
         }
 
-        switch (state) {
-            case "method-selection":
-                return renderMethodSelection();
+        return (
+            <>
+                {renderHeader()}
+                <div className="tableberg-ai-modal-content">
+                    {(() => {
+                        switch (state) {
+                            case "method-selection":
+                                return renderMethodSelection();
 
-            case "input":
-                return renderInput();
+                            case "input":
+                                return renderInput();
 
-            case "processing":
-                return (
-                    <LoadingState
-                        message={__("Creating your table...", "tableberg")}
-                    />
-                );
+                            case "processing":
+                                return (
+                                    <LoadingState
+                                        message={__("Creating your table...", "tableberg")}
+                                    />
+                                );
 
-            case "error":
-                return (
-                    <div className="tableberg-ai-modal-error">
-                        <Notice status="error" isDismissible={false}>
-                            {error}
-                        </Notice>
-                        <div className="tableberg-ai-modal-actions">
-                            <Button
-                                variant="secondary"
-                                onClick={() => {
-                                    setState("input");
-                                    setError(null);
-                                }}
-                            >
-                                {__("Try Again", "tableberg")}
-                            </Button>
-                            <Button variant="tertiary" onClick={onClose}>
-                                {__("Cancel", "tableberg")}
-                            </Button>
-                        </div>
-                    </div>
-                );
+                            case "error":
+                                return (
+                                    <div className="tableberg-ai-modal-error">
+                                        <Notice status="error" isDismissible={false}>
+                                            {error}
+                                        </Notice>
+                                        <div className="tableberg-ai-modal-actions">
+                                            <Button
+                                                variant="secondary"
+                                                onClick={() => {
+                                                    setState("input");
+                                                    setError(null);
+                                                }}
+                                            >
+                                                {__("Try Again", "tableberg")}
+                                            </Button>
+                                            <Button 
+                                                variant="tertiary" 
+                                                onClick={() => {
+                                                    setState("method-selection");
+                                                    setMethod(null);
+                                                    setError(null);
+                                                }}
+                                            >
+                                                {__("Choose Different Method", "tableberg")}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                );
 
-            default:
-                return null;
-        }
+                            default:
+                                return null;
+                        }
+                    })()}
+                </div>
+                <div className="tableberg-ai-modal-footer">
+                    <Button
+                        variant="primary"
+                        onClick={generateTable}
+                        disabled={isGenerating || !prompt.trim()}
+                    >
+                        {isGenerating
+                            ? __("Generating...", "tableberg")
+                            : __("Generate & Insert Table", "tableberg")}
+                    </Button>
+                </div>
+            </>
+        );
     };
 
     return (
-        <Modal
+        <CustomModal
             title={__("AI Table", "tableberg")}
             onRequestClose={onClose}
             className="tableberg-ai-modal"
@@ -370,6 +460,6 @@ export default function AITableModal({ onClose, onInsert }: Props) {
             shouldCloseOnClickOutside={!isGenerating}
         >
             {renderContent()}
-        </Modal>
+        </CustomModal>
     );
 }

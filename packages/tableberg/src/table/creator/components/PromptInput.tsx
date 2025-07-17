@@ -84,18 +84,6 @@ export default function PromptInput({ value, onChange, onGenerate, isGenerating 
                     <li>{__("SaaS pricing table with feature checkmarks, star ratings, and signup buttons", "tableberg")}</li>
                 </ul>
             </div>
-
-            <div className="tableberg-ai-modal-actions">
-                <Button
-                    variant="primary"
-                    onClick={onGenerate}
-                    disabled={isGenerating || !value.trim()}
-                >
-                    {isGenerating
-                        ? __("Generating...", "tableberg")
-                        : __("Generate & Insert Table", "tableberg")}
-                </Button>
-            </div>
         </div>
     );
 }

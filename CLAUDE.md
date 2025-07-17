@@ -29,18 +29,14 @@ pnpm patterns:get
 
 ### Code Quality
 
+**IMPORTANT**: Do NOT run linting or formatting scripts. These may modify files unnecessarily and cause conflicts. The build process handles this automatically.
+
 ```bash
-# Lint JavaScript/TypeScript
-npx wp-scripts lint-js
-
-# Lint CSS/SCSS
-npx wp-scripts lint-style
-
-# Format code with Prettier
-npx wp-scripts format
-
-# Check package.json files
-npx wp-scripts lint-pkg-json
+# These commands should NOT be run manually:
+# npx wp-scripts lint-js
+# npx wp-scripts lint-style 
+# npx wp-scripts format
+# npx wp-scripts lint-pkg-json
 ```
 
 ### Testing
@@ -259,7 +255,7 @@ When updating plugin version, modify in:
 
 #### Before Committing
 
-1. **Run all linting**: `npx wp-scripts lint-js && npx wp-scripts lint-style`
+1. **DO NOT run linting commands manually** - These are handled automatically by the build process
 2. **Test in multiple browsers**: Chrome, Firefox, Safari minimum
 3. **Test WordPress versions**: Current and previous major version
 4. **Test with common plugins**: WooCommerce, Yoast, etc.
@@ -309,3 +305,14 @@ When updating plugin version, modify in:
 -   **Missing Text Domain**: All strings need 'tableberg' domain
 -   **Skipping Validation**: Always validate and sanitize
 -   **Breaking Changes**: Maintain backward compatibility
+-   **Running linting/formatting scripts**: NEVER run `npx wp-scripts lint-js`, `npx wp-scripts format`, or similar commands
+
+## CRITICAL: DO NOT RUN LINTING OR FORMATTING SCRIPTS
+
+**NEVER** run any of these commands as they may modify files unnecessarily:
+- `npx wp-scripts lint-js`
+- `npx wp-scripts lint-style`
+- `npx wp-scripts format`
+- `npx wp-scripts lint-pkg-json`
+
+The build process handles code formatting automatically. Manual linting can cause file conflicts and unnecessary changes.
