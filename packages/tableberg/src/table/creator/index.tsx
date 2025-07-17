@@ -169,6 +169,7 @@ export default function TableCreator({ clientId, proProps }: Props) {
                     onInsert={(block) => {
                         storeActions.replaceBlock(clientId, block);
                     }}
+                    currentBlockId={clientId}
                 />
             )}
             {modal === "ai-upsell" && (

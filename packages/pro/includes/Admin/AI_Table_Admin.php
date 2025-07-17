@@ -541,6 +541,11 @@ class AI_Table_Admin {
         $content = '';
         
         try {
+            // Skip empty TableBerg blocks that only contain placeholder text
+            if (isset($block['blockName']) && $block['blockName'] === 'tableberg/table' && $this->is_empty_tableberg_block($block)) {
+                return '';
+            }
+            
             // Try to render the block server-side
             $rendered_block = render_block($block);
             
@@ -634,6 +639,19 @@ class AI_Table_Admin {
         $content = preg_replace('/\s*href\s*=\s*["\']javascript:[^"\']*["\']/', '', $content); // Remove javascript links
         $content = preg_replace('/\s*src\s*=\s*["\']data:[^"\']*["\']/', '', $content); // Remove data URLs
         
+        // Remove TableBerg-specific placeholder text
+        $content = preg_replace('/\s*TablebergBlock\s*\d+\s*of\s*\d+,?\s*Level\s*\d+/i', '', $content); // Remove "TablebergBlock X of Y, Level Z"
+        $content = preg_replace('/\s*TablebergCreate\s*Blank\s*Table/i', '', $content); // Remove "TablebergCreate Blank Table"
+        $content = preg_replace('/\s*Pre-Built\s*Table/i', '', $content); // Remove "Pre-Built Table"
+        $content = preg_replace('/\s*WooCommerce\s*Table/i', '', $content); // Remove "WooCommerce Table"
+        $content = preg_replace('/\s*Data\s*Table\s*\(CSV,\s*XML\)/i', '', $content); // Remove "Data Table (CSV, XML)"
+        $content = preg_replace('/\s*AI\s*Table/i', '', $content); // Remove "AI Table"
+        $content = preg_replace('/\s*Posts\s*Table/i', '', $content); // Remove "Posts Table"
+        $content = preg_replace('/\s*Column\s*count/i', '', $content); // Remove "Column count"
+        $content = preg_replace('/\s*Row\s*count/i', '', $content); // Remove "Row count"
+        $content = preg_replace('/\s*Create\s*or/i', '', $content); // Remove "Create or"
+        $content = preg_replace('/\s*Pro\s*$/i', '', $content); // Remove trailing "Pro"
+        
         // Normalize whitespace
         $content = preg_replace('/\s+/', ' ', $content);
         
@@ -687,7 +705,7 @@ class AI_Table_Admin {
             return false;
         }
         
-        // Check for common non-content strings
+        // Check for common non-content strings including TableBerg-specific ones
         $non_content_strings = array(
             'block-editor', 'wp-block', 'components-', 'editor-', 'gutenberg-',
             'undefined', 'null', 'NaN', 'true', 'false', 'function', 'return',
@@ -699,7 +717,12 @@ class AI_Table_Admin {
             'width', 'height', 'top', 'left', 'right', 'bottom', 'z-index',
             'transform', 'transition', 'animation', 'flex', 'grid', 'absolute',
             'relative', 'fixed', 'sticky', 'hidden', 'visible', 'overflow',
-            'important', 'media', 'keyframes', 'rgba', 'rgb', 'hsl', 'hsla'
+            'important', 'media', 'keyframes', 'rgba', 'rgb', 'hsl', 'hsla',
+            // TableBerg-specific placeholder text
+            'tablebergblock', 'tablebergcreate', 'tableberg', 'pre-built table',
+            'woocommerce table', 'data table', 'csv', 'xml', 'ai table',
+            'posts table', 'column count', 'row count', 'create blank table',
+            'level 1', 'level 2', 'level 3', 'of 101', 'block placeholder'
         );
         
         $lower_content = strtolower($trimmed_content);
@@ -755,6 +778,40 @@ class AI_Table_Admin {
         }
         
         return implode("\n\n", $filtered_lines);
+    }
+    
+    /**
+     * Check if a TableBerg block is empty (only contains placeholder text)
+     *
+     * @param array $block Block data
+     * @return bool True if the block is empty
+     */
+    private function is_empty_tableberg_block($block) {
+        if (!isset($block['blockName']) || $block['blockName'] !== 'tableberg/table') {
+            return false;
+        }
+        
+        // Check if block has no inner blocks or only empty cells
+        if (empty($block['innerBlocks']) || !is_array($block['innerBlocks'])) {
+            return true;
+        }
+        
+        // Check if all inner blocks are empty cells
+        foreach ($block['innerBlocks'] as $inner_block) {
+            if (isset($inner_block['blockName']) && $inner_block['blockName'] === 'tableberg/cell') {
+                if (!empty($inner_block['innerBlocks']) && is_array($inner_block['innerBlocks'])) {
+                    foreach ($inner_block['innerBlocks'] as $cell_block) {
+                        if (isset($cell_block['blockName']) && $cell_block['blockName'] === 'core/paragraph') {
+                            if (!empty($cell_block['attrs']['content']) && trim($cell_block['attrs']['content']) !== '') {
+                                return false; // Found content, not empty
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return true; // All cells are empty
     }
     
     /**

@@ -16,6 +16,7 @@ import "./ai-table-modal.scss";
 interface Props {
     onClose: () => void;
     onInsert: (block: any) => void;
+    currentBlockId?: string;
 }
 
 type GenerationMethod = "prompt" | "context" | "image";
@@ -49,7 +50,7 @@ interface AIStatus {
     message: string;
 }
 
-export default function AITableModal({ onClose, onInsert }: Props) {
+export default function AITableModal({ onClose, onInsert, currentBlockId }: Props) {
     const [method, setMethod] = useState<GenerationMethod | null>(null);
     const [state, setState] = useState<ModalState>("method-selection");
     const [prompt, setPrompt] = useState("");
@@ -155,6 +156,16 @@ export default function AITableModal({ onClose, onInsert }: Props) {
         
         // Skip if already processed (deduplication)
         if (processedBlocks.has(block.clientId)) {
+            return '';
+        }
+        
+        // Skip the current TableBerg block being edited to avoid including its placeholder text
+        if (currentBlockId && block.clientId === currentBlockId) {
+            return '';
+        }
+        
+        // Skip empty TableBerg blocks that only contain placeholder text
+        if (block.name === 'tableberg/table' && isEmptyTableBergBlock(block)) {
             return '';
         }
         
@@ -307,6 +318,18 @@ export default function AITableModal({ onClose, onInsert }: Props) {
                 .replace(/\\s*on[\\w]+\\s*=\\s*[\"'][^\"']*[\"']/gi, '') // Remove event handlers
                 .replace(/\\s*href\\s*=\\s*[\"']javascript:[^\"']*[\"']/gi, '') // Remove javascript links
                 .replace(/\\s*src\\s*=\\s*[\"']data:[^\"']*[\"']/gi, '') // Remove data URLs
+                // Remove TableBerg-specific placeholder text
+                .replace(/\\s*TablebergBlock\\s*\\d+\\s*of\\s*\\d+,?\\s*Level\\s*\\d+/gi, '') // Remove "TablebergBlock X of Y, Level Z"
+                .replace(/\\s*TablebergCreate\\s*Blank\\s*Table/gi, '') // Remove "TablebergCreate Blank Table"
+                .replace(/\\s*Pre-Built\\s*Table/gi, '') // Remove "Pre-Built Table"
+                .replace(/\\s*WooCommerce\\s*Table/gi, '') // Remove "WooCommerce Table"
+                .replace(/\\s*Data\\s*Table\\s*\\(CSV,\\s*XML\\)/gi, '') // Remove "Data Table (CSV, XML)"
+                .replace(/\\s*AI\\s*Table/gi, '') // Remove "AI Table"
+                .replace(/\\s*Posts\\s*Table/gi, '') // Remove "Posts Table"
+                .replace(/\\s*Column\\s*count/gi, '') // Remove "Column count"
+                .replace(/\\s*Row\\s*count/gi, '') // Remove "Row count"
+                .replace(/\\s*Create\\s*or/gi, '') // Remove "Create or"
+                .replace(/\\s*Pro\\s*$/gi, '') // Remove trailing "Pro"
                 .replace(/\\s+/g, ' ') // Normalize whitespace
                 .trim();
             
@@ -357,7 +380,7 @@ export default function AITableModal({ onClose, onInsert }: Props) {
             return false;
         }
         
-        // Check for common non-content strings
+        // Check for common non-content strings including TableBerg-specific ones
         const nonContentStrings = [
             'block-editor', 'wp-block', 'components-', 'editor-', 'gutenberg-',
             'undefined', 'null', 'NaN', 'true', 'false', 'function', 'return',
@@ -369,7 +392,12 @@ export default function AITableModal({ onClose, onInsert }: Props) {
             'width', 'height', 'top', 'left', 'right', 'bottom', 'z-index',
             'transform', 'transition', 'animation', 'flex', 'grid', 'absolute',
             'relative', 'fixed', 'sticky', 'hidden', 'visible', 'overflow',
-            'important', 'media', 'keyframes', 'rgba', 'rgb', 'hsl', 'hsla'
+            'important', 'media', 'keyframes', 'rgba', 'rgb', 'hsl', 'hsla',
+            // TableBerg-specific placeholder text
+            'tablebergblock', 'tablebergcreate', 'tableberg', 'pre-built table',
+            'woocommerce table', 'data table', 'csv', 'xml', 'ai table',
+            'posts table', 'column count', 'row count', 'create blank table',
+            'level 1', 'level 2', 'level 3', 'of 101', 'block placeholder'
         ];
         
         const lowerContent = trimmedContent.toLowerCase();
@@ -538,6 +566,34 @@ export default function AITableModal({ onClose, onInsert }: Props) {
         }
         
         return content;
+    };
+    
+    // Helper function to check if a TableBerg block is empty (only contains placeholder)
+    const isEmptyTableBergBlock = (block: any): boolean => {
+        if (!block || block.name !== 'tableberg/table') {
+            return false;
+        }
+        
+        // Check if block has no inner blocks or only empty cells
+        if (!block.innerBlocks || block.innerBlocks.length === 0) {
+            return true;
+        }
+        
+        // Check if all inner blocks are empty cells
+        const hasContent = block.innerBlocks.some((innerBlock: any) => {
+            if (innerBlock.name === 'tableberg/cell' && innerBlock.innerBlocks) {
+                return innerBlock.innerBlocks.some((cellBlock: any) => {
+                    if (cellBlock.name === 'core/paragraph' && cellBlock.attributes?.content) {
+                        const content = cellBlock.attributes.content.trim();
+                        return content.length > 0;
+                    }
+                    return false;
+                });
+            }
+            return false;
+        });
+        
+        return !hasContent;
     };
 
     // Extract content via server-side rendering
