@@ -615,8 +615,8 @@ class AI_Table_Admin {
         // Strip HTML tags but preserve content
         $content = wp_strip_all_tags($html_content, true);
         
-        // Decode HTML entities
-        $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
+        // Decode HTML entities more thoroughly
+        $content = $this->decode_html_entities($content);
         
         // Clean up common CSS artifacts and technical strings
         $content = preg_replace('/\s*{\s*[^}]*\s*}/s', '', $content); // Remove CSS blocks
@@ -812,6 +812,83 @@ class AI_Table_Admin {
         }
         
         return true; // All cells are empty
+    }
+    
+    /**
+     * Decode HTML entities more thoroughly
+     *
+     * @param string $content Content to decode
+     * @return string Decoded content
+     */
+    private function decode_html_entities($content) {
+        if (empty($content)) {
+            return '';
+        }
+        
+        // First pass: WordPress function for common entities
+        $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        
+        // Second pass: Additional entity replacements for common cases
+        $entity_map = array(
+            '&amp;' => '&',
+            '&lt;' => '<',
+            '&gt;' => '>',
+            '&quot;' => '"',
+            '&#39;' => "'",
+            '&apos;' => "'",
+            '&nbsp;' => ' ',
+            '&mdash;' => '—',
+            '&ndash;' => '–',
+            '&hellip;' => '…',
+            '&lsquo;' => "'",
+            '&rsquo;' => "'",
+            '&ldquo;' => '"',
+            '&rdquo;' => '"',
+            '&bull;' => '•',
+            '&copy;' => '©',
+            '&reg;' => '®',
+            '&trade;' => '™',
+            '&deg;' => '°',
+            '&plusmn;' => '±',
+            '&frac14;' => '¼',
+            '&frac12;' => '½',
+            '&frac34;' => '¾'
+        );
+        
+        // Apply entity replacements
+        foreach ($entity_map as $entity => $replacement) {
+            $content = str_replace($entity, $replacement, $content);
+        }
+        
+        // Third pass: Decode numeric entities (&#123; format)
+        $content = preg_replace_callback('/&#(\d+);/', function($matches) {
+            $num = intval($matches[1]);
+            if ($num > 0 && $num < 1114112) { // Valid Unicode range
+                if (function_exists('mb_chr')) {
+                    return mb_chr($num, 'UTF-8');
+                } else {
+                    // Fallback for older PHP versions
+                    return html_entity_decode('&#' . $num . ';', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                }
+            }
+            return $matches[0]; // Return original if invalid
+        }, $content);
+        
+        // Fourth pass: Decode hex entities (&#x1A; format)
+        $content = preg_replace_callback('/&#x([0-9a-fA-F]+);/', function($matches) {
+            $num = hexdec($matches[1]);
+            if ($num > 0 && $num < 1114112) { // Valid Unicode range
+                if (function_exists('mb_chr')) {
+                    return mb_chr($num, 'UTF-8');
+                } else {
+                    // Fallback for older PHP versions
+                    return html_entity_decode('&#x' . $matches[1] . ';', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                }
+            }
+            return $matches[0]; // Return original if invalid
+        }, $content);
+        
+        return $content;
     }
     
     /**

@@ -102,6 +102,9 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                 return;
             }
             
+            // Get post title for better context
+            const postTitle = select('core/editor')?.getEditedPostAttribute?.('title') || '';
+            
             // Get all blocks from the editor
             const blocks = select('core/block-editor')?.getBlocks?.() || [];
             
@@ -133,13 +136,21 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
             // Clean and deduplicate the final content
             extractedText = cleanExtractedContent(extractedText);
             
+            // Prepend title to content for better AI context
+            let finalContent = '';
+            if (postTitle && postTitle.trim()) {
+                finalContent = `Title: ${postTitle.trim()}\n\n${extractedText}`;
+            } else {
+                finalContent = extractedText;
+            }
+            
             // Calculate word count
-            const words = extractedText.trim().split(/\s+/).filter(word => word.length > 0);
+            const words = finalContent.trim().split(/\s+/).filter(word => word.length > 0);
             const wordCount = words.length;
             const isWithinLimits = wordCount < 3000;
             
             setExtractedContent({
-                content: extractedText.trim(),
+                content: finalContent.trim(),
                 wordCount,
                 isWithinLimits
             });
@@ -259,8 +270,9 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                 }
             });
             
-            // Get text content
+            // Get text content and decode HTML entities
             let content = tempDiv.textContent || tempDiv.innerText || '';
+            content = decodeHtmlEntities(content);
             
             // Clean up common CSS artifacts and technical strings
             content = content
@@ -421,8 +433,15 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
     const cleanExtractedContent = (content: string): string => {
         if (!content) return '';
         
+        // Decode HTML entities first
+        content = decodeHtmlEntities(content);
+        
         // Split into lines and clean each line
-        const lines = content.split('\n').map(line => line.trim()).filter(line => {
+        const lines = content.split('\n').map(line => {
+            // Decode HTML entities in each line and trim
+            const decodedLine = decodeHtmlEntities(line.trim());
+            return decodedLine;
+        }).filter(line => {
             return line.length > 0 && isValidContent(line);
         });
         
@@ -568,6 +587,52 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
         return content;
     };
     
+    // Helper function to decode HTML entities properly
+    const decodeHtmlEntities = (text: string): string => {
+        if (!text) return '';
+        
+        try {
+            // Create a temporary div to decode HTML entities
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = text;
+            
+            // Get the decoded text
+            let decoded = tempDiv.textContent || tempDiv.innerText || '';
+            
+            // Additional common entity replacements that might not be caught
+            const entityMap: { [key: string]: string } = {
+                '&amp;': '&',
+                '&lt;': '<',
+                '&gt;': '>',
+                '&quot;': '"',
+                '&#39;': "'",
+                '&apos;': "'",
+                '&nbsp;': ' ',
+                '&mdash;': '—',
+                '&ndash;': '–',
+                '&hellip;': '…',
+                '&lsquo;': "'",
+                '&rsquo;': "'",
+                '&ldquo;': '"',
+                '&rdquo;': '"',
+                '&bull;': '•',
+                '&copy;': '©',
+                '&reg;': '®',
+                '&trade;': '™'
+            };
+            
+            // Apply additional entity replacements
+            Object.keys(entityMap).forEach(entity => {
+                decoded = decoded.replace(new RegExp(entity, 'g'), entityMap[entity]);
+            });
+            
+            return decoded;
+        } catch (error) {
+            console.error('Error decoding HTML entities:', error);
+            return text; // Return original text if decoding fails
+        }
+    };
+    
     // Helper function to check if a TableBerg block is empty (only contains placeholder)
     const isEmptyTableBergBlock = (block: any): boolean => {
         if (!block || block.name !== 'tableberg/table') {
@@ -616,18 +681,29 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
     const fallbackContentExtraction = () => {
         try {
             // Fallback to current method if block editor API fails
-            const content = (window as any).wp?.data?.select('core/editor')?.getEditedPostContent?.() || '';
+            const { select } = (window as any).wp?.data || {};
+            const content = select('core/editor')?.getEditedPostContent?.() || '';
+            const postTitle = select('core/editor')?.getEditedPostAttribute?.('title') || '';
             
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content;
-            const plainText = tempDiv.textContent || tempDiv.innerText || '';
+            let plainText = tempDiv.textContent || tempDiv.innerText || '';
+            plainText = decodeHtmlEntities(plainText);
             
-            const words = plainText.trim().split(/\s+/).filter(word => word.length > 0);
+            // Prepend title to content for better AI context
+            let finalContent = '';
+            if (postTitle && postTitle.trim()) {
+                finalContent = `Title: ${postTitle.trim()}\n\n${plainText}`;
+            } else {
+                finalContent = plainText;
+            }
+            
+            const words = finalContent.trim().split(/\s+/).filter(word => word.length > 0);
             const wordCount = words.length;
             const isWithinLimits = wordCount < 3000;
             
             setExtractedContent({
-                content: plainText.trim(),
+                content: finalContent.trim(),
                 wordCount,
                 isWithinLimits
             });

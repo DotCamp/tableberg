@@ -1598,7 +1598,7 @@ IMPORTANT RULES:
         $content = trim($content);
         
         // Decode HTML entities if any remain
-        $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
+        $content = $this->decode_html_entities($content);
         
         // Only basic whitespace normalization
         $content = $this->normalize_whitespace($content);
@@ -1625,7 +1625,82 @@ IMPORTANT RULES:
         return trim($content);
     }
     
-    
+    /**
+     * Decode HTML entities more thoroughly
+     *
+     * @param string $content Content to decode
+     * @return string Decoded content
+     */
+    private function decode_html_entities($content) {
+        if (empty($content)) {
+            return '';
+        }
+        
+        // First pass: WordPress function for common entities
+        $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        
+        // Second pass: Additional entity replacements for common cases
+        $entity_map = array(
+            '&amp;' => '&',
+            '&lt;' => '<',
+            '&gt;' => '>',
+            '&quot;' => '"',
+            '&#39;' => "'",
+            '&apos;' => "'",
+            '&nbsp;' => ' ',
+            '&mdash;' => '—',
+            '&ndash;' => '–',
+            '&hellip;' => '…',
+            '&lsquo;' => "'",
+            '&rsquo;' => "'",
+            '&ldquo;' => '"',
+            '&rdquo;' => '"',
+            '&bull;' => '•',
+            '&copy;' => '©',
+            '&reg;' => '®',
+            '&trade;' => '™',
+            '&deg;' => '°',
+            '&plusmn;' => '±',
+            '&frac14;' => '¼',
+            '&frac12;' => '½',
+            '&frac34;' => '¾'
+        );
+        
+        // Apply entity replacements
+        foreach ($entity_map as $entity => $replacement) {
+            $content = str_replace($entity, $replacement, $content);
+        }
+        
+        // Third pass: Decode numeric entities (&#123; format)
+        $content = preg_replace_callback('/&#(\d+);/', function($matches) {
+            $num = intval($matches[1]);
+            if ($num > 0 && $num < 1114112) { // Valid Unicode range
+                if (function_exists('mb_chr')) {
+                    return mb_chr($num, 'UTF-8');
+                } else {
+                    // Fallback for older PHP versions
+                    return html_entity_decode('&#' . $num . ';', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                }
+            }
+            return $matches[0]; // Return original if invalid
+        }, $content);
+        
+        // Fourth pass: Decode hex entities (&#x1A; format)
+        $content = preg_replace_callback('/&#x([0-9a-fA-F]+);/', function($matches) {
+            $num = hexdec($matches[1]);
+            if ($num > 0 && $num < 1114112) { // Valid Unicode range
+                if (function_exists('mb_chr')) {
+                    return mb_chr($num, 'UTF-8');
+                } else {
+                    // Fallback for older PHP versions
+                    return html_entity_decode('&#x' . $matches[1] . ';', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                }
+            }
+            return $matches[0]; // Return original if invalid
+        }, $content);
+        
+        return $content;
+    }
     
     /**
      * Create content-specific prompt
@@ -1634,6 +1709,20 @@ IMPORTANT RULES:
      * @return string Formatted prompt
      */
     private function create_content_prompt($content) {
+        // Check if content includes a title for better context
+        $hasTitle = strpos($content, 'Title: ') === 0;
+        
+        if ($hasTitle) {
+            // Extract title and content separately for better prompt structure
+            $lines = explode("\n", $content, 3);
+            $title = isset($lines[0]) ? str_replace('Title: ', '', $lines[0]) : '';
+            $bodyContent = isset($lines[2]) ? $lines[2] : $content;
+            
+            if (!empty($title)) {
+                return "Please analyze the following content from a page titled \"$title\" and create a relevant table that organizes this information effectively. Consider the page title context when determining the most appropriate table structure and content:\n\n" . $bodyContent;
+            }
+        }
+        
         return "Please analyze the following content and create a relevant table that organizes this information effectively:\n\n" . $content;
     }
     
