@@ -41,6 +41,196 @@ class AI_Table_Service {
     }
     
     /**
+     * Make API request with retry mechanism and proper error handling
+     *
+     * @param string $api_key OpenAI API key
+     * @param string $system_prompt System prompt for the AI
+     * @param string $user_prompt User prompt for the AI
+     * @param int $max_retries Maximum number of retry attempts
+     * @return array|WP_Error API response or error
+     */
+    private function make_api_request($api_key, $system_prompt, $user_prompt, $max_retries = 2) {
+        $attempt = 0;
+        
+        while ($attempt <= $max_retries) {
+            $attempt++;
+            
+            // Calculate timeout based on attempt (progressive backoff)
+            $timeout = 60 + ($attempt * 20); // 60s, 80s, 100s
+            
+            $response = wp_remote_post(self::API_ENDPOINT, array(
+                'timeout' => $timeout,
+                'headers' => array(
+                    'Authorization' => 'Bearer ' . $api_key,
+                    'Content-Type' => 'application/json',
+                ),
+                'body' => json_encode(array(
+                    'model' => 'gpt-4',
+                    'messages' => array(
+                        array(
+                            'role' => 'system',
+                            'content' => $system_prompt
+                        ),
+                        array(
+                            'role' => 'user',
+                            'content' => $user_prompt
+                        )
+                    ),
+                    'temperature' => 0.3,
+                    'max_tokens' => 2000,
+                )),
+            ));
+            
+            // Check for WordPress errors
+            if (is_wp_error($response)) {
+                $error_message = $response->get_error_message();
+                
+                // Check if it's a timeout error
+                if (strpos($error_message, 'cURL error 28') !== false || 
+                    strpos($error_message, 'Operation timed out') !== false ||
+                    strpos($error_message, 'timeout') !== false) {
+                    
+                    // If we haven't reached max retries, continue to next attempt
+                    if ($attempt <= $max_retries) {
+                        error_log("AI Table API timeout on attempt {$attempt}, retrying...");
+                        sleep(2); // Wait 2 seconds before retry
+                        continue;
+                    }
+                    
+                    // All retries failed, return timeout-specific error
+                    return new \WP_Error(
+                        'ai_table_timeout',
+                        __('The AI service is taking longer than expected to respond. This can happen with large content or high server load. Please try again with shorter content or try again later.', 'tableberg')
+                    );
+                }
+                
+                // For other errors, return immediately
+                return new \WP_Error(
+                    'ai_table_request_failed',
+                    sprintf(__('Failed to connect to AI service: %s', 'tableberg'), $error_message)
+                );
+            }
+            
+            // Check HTTP status code
+            $status_code = wp_remote_retrieve_response_code($response);
+            
+            if ($status_code >= 500 && $attempt <= $max_retries) {
+                // Server error, retry
+                error_log("AI Table API server error ({$status_code}) on attempt {$attempt}, retrying...");
+                sleep(2);
+                continue;
+            }
+            
+            if ($status_code === 429 && $attempt <= $max_retries) {
+                // Rate limit, wait longer and retry
+                error_log("AI Table API rate limit on attempt {$attempt}, retrying...");
+                sleep(5);
+                continue;
+            }
+            
+            // Success or non-retryable error
+            return $response;
+        }
+        
+        // Should not reach here, but just in case
+        return new \WP_Error(
+            'ai_table_max_retries',
+            __('Maximum retry attempts reached. Please try again later.', 'tableberg')
+        );
+    }
+    
+    /**
+     * Validate content length to prevent oversized requests
+     *
+     * @param string $content Content to validate
+     * @return bool|WP_Error True if valid, WP_Error if too large
+     */
+    private function validate_content_length($content) {
+        $word_count = str_word_count($content);
+        $max_words = 3000; // Approximately 4000 tokens
+        
+        if ($word_count > $max_words) {
+            return new \WP_Error(
+                'ai_table_content_too_large',
+                sprintf(
+                    __('Content is too large (%d words). Please reduce content to under %d words or use shorter excerpts.', 'tableberg'),
+                    $word_count,
+                    $max_words
+                )
+            );
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Generate table from page content
+     *
+     * @param string $content Page/post content to analyze
+     * @param int    $post_id Optional post ID for context
+     * @param array  $options Additional options
+     * @return array|WP_Error Generated table data or error
+     */
+    public function generate_table_from_content($content, $post_id = null, $options = array()) {
+        $api_key = $this->get_api_key();
+        
+        if (!$api_key) {
+            return new \WP_Error('no_api_key', __('OpenAI API key not configured', 'tableberg'));
+        }
+        
+        // Process content for AI analysis
+        $processed_content = $this->prepare_content_for_ai($content);
+        
+        if (empty($processed_content)) {
+            return new \WP_Error('empty_content', __('No usable content found for table generation', 'tableberg'));
+        }
+        
+        // Validate content length to prevent oversized requests
+        $validation_result = $this->validate_content_length($processed_content);
+        if (is_wp_error($validation_result)) {
+            return $validation_result;
+        }
+        
+        // Get content-specific system prompt
+        $system_prompt = $this->get_content_analysis_prompt();
+        
+        // Create enhanced prompt with processed content
+        $enhanced_prompt = $this->create_content_prompt($processed_content);
+        
+        // Make API request with retry mechanism
+        $response = $this->make_api_request($api_key, $system_prompt, $enhanced_prompt);
+        
+        if (is_wp_error($response)) {
+            return $response;
+        }
+        
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+        
+        if (wp_remote_retrieve_response_code($response) !== 200) {
+            $error_message = isset($data['error']['message']) 
+                ? $data['error']['message'] 
+                : __('Failed to generate table from content', 'tableberg');
+                
+            return new \WP_Error('api_error', $error_message);
+        }
+        
+        if (!isset($data['choices'][0]['message']['content'])) {
+            return new \WP_Error('invalid_response', __('Invalid API response', 'tableberg'));
+        }
+        
+        // Parse the AI response
+        $table_data = $this->parse_ai_response($data['choices'][0]['message']['content']);
+        
+        if (is_wp_error($table_data)) {
+            return $table_data;
+        }
+        
+        // Convert to Tableberg blocks
+        return $this->convert_to_blocks($table_data);
+    }
+    
+    /**
      * Generate table from user prompt
      *
      * @param string $prompt User's table description
@@ -60,29 +250,8 @@ class AI_Table_Service {
         // Enhance user prompt with structure requirements
         $enhanced_prompt = $this->enhance_user_prompt($prompt);
         
-        // Make API request
-        $response = wp_remote_post(self::API_ENDPOINT, array(
-            'timeout' => 30,
-            'headers' => array(
-                'Authorization' => 'Bearer ' . $api_key,
-                'Content-Type' => 'application/json',
-            ),
-            'body' => json_encode(array(
-                'model' => 'gpt-4',
-                'messages' => array(
-                    array(
-                        'role' => 'system',
-                        'content' => $system_prompt
-                    ),
-                    array(
-                        'role' => 'user',
-                        'content' => $enhanced_prompt
-                    )
-                ),
-                'temperature' => 0.3,
-                'max_tokens' => 2000,
-            )),
-        ));
+        // Make API request with retry mechanism
+        $response = $this->make_api_request($api_key, $system_prompt, $enhanced_prompt);
         
         if (is_wp_error($response)) {
             return $response;
@@ -112,6 +281,57 @@ class AI_Table_Service {
         
         // Convert to Tableberg blocks
         return $this->convert_to_blocks($table_data);
+    }
+    
+    /**
+     * Get content-specific system prompt for table generation
+     *
+     * @return string
+     */
+    private function get_content_analysis_prompt() {
+        return "You are analyzing WordPress post content to create a relevant table that organizes this information effectively.
+
+CONTENT ANALYSIS RULES:
+- Look for lists, comparisons, data points, schedules, or structured information
+- If content contains comparisons, use COLUMN-ORIENTED layout (each option/plan/service as column)
+- If content contains data/schedules, use ROW-ORIENTED layout (each item as row)
+- If content is general, create a content outline or summary table
+- Focus on the most structured and tabular parts of the content
+- Use only the provided content - do not add external information
+
+RESPONSE FORMAT: Respond with ONLY a JSON object in this format:
+{
+    \"headers\": [\"Column 1\", \"Column 2\", \"Column 3\"],
+    \"rows\": [
+        [
+            {\"type\": \"text\", \"content\": \"Content from post\"},
+            {\"type\": \"text\", \"content\": \"More content\"},
+            {\"type\": \"text\", \"content\": \"Additional info\"}
+        ]
+    ]
+}
+
+AVAILABLE BLOCK TYPES:
+1. \"text\" - Regular paragraph content
+2. \"button\" - Call-to-action buttons (use for pricing, purchasing, contact actions)
+3. \"image\" - Product photos, logos, avatars (include alt text and width)
+4. \"styled_list\" - Feature lists, specifications (include icon type)
+5. \"icon\" - Yes/no indicators, status symbols (specify icon name and color)
+6. \"star_rating\" - Reviews, quality scores (include rating value and max stars)
+
+INTELLIGENT BLOCK SELECTION:
+- Use \"styled_list\" for feature lists or specifications from content
+- Use \"icon\" for yes/no values or status indicators mentioned in content
+- Use \"star_rating\" for any numerical ratings or quality scores found
+- Use \"button\" for purchase/contact actions mentioned in content
+- Use \"text\" for general informational content
+
+IMPORTANT RULES:
+- Extract information exactly as presented in the content
+- Do not fabricate or assume information not present
+- Maintain the structure and relationships from the original content
+- Ensure all rows have the same number of columns as headers
+- Do not include any text outside the JSON object";
     }
     
     /**
@@ -1158,6 +1378,57 @@ class AI_Table_Service {
         );
         
         return isset($icons[$icon_name]) ? $icons[$icon_name] : $icons['check'];
+    }
+    
+    /**
+     * Prepare content for AI analysis
+     *
+     * @param string $content Raw content
+     * @param int    $max_tokens Maximum tokens to send to AI (unused for now)
+     * @return string Processed content
+     */
+    private function prepare_content_for_ai($content, $max_tokens = 4000) {
+        // Content is already clean from JavaScript block editor API - minimal processing
+        $content = trim($content);
+        
+        // Decode HTML entities if any remain
+        $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
+        
+        // Only basic whitespace normalization
+        $content = $this->normalize_whitespace($content);
+        
+        return $content;
+    }
+    
+    /**
+     * Normalize whitespace while preserving structure
+     *
+     * @param string $content Content to normalize
+     * @return string Normalized content
+     */
+    private function normalize_whitespace($content) {
+        // Replace multiple spaces with single space
+        $content = preg_replace('/[ \t]+/', ' ', $content);
+        
+        // Preserve paragraph breaks (double newlines)
+        $content = preg_replace('/\n\s*\n/', "\n\n", $content);
+        
+        // Remove excessive newlines (more than 2)
+        $content = preg_replace('/\n{3,}/', "\n\n", $content);
+        
+        return trim($content);
+    }
+    
+    
+    
+    /**
+     * Create content-specific prompt
+     *
+     * @param string $content Processed content
+     * @return string Formatted prompt
+     */
+    private function create_content_prompt($content) {
+        return "Please analyze the following content and create a relevant table that organizes this information effectively:\n\n" . $content;
     }
     
     /**

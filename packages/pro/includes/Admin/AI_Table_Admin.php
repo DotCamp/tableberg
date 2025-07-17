@@ -113,7 +113,7 @@ class AI_Table_Admin {
                 ),
                 'max_tokens' => 5
             )),
-            'timeout' => 15,
+            'timeout' => 30,
         ));
         
         if (is_wp_error($response)) {
@@ -311,7 +311,7 @@ class AI_Table_Admin {
             },
             'args' => array(
                 'prompt' => array(
-                    'required' => true,
+                    'required' => false,
                     'type' => 'string',
                     'sanitize_callback' => 'sanitize_text_field',
                 ),
@@ -320,6 +320,16 @@ class AI_Table_Admin {
                     'type' => 'string',
                     'default' => 'prompt',
                     'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'content' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'sanitize_callback' => 'sanitize_textarea_field',
+                ),
+                'post_id' => array(
+                    'required' => false,
+                    'type' => 'integer',
+                    'sanitize_callback' => 'absint',
                 ),
             ),
         ));
@@ -332,6 +342,21 @@ class AI_Table_Admin {
                 return current_user_can('edit_posts');
             },
         ));
+        
+        // Add endpoint for server-side block content extraction
+        register_rest_route('tableberg/v1', '/ai/extract-blocks', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'rest_extract_blocks_content'),
+            'permission_callback' => function() {
+                return current_user_can('edit_posts');
+            },
+            'args' => array(
+                'blocks' => array(
+                    'required' => true,
+                    'type' => 'array',
+                ),
+            ),
+        ));
     }
     
     /**
@@ -340,11 +365,22 @@ class AI_Table_Admin {
     public function rest_generate_table($request) {
         $prompt = $request->get_param('prompt');
         $method = $request->get_param('method');
+        $content = $request->get_param('content');
+        $post_id = $request->get_param('post_id');
         
-        if (empty($prompt) && $method === 'prompt') {
+        // Validate input based on method
+        if ($method === 'prompt' && empty($prompt)) {
             return new \WP_Error(
                 'missing_prompt',
                 __('Please provide a table description', 'tableberg'),
+                array('status' => 400)
+            );
+        }
+        
+        if ($method === 'content' && empty($content) && empty($post_id)) {
+            return new \WP_Error(
+                'missing_content',
+                __('Please provide content or post ID for content-based generation', 'tableberg'),
                 array('status' => 400)
             );
         }
@@ -365,6 +401,23 @@ class AI_Table_Admin {
         switch ($method) {
             case 'prompt':
                 $result = $service->generate_table_from_prompt($prompt);
+                break;
+                
+            case 'content':
+                // If no content provided, try to extract from post_id
+                if (empty($content) && !empty($post_id)) {
+                    $post = get_post($post_id);
+                    if (!$post) {
+                        return new \WP_Error(
+                            'invalid_post',
+                            __('Post not found', 'tableberg'),
+                            array('status' => 404)
+                        );
+                    }
+                    $content = $post->post_content;
+                }
+                
+                $result = $service->generate_table_from_content($content, $post_id);
                 break;
                 
             default:
@@ -415,5 +468,266 @@ class AI_Table_Admin {
                 ? __('Please configure your OpenAI API key in Tableberg settings', 'tableberg')
                 : __('AI Table is ready to use', 'tableberg')
         );
+    }
+    
+    /**
+     * REST API handler for server-side block content extraction
+     */
+    public function rest_extract_blocks_content($request) {
+        $blocks = $request->get_param('blocks');
+        
+        if (!is_array($blocks)) {
+            return new \WP_Error(
+                'invalid_blocks',
+                __('Invalid blocks data', 'tableberg'),
+                array('status' => 400)
+            );
+        }
+        
+        $extracted_parts = array();
+        
+        foreach ($blocks as $block) {
+            if (is_array($block)) {
+                $block_content = $this->extract_single_block_content($block);
+                if (!empty($block_content)) {
+                    $extracted_parts[] = $block_content;
+                }
+            }
+        }
+        
+        // Join content parts and clean/deduplicate
+        $extracted_content = implode("\n\n", $extracted_parts);
+        $extracted_content = $this->clean_and_deduplicate_content($extracted_content);
+        
+        return array(
+            'success' => true,
+            'content' => trim($extracted_content)
+        );
+    }
+    
+    /**
+     * Extract content from a single block using server-side rendering
+     *
+     * @param array $block Block data
+     * @return string Extracted content
+     */
+    private function extract_single_block_content($block) {
+        $content = '';
+        
+        try {
+            // Try to render the block server-side
+            $rendered_block = render_block($block);
+            
+            if (!empty($rendered_block)) {
+                // Enhanced HTML cleaning and content extraction
+                $content = $this->clean_html_content($rendered_block);
+                
+                if ($this->is_valid_content($content)) {
+                    $content = trim($content);
+                    
+                    // Only process inner blocks if parent has no meaningful content
+                    if (!empty($block['innerBlocks']) && is_array($block['innerBlocks'])) {
+                        $inner_content = '';
+                        foreach ($block['innerBlocks'] as $inner_block) {
+                            $inner_content .= $this->extract_single_block_content($inner_block);
+                        }
+                        
+                        if (!empty($inner_content)) {
+                            $content = $content . "\n\n" . trim($inner_content);
+                        }
+                    }
+                    
+                    return $content;
+                }
+            }
+            
+            // If no content found in parent, process inner blocks
+            if (!empty($block['innerBlocks']) && is_array($block['innerBlocks'])) {
+                $inner_contents = array();
+                foreach ($block['innerBlocks'] as $inner_block) {
+                    $inner_content = $this->extract_single_block_content($inner_block);
+                    if (!empty($inner_content)) {
+                        $inner_contents[] = $inner_content;
+                    }
+                }
+                
+                if (!empty($inner_contents)) {
+                    return implode("\n\n", $inner_contents);
+                }
+            }
+        } catch (Exception $e) {
+            error_log('Error extracting block content: ' . $e->getMessage());
+        }
+        
+        return $content;
+    }
+    
+    /**
+     * Clean HTML content and remove CSS/technical artifacts
+     *
+     * @param string $html_content HTML content to clean
+     * @return string Cleaned content
+     */
+    private function clean_html_content($html_content) {
+        if (empty($html_content)) {
+            return '';
+        }
+        
+        // Remove style and script tags first
+        $html_content = preg_replace('/<style[^>]*>.*?<\/style>/is', '', $html_content);
+        $html_content = preg_replace('/<script[^>]*>.*?<\/script>/is', '', $html_content);
+        $html_content = preg_replace('/<link[^>]*>/i', '', $html_content);
+        
+        // Remove HTML comments
+        $html_content = preg_replace('/<!--.*?-->/s', '', $html_content);
+        
+        // Strip HTML tags but preserve content
+        $content = wp_strip_all_tags($html_content, true);
+        
+        // Decode HTML entities
+        $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
+        
+        // Clean up common CSS artifacts and technical strings
+        $content = preg_replace('/\s*{\s*[^}]*\s*}/s', '', $content); // Remove CSS blocks
+        $content = preg_replace('/\s*@[\w-]+\s*[^;]*;/', '', $content); // Remove CSS at-rules
+        $content = preg_replace('/\s*[.#][\w-]+\s*[{:]/', '', $content); // Remove CSS selectors
+        $content = preg_replace('/\s*[\w-]+\s*:\s*[^;]*;?/i', '', $content); // Remove CSS properties
+        $content = preg_replace('/rgb\([^)]*\)/', '', $content); // Remove RGB colors
+        $content = preg_replace('/#[0-9a-fA-F]{3,6}/', '', $content); // Remove hex colors
+        $content = preg_replace('/\s*!important/i', '', $content); // Remove !important
+        $content = preg_replace('/\s*(px|em|rem|vh|vw|%|pt|pc|in|cm|mm|ex|ch|vmin|vmax)\b/', '', $content); // Remove units
+        $content = preg_replace('/\s*[\w-]+\s*=\s*["\'][^"\']*["\']/', '', $content); // Remove HTML attributes
+        $content = preg_replace('/\s*(undefined|null|NaN)\s*/', ' ', $content); // Remove undefined/null/NaN
+        $content = preg_replace('/\s*\[object\s+Object\]/', '', $content); // Remove [object Object]
+        $content = preg_replace('/\s*function\s*\([^)]*\)\s*{[^}]*}/', '', $content); // Remove function definitions
+        $content = preg_replace('/\s*(var|const|let)\s+[\w$]+\s*=\s*[^;]*;?/', '', $content); // Remove variable declarations
+        $content = preg_replace('/\s*(document|window|console|jQuery)\s*\.[\w.()]*;?/', '', $content); // Remove JS references
+        $content = preg_replace('/\s*\$\([^)]*\)\.[\w.()]*;?/', '', $content); // Remove jQuery selectors
+        $content = preg_replace('/\s*addEventListener\s*\([^)]*\)\s*{[^}]*}/', '', $content); // Remove event listeners
+        $content = preg_replace('/\s*on[\w]+\s*=\s*["\'][^"\']*["\']/', '', $content); // Remove event handlers
+        $content = preg_replace('/\s*href\s*=\s*["\']javascript:[^"\']*["\']/', '', $content); // Remove javascript links
+        $content = preg_replace('/\s*src\s*=\s*["\']data:[^"\']*["\']/', '', $content); // Remove data URLs
+        
+        // Normalize whitespace
+        $content = preg_replace('/\s+/', ' ', $content);
+        
+        return trim($content);
+    }
+    
+    /**
+     * Check if content is valid and meaningful
+     *
+     * @param string $content Content to validate
+     * @return bool True if content is valid
+     */
+    private function is_valid_content($content) {
+        if (empty($content) || strlen(trim($content)) < 3) {
+            return false;
+        }
+        
+        $trimmed_content = trim($content);
+        
+        // Check if content is mostly CSS/HTML artifacts
+        $css_patterns = array(
+            '/^[.#][\w-]+$/',  // CSS selectors
+            '/^\s*[\w-]+\s*:\s*[^;]*;?$/',  // CSS properties
+            '/^\s*@[\w-]+/',  // CSS at-rules
+            '/^\s*{[^}]*}$/',  // CSS blocks
+            '/^\s*[\w-]+\s*=\s*["\'][^"\']*["\']$/',  // HTML attributes
+            '/^\s*(class|id|style|data-[\w-]*|aria-[\w-]*)\s*=\s*["\'][^"\']*["\']$/',  // Specific attributes
+            '/^\s*(undefined|null|NaN|function|var|const|let)\s/',  // JavaScript keywords
+            '/^\s*[0-9.]+\s*(px|em|rem|vh|vw|%|pt|pc|in|cm|mm|ex|ch|vmin|vmax)\s*$/',  // CSS units
+            '/^\s*(rgb|rgba|hsl|hsla)\s*\(/',  // CSS color functions
+            '/^\s*#[0-9a-fA-F]{3,6}\s*$/',  // Hex colors
+            '/^\s*[\w-]+\s*{[^}]*}\s*$/',  // CSS rules
+            '/^\s*\$\([^)]*\)/',  // jQuery selectors
+            '/^\s*document\./',  // Document references
+            '/^\s*window\./',  // Window references
+            '/^\s*console\./',  // Console references
+        );
+        
+        // Check if content matches any CSS/HTML pattern
+        foreach ($css_patterns as $pattern) {
+            if (preg_match($pattern, $trimmed_content)) {
+                return false;
+            }
+        }
+        
+        // Check if content is mostly special characters or numbers
+        $alpha_numeric_count = preg_match_all('/[a-zA-Z0-9]/', $trimmed_content);
+        $total_length = strlen($trimmed_content);
+        
+        if ($alpha_numeric_count / $total_length < 0.6) {
+            return false;
+        }
+        
+        // Check for common non-content strings
+        $non_content_strings = array(
+            'block-editor', 'wp-block', 'components-', 'editor-', 'gutenberg-',
+            'undefined', 'null', 'NaN', 'true', 'false', 'function', 'return',
+            'var', 'const', 'let', 'document', 'window', 'console', 'jQuery',
+            'addEventListener', 'onclick', 'className', 'innerHTML', 'textContent',
+            'querySelector', 'getElementById', 'getElementsBy', 'setAttribute',
+            'getAttribute', 'classList', 'style', 'display', 'position',
+            'margin', 'padding', 'border', 'background', 'color', 'font',
+            'width', 'height', 'top', 'left', 'right', 'bottom', 'z-index',
+            'transform', 'transition', 'animation', 'flex', 'grid', 'absolute',
+            'relative', 'fixed', 'sticky', 'hidden', 'visible', 'overflow',
+            'important', 'media', 'keyframes', 'rgba', 'rgb', 'hsl', 'hsla'
+        );
+        
+        $lower_content = strtolower($trimmed_content);
+        $non_content_count = 0;
+        
+        foreach ($non_content_strings as $str) {
+            if (strpos($lower_content, $str) !== false) {
+                $non_content_count++;
+            }
+        }
+        
+        // If more than 30% of common non-content strings are found, likely not meaningful content
+        if ($non_content_count > count($non_content_strings) * 0.3) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Clean and deduplicate extracted content
+     *
+     * @param string $content Content to clean and deduplicate
+     * @return string Cleaned and deduplicated content
+     */
+    private function clean_and_deduplicate_content($content) {
+        if (empty($content)) {
+            return '';
+        }
+        
+        // Split into lines and clean each line
+        $lines = array_map('trim', explode("\n", $content));
+        $lines = array_filter($lines, function($line) {
+            return !empty($line) && $this->is_valid_content($line);
+        });
+        
+        // Remove duplicate lines
+        $unique_lines = array_unique($lines);
+        
+        // Remove lines that are substrings of other lines
+        $filtered_lines = array();
+        foreach ($unique_lines as $line) {
+            $is_substring = false;
+            foreach ($unique_lines as $other_line) {
+                if ($line !== $other_line && strpos($other_line, $line) !== false && strlen($other_line) > strlen($line)) {
+                    $is_substring = true;
+                    break;
+                }
+            }
+            if (!$is_substring) {
+                $filtered_lines[] = $line;
+            }
+        }
+        
+        return implode("\n\n", $filtered_lines);
     }
 }
