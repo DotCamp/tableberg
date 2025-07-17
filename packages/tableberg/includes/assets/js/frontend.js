@@ -517,7 +517,7 @@
 
         removeHighlights();
 
-        if (!search || search.length < 3) {
+        if (!search) {
             if (input.dataset.isDirty) {
                 input.dataset.isDirty = false;
                 Array.from(rows).forEach((row) => {
