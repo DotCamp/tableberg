@@ -8,6 +8,7 @@
 namespace Tableberg\Pro;
 
 use Tableberg\Pro\Admin\AI_Table_Admin;
+use Tableberg\Pro\Debug\AI_Debug_Logger;
 
 /**
  * AI Table Service Class
@@ -47,9 +48,29 @@ class AI_Table_Service {
      * @param string $system_prompt System prompt for the AI
      * @param string $user_prompt User prompt for the AI
      * @param int $max_retries Maximum number of retry attempts
+     * @param string $type Request type (prompt|content)
      * @return array|WP_Error API response or error
      */
-    private function make_api_request($api_key, $system_prompt, $user_prompt, $max_retries = 2) {
+    private function make_api_request($api_key, $system_prompt, $user_prompt, $max_retries = 2, $type = 'prompt') {
+        $debug_logger = AI_Debug_Logger::get_instance();
+        $start_time = microtime(true);
+        
+        // Log the request start
+        $messages = [
+            ['role' => 'system', 'content' => $system_prompt],
+            ['role' => 'user', 'content' => $user_prompt]
+        ];
+        
+        $log_id = $debug_logger->log_ai_request([
+            'type' => $type,
+            'prompt' => $user_prompt,
+            'content' => $type === 'content' ? $user_prompt : '',
+            'model' => 'gpt-4o',
+            'max_tokens' => 2000,
+            'temperature' => 0.3,
+            'full_messages' => $messages
+        ]);
+        
         $attempt = 0;
         
         while ($attempt <= $max_retries) {
@@ -65,7 +86,7 @@ class AI_Table_Service {
                     'Content-Type' => 'application/json',
                 ),
                 'body' => json_encode(array(
-                    'model' => 'gpt-4',
+                    'model' => 'gpt-4o',
                     'messages' => array(
                         array(
                             'role' => 'system',
@@ -129,14 +150,49 @@ class AI_Table_Service {
             }
             
             // Success or non-retryable error
+            $end_time = microtime(true);
+            $duration_ms = round(($end_time - $start_time) * 1000);
+            
+            // Log response
+            if (is_wp_error($response)) {
+                $debug_logger->log_ai_response($log_id, [
+                    'success' => false,
+                    'error' => $response->get_error_message(),
+                    'duration_ms' => $duration_ms,
+                    'table_generated' => false
+                ]);
+            } else {
+                $body = wp_remote_retrieve_body($response);
+                $data = json_decode($body, true);
+                
+                $debug_logger->log_ai_response($log_id, [
+                    'success' => wp_remote_retrieve_response_code($response) === 200,
+                    'response' => $data,
+                    'duration_ms' => $duration_ms,
+                    'table_generated' => wp_remote_retrieve_response_code($response) === 200 && isset($data['choices'][0]['message']['content'])
+                ]);
+            }
+            
             return $response;
         }
         
         // Should not reach here, but just in case
-        return new \WP_Error(
+        $end_time = microtime(true);
+        $duration_ms = round(($end_time - $start_time) * 1000);
+        
+        $error = new \WP_Error(
             'ai_table_max_retries',
             __('Maximum retry attempts reached. Please try again later.', 'tableberg')
         );
+        
+        $debug_logger->log_ai_response($log_id, [
+            'success' => false,
+            'error' => $error->get_error_message(),
+            'duration_ms' => $duration_ms,
+            'table_generated' => false
+        ]);
+        
+        return $error;
     }
     
     /**
@@ -198,7 +254,7 @@ class AI_Table_Service {
         $enhanced_prompt = $this->create_content_prompt($processed_content);
         
         // Make API request with retry mechanism
-        $response = $this->make_api_request($api_key, $system_prompt, $enhanced_prompt);
+        $response = $this->make_api_request($api_key, $system_prompt, $enhanced_prompt, 2, 'content');
         
         if (is_wp_error($response)) {
             return $response;
@@ -251,7 +307,7 @@ class AI_Table_Service {
         $enhanced_prompt = $this->enhance_user_prompt($prompt);
         
         // Make API request with retry mechanism
-        $response = $this->make_api_request($api_key, $system_prompt, $enhanced_prompt);
+        $response = $this->make_api_request($api_key, $system_prompt, $enhanced_prompt, 2, 'prompt');
         
         if (is_wp_error($response)) {
             return $response;

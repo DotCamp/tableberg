@@ -19,10 +19,16 @@ function MenuHeader({ currentRoutePath, setCurrentRoutePath }) {
         window.history.pushState(null, null, url.href);
     }, [currentRoutePath]);
 
-    const routeObjectsMinus404 = useMemo(
-        () => routeObjects.slice(0, routeObjects.length - 1),
-        [],
-    );
+    const routeObjectsMinus404 = useMemo(() => {
+        const filteredRoutes = routeObjects.slice(0, routeObjects.length - 1);
+        
+        // Filter out AI Debug route if user is not Pro
+        if (!tablebergAdminMenuData?.misc?.pro_status) {
+            return filteredRoutes.filter(route => route.getPath() !== 'ai-debug');
+        }
+        
+        return filteredRoutes;
+    }, []);
     const logoUrl = tablebergAdminMenuData?.assets.logo;
     const versionData = tablebergAdminMenuData?.versionControl;
 
