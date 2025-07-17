@@ -1,8 +1,8 @@
 name: PHP Compatibility Check
 
-on: 
+on:
   push:
-    branches: 
+    branches:
       - '**'
 
 jobs:
@@ -18,4 +18,4 @@ jobs:
           test-versions: 7.0-
           paths: ${{ github.workspace }}
           extensions: php
-          ignore: "*/vendor/php-stubs/*"
+          ignore: "*/vendor/php-stubs/*, vendor/clue/*, vendor/composer/*, vendor/fidry/*, vendor/friendsofphp/*, vendor/psr/*, vendor/react/*, vendor/sebastian/*, vendor/symfony/*"
