@@ -40,20 +40,38 @@ export default function PromptInput({ value, onChange, onGenerate, isGenerating 
     const applyTemplate = (template: string) => {
         onChange(template);
     };
+    
+    const getCharacterCount = () => {
+        return value.length;
+    };
+    
+    const getWordCount = () => {
+        return value.trim().split(/\s+/).filter(word => word.length > 0).length;
+    };
 
     return (
         <div className="tableberg-ai-prompt-input">
-            <TextareaControl
-                label={__("Describe what table you need:", "tableberg")}
-                value={value}
-                onChange={onChange}
-                placeholder={__(
-                    "Example: Create a pricing comparison table with 3 plans...",
-                    "tableberg"
-                )}
-                rows={6}
-                disabled={isGenerating}
-            />
+            <div className="tableberg-ai-prompt-textarea-wrapper">
+                <TextareaControl
+                    label={__("Describe what table you need:", "tableberg")}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={__(
+                        "Example: Create a pricing comparison table with 3 plans...",
+                        "tableberg"
+                    )}
+                    rows={6}
+                    disabled={isGenerating}
+                />
+                <div className="tableberg-ai-prompt-stats">
+                    <span className="tableberg-ai-prompt-words">
+                        {getWordCount()} {__("words", "tableberg")}
+                    </span>
+                    <span className="tableberg-ai-prompt-chars">
+                        {getCharacterCount()} {__("characters", "tableberg")}
+                    </span>
+                </div>
+            </div>
             
             <div className="tableberg-ai-templates">
                 <p className="tableberg-ai-templates-label">
@@ -83,6 +101,26 @@ export default function PromptInput({ value, onChange, onGenerate, isGenerating 
                     <li>{__("Team directory with profile photos, expertise ratings, skill lists, and contact buttons", "tableberg")}</li>
                     <li>{__("SaaS pricing table with feature checkmarks, star ratings, and signup buttons", "tableberg")}</li>
                 </ul>
+            </div>
+            
+            <div className="tableberg-ai-tips">
+                <div className="tableberg-ai-tips-header">
+                    💡 <strong>{__("Pro Tips:", "tableberg")}</strong>
+                </div>
+                <div className="tableberg-ai-tips-content">
+                    <div className="tableberg-ai-tip">
+                        <span className="tableberg-ai-tip-label">{__("Be specific:", "tableberg")}</span>
+                        <span className="tableberg-ai-tip-text">{__("Include details like number of columns, data types, and styling preferences", "tableberg")}</span>
+                    </div>
+                    <div className="tableberg-ai-tip">
+                        <span className="tableberg-ai-tip-label">{__("Mention features:", "tableberg")}</span>
+                        <span className="tableberg-ai-tip-text">{__("Ask for buttons, ratings, images, or icons to make tables more engaging", "tableberg")}</span>
+                    </div>
+                    <div className="tableberg-ai-tip">
+                        <span className="tableberg-ai-tip-label">{__("Set the context:", "tableberg")}</span>
+                        <span className="tableberg-ai-tip-text">{__("Describe the purpose (comparison, pricing, features) for better results", "tableberg")}</span>
+                    </div>
+                </div>
             </div>
         </div>
     );

@@ -680,28 +680,28 @@ export default function AITableModal({ onClose, onInsert }: Props) {
             console.error("AI Table generation error:", err);
             setState("error");
 
-            // Check for specific error types
+            // Enhanced error handling with more context
             if (
                 err.code === "invalid_json" ||
                 err.message?.includes("Unexpected token")
             ) {
                 setError(
                     __(
-                        "Invalid response from server. Please make sure the AI Table add-on is properly activated.",
+                        "Invalid response from server. The AI service returned malformed data. Please try again or contact support if this persists.",
                         "tableberg",
                     ),
                 );
             } else if (err.code === "rest_no_route") {
                 setError(
                     __(
-                        "AI Table service not available. Please make sure the Pro version is activated and refresh the page.",
+                        "AI Table service not available. Please make sure Tableberg Pro is activated and your WordPress site is up to date.",
                         "tableberg",
                     ),
                 );
             } else if (err.code === "ai_table_timeout") {
                 setError(
                     __(
-                        "The AI service is taking longer than expected to respond. This can happen with large content or high server load. Please try again with shorter content or try again later.",
+                        "The AI service is taking longer than expected to respond. This can happen with complex requests or high server load. Please try again with a simpler request or wait a few minutes.",
                         "tableberg",
                     ),
                 );
@@ -709,22 +709,43 @@ export default function AITableModal({ onClose, onInsert }: Props) {
                 setError(
                     err.message ||
                         __(
-                            "Content is too large for AI processing. Please reduce the content length and try again.",
+                            "Content is too large for AI processing. Please reduce the content length to under 3000 words and try again.",
                             "tableberg",
                         ),
                 );
             } else if (err.code === "ai_table_request_failed") {
                 setError(
                     __(
-                        "Failed to connect to AI service. Please check your internet connection and try again.",
+                        "Failed to connect to AI service. Please check your internet connection and API key settings.",
+                        "tableberg",
+                    ),
+                );
+            } else if (err.code === "ai_api_key_invalid") {
+                setError(
+                    __(
+                        "Invalid OpenAI API key. Please check your API key in the settings and make sure it has sufficient credits.",
+                        "tableberg",
+                    ),
+                );
+            } else if (err.code === "ai_rate_limit") {
+                setError(
+                    __(
+                        "Rate limit exceeded. Please wait a moment before trying again.",
                         "tableberg",
                     ),
                 );
             } else {
+                // Generic error with helpful context
+                const contextMessage = method === "content" 
+                    ? __("while analyzing page content", "tableberg")
+                    : method === "prompt"
+                    ? __("while processing your prompt", "tableberg")
+                    : __("while generating the table", "tableberg");
+                    
                 setError(
                     err.message ||
                         __(
-                            "An error occurred while generating the table",
+                            `An unexpected error occurred ${contextMessage}. Please try again or contact support if this continues.`,
                             "tableberg",
                         ),
                 );
@@ -997,35 +1018,74 @@ export default function AITableModal({ onClose, onInsert }: Props) {
                                 return (
                                     <LoadingState
                                         message={__("Creating your table...", "tableberg")}
+                                        method={method || undefined}
                                     />
                                 );
 
                             case "error":
                                 return (
                                     <div className="tableberg-ai-modal-error">
-                                        <Notice status="error" isDismissible={false}>
-                                            {error}
-                                        </Notice>
-                                        <div className="tableberg-ai-modal-actions">
-                                            <Button
-                                                variant="secondary"
-                                                onClick={() => {
-                                                    setState("input");
-                                                    setError(null);
-                                                }}
-                                            >
-                                                {__("Try Again", "tableberg")}
-                                            </Button>
-                                            <Button 
-                                                variant="tertiary" 
-                                                onClick={() => {
-                                                    setState("method-selection");
-                                                    setMethod(null);
-                                                    setError(null);
-                                                }}
-                                            >
-                                                {__("Choose Different Method", "tableberg")}
-                                            </Button>
+                                        <div className="tableberg-ai-error-icon">
+                                            ⚠️
+                                        </div>
+                                        <div className="tableberg-ai-error-content">
+                                            <h3>{__("Something went wrong", "tableberg")}</h3>
+                                            <div className="tableberg-ai-error-message">
+                                                <Notice status="error" isDismissible={false}>
+                                                    {error}
+                                                </Notice>
+                                            </div>
+                                            
+                                            <div className="tableberg-ai-error-suggestions">
+                                                <h4>{__("What you can try:", "tableberg")}</h4>
+                                                <ul>
+                                                    {error?.includes("content too large") && (
+                                                        <li>{__("Try reducing the amount of content or split it into smaller sections", "tableberg")}</li>
+                                                    )}
+                                                    {error?.includes("timeout") && (
+                                                        <li>{__("Wait a moment and try again - our servers might be busy", "tableberg")}</li>
+                                                    )}
+                                                    {error?.includes("API key") && (
+                                                        <li>{__("Check your OpenAI API key settings", "tableberg")}</li>
+                                                    )}
+                                                    {error?.includes("connection") && (
+                                                        <li>{__("Check your internet connection", "tableberg")}</li>
+                                                    )}
+                                                    <li>{__("Try a different generation method", "tableberg")}</li>
+                                                    <li>{__("Simplify your request and try again", "tableberg")}</li>
+                                                </ul>
+                                            </div>
+                                            
+                                            <div className="tableberg-ai-modal-actions">
+                                                <Button
+                                                    variant="primary"
+                                                    onClick={() => {
+                                                        setState("input");
+                                                        setError(null);
+                                                    }}
+                                                >
+                                                    {__("Try Again", "tableberg")}
+                                                </Button>
+                                                <Button 
+                                                    variant="secondary" 
+                                                    onClick={() => {
+                                                        setState("method-selection");
+                                                        setMethod(null);
+                                                        setError(null);
+                                                    }}
+                                                >
+                                                    {__("Choose Different Method", "tableberg")}
+                                                </Button>
+                                                {error?.includes("API key") && (
+                                                    <Button 
+                                                        variant="link"
+                                                        href={`${window.location.origin}/wp-admin/admin.php?page=tableberg-settings&route=settings`}
+                                                        target="_blank"
+                                                    >
+                                                        {__("Go to Settings", "tableberg")}
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 );
