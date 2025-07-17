@@ -139,6 +139,17 @@ class AI_Table_Service {
             ]
         }
 
+        TABLE LAYOUT GUIDELINES:
+        - For COMPARISON TABLES (pricing, services, products): Use COLUMN-ORIENTED layout
+          * Each plan/service/product should be a COLUMN (header)
+          * Each feature/attribute should be a ROW
+          * Example: Headers = [\"Basic Plan\", \"Pro Plan\", \"Enterprise Plan\"], Rows = [\"Price\", \"Features\", \"Support\"]
+        
+        - For DATA TABLES (schedules, lists, information): Use ROW-ORIENTED layout
+          * Each item should be a ROW
+          * Each attribute should be a COLUMN
+          * Example: Headers = [\"Day\", \"Time\", \"Activity\"], Rows = [\"Monday\", \"Tuesday\", \"Wednesday\"]
+
         AVAILABLE BLOCK TYPES:
         1. \"text\" - Regular paragraph content
         2. \"button\" - Call-to-action buttons (use for pricing, purchasing, contact actions)
@@ -190,7 +201,8 @@ class AI_Table_Service {
         - Replace yes/no text with icon blocks
         - Include star ratings for any quality/review mentions
         - Do not include any text outside the JSON object
-        - Ensure all rows have the same number of columns as headers";
+        - Ensure all rows have the same number of columns as headers
+        - For comparison tables, put each option (plan/service/product) as a COLUMN, not a row";
     }
     
     /**
@@ -200,7 +212,27 @@ class AI_Table_Service {
      * @return string Enhanced prompt
      */
     private function enhance_user_prompt($prompt) {
-        return $prompt . "\n\nRemember to respond with ONLY the JSON object, no additional text.";
+        $enhanced_prompt = $prompt;
+        
+        // Detect comparison-related keywords and add column-oriented guidance
+        $comparison_keywords = array('pricing', 'price', 'plan', 'tier', 'package', 'service', 'product', 'compare', 'comparison', 'vs', 'versus', 'option', 'choice');
+        $prompt_lower = strtolower($prompt);
+        
+        $has_comparison_keywords = false;
+        foreach ($comparison_keywords as $keyword) {
+            if (strpos($prompt_lower, $keyword) !== false) {
+                $has_comparison_keywords = true;
+                break;
+            }
+        }
+        
+        if ($has_comparison_keywords) {
+            $enhanced_prompt .= "\n\nIMPORTANT: Use COLUMN-ORIENTED layout for this comparison table. Each option/plan/service should be a COLUMN header, and each feature/attribute should be a ROW.";
+        }
+        
+        $enhanced_prompt .= "\n\nRemember to respond with ONLY the JSON object, no additional text.";
+        
+        return $enhanced_prompt;
     }
     
     /**
@@ -1135,13 +1167,13 @@ class AI_Table_Service {
      */
     public function get_prompt_templates() {
         return array(
-            'comparison' => __('Create a modern product comparison table with 3 competing products. Include product images, star ratings for reviews, feature lists with checkmarks, and "Buy Now" buttons. Use icons for yes/no features and make it conversion-focused.', 'tableberg'),
-            'pricing' => __('Create a professional pricing table with 3 tiers: Basic ($19/mo), Pro ($49/mo), and Enterprise ($99/mo). Include feature lists with checkmarks, highlight the Pro plan, add "Get Started" buttons, and use star ratings for customer satisfaction scores.', 'tableberg'),
+            'comparison' => __('Create a modern product comparison table with 3 competing products as COLUMNS. Include product images, star ratings for reviews, feature lists with checkmarks, and "Buy Now" buttons. Use icons for yes/no features and make it conversion-focused. Each product should be a column header.', 'tableberg'),
+            'pricing' => __('Create a professional pricing table with 3 tiers as COLUMNS: Basic ($19/mo), Pro ($49/mo), and Enterprise ($99/mo). Include feature lists with checkmarks, highlight the Pro plan, add "Get Started" buttons, and use star ratings for customer satisfaction scores. Each plan should be a column header.', 'tableberg'),
             'schedule' => __('Create a weekly schedule table for Monday through Friday with time slots from 9am to 5pm. Use styled lists for detailed activities and icons to indicate availability or special events.', 'tableberg'),
-            'features' => __('Create a feature comparison table with checkmark icons for included features, X icons for missing features, star icons for premium features, and styled lists for detailed specifications. Include action buttons.', 'tableberg'),
+            'features' => __('Create a feature comparison table with checkmark icons for included features, X icons for missing features, star icons for premium features, and styled lists for detailed specifications. Include action buttons. Use column-oriented layout with each option as a column.', 'tableberg'),
             'data' => __('Create a professional data table with appropriate visual elements. Use star ratings for scores, icons for status indicators, styled lists for multi-item data, and buttons for actions. Make it scannable and modern.', 'tableberg'),
-            'products' => __('Create a product showcase table with 3 products. Include product images, star ratings for reviews, styled feature lists, pricing with "Order Now" buttons, and visual indicators for key specifications.', 'tableberg'),
-            'services' => __('Create a service comparison table with 3 service packages. Use styled lists for what\'s included, star ratings for quality scores, checkmark icons for features, and "Contact Us" buttons for each service.', 'tableberg'),
+            'products' => __('Create a product showcase table with 3 products as COLUMNS. Include product images, star ratings for reviews, styled feature lists, pricing with "Order Now" buttons, and visual indicators for key specifications. Each product should be a column header.', 'tableberg'),
+            'services' => __('Create a service comparison table with 3 service packages as COLUMNS. Use styled lists for what\'s included, star ratings for quality scores, checkmark icons for features, and "Contact Us" buttons for each service. Each service should be a column header.', 'tableberg'),
             'team' => __('Create a team members table with profile images, star ratings for expertise levels, styled lists for skills and specialties, and "Contact" buttons for each team member.', 'tableberg')
         );
     }
