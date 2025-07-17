@@ -1028,7 +1028,7 @@ class AI_Table_Service {
                 'alt' => esc_html($data['alt']),
                 'width' => $data['width'],
                 'align' => 'center',
-                'isExample' => true // Indicates this is a placeholder
+                'isExample' => false // Allow proper image block functionality
             ),
             'innerBlocks' => array()
         );
