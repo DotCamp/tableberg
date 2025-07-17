@@ -5,18 +5,13 @@ namespace Tableberg\Pro\Blocks;
 use Tableberg\Pro\Common;
 use Tableberg\Utils\Utils;
 
-class Icon
-{
-
-
-    public function __construct()
-    {
+class Icon {
+    public function __construct() {
         add_action('init', array($this, 'block_registration'));
     }
 
 
-    private static function get_styles(array $attributes): string
-    {
+    private static function get_styles(array $attributes): string {
         $styles = [
             'justify-content' => $attributes['justify'],
             'background' => Utils::get_any($attributes, 'background', 'bgGradient'),
@@ -37,8 +32,7 @@ class Icon
 
     }
 
-    public function render_block($attributes, $content, $block)
-    {
+    public function render_block($attributes, $content, $block) {
         $size = $attributes['size'];
         $icon = $attributes['icon'];
         if (isset($icon['type']) && $icon['type'] === 'url') {
@@ -69,8 +63,7 @@ class Icon
     }
 
 
-    public function block_registration()
-    {
+    public function block_registration() {
 
         $jsonPath = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/icon/block.json';
         $attrs = json_decode(file_get_contents($jsonPath), true)['attributes'];

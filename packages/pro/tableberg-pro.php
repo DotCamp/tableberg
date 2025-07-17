@@ -41,8 +41,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 if (!function_exists('tp_fs')) {
     // Create a helper function for easy SDK access.
-    function tp_fs()
-    {
+    function tp_fs() {
         global $tp_fs;
 
         if (!isset($tp_fs)) {
@@ -50,7 +49,7 @@ if (!function_exists('tp_fs')) {
             if (file_exists(dirname(dirname(__FILE__)) . '/tableberg/includes/freemius/start.php')) {
                 // Try to load SDK from parent plugin folder.
                 require_once dirname(dirname(__FILE__)) . '/tableberg/includes/freemius/start.php';
-            } else if (file_exists(dirname(dirname(__FILE__)) . '/tableberg-pro/includes/freemius/start.php')) {
+            } elseif (file_exists(dirname(dirname(__FILE__)) . '/tableberg-pro/includes/freemius/start.php')) {
                 // Try to load SDK from premium parent plugin folder.
                 require_once dirname(dirname(__FILE__)) . '/tableberg-pro/includes/freemius/start.php';
             } else {
@@ -87,14 +86,12 @@ if (!function_exists('tp_fs')) {
 }
 
 
-function tp_fs_is_parent_active_and_loaded()
-{
+function tp_fs_is_parent_active_and_loaded() {
     // Check if the parent's init SDK method exists.
     return function_exists('tab_fs');
 }
 
-function tp_fs_is_parent_active()
-{
+function tp_fs_is_parent_active() {
     $active_plugins = get_option('active_plugins', array());
 
     if (is_multisite()) {
@@ -114,8 +111,7 @@ function tp_fs_is_parent_active()
     return false;
 }
 
-function tp_fs_init()
-{
+function tp_fs_init() {
     if (tp_fs_is_parent_active_and_loaded()) {
         // Init Freemius.
         tp_fs();
@@ -129,17 +125,13 @@ function tp_fs_init()
             /**
              * Tableberg Pro main class.
              */
-            class Tableberg_Pro_Main
-            {
-
-
+            class Tableberg_Pro_Main {
                 /**
                  * Constructor.
                  *
                  * @return void
                  */
-                public function __construct()
-                {
+                public function __construct() {
                     new Blocks\StarRating();
                     new Blocks\StyledList();
                     new Blocks\StyledListItem();
@@ -153,22 +145,22 @@ function tp_fs_init()
                     new Blocks\WooVariationPicker();
                     new Assets();
 
-					add_action('init', array($this, 'init_actions'));
-				}
+                    add_action('init', array($this, 'init_actions'));
+                }
 
-				/**
-				 * Init lifecycle related actions.
-				 *
-				 * @return void
-				 */
-				public function init_actions(  ) {
-					RegisterPatterns::from_dir(__DIR__ . '/includes/patterns');
-				}
-			}
+                /**
+                 * Init lifecycle related actions.
+                 *
+                 * @return void
+                 */
+                public function init_actions() {
+                    RegisterPatterns::from_dir(__DIR__ . '/includes/patterns');
+                }
+            }
 
-			if (tp_fs()->can_use_premium_code()) {
-				new Tableberg_Pro_Main();
-			}
+            if (tp_fs()->can_use_premium_code()) {
+                new Tableberg_Pro_Main();
+            }
         }
     } else {
         // Parent is inactive, add your error handling here.
@@ -178,7 +170,7 @@ function tp_fs_init()
 if (tp_fs_is_parent_active_and_loaded()) {
     // If parent already included, init add-on.
     tp_fs_init();
-} else if (tp_fs_is_parent_active()) {
+} elseif (tp_fs_is_parent_active()) {
     // Init add-on only after the parent is loaded.
     add_action('tab_fs_loaded', 'tp_fs_init');
 } else {
@@ -186,8 +178,7 @@ if (tp_fs_is_parent_active_and_loaded()) {
     tp_fs_init();
 }
 
-function load_pro_textdomain()
-{
+function load_pro_textdomain() {
     load_plugin_textdomain('tableberg', false, dirname(plugin_basename(__FILE__)) . '/languages');
 }
 

@@ -6,19 +6,15 @@ use Tableberg\Utils\Utils;
 
 /**
  *
- *@package Tableberg_pro 
+ *@package Tableberg_pro
  */
 
-class Toggle
-{
-
-    public function __construct()
-    {
-        add_action("init", [$this, "register_block"]);
+class Toggle {
+    public function __construct() {
+        add_action('init', [$this, 'register_block']);
     }
 
-    public function render_toggle_block($attributes, $content)
-    {
+    public function render_toggle_block($attributes, $content) {
         $alignment_class = isset($attributes['alignment']) ? $attributes['alignment'] : 'left';
         $gap = isset($attributes['gap']) ? Utils::get_spacing_css_single($attributes['gap']) : '0';
         $borderRadius = isset($attributes['tabBorderRadius']) ? Utils::get_spacing_css_single($attributes['tabBorderRadius']) : '0';
@@ -41,7 +37,7 @@ class Toggle
 
         $defaultActiveTabIndex = $attributes['defaultActiveTabIndex'];
 
-        foreach ($attributes["tabs"] as $index => $title) {
+        foreach ($attributes['tabs'] as $index => $title) {
             $activeClass = ((int)$index === (int) $defaultActiveTabIndex) ? 'active' : '';
 
             $output .= '<div
@@ -49,11 +45,11 @@ class Toggle
                     data-index="' . esc_attr($index) .  '"
                     style="border-radius: ' . esc_attr($borderRadius) . ';"
                 >
-                    <p>' . esc_html($title) . "</p>
-                </div>";
+                    <p>' . esc_html($title) . '</p>
+                </div>';
         }
 
-        $output .= "</nav>";
+        $output .= '</nav>';
 
         $output .= '<div class="tab-content" style="display:block;">';
         $output .= $content;
@@ -64,16 +60,15 @@ class Toggle
         return $output;
     }
 
-    public function register_block()
-    {
+    public function register_block() {
         $json = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/toggle/block.json';
         $attrs = json_decode(file_get_contents($json), true)['attributes'];
 
         register_block_type_from_metadata(
             $json,
             [
-                "attributes" => $attrs,
-                "render_callback" => [$this, "render_toggle_block"]
+                'attributes' => $attrs,
+                'render_callback' => [$this, 'render_toggle_block']
             ]
         );
     }

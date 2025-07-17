@@ -4,27 +4,23 @@ namespace Tableberg\Pro\Blocks;
 
 /**
  *
- *@package Tableberg_pro 
+ *@package Tableberg_pro
  */
 
-class Woo
-{
-
-    public function __construct()
-    {
-        add_action("init", [$this, "register_block"]);
-        add_action("rest_api_init", [$this, "register_rest_routes"]);
+class Woo {
+    public function __construct() {
+        add_action('init', [$this, 'register_block']);
+        add_action('rest_api_init', [$this, 'register_rest_routes']);
     }
 
-    public function register_block()
-    {
+    public function register_block() {
         $json = TABLEBERG_PRO_DIR_PATH . 'dist/blocks/woo/block.json';
         $attrs = json_decode(file_get_contents($json), true)['attributes'];
 
         register_block_type_from_metadata(
             $json,
             [
-                "attributes" => $attrs,
+                'attributes' => $attrs,
             ]
         );
     }
@@ -41,32 +37,32 @@ class Woo
                 'per_page' => [
                     'default' => 10,
                     'sanitize_callback' => 'absint',
-                    'validate_callback' => function($param) {
+                    'validate_callback' => function ($param) {
                         return is_numeric($param) && $param > 0;
                     }
                 ],
                 'page' => [
                     'default' => 1,
                     'sanitize_callback' => 'absint',
-                    'validate_callback' => function($param) {
+                    'validate_callback' => function ($param) {
                         return is_numeric($param) && $param > 0;
                     }
                 ],
                 '_fields' => [
                     'default' => '',
-                    'sanitize_callback' => function($param) {
+                    'sanitize_callback' => function ($param) {
                         return sanitize_text_field($param);
                     }
                 ],
                 'featured' => [
                     'default' => false,
-                    'sanitize_callback' => function($param) {
+                    'sanitize_callback' => function ($param) {
                         return filter_var($param, FILTER_VALIDATE_BOOLEAN);
                     }
                 ],
                 'on_sale' => [
                     'default' => false,
-                    'sanitize_callback' => function($param) {
+                    'sanitize_callback' => function ($param) {
                         return filter_var($param, FILTER_VALIDATE_BOOLEAN);
                     }
                 ]
@@ -76,7 +72,7 @@ class Woo
 
     /**
      * Get WooCommerce products data
-     * 
+     *
      * @param \WP_REST_Request $request The request object
      * @return \WP_REST_Response
      */
@@ -196,7 +192,7 @@ class Woo
     }
 
     private function get_term_objects($variations, $attribute) {
-        $term_objects = array_map(function($variation) use ($attribute) {
+        $term_objects = array_map(function ($variation) use ($attribute) {
             $terms = get_terms([
                 'taxonomy' => $attribute,
                 'hide_empty' => false,
@@ -210,7 +206,7 @@ class Woo
             }
 
             $term = array_values(
-                array_filter($terms, function($term) use ($variation) {
+                array_filter($terms, function ($term) use ($variation) {
                     return $term->slug === $variation;
                 })
             )[0];
@@ -228,12 +224,12 @@ class Woo
         foreach ($products as &$product) {
             foreach ($product as $key => $value) {
                 switch ($key) {
-                    case "images":
+                    case 'images':
                         $product[$key] = sizeof($value) > 0 ?
                             [ 'url' => $value[0]['src'] ] :
                             [ 'url' => '' ];
                         break;
-                    case "price":
+                    case 'price':
                         $product[$key] = html_entity_decode(get_woocommerce_currency_symbol()) . $value;
                         break;
                     default:
