@@ -82,14 +82,18 @@ class DynamicField {
 
         if ($target === 'tableberg/button') {
             $buttonDiv = $tags->query("//div[contains(@class, 'wp-block-tableberg-button')]")[0];
-            $buttonDiv->setAttribute('data-tableberg-woo-product-id', $value);
+            if (!empty($buttonDiv)) {
+                $buttonDiv->setAttribute('data-tableberg-woo-product-id', $value);
+            }
 
             return $dom->saveHTML();
         }
 
         if ($target === 'tableberg-pro/woo-variation-picker') {
             $pickerDiv = $tags->query("//div[contains(@class, 'tableberg-woo-variation-picker')]")[0];
-            $pickerDiv->setAttribute('data-tableberg-woo-variation-props', json_encode($value));
+            if (!empty($pickerDiv)) {
+                $pickerDiv->setAttribute('data-tableberg-woo-variation-props', json_encode($value));
+            }
 
             return $dom->saveHTML();
         }
