@@ -649,6 +649,155 @@ IMPORTANT RULES:
     }
     
     /**
+     * Extract and normalize list items from various formats
+     *
+     * @param array $block_data Block data from AI
+     * @return array Normalized items and icon
+     */
+    private function extract_styled_list_items($block_data) {
+        $items = array();
+        $icon = 'check'; // default icon
+        
+        // Check for 'content' field first (new format from AI)
+        if (isset($block_data['content'])) {
+            if (is_array($block_data['content'])) {
+                // Handle array of objects
+                foreach ($block_data['content'] as $item) {
+                    if (is_array($item)) {
+                        // Handle nested objects with icon and content
+                        if (isset($item['content'])) {
+                            $items[] = $item['content'];
+                        } elseif (isset($item['text'])) {
+                            $items[] = $item['text'];
+                        }
+                        
+                        // Extract icon from first item if available and not already set
+                        if (count($items) === 1 && isset($item['icon'])) {
+                            $icon = $item['icon'];
+                        }
+                    } else {
+                        // Handle simple string items
+                        $items[] = $item;
+                    }
+                }
+            } elseif (is_string($block_data['content'])) {
+                // Handle string content - split into individual items
+                $items = $this->split_string_into_list_items($block_data['content']);
+            }
+        }
+        
+        // Fallback to 'items' field (existing format)
+        if (empty($items) && isset($block_data['items']) && is_array($block_data['items'])) {
+            $items = $block_data['items'];
+        }
+        
+        // If still no items, use default
+        if (empty($items)) {
+            $items = array('Item 1');
+        }
+        
+        // Check for explicit icon in block data
+        if (isset($block_data['icon'])) {
+            $icon = $block_data['icon'];
+        }
+        
+        return array(
+            'items' => $items,
+            'icon' => $icon
+        );
+    }
+    
+    /**
+     * Split a long string into individual list items
+     *
+     * @param string $content Long string content
+     * @return array Array of individual items
+     */
+    private function split_string_into_list_items($content) {
+        $items = array();
+        
+        // Clean up the content
+        $content = trim($content);
+        
+        if (empty($content)) {
+            return array('Item 1');
+        }
+        
+        // Try to split by sentence boundaries first
+        $sentences = preg_split('/(?<=[.!?])\s+/', $content, -1, PREG_SPLIT_NO_EMPTY);
+        
+        // If we get reasonable sentences, use them
+        if (count($sentences) > 1 && count($sentences) <= 8) {
+            foreach ($sentences as $sentence) {
+                $sentence = trim($sentence);
+                if (!empty($sentence) && strlen($sentence) > 10) {
+                    $items[] = $sentence;
+                }
+            }
+        }
+        
+        // If sentence splitting didn't work well, try other delimiters
+        if (empty($items)) {
+            // Look for common list patterns
+            $patterns = array(
+                '/\.\s*(?=[A-Z])/',  // Period followed by capital letter
+                '/;\s*/',             // Semicolon
+                '/\.\s*(?=\w)/',     // Period followed by word
+            );
+            
+            foreach ($patterns as $pattern) {
+                $potential_items = preg_split($pattern, $content, -1, PREG_SPLIT_NO_EMPTY);
+                
+                if (count($potential_items) > 1 && count($potential_items) <= 8) {
+                    foreach ($potential_items as $item) {
+                        $item = trim($item);
+                        if (!empty($item) && strlen($item) > 5) {
+                            $items[] = $item;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        
+        // If still no good items, try to break by length
+        if (empty($items)) {
+            $words = explode(' ', $content);
+            $current_item = '';
+            $target_length = 80; // Target length per item
+            
+            foreach ($words as $word) {
+                if (strlen($current_item . ' ' . $word) > $target_length && !empty($current_item)) {
+                    $items[] = trim($current_item);
+                    $current_item = $word;
+                } else {
+                    $current_item .= (empty($current_item) ? '' : ' ') . $word;
+                }
+            }
+            
+            // Add the last item
+            if (!empty($current_item)) {
+                $items[] = trim($current_item);
+            }
+        }
+        
+        // Clean up items and limit to reasonable number
+        $items = array_filter($items, function($item) {
+            return !empty(trim($item)) && strlen(trim($item)) > 3;
+        });
+        
+        // Limit to 6 items maximum for better display
+        $items = array_slice($items, 0, 6);
+        
+        // If we still have no items, return the original content as single item
+        if (empty($items)) {
+            $items = array($content);
+        }
+        
+        return $items;
+    }
+
+    /**
      * Normalize block data from AI response
      *
      * @param array $block_data Block data from AI
@@ -679,10 +828,11 @@ IMPORTANT RULES:
                 );
                 
             case 'styled_list':
+                $extracted = $this->extract_styled_list_items($block_data);
                 return array(
                     'type' => 'styled_list',
-                    'items' => isset($block_data['items']) ? $block_data['items'] : array('Item 1'),
-                    'icon' => isset($block_data['icon']) ? $block_data['icon'] : 'check'
+                    'items' => $extracted['items'],
+                    'icon' => $extracted['icon']
                 );
                 
             case 'image':
