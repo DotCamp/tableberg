@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 interface Props {
     message?: string;
     method?: "prompt" | "content" | "image";
+    completed?: boolean;
 }
 
 interface LoadingStep {
@@ -92,7 +93,7 @@ const tips = [
     __("💡 Tip: Star ratings help showcase product quality", "tableberg")
 ];
 
-export default function LoadingState({ message = __("Creating your table...", "tableberg"), method }: Props) {
+export default function LoadingState({ message = __("Creating your table...", "tableberg"), method, completed = false }: Props) {
     const [currentStep, setCurrentStep] = useState(0);
     const [progress, setProgress] = useState(0);
     const [currentTip, setCurrentTip] = useState(0);
@@ -103,16 +104,26 @@ export default function LoadingState({ message = __("Creating your table...", "t
     const totalEstimatedTime = steps.reduce((sum, step) => sum + (step.estimatedTime || 3000), 0);
     
     useEffect(() => {
+        if (completed) {
+            return; // Don't start or continue timer when completed
+        }
+        
         const interval = setInterval(() => {
             setElapsedTime(prev => prev + 100);
         }, 100);
         
         return () => clearInterval(interval);
-    }, []);
+    }, [completed]);
     
     useEffect(() => {
+        if (completed) {
+            setCurrentStep(steps.length);
+            setProgress(100);
+            return;
+        }
+        
         let accumulatedTime = 0;
-        let currentStepIndex = 0;
+        let currentStepIndex = steps.length - 1; // Default to last step if no match found
         
         for (let i = 0; i < steps.length; i++) {
             accumulatedTime += steps[i].estimatedTime || 3000;
@@ -122,9 +133,10 @@ export default function LoadingState({ message = __("Creating your table...", "t
             }
         }
         
-        setCurrentStep(currentStepIndex);
+        // Ensure we never go backwards in steps - only allow forward progression
+        setCurrentStep(prev => Math.max(prev, currentStepIndex));
         setProgress(Math.min((elapsedTime / totalEstimatedTime) * 100, 95));
-    }, [elapsedTime, steps, totalEstimatedTime]);
+    }, [elapsedTime, steps, totalEstimatedTime, completed]);
     
     useEffect(() => {
         const tipInterval = setInterval(() => {
@@ -150,9 +162,9 @@ export default function LoadingState({ message = __("Creating your table...", "t
             </div>
             
             <div className="tableberg-ai-loading-header">
-                <h3>{message}</h3>
+                <h3>{completed ? __("Table generated successfully!", "tableberg") : message}</h3>
                 <p className="tableberg-ai-loading-motivational">
-                    {motivationalMessages[motivationalMessage]}
+                    {completed ? __("Your table is ready to be inserted.", "tableberg") : motivationalMessages[motivationalMessage]}
                 </p>
             </div>
             
@@ -173,12 +185,12 @@ export default function LoadingState({ message = __("Creating your table...", "t
                     <div 
                         key={step.id}
                         className={`tableberg-ai-loading-step ${
-                            index < currentStep ? 'completed' : 
+                            completed || index < currentStep ? 'completed' : 
                             index === currentStep ? 'active' : 'pending'
                         }`}
                     >
                         <div className="tableberg-ai-loading-step-icon">
-                            {index < currentStep ? '✅' : index === currentStep ? step.icon : '⏳'}
+                            {completed || index < currentStep ? '✅' : index === currentStep ? step.icon : '⏳'}
                         </div>
                         <div className="tableberg-ai-loading-step-content">
                             <div className="tableberg-ai-loading-step-label">{step.label}</div>

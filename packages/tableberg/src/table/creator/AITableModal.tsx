@@ -20,7 +20,7 @@ interface Props {
 }
 
 type GenerationMethod = "prompt" | "context" | "image";
-type ModalState = "method-selection" | "input" | "processing" | "error";
+type ModalState = "method-selection" | "input" | "processing" | "completed" | "error";
 
 interface AISettings {
     api_key?: string;
@@ -795,8 +795,14 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                 console.log("Created block:", block);
 
                 if (block) {
-                    onInsert(block);
-                    onClose();
+                    // Show completion state first
+                    setState("completed");
+                    
+                    // Wait a bit to show the completion, then insert and close
+                    setTimeout(() => {
+                        onInsert(block);
+                        onClose();
+                    }, 1500);
                 } else {
                     throw new Error(
                         __("Failed to create block from response", "tableberg"),
@@ -1048,7 +1054,7 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                             </span>
                         </>
                     )}
-                    {(state === "processing" || state === "error") && method && (
+                    {(state === "processing" || state === "completed" || state === "error") && method && (
                         <>
                             <span className="tableberg-ai-modal-breadcrumb-step">
                                 {__("Choose Method", "tableberg")}
@@ -1062,6 +1068,7 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                             <span className="tableberg-ai-modal-breadcrumb-separator">›</span>
                             <span className="tableberg-ai-modal-breadcrumb-current">
                                 {state === "processing" && __("Generating", "tableberg")}
+                                {state === "completed" && __("Complete", "tableberg")}
                                 {state === "error" && __("Error", "tableberg")}
                             </span>
                         </>
@@ -1151,6 +1158,15 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                                     <LoadingState
                                         message={__("Creating your table...", "tableberg")}
                                         method={method || undefined}
+                                    />
+                                );
+
+                            case "completed":
+                                return (
+                                    <LoadingState
+                                        message={__("Table generated successfully!", "tableberg")}
+                                        method={method || undefined}
+                                        completed={true}
                                     />
                                 );
 
