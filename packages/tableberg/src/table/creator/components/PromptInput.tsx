@@ -12,27 +12,27 @@ const templates = [
     {
         id: "comparison",
         label: __("Comparison", "tableberg"),
-        prompt: __("Create a comparison table for [products] with features like [list key features]", "tableberg"),
+        prompt: __("Create a modern product comparison table with 3 competing products. Include product images, star ratings for reviews, feature lists with checkmarks, and \"Buy Now\" buttons. Use icons for yes/no features and make it conversion-focused.", "tableberg"),
     },
     {
         id: "pricing",
         label: __("Pricing", "tableberg"),
-        prompt: __("Create a pricing table with 3 tiers: Basic, Pro, and Enterprise", "tableberg"),
-    },
-    {
-        id: "schedule",
-        label: __("Schedule", "tableberg"),
-        prompt: __("Create a weekly schedule table for Monday through Friday", "tableberg"),
+        prompt: __("Create a professional pricing table with 3 tiers: Basic ($19/mo), Pro ($49/mo), and Enterprise ($99/mo). Include feature lists with checkmarks, highlight the Pro plan, add \"Get Started\" buttons, and use star ratings for customer satisfaction scores.", "tableberg"),
     },
     {
         id: "features",
         label: __("Features", "tableberg"),
-        prompt: __("Create a feature comparison table with checkmarks", "tableberg"),
+        prompt: __("Create a feature comparison table with checkmark icons for included features, X icons for missing features, star icons for premium features, and styled lists for detailed specifications. Include action buttons.", "tableberg"),
     },
     {
-        id: "data",
-        label: __("Data", "tableberg"),
-        prompt: __("Create a data table with columns for [specify columns]", "tableberg"),
+        id: "products",
+        label: __("Products", "tableberg"),
+        prompt: __("Create a product showcase table with 3 products. Include product images, star ratings for reviews, styled feature lists, pricing with \"Order Now\" buttons, and visual indicators for key specifications.", "tableberg"),
+    },
+    {
+        id: "services",
+        label: __("Services", "tableberg"),
+        prompt: __("Create a service comparison table with 3 service packages. Use styled lists for what's included, star ratings for quality scores, checkmark icons for features, and \"Contact Us\" buttons for each service.", "tableberg"),
     },
 ];
 
@@ -79,9 +79,9 @@ export default function PromptInput({ value, onChange, onGenerate, isGenerating 
                     {__("Examples:", "tableberg")}
                 </p>
                 <ul>
-                    <li>{__("Pricing table with Basic ($9), Pro ($29), Enterprise ($99)", "tableberg")}</li>
-                    <li>{__("Compare iPhone 15, 15 Pro, and 15 Pro Max features", "tableberg")}</li>
-                    <li>{__("Weekly schedule Monday to Friday, 9am to 5pm", "tableberg")}</li>
+                    <li>{__("Compare iPhone 15, 15 Pro, and 15 Pro Max with images, star ratings, feature lists, and buy buttons", "tableberg")}</li>
+                    <li>{__("Team directory with profile photos, expertise ratings, skill lists, and contact buttons", "tableberg")}</li>
+                    <li>{__("SaaS pricing table with feature checkmarks, star ratings, and signup buttons", "tableberg")}</li>
                 </ul>
             </div>
 
