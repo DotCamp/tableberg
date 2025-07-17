@@ -1,8 +1,5 @@
 import { __ } from "@wordpress/i18n";
-import {
-    InspectorControls,
-    useBlockProps,
-} from "@wordpress/block-editor";
+import { InspectorControls, useBlockProps } from "@wordpress/block-editor";
 import {
     PanelBody,
     SelectControl,
@@ -11,7 +8,12 @@ import {
 } from "@wordpress/components";
 import { CSSProperties } from "react";
 
-import { RANGE_CONFIG_POSITION, RANGE_CONFIG_SIZE, RibbonAttrs, RibbonProps } from "..";
+import {
+    RANGE_CONFIG_POSITION,
+    RANGE_CONFIG_SIZE,
+    RibbonAttrs,
+    RibbonProps,
+} from "..";
 import { getSpacingStyle } from "../../../utils/styling-helpers";
 import { Icon, IconPickerMini } from "@tableberg/components/icon-library";
 import { SizeControl, SpacingControl } from "@tableberg/components";
@@ -65,7 +67,8 @@ export default function Corner({ attrs, setAttributes }: RibbonProps) {
             <div {...blockProps}>
                 <div
                     style={{
-                        background: attrs.bgGradient ?? attrs.background ?? "#ffffff",
+                        background:
+                            attrs.bgGradient ?? attrs.background ?? "#ffffff",
                         ...getSpacingStyle(iAttrs.padding, "padding"),
                         fill: attrs.color,
                     }}
@@ -145,7 +148,7 @@ export default function Corner({ attrs, setAttributes }: RibbonProps) {
                 <PanelBody title="Icon" initialOpen>
                     <IconPickerMini
                         onSelect={(icon) => {
-                            setAttrs({icon});
+                            setAttrs({ icon });
                         }}
                     />
                 </PanelBody>

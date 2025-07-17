@@ -110,7 +110,6 @@
         }
     }
 
-    
     &:has(.tableberg-h-sorter) .tableberg-cell-inner {
         padding-left: 20px;
     }
@@ -162,7 +161,8 @@
     }
 }
 
-.tableberg-colstack-table, .tableberg-rowstack-table {
+.tableberg-colstack-table,
+.tableberg-rowstack-table {
     .wp-block-tableberg-cell {
         &.tableberg-odd-row-cell {
             background: var(--tableberg-odd-bg);

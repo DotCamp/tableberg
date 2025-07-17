@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React from "react";
 import MenuHeader from "../components/MenuHeader";
 import Content from "../components/Content";
@@ -16,7 +15,7 @@ function AdminMenuContainer() {
     const route = url.searchParams.get("route");
 
     const [currentRoutePath, setCurrentRoutePath] = useState(
-        route ?? "welcome"
+        route ?? "welcome",
     );
     return (
         <div className={"tableberg-admin-menu-container"}>

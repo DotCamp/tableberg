@@ -7,7 +7,11 @@ module.exports = {
     ...defaultConfig,
     entry: {
         "tableberg-pro": path.resolve(process.cwd(), "src", "index.tsx"),
-        "tableberg-pro-frontend": path.resolve(process.cwd(), "src", "frontend.ts"),
+        "tableberg-pro-frontend": path.resolve(
+            process.cwd(),
+            "src",
+            "frontend.ts",
+        ),
         "tableberg-pro-style": path.resolve(process.cwd(), "src", "style.scss"),
         "tableberg-pro-editor": path.resolve(
             process.cwd(),

@@ -13,7 +13,7 @@ function Image(props: ImageTypes) {
     const imageSrc = get(
         attributes,
         `media.sizes.${sizeSlug}.url`,
-        attributes.media?.url ?? ""
+        attributes.media?.url ?? "",
     );
     const mediaAlt = get(attributes, "alt", "");
     const aspectRatio = get(attributes, "aspectRatio", "");

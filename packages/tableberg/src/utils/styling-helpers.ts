@@ -17,7 +17,7 @@ export const getBorderCSS = (object: object) => {
 
 export function getSingleSideBorderValue(
     border: BorderTypes,
-    side: keyof BorderTypes
+    side: keyof BorderTypes,
 ) {
     const { width = "", style = "", color = "" } = border[side] || {};
     if (isEmpty(width)) {

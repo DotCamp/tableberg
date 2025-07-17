@@ -1,9 +1,8 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { __ } from "@wordpress/i18n";
 import MenuButton, { BUTTON_TYPES } from "./MenuButton";
-import { faRightLong } from '@fortawesome/free-solid-svg-icons'
+import { faRightLong } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Version control popup component.
@@ -49,12 +48,12 @@ function VersionControlPopup({
     };
 
     const [operationStatus, setOperationStatus] = useState(
-        OPERATION_STATUS_TYPES.NOT_STARTED
+        OPERATION_STATUS_TYPES.NOT_STARTED,
     );
     const [reloadCountdown, setReloadCountdown] = useState(reloadDelay / 1000);
 
     const [responseObject, setResponseObject] = useState(
-        generateResponseObject("")
+        generateResponseObject(""),
     );
 
     const isDowngrade = from > to;
@@ -69,12 +68,12 @@ function VersionControlPopup({
         onOperationStart()
             .then(({ message }) => {
                 setResponseObject(
-                    generateResponseObject(message, RESPONSE_TYPES.OK)
+                    generateResponseObject(message, RESPONSE_TYPES.OK),
                 );
             })
             .catch(({ message }) => {
                 setResponseObject(
-                    generateResponseObject(message, RESPONSE_TYPES.ERROR)
+                    generateResponseObject(message, RESPONSE_TYPES.ERROR),
                 );
             })
             .finally(() => {
@@ -114,7 +113,7 @@ function VersionControlPopup({
                     <div
                         className={"version-icon"}
                         data-in-progress={JSON.stringify(
-                            operationStatus === OPERATION_STATUS_TYPES.STARTED
+                            operationStatus === OPERATION_STATUS_TYPES.STARTED,
                         )}
                     >
                         <div className={"version-icon-inner-wrapper"}>
@@ -139,7 +138,7 @@ function VersionControlPopup({
                                 <div>
                                     {__(
                                         "Older versions might be unstable. Do it on your own risk and create a backup.",
-                                        "tableberg"
+                                        "tableberg",
                                     )}
                                 </div>
                                 <div
@@ -174,11 +173,11 @@ function VersionControlPopup({
                                     {reloadCountdown <= 0
                                         ? `${__(
                                               "Reloading page now…",
-                                              "tableberg"
+                                              "tableberg",
                                           )}`
                                         : `${__(
                                               "Reloading page in ",
-                                              "tableberg"
+                                              "tableberg",
                                           )} ${reloadCountdown}...`}
                                 </div>
                             </div>

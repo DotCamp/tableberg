@@ -18,12 +18,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         headings.forEach((heading, index) => {
             heading.style.setProperty("color", inactiveColor ?? null);
-            heading.style.setProperty("background-color", inactiveBackground ?? null);
+            heading.style.setProperty(
+                "background-color",
+                inactiveBackground ?? null,
+            );
 
             if (heading.classList.contains("active")) {
                 tables[index].style.display = "block";
                 heading.style.setProperty("color", activeColor ?? null);
-                heading.style.setProperty("background-color", activeBackground ?? null);
+                heading.style.setProperty(
+                    "background-color",
+                    activeBackground ?? null,
+                );
             }
 
             heading.addEventListener("click", () => {
@@ -36,12 +42,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 headings.forEach((heading) => {
                     heading.classList.remove("active");
                     heading.style.setProperty("color", inactiveColor ?? null);
-                    heading.style.setProperty("background-color", inactiveBackground ?? null);
+                    heading.style.setProperty(
+                        "background-color",
+                        inactiveBackground ?? null,
+                    );
                 });
 
                 heading.classList.add("active");
                 heading.style.setProperty("color", activeColor ?? null);
-                heading.style.setProperty("background-color", activeBackground ?? null);
+                heading.style.setProperty(
+                    "background-color",
+                    activeBackground ?? null,
+                );
             });
         });
     });

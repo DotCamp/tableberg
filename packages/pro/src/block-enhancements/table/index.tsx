@@ -5,18 +5,17 @@ import TableAndCellControl from "../TableAndCellControl";
 import { createBlock } from "@wordpress/blocks";
 
 interface TableProProps {
-    onCreateWooTable: (
-        storeActions: BlockEditorStoreActions
-    ) => void;
+    onCreateWooTable: (storeActions: BlockEditorStoreActions) => void;
 }
 
 const TablePro = ({ props, BlockEdit }: ProBlockProps<TablebergBlockAttrs>) => {
     const proProps: TableProProps = {
         onCreateWooTable: (storeActions) => {
             storeActions.replaceBlock(
-                props.clientId, createBlock("tableberg-pro/woo")
+                props.clientId,
+                createBlock("tableberg-pro/woo"),
             );
-        }
+        },
     };
 
     return (

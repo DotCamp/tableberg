@@ -18,7 +18,7 @@ interface ITBStoreState {
 }
 
 const DEFAULT_STATE: ITBStoreState = {
-    tableId: '',
+    tableId: "",
     indexes: [],
 
     minRow: Number.MAX_VALUE,
@@ -40,20 +40,20 @@ const tablebergCategories = context.tablebergPatternCategories || [];
 DEFAULT_STATE.patterns = tablebergPatterns;
 DEFAULT_STATE.categories = tablebergCategories;
 
-export const store = createReduxStore('tableberg-store', {
+export const store = createReduxStore("tableberg-store", {
     reducer(state: ITBStoreState = DEFAULT_STATE, action) {
         switch (action.type) {
             case "SET_MESSAGE":
                 return {
                     ...state,
-                    testmessage: action.message
-                }
+                    testmessage: action.message,
+                };
             case "SET_RENDER_MODE":
                 return {
                     ...state,
-                    renderMode: action.renderMode
-                }
-            case 'TOGGLE_CELL_SELECTION':
+                    renderMode: action.renderMode,
+                };
+            case "TOGGLE_CELL_SELECTION":
                 const cells = action.cells as TablebergCellInstance[];
 
                 // @ts-ignore
@@ -120,7 +120,7 @@ export const store = createReduxStore('tableberg-store', {
 
                 newState.indexes = reCalculateState();
                 return newState;
-            case 'END_CELL_MULTI_SELECT':
+            case "END_CELL_MULTI_SELECT":
                 return { ...DEFAULT_STATE };
         }
 
@@ -131,14 +131,14 @@ export const store = createReduxStore('tableberg-store', {
         setTestMessage(message: string) {
             return {
                 type: "SET_MESSAGE",
-                message
-            }
+                message,
+            };
         },
         setRenderMode(renderMode: TablebergRenderMode) {
             return {
                 type: "SET_RENDER_MODE",
-                renderMode
-            }
+                renderMode,
+            };
         },
         selectForMerge(
             tableId: string,
@@ -150,10 +150,10 @@ export const store = createReduxStore('tableberg-store', {
             to: {
                 row: number;
                 col: number;
-            }
+            },
         ) {
             return {
-                type: 'TOGGLE_CELL_SELECTION',
+                type: "TOGGLE_CELL_SELECTION",
                 tableId,
                 cells,
                 from,
@@ -162,7 +162,7 @@ export const store = createReduxStore('tableberg-store', {
         },
         endCellMultiSelect(tableId: string) {
             return {
-                type: 'END_CELL_MULTI_SELECT',
+                type: "END_CELL_MULTI_SELECT",
                 tableId,
             };
         },
@@ -170,16 +170,16 @@ export const store = createReduxStore('tableberg-store', {
 
     selectors: {
         getTestMessage(state: ITBStoreState) {
-            return state.testmessage
+            return state.testmessage;
         },
         getRenderMode(state: ITBStoreState) {
-            return state.renderMode
+            return state.renderMode;
         },
         isCellSelected(
             state: ITBStoreState,
             tableId: string,
             row: number,
-            col: number
+            col: number,
         ): boolean {
             return (
                 state.tableId === tableId &&
@@ -198,7 +198,7 @@ export const store = createReduxStore('tableberg-store', {
 
         getIndexes(
             state: ITBStoreState,
-            tableId: string
+            tableId: string,
         ): number[] | undefined {
             if (state.tableId !== tableId) {
                 return;
@@ -217,9 +217,9 @@ export const store = createReduxStore('tableberg-store', {
 register(store);
 
 type DynamicData = {
-    fields: string[],
-    rows: Record<string, any>[],
-}
+    fields: string[];
+    rows: Record<string, any>[];
+};
 
 interface ITBPrivateStoreState {
     renderMode: TablebergRenderMode;
@@ -234,32 +234,37 @@ const PRIVATE_STORE_DEFAULT_STATE: ITBPrivateStoreState = {
     renderMode: "primary",
     testmessage: "none",
     dynamicProps: {
-        fields: []
-    }
+        fields: [],
+    },
 };
 
 export const createPrivateStore = (clientId: string) => {
-    const store = createReduxStore('tableberg-private-store-' + clientId, {
-        reducer(state: ITBPrivateStoreState = PRIVATE_STORE_DEFAULT_STATE, action) {
+    const store = createReduxStore("tableberg-private-store-" + clientId, {
+        reducer(
+            state: ITBPrivateStoreState = PRIVATE_STORE_DEFAULT_STATE,
+            action,
+        ) {
             switch (action.type) {
                 case "SET_MESSAGE":
                     return {
                         ...state,
-                        testmessage: action.message
-                    }
+                        testmessage: action.message,
+                    };
                 case "SET_RENDER_MODE":
                     return {
                         ...state,
-                        renderMode: action.renderMode
-                    }
+                        renderMode: action.renderMode,
+                    };
                 case "SET_DYNAMIC_FIELD":
-                    const newFields = JSON.parse(JSON.stringify(state.dynamicProps.fields));
+                    const newFields = JSON.parse(
+                        JSON.stringify(state.dynamicProps.fields),
+                    );
                     newFields[action.col] = action.field;
                     return {
                         ...state,
                         dynamicProps: {
                             fields: newFields,
-                        }
+                        },
                     };
                 case "SET_DYNAMIC_DATA":
                     return {
@@ -275,19 +280,19 @@ export const createPrivateStore = (clientId: string) => {
             setTestMessage(message: string) {
                 return {
                     type: "SET_MESSAGE",
-                    message
-                }
+                    message,
+                };
             },
             setRenderMode(renderMode: TablebergRenderMode) {
                 return {
                     type: "SET_RENDER_MODE",
-                    renderMode
-                }
+                    renderMode,
+                };
             },
             setDynamicData(data: DynamicData) {
                 return {
                     type: "SET_DYNAMIC_DATA",
-                    data
+                    data,
                 };
             },
         },
@@ -299,11 +304,13 @@ export const createPrivateStore = (clientId: string) => {
             getRenderMode(state: ITBPrivateStoreState) {
                 return state.renderMode;
             },
-            getDynamicData(state: ITBPrivateStoreState): DynamicData | undefined {
+            getDynamicData(
+                state: ITBPrivateStoreState,
+            ): DynamicData | undefined {
                 return state.dynamicData;
             },
         },
-    })
+    });
 
     register(store);
 

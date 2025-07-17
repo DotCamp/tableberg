@@ -13,8 +13,12 @@ export function getStyles(attributes: ButtonBlockTypes) {
         textHoverColor,
     } = attributes;
 
-    let computedBackgroundColor = backgroundColor ? backgroundColor : backgroundGradient;
-    let computedBackgroundHoverColor = backgroundHoverColor ? backgroundHoverColor : backgroundHoverGradient;
+    let computedBackgroundColor = backgroundColor
+        ? backgroundColor
+        : backgroundGradient;
+    let computedBackgroundHoverColor = backgroundHoverColor
+        ? backgroundHoverColor
+        : backgroundHoverGradient;
 
     if (!computedBackgroundHoverColor) {
         computedBackgroundHoverColor = computedBackgroundColor;
@@ -26,7 +30,8 @@ export function getStyles(attributes: ButtonBlockTypes) {
             ? textColor
             : textHoverColor,
         "--tableberg-button-background-color": computedBackgroundColor,
-        "--tableberg-button-hover-background-color": computedBackgroundHoverColor,
+        "--tableberg-button-hover-background-color":
+            computedBackgroundHoverColor,
     };
 
     return omitBy(
@@ -36,12 +41,13 @@ export function getStyles(attributes: ButtonBlockTypes) {
             isEmpty(value) ||
             isUndefined(value) ||
             trim(value) === "" ||
-            trim(value) === "undefined undefined undefined"
+            trim(value) === "undefined undefined undefined",
     );
 }
 
-
-export function getInnerStyles(attributes: ButtonBlockTypes): Record<string, any> {
+export function getInnerStyles(
+    attributes: ButtonBlockTypes,
+): Record<string, any> {
     const paddingCSS = getSpacingCss(attributes.padding);
     const styles = {
         "padding-top": paddingCSS?.top,
@@ -56,6 +62,6 @@ export function getInnerStyles(attributes: ButtonBlockTypes): Record<string, any
             isEmpty(value) ||
             isUndefined(value) ||
             trim(value) === "" ||
-            trim(value) === "undefined undefined undefined"
+            trim(value) === "undefined undefined undefined",
     );
 }

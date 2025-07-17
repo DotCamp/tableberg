@@ -9,7 +9,10 @@ import {
     __experimentalUseMultipleOriginColorsAndGradients as useMultipleOriginColorsAndGradients,
     store as blockEditorStore,
 } from "@wordpress/block-editor";
-import { Color, Gradient } from "@wordpress/components/build-types/palette-edit/types";
+import {
+    Color,
+    Gradient,
+} from "@wordpress/components/build-types/palette-edit/types";
 import { useRef } from "react";
 
 interface ColorSettingsProps {
@@ -33,7 +36,7 @@ function ColorSetting({
     onGradientChange,
     onDeselect,
     resetAllFilter,
-    allowGradient = false
+    allowGradient = false,
 }: ColorSettingsProps) {
     const { clientId } = useBlockEditContext();
     const colorGradientSettings = useMultipleOriginColorsAndGradients();
@@ -41,38 +44,38 @@ function ColorSetting({
     const lastColor = useRef(colorValue);
     const lastGradient = useRef(gradientValue);
 
-    const {
-        defaultColors, themeColors, defaultGradients, themeGradients
-    } = useSelect((select) => {
-        const colorSettings = (
-            select(blockEditorStore) as BlockEditorStoreSelectors
-        ).getSettings()?.__experimentalFeatures?.color;
-        return {
-            defaultColors: colorSettings.palette.default,
-            themeColors: colorSettings.palette.theme,
-            defaultGradients: colorSettings.gradients.default,
-            themeGradients: colorSettings.gradients.theme,
-        };
-    }, []);
+    const { defaultColors, themeColors, defaultGradients, themeGradients } =
+        useSelect((select) => {
+            const colorSettings = (
+                select(blockEditorStore) as BlockEditorStoreSelectors
+            ).getSettings()?.__experimentalFeatures?.color;
+            return {
+                defaultColors: colorSettings.palette.default,
+                themeColors: colorSettings.palette.theme,
+                defaultGradients: colorSettings.gradients.default,
+                themeGradients: colorSettings.gradients.theme,
+            };
+        }, []);
 
     const colorPalette = palette === "theme" ? themeColors : defaultColors;
-    const gradientPalette = palette === "theme" ? themeGradients : defaultGradients;
+    const gradientPalette =
+        palette === "theme" ? themeGradients : defaultGradients;
 
     if (!resetAllFilter) {
         resetAllFilter = onDeselect;
     }
 
     interface Settings {
-        clearable?: boolean,
-        colorValue?: string | null,
-        gradientValue?: string | null,
-        colors?: Color[],
-        gradients?: Gradient[],
-        label: string,
-        onColorChange: (newValue: string) => any,
-        onGradientChange?: (newValue: string) => any,
-        resetAllFilter?: () => any,
-        onDeselect?: () => any,
+        clearable?: boolean;
+        colorValue?: string | null;
+        gradientValue?: string | null;
+        colors?: Color[];
+        gradients?: Gradient[];
+        label: string;
+        onColorChange: (newValue: string) => any;
+        onGradientChange?: (newValue: string) => any;
+        resetAllFilter?: () => any;
+        onDeselect?: () => any;
     }
 
     let settings: Settings = {
@@ -89,7 +92,7 @@ function ColorSetting({
         },
         onDeselect: onDeselect,
     };
-    
+
     if (allowGradient) {
         settings = {
             ...settings,
@@ -101,7 +104,7 @@ function ColorSetting({
                     onGradientChange(val);
                 }
             },
-        }
+        };
     }
 
     return (
@@ -119,4 +122,3 @@ function ColorSetting({
 }
 
 export default ColorSetting;
-

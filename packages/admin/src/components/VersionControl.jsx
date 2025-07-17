@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useMemo, useState } from "react";
 import VersionControlPopup from "./VersionControlPopup";
 import Portal from "./Portal";
@@ -19,7 +18,7 @@ function VersionControl({ pluginVersion, allVersions, onVersionRollBack }) {
 
     const sortedVersions = useMemo(
         () => allVersions.sort().reverse(),
-        [allVersions]
+        [allVersions],
     );
 
     /**

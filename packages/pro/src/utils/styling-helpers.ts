@@ -48,7 +48,10 @@ export function getSpacingCss(object: object): Spacing {
     return css;
 }
 
-export function getSpacingStyle(object: any, property: "padding" | "margin"): StyleAttr {
+export function getSpacingStyle(
+    object: any,
+    property: "padding" | "margin",
+): StyleAttr {
     if (!object) {
         return {};
     }

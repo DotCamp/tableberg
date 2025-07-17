@@ -45,7 +45,10 @@ import transforms from "./transforms";
 
 export type TablebergRenderMode = "" | "primary" | "stack-row" | "stack-col";
 
-export const privateStores: Record<string, ReturnType<typeof createPrivateStore>> = {};
+export const privateStores: Record<
+    string,
+    ReturnType<typeof createPrivateStore>
+> = {};
 window.tablebergPrivateStores = privateStores;
 
 const removeFirstRow = (
@@ -292,7 +295,9 @@ const useUndoRedo = (
     }
 };
 
-const usePreventCellDelete = (rootRef: React.RefObject<HTMLTableElement | undefined>) => {
+const usePreventCellDelete = (
+    rootRef: React.RefObject<HTMLTableElement | undefined>,
+) => {
     useSelect(
         (select) => {
             rootRef.current?.addEventListener(
@@ -327,7 +332,7 @@ function useRenderMode(
         mobile?: Breakpoint;
     },
     previewDevice: keyof TablebergBlockAttrs["responsive"]["breakpoints"],
-    clientId: string
+    clientId: string,
 ) {
     const privateStore = privateStores[clientId];
 
@@ -347,7 +352,9 @@ function useRenderMode(
     }
 
     if (breakpoint?.enabled && breakpoint?.mode === "stack") {
-        setRenderMode(`stack-${breakpoint.direction}` as "stack-row" | "stack-col");
+        setRenderMode(
+            `stack-${breakpoint.direction}` as "stack-row" | "stack-col",
+        );
     }
 
     const isScrollMode = breakpoint?.enabled && breakpoint?.mode === "scroll";
@@ -355,7 +362,7 @@ function useRenderMode(
         setRenderMode("primary");
     }
 
-    return { renderMode, isScrollMode, breakpoint }
+    return { renderMode, isScrollMode, breakpoint };
 }
 
 function edit(props: BlockEditProps<TablebergBlockAttrs>) {
@@ -384,8 +391,8 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     }, []);
     useUndoRedo(attributes, tableBlock.innerBlocks.length, setAttributes);
 
-    const previewDevice: keyof TablebergBlockAttrs["responsive"]["breakpoints"]
-        = useSelect((select) => {
+    const previewDevice: keyof TablebergBlockAttrs["responsive"]["breakpoints"] =
+        useSelect((select) => {
             // @ts-ignore
             return select("core/editor").getDeviceType().toLowerCase();
         }, []);
@@ -395,7 +402,7 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
     const { renderMode, isScrollMode, breakpoint } = useRenderMode(
         attributes.responsive.breakpoints,
         previewDevice,
-        clientId
+        clientId,
     );
 
     const blockProps = useBlockProps({
@@ -454,7 +461,11 @@ function edit(props: BlockEditProps<TablebergBlockAttrs>) {
         <>
             <div {...blockProps}>
                 {(renderMode === "primary" && (
-                    <PrimaryTable {...props} tableBlock={tableBlock} privateStore={privateStores[clientId]} />
+                    <PrimaryTable
+                        {...props}
+                        tableBlock={tableBlock}
+                        privateStore={privateStores[clientId]}
+                    />
                 )) ||
                     (renderMode === "stack-row" && breakpoint && (
                         <StackRowTable

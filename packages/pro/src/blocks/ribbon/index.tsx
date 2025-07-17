@@ -138,8 +138,8 @@ const DEFAULT_ATTRS: Record<string, Partial<RibbonAttrs>> = {
             y: "-3px",
             originX: "left",
             originY: "top",
-        }
-    }
+        },
+    },
 };
 
 function edit({
@@ -157,7 +157,7 @@ function edit({
             exampleImage1,
             exampleImage2,
             exampleImage3,
-            exampleImage4
+            exampleImage4,
         ];
 
         const [counter, setCounter] = useState(0);
@@ -171,9 +171,7 @@ function edit({
             };
         });
 
-        return (
-            <img src={previews[counter]} style={{ maxWidth: "100%" }}></img>
-        );
+        return <img src={previews[counter]} style={{ maxWidth: "100%" }}></img>;
     }
 
     return (

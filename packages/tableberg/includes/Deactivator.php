@@ -16,11 +16,8 @@ namespace Tableberg;
  * @since      1.0.2
  * @author     Imtiaz Rayhan <imtiazrayhan@gmail.com>
  */
-class Deactivator
-{
-
-    public static function deactivate()
-    {
+class Deactivator {
+    public static function deactivate() {
         delete_option('tableberg_individual_control');
         delete_option('tableberg_block_properties');
         delete_option('tableberg_global_control');

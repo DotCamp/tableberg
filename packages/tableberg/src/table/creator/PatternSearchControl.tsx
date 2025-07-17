@@ -1,5 +1,5 @@
-import { type FC } from 'react';
-import { SearchControl } from '@wordpress/components';
+import { type FC } from "react";
+import { SearchControl } from "@wordpress/components";
 
 /**
  * Pattern search control component.
@@ -13,26 +13,26 @@ import { SearchControl } from '@wordpress/components';
  * @class
  */
 const PatternSearchControl: FC<{
-	onChange: (value: string) => void;
-	minChars?: number;
+    onChange: (value: string) => void;
+    minChars?: number;
 }> = ({ onChange, minChars = 3 }) => {
-	const handleSearch = (search: string) => {
-		let searchValue = search.trim();
+    const handleSearch = (search: string) => {
+        let searchValue = search.trim();
 
-		if (searchValue.length < minChars) {
-			searchValue = '';
-		}
+        if (searchValue.length < minChars) {
+            searchValue = "";
+        }
 
-		onChange(searchValue);
-	};
+        onChange(searchValue);
+    };
 
-	return (
-		<SearchControl
-			onChange={handleSearch}
-			size={'compact'}
-			placeholder={''}
-		/>
-	);
+    return (
+        <SearchControl
+            onChange={handleSearch}
+            size={"compact"}
+            placeholder={""}
+        />
+    );
 };
 
 export default PatternSearchControl;

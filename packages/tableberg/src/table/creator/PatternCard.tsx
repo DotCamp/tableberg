@@ -1,18 +1,18 @@
-import type { BlockInstance } from '@wordpress/blocks';
-import { useEffect, useState, type FC, useRef, useMemo } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTags } from '@fortawesome/free-solid-svg-icons';
-import type Pattern from './includes/Pattern';
-import PatternCardPreviewSkeleton from './PatternCardPreviewSkeleton';
-import PatternCardTextSkeleton from './PatternCardTextSkeleton';
+import type { BlockInstance } from "@wordpress/blocks";
+import { useEffect, useState, type FC, useRef, useMemo } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTags } from "@fortawesome/free-solid-svg-icons";
+import type Pattern from "./includes/Pattern";
+import PatternCardPreviewSkeleton from "./PatternCardPreviewSkeleton";
+import PatternCardTextSkeleton from "./PatternCardTextSkeleton";
 
 interface PatternCardProps {
-	pattern: Pattern;
-	setUpsell: (patternName: string) => void;
-	onSelect: (block: BlockInstance) => void;
-	isDummy?: boolean;
-	useInView?: boolean;
-	viewRatio?: number;
+    pattern: Pattern;
+    setUpsell: (patternName: string) => void;
+    onSelect: (block: BlockInstance) => void;
+    isDummy?: boolean;
+    useInView?: boolean;
+    viewRatio?: number;
 }
 
 /**
@@ -28,176 +28,176 @@ interface PatternCardProps {
  * @class
  */
 const PatternCard: FC<PatternCardProps> = ({
-	pattern,
-	setUpsell,
-	onSelect,
-	isDummy = false,
-	useInView = false,
-	viewRatio = 0.1,
+    pattern,
+    setUpsell,
+    onSelect,
+    isDummy = false,
+    useInView = false,
+    viewRatio = 0.1,
 }) => {
-	const [isBusy, setIsBusy] = useState(true);
-	const [isInView, setIsInView] = useState(!useInView);
+    const [isBusy, setIsBusy] = useState(true);
+    const [isInView, setIsInView] = useState(!useInView);
 
-	// Reference to the wrapper element for in view observer.
-	const wrapperRef = useRef(null);
+    // Reference to the wrapper element for in view observer.
+    const wrapperRef = useRef(null);
 
-	// Component observer initialization.
-	const observer = useMemo(() => {
-		return useInView
-			? new IntersectionObserver(
-					([entry]) => {
-						const { isIntersecting } = entry;
+    // Component observer initialization.
+    const observer = useMemo(() => {
+        return useInView
+            ? new IntersectionObserver(
+                  ([entry]) => {
+                      const { isIntersecting } = entry;
 
-						// only update state if element is in view
-						if (isIntersecting) {
-							setIsInView(isIntersecting);
-						}
-					},
-					{ threshold: viewRatio }
-				)
-			: null;
-	}, [viewRatio]);
+                      // only update state if element is in view
+                      if (isIntersecting) {
+                          setIsInView(isIntersecting);
+                      }
+                  },
+                  { threshold: viewRatio },
+              )
+            : null;
+    }, [viewRatio]);
 
-	// Start observing the wrapper element for in view operations.
-	useEffect(() => {
-		if (wrapperRef.current) {
-			observer?.observe(wrapperRef.current);
-		}
-	}, [observer, wrapperRef]);
+    // Start observing the wrapper element for in view operations.
+    useEffect(() => {
+        if (wrapperRef.current) {
+            observer?.observe(wrapperRef.current);
+        }
+    }, [observer, wrapperRef]);
 
-	// Disconnect observer when component is in view to prevent multiple calls.
-	useEffect(() => {
-		if (isInView) {
-			observer?.disconnect();
-		}
-	}, [observer, isInView]);
+    // Disconnect observer when component is in view to prevent multiple calls.
+    useEffect(() => {
+        if (isInView) {
+            observer?.disconnect();
+        }
+    }, [observer, isInView]);
 
-	/**
-	 * Handle busy status.
-	 *
-	 * @param {boolean} status Busy status.
-	 */
-	const handleBusyStatus = (status: boolean) => {
-		setIsBusy(isDummy ? false : status);
-	};
+    /**
+     * Handle busy status.
+     *
+     * @param {boolean} status Busy status.
+     */
+    const handleBusyStatus = (status: boolean) => {
+        setIsBusy(isDummy ? false : status);
+    };
 
-	const handleImageError = () => {
-		handleBusyStatus(false);
-	};
+    const handleImageError = () => {
+        handleBusyStatus(false);
+    };
 
-	const handleImageLoad = () => {
-		handleBusyStatus(false);
-	};
+    const handleImageLoad = () => {
+        handleBusyStatus(false);
+    };
 
-	const ariaLabelId = `pattern-card-${pattern.name}`;
+    const ariaLabelId = `pattern-card-${pattern.name}`;
 
-	/**
-	 * Card selection handler.
-	 */
-	const cardSelectionHandler = () => {
-		if (!isBusy && !isDummy) {
-			const match = pattern.name.match(/^tableberg\/upsell-(.*)$/);
-			if (pattern.isUpsell && match) {
-				setUpsell(match[1]);
-			} else {
-				onSelect(pattern.blocks[0]);
-			}
-		}
-	};
+    /**
+     * Card selection handler.
+     */
+    const cardSelectionHandler = () => {
+        if (!isBusy && !isDummy) {
+            const match = pattern.name.match(/^tableberg\/upsell-(.*)$/);
+            if (pattern.isUpsell && match) {
+                setUpsell(match[1]);
+            } else {
+                onSelect(pattern.blocks[0]);
+            }
+        }
+    };
 
-	return (
-		<div
-			role={'gridcell'}
-			aria-labelledby={ariaLabelId}
-			tabIndex={0}
-			className={'tableberg-pattern-library-card'}
-			onClick={cardSelectionHandler}
-			onKeyDown={(event) => {
-				if (event.key === 'Enter') {
-					cardSelectionHandler();
-				}
-			}}
-		>
-			<div className={'tableberg-pattern-library-card-preview'}>
-				{isBusy && <PatternCardPreviewSkeleton />}
-				{!isDummy && (
-					<div
-						className={
-							'tableberg-in-view-wrapper tableberg-pattern-library-card-preview-wrapper'
-						}
-						ref={wrapperRef}
-					>
-						{isInView && (
-							<img
-								data-tableberg-preview-loaded={!isBusy}
-								alt={pattern.title}
-								className={
-									'tableberg-pattern-library-card-preview-wrapper-image'
-								}
-								onError={handleImageError}
-								onLoad={handleImageLoad}
-								src={pattern.screenshotUrl}
-								role={'presentation'}
-							/>
-						)}
-					</div>
-				)}
-			</div>
-			<div className={'tableberg-pattern-library-card-info'}>
-				<div className={'tableberg-pattern-library-card-info-header'}>
-					<div
-						className={
-							'tableberg-pattern-library-card-info-header-title'
-						}
-						id={ariaLabelId}
-					>
-						{isDummy ? (
-							<PatternCardTextSkeleton width={'MEDIUM'} />
-						) : (
-							pattern.title
-						)}
-					</div>
-					{!isDummy && pattern.isUpsell && (
-						<div
-							className={
-								'tableberg-pattern-library-card-info-header-pro'
-							}
-						>
-							PRO
-						</div>
-					)}
-				</div>
-				<div className={'tableberg-pattern-library-card-info-footer'}>
-					<div
-						className={
-							'tableberg-pattern-library-card-info-footer-tags'
-						}
-					>
-						{!isDummy && (
-							<div
-								className={
-									'tableberg-pattern-library-card-info-footer-tags-icon'
-								}
-							>
-								<FontAwesomeIcon icon={faTags} />
-							</div>
-						)}
-						<div
-							className={
-								'tableberg-pattern-library-card-info-footer-tags-listing'
-							}
-						>
-							{isDummy ? (
-								<PatternCardTextSkeleton width={'SMALL'} />
-							) : (
-								pattern.categories.join(', ')
-							)}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+    return (
+        <div
+            role={"gridcell"}
+            aria-labelledby={ariaLabelId}
+            tabIndex={0}
+            className={"tableberg-pattern-library-card"}
+            onClick={cardSelectionHandler}
+            onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                    cardSelectionHandler();
+                }
+            }}
+        >
+            <div className={"tableberg-pattern-library-card-preview"}>
+                {isBusy && <PatternCardPreviewSkeleton />}
+                {!isDummy && (
+                    <div
+                        className={
+                            "tableberg-in-view-wrapper tableberg-pattern-library-card-preview-wrapper"
+                        }
+                        ref={wrapperRef}
+                    >
+                        {isInView && (
+                            <img
+                                data-tableberg-preview-loaded={!isBusy}
+                                alt={pattern.title}
+                                className={
+                                    "tableberg-pattern-library-card-preview-wrapper-image"
+                                }
+                                onError={handleImageError}
+                                onLoad={handleImageLoad}
+                                src={pattern.screenshotUrl}
+                                role={"presentation"}
+                            />
+                        )}
+                    </div>
+                )}
+            </div>
+            <div className={"tableberg-pattern-library-card-info"}>
+                <div className={"tableberg-pattern-library-card-info-header"}>
+                    <div
+                        className={
+                            "tableberg-pattern-library-card-info-header-title"
+                        }
+                        id={ariaLabelId}
+                    >
+                        {isDummy ? (
+                            <PatternCardTextSkeleton width={"MEDIUM"} />
+                        ) : (
+                            pattern.title
+                        )}
+                    </div>
+                    {!isDummy && pattern.isUpsell && (
+                        <div
+                            className={
+                                "tableberg-pattern-library-card-info-header-pro"
+                            }
+                        >
+                            PRO
+                        </div>
+                    )}
+                </div>
+                <div className={"tableberg-pattern-library-card-info-footer"}>
+                    <div
+                        className={
+                            "tableberg-pattern-library-card-info-footer-tags"
+                        }
+                    >
+                        {!isDummy && (
+                            <div
+                                className={
+                                    "tableberg-pattern-library-card-info-footer-tags-icon"
+                                }
+                            >
+                                <FontAwesomeIcon icon={faTags} />
+                            </div>
+                        )}
+                        <div
+                            className={
+                                "tableberg-pattern-library-card-info-footer-tags-listing"
+                            }
+                        >
+                            {isDummy ? (
+                                <PatternCardTextSkeleton width={"SMALL"} />
+                            ) : (
+                                pattern.categories.join(", ")
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default PatternCard;

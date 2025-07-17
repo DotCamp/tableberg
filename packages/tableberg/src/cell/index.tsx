@@ -390,7 +390,7 @@ const useMerging = (
         return select(blockEditorStore) as BlockEditorStoreSelectors;
     }, []);
 
-    const elClickEvt = function(this: HTMLElement, evt: MouseEvent) {
+    const elClickEvt = function (this: HTMLElement, evt: MouseEvent) {
         const cell: TablebergCellInstance = storeSelect.getBlock(
             clientId,
         ) as any;
@@ -828,27 +828,23 @@ function edit(
 
     function getCellBorders(border: TablebergCellBlockAttrs["border"]) {
         if (
-            border && (
-                'style' in border || 
-                'color' in border || 
-                'width' in border
-            )
+            border &&
+            ("style" in border || "color" in border || "width" in border)
         ) {
             return {
                 border: "1px solid black",
                 borderStyle: border.style,
                 borderColor: border.color,
                 borderWidth: border.width,
-            }
+            };
         }
 
         if (
-            border && (
-                'top' in border ||
-                'bottom' in border ||
-                'left' in border ||
-                'right' in border
-            )
+            border &&
+            ("top" in border ||
+                "bottom" in border ||
+                "left" in border ||
+                "right" in border)
         ) {
             const borderStyles: Record<string, any> = {
                 border: "1px solid black",
@@ -863,20 +859,22 @@ function edit(
             return borderStyles;
         }
 
-        return {}
+        return {};
     }
 
-    function getCellBorderRadius(borderRadius: TablebergCellBlockAttrs["borderRadius"]) {
-        if (borderRadius && 'topLeft' in borderRadius) {
+    function getCellBorderRadius(
+        borderRadius: TablebergCellBlockAttrs["borderRadius"],
+    ) {
+        if (borderRadius && "topLeft" in borderRadius) {
             return {
                 borderTopLeftRadius: borderRadius.topLeft,
                 borderBottomLeftRadius: borderRadius.bottomLeft,
                 borderTopRightRadius: borderRadius.topRight,
                 borderBottomRightRadius: borderRadius.bottomRight,
-            }
+            };
         }
 
-        return {}
+        return {};
     }
 
     const blockProps = useBlockProps({
@@ -895,18 +893,21 @@ function edit(
             ...getCellBorderRadius(attributes.borderRadius),
         },
         ref: cellRef,
-        className: classNames({
-            "tableberg-odd-row-cell": isOddRow,
-            "tableberg-even-row-cell": !isOddRow,
-            "tableberg-header-cell": isHeaderRow,
-            "tableberg-footer-cell": isFooterRow,
-            "tableberg-has-selected": hasSelected,
-            "is-multi-selected": isCellSelected(
-                tableBlock.clientId,
-                attributes.row,
-                attributes.col,
-            ),
-        }, `tableberg-v-align-${attributes.vAlign}`),
+        className: classNames(
+            {
+                "tableberg-odd-row-cell": isOddRow,
+                "tableberg-even-row-cell": !isOddRow,
+                "tableberg-header-cell": isHeaderRow,
+                "tableberg-footer-cell": isFooterRow,
+                "tableberg-has-selected": hasSelected,
+                "is-multi-selected": isCellSelected(
+                    tableBlock.clientId,
+                    attributes.row,
+                    attributes.col,
+                ),
+            },
+            `tableberg-v-align-${attributes.vAlign}`,
+        ),
     });
 
     const innerBlocksProps = useInnerBlocksProps({
@@ -1103,15 +1104,12 @@ function edit(
 
     const rootEl = cellRef.current?.closest(".wp-block-tableberg-wrapper");
 
-    const { renderMode } = useSelect(
-        (select) => {
-            const { getRenderMode } = select(privateStores[tableBlock.clientId]);
-            return {
-                renderMode: getRenderMode(),
-            };
-        },
-        [],
-    );
+    const { renderMode } = useSelect((select) => {
+        const { getRenderMode } = select(privateStores[tableBlock.clientId]);
+        return {
+            renderMode: getRenderMode(),
+        };
+    }, []);
 
     let targetEl;
     if (renderMode === "primary" && !attributes.isTmp) {
@@ -1123,55 +1121,56 @@ function edit(
     return (
         <>
             {targetEl ? (
-                createPortal(<TagName
-                    {...blockProps}
-                    rowSpan={attributes.rowspan}
-                    colSpan={attributes.colspan}
-                >
-                    <div {...innerBlocksProps} />
-                    {hSort?.enabled && !attributes.col && (
-                        <button
-                            type="button"
-                            className={classNames({
-                                "tableberg-h-sorter": true,
-                                [`tableberg-${hSort.order}`]:
-                                    hSort?.row === attributes.row,
-                            })}
-                            onPointerDown={(evt) => {
-                                evt.stopPropagation();
-                                evt.preventDefault();
-                                sortTableH(
-                                    rootEl! as HTMLElement,
-                                    tableBlock.clientId,
-                                    attributes.row,
-                                    storeSelect,
-                                    storeActions,
-                                );
-                            }}
-                        />
-                    )}
-                    {vSort?.enabled && !attributes.row && (
-                        <button
-                            type="button"
-                            className={classNames({
-                                "tableberg-v-sorter": true,
-                                [`tableberg-${vSort.order}`]:
-                                    vSort?.col === attributes.col,
-                            })}
-                            onPointerDown={(evt) => {
-                                evt.stopPropagation();
-                                evt.preventDefault();
-                                sortTableV(
-                                    rootEl! as HTMLElement,
-                                    tableBlock.clientId,
-                                    attributes.col,
-                                    storeSelect,
-                                    storeActions,
-                                );
-                            }}
-                        />
-                    )}
-                </TagName>,
+                createPortal(
+                    <TagName
+                        {...blockProps}
+                        rowSpan={attributes.rowspan}
+                        colSpan={attributes.colspan}
+                    >
+                        <div {...innerBlocksProps} />
+                        {hSort?.enabled && !attributes.col && (
+                            <button
+                                type="button"
+                                className={classNames({
+                                    "tableberg-h-sorter": true,
+                                    [`tableberg-${hSort.order}`]:
+                                        hSort?.row === attributes.row,
+                                })}
+                                onPointerDown={(evt) => {
+                                    evt.stopPropagation();
+                                    evt.preventDefault();
+                                    sortTableH(
+                                        rootEl! as HTMLElement,
+                                        tableBlock.clientId,
+                                        attributes.row,
+                                        storeSelect,
+                                        storeActions,
+                                    );
+                                }}
+                            />
+                        )}
+                        {vSort?.enabled && !attributes.row && (
+                            <button
+                                type="button"
+                                className={classNames({
+                                    "tableberg-v-sorter": true,
+                                    [`tableberg-${vSort.order}`]:
+                                        vSort?.col === attributes.col,
+                                })}
+                                onPointerDown={(evt) => {
+                                    evt.stopPropagation();
+                                    evt.preventDefault();
+                                    sortTableV(
+                                        rootEl! as HTMLElement,
+                                        tableBlock.clientId,
+                                        attributes.col,
+                                        storeSelect,
+                                        storeActions,
+                                    );
+                                }}
+                            />
+                        )}
+                    </TagName>,
                     targetEl,
                 )
             ) : (

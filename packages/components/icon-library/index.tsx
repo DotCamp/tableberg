@@ -41,12 +41,17 @@ export default IconsLibrary;
 export { default as IconPickerMini } from "./IconPickerMini";
 
 export function Icon({ icon, size, style }: any) {
-    
     const { viewBox, xmlns, children } = icon.icon.props;
     const pathData = children.props.d;
 
     return (
-        <svg viewBox={viewBox} xmlns={xmlns} height={size} width={size} style={style}>
+        <svg
+            viewBox={viewBox}
+            xmlns={xmlns}
+            height={size}
+            width={size}
+            style={style}
+        >
             <path d={pathData} />
         </svg>
     );

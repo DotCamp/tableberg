@@ -60,7 +60,7 @@ export const sortTableV = (
 
     const indexMap: Record<number, number> = {};
 
-    const oldRowStyless = {...tableBlock.attributes.rowStyles};
+    const oldRowStyless = { ...tableBlock.attributes.rowStyles };
     const rowStyles: Record<number, any> = {};
 
     indexedRows.forEach((item, newIndex) => {
@@ -72,7 +72,6 @@ export const sortTableV = (
     for (const key in oldRowStyless) {
         rowStyles[key] = oldRowStyless[key];
     }
-
 
     const newInnerBlocks = tableBlock.innerBlocks.map((cell) => {
         if (!cell.attributes.isTmp) {
@@ -160,10 +159,9 @@ export const sortTableH = (
     }
 
     const indexMap: Record<number, number> = {};
-    const oldColStyless = {...tableBlock.attributes.colStyles};
+    const oldColStyless = { ...tableBlock.attributes.colStyles };
     const colStyles: Record<number, any> = {};
 
-    
     indexedCols.forEach((item, newIndex) => {
         indexMap[item.originalIndex] = newIndex;
         colStyles[newIndex] = oldColStyless[item.originalIndex];
@@ -173,7 +171,6 @@ export const sortTableH = (
     for (const key in oldColStyless) {
         colStyles[key] = oldColStyless[key];
     }
-
 
     const newInnerBlocks = tableBlock.innerBlocks.map((cell) => {
         const newColIndex = indexMap[cell.attributes.col];

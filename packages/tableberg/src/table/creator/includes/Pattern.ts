@@ -1,19 +1,19 @@
-import type { BlockInstance } from '@wordpress/blocks';
+import type { BlockInstance } from "@wordpress/blocks";
 
 export interface PatternOptions {
-	name: string;
-	title: string;
-	isUpsell: boolean;
-	blocks: BlockInstance[];
-	viewportWidth: number;
-	tablebergPatternScreenshot: false | string;
-	categories: string[];
-	categorySlugs: string[];
+    name: string;
+    title: string;
+    isUpsell: boolean;
+    blocks: BlockInstance[];
+    viewportWidth: number;
+    tablebergPatternScreenshot: false | string;
+    categories: string[];
+    categorySlugs: string[];
 }
 
 export interface PatternType
-	extends Omit<PatternOptions, 'tablebergPatternScreenshot'> {
-	screenshotUrl: string | undefined;
+    extends Omit<PatternOptions, "tablebergPatternScreenshot"> {
+    screenshotUrl: string | undefined;
 }
 
 /**
@@ -24,19 +24,19 @@ export interface PatternType
  * @class
  */
 class Pattern implements PatternType {
-	screenshotUrl!: string | undefined;
-	name!: string;
-	title!: string;
-	isUpsell!: boolean;
-	blocks!: BlockInstance[];
-	viewportWidth!: number;
-	categories!: string[];
-	categorySlugs!: string[];
+    screenshotUrl!: string | undefined;
+    name!: string;
+    title!: string;
+    isUpsell!: boolean;
+    blocks!: BlockInstance[];
+    viewportWidth!: number;
+    categories!: string[];
+    categorySlugs!: string[];
 
-	constructor(options: PatternOptions) {
-		Object.assign(this, options);
-		this.screenshotUrl = options.tablebergPatternScreenshot || undefined;
-	}
+    constructor(options: PatternOptions) {
+        Object.assign(this, options);
+        this.screenshotUrl = options.tablebergPatternScreenshot || undefined;
+    }
 }
 
 export default Pattern;

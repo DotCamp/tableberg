@@ -289,7 +289,11 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
             return;
         }
         function onKeyDown(this: HTMLDivElement, event: any) {
-            if (event.defaultPrevented || event.shiftKey || event.keyCode !== 13) {
+            if (
+                event.defaultPrevented ||
+                event.shiftKey ||
+                event.keyCode !== 13
+            ) {
                 return;
             }
 
@@ -318,8 +322,12 @@ function edit(props: BlockEditProps<StyledListItemProps>) {
                 text: div.innerHTML,
             });
             div.remove();
-            
-            storeActions.insertBlock(newBlock, blockIndex + 1, topParentListBlock.clientId);
+
+            storeActions.insertBlock(
+                newBlock,
+                blockIndex + 1,
+                topParentListBlock.clientId,
+            );
             // @ts-ignore
             storeActions.selectionChange(newBlock.clientId);
             setAttributes({ text: this.innerHTML });

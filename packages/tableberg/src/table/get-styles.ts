@@ -32,14 +32,15 @@ export function getStyles({
     if (enableInnerBorder) {
         tableInnerBorder = getBorderVariablesCss(innerBorder, "inner");
     }
-    
 
-    if (!cellSpacingCSS.top || cellSpacingCSS.top == '0') {
+    if (!cellSpacingCSS.top || cellSpacingCSS.top == "0") {
         tableInnerBorder["--tableberg-inner-border-top"] = "none";
-        tableInnerBorder["--tableberg-inner-border-top-first"] = tableInnerBorder["--tableberg-inner-border-bottom"];
+        tableInnerBorder["--tableberg-inner-border-top-first"] =
+            tableInnerBorder["--tableberg-inner-border-bottom"];
     }
-    if (!cellSpacingCSS.left || cellSpacingCSS.left == '0') {
-        tableInnerBorder["--tableberg-inner-border-left-first"] = tableInnerBorder["--tableberg-inner-border-right"];
+    if (!cellSpacingCSS.left || cellSpacingCSS.left == "0") {
+        tableInnerBorder["--tableberg-inner-border-left-first"] =
+            tableInnerBorder["--tableberg-inner-border-right"];
         tableInnerBorder["--tableberg-inner-border-left"] = "none";
     }
 
@@ -55,7 +56,7 @@ export function getStyles({
         "--tableberg-even-bg":
             evenRowBackgroundGradient || evenRowBackgroundColor,
         "--tableberg-block-spacing": getSpacingCssSingle(blockSpacing),
-        "borderSpacing": `${cellSpacingCSS?.left || 0} ${
+        borderSpacing: `${cellSpacingCSS?.left || 0} ${
             cellSpacingCSS?.top || 0
         }`,
         ...tableInnerBorder,

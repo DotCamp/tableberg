@@ -13,5 +13,4 @@ const imageBlockIcon = (
     </svg>
 );
 
-
 export default imageBlockIcon;

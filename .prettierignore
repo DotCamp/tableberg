@@ -1,0 +1,15 @@
+# Exclude freemius directories
+packages/**/includes/freemius/
+
+# Exclude vendor directories
+vendor/
+node_modules/
+
+# Exclude build outputs
+dist/
+build/
+
+# Exclude lock files
+*.lock
+pnpm-lock.yaml
+composer.lock 

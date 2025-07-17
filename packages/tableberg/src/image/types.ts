@@ -79,7 +79,7 @@ export interface AttributesTypes {
         topRight: string;
         bottomLeft: string;
         bottomRight: string;
-    }
+    };
     isExample: boolean;
 }
 export interface MainPropTypes {

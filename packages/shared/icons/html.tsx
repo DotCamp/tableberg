@@ -16,5 +16,4 @@ const HtmlBlockIcon = (
     </svg>
 );
 
-
 export default HtmlBlockIcon;

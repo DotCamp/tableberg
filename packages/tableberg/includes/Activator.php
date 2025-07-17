@@ -19,10 +19,8 @@ use Tableberg\Utils\Utils;
  *  @package Tableberg
  * @author     Imtiaz Rayhan <imtiazrayhan@gmail.com>
  */
-class Activator
-{
-    public static function activate()
-    {
+class Activator {
+    public static function activate() {
 
         set_transient('_welcome_redirect_tableberg', true, 60);
 

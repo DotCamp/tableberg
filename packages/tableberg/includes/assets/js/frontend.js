@@ -234,12 +234,16 @@
 
         if (oldMode && oldMode.match("stack-row")) {
             cells.sort((a, b) => {
-                const { dataset: { tablebergRow: aRow, tablebergCol: aCol } } = a;
-                const { dataset: { tablebergRow: bRow, tablebergCol: bCol } } = b;
+                const {
+                    dataset: { tablebergRow: aRow, tablebergCol: aCol },
+                } = a;
+                const {
+                    dataset: { tablebergRow: bRow, tablebergCol: bCol },
+                } = b;
 
-                return (aRow === bRow) ?
-                    parseInt(aCol) - parseInt(bCol) :
-                    parseInt(aRow) - parseInt(bRow);
+                return aRow === bRow
+                    ? parseInt(aCol) - parseInt(bCol)
+                    : parseInt(aRow) - parseInt(bRow);
             });
         }
 
@@ -259,7 +263,10 @@
 
         function markCell(cell) {
             const rowi = parseInt(cell.dataset.tablebergRow);
-            if (table.dataset.tablebergHeader !== "" && cell.dataset.tablebergRow === "0") {
+            if (
+                table.dataset.tablebergHeader !== "" &&
+                cell.dataset.tablebergRow === "0"
+            ) {
                 markRowCell(cell, "header");
             } else if (
                 table.dataset.tablebergFooter !== "" &&
@@ -278,23 +285,31 @@
                 return;
             }
 
-            const leftColCells = cells.filter(cell => parseInt(cell.dataset.tablebergCol) === 0);
-            const cellsExcludingLeftCol = cells.filter(cell => parseInt(cell.dataset.tablebergCol) !== 0);
+            const leftColCells = cells.filter(
+                (cell) => parseInt(cell.dataset.tablebergCol) === 0,
+            );
+            const cellsExcludingLeftCol = cells.filter(
+                (cell) => parseInt(cell.dataset.tablebergCol) !== 0,
+            );
 
             const leftColCellsWithGapsForRowspan = [];
-            leftColCells.forEach(cell => {
+            leftColCells.forEach((cell) => {
                 leftColCellsWithGapsForRowspan.push(cell);
                 if (cell.attributes.rowspan) {
-                    for (let i = 1; i < parseInt(cell.attributes.rowspan.value); i++) {
+                    for (
+                        let i = 1;
+                        i < parseInt(cell.attributes.rowspan.value);
+                        i++
+                    ) {
                         leftColCellsWithGapsForRowspan.push("gap");
                     }
                 }
-            })
+            });
 
             cells = cellsExcludingLeftCol;
 
             for (let row = 0; row < rowsToGenerate; row++) {
-                const cell = leftColCellsWithGapsForRowspan[row % tableRows]
+                const cell = leftColCellsWithGapsForRowspan[row % tableRows];
                 if (cell === "gap") {
                     continue;
                 }
@@ -310,10 +325,13 @@
 
         (function generateCellMarkup() {
             for (const cell of cells) {
-                const coli = headerAsCol ? parseInt(cell.dataset.tablebergCol) - 1 : parseInt(cell.dataset.tablebergCol);
+                const coli = headerAsCol
+                    ? parseInt(cell.dataset.tablebergCol) - 1
+                    : parseInt(cell.dataset.tablebergCol);
                 const rowi = parseInt(cell.dataset.tablebergRow);
 
-                let targetRow = tableRows * (Math.ceil((coli + 1) / stackCount) - 1) + rowi;
+                let targetRow =
+                    tableRows * (Math.ceil((coli + 1) / stackCount) - 1) + rowi;
 
                 markCell(cell);
 
@@ -334,7 +352,10 @@
 
                 if (table.dataset.tablebergHeader !== "" && isHeaderRow) {
                     tableMarkup += createRow("header");
-                } else if (table.dataset.tablebergFooter !== "" && isFooterRow) {
+                } else if (
+                    table.dataset.tablebergFooter !== "" &&
+                    isFooterRow
+                ) {
                     tableMarkup += createRow("footer");
                 } else if (i % 2 === 0) {
                     tableMarkup += createRow("even-row");
@@ -493,9 +514,9 @@
     function searchTable(input) {
         const search = input.value.trim();
         const rows = input.parentElement.parentElement.querySelectorAll("tr");
-        
+
         removeHighlights();
-        
+
         if (!search || search.length < 3) {
             if (input.dataset.isDirty) {
                 input.dataset.isDirty = false;
@@ -520,21 +541,32 @@
     }
 
     function highlightMatches(row, searchTerm) {
-        const cells = row.querySelectorAll('td, th');
-        cells.forEach(cell => {
+        const cells = row.querySelectorAll("td, th");
+        cells.forEach((cell) => {
             const text = cell.textContent;
             if (text.toLowerCase().includes(searchTerm.toLowerCase())) {
-                const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-                cell.innerHTML = text.replace(regex, '<span class="tableberg-search-highlight">$1</span>');
+                const regex = new RegExp(
+                    `(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+                    "gi",
+                );
+                cell.innerHTML = text.replace(
+                    regex,
+                    '<span class="tableberg-search-highlight">$1</span>',
+                );
             }
         });
     }
 
     function removeHighlights() {
-        const highlights = document.querySelectorAll('.tableberg-search-highlight');
-        highlights.forEach(highlight => {
+        const highlights = document.querySelectorAll(
+            ".tableberg-search-highlight",
+        );
+        highlights.forEach((highlight) => {
             const parent = highlight.parentNode;
-            parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+            parent.replaceChild(
+                document.createTextNode(highlight.textContent),
+                highlight,
+            );
         });
     }
 
@@ -705,7 +737,6 @@
 
         let index = 0;
         for (const row of tbody.rows) {
-
             const sortedCells = [];
             for (const cell of row.cells) {
                 const idx = indexMap[cell.dataset.tablebergCol];

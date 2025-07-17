@@ -12,7 +12,7 @@ import React, { useMemo } from "react";
 function HeaderVersionInfo({ currentVersion, availableVersions, onSelect }) {
     const availableVersionsMinusCurrent = useMemo(
         () => availableVersions.filter((version) => version !== currentVersion),
-        [availableVersions]
+        [availableVersions],
     );
 
     return (

@@ -1,6 +1,6 @@
-import { type FC } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { type FC } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Pattern card preview section skeleton component.
@@ -9,13 +9,17 @@ import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
  * @class
  */
 const PatternCardPreviewSkeleton: FC = () => {
-	return (
-		<div className={'tableberg-pattern-library-card-skeleton-preview'}>
-			<div className={'tableberg-pattern-library-card-skeleton-preview-icon'}>
-				<FontAwesomeIcon icon={faEyeSlash} />
-			</div>
-		</div>
-	);
+    return (
+        <div className={"tableberg-pattern-library-card-skeleton-preview"}>
+            <div
+                className={
+                    "tableberg-pattern-library-card-skeleton-preview-icon"
+                }
+            >
+                <FontAwesomeIcon icon={faEyeSlash} />
+            </div>
+        </div>
+    );
 };
 
 export default PatternCardPreviewSkeleton;

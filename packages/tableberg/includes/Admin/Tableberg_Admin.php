@@ -14,8 +14,7 @@ use Tableberg\Version_Control;
 /**
  * Manage Tableberg Admin
  */
-class Tableberg_Admin
-{
+class Tableberg_Admin {
     /**
      * The ID of this plugin.
      *
@@ -51,8 +50,7 @@ class Tableberg_Admin
     /**
      * Initialize the class and set its properties.
      */
-    public function __construct()
-    {
+    public function __construct() {
 
         $this->plugin_name = 'tableberg';
         $this->version     = TABLEBERG_VERSION;
@@ -76,8 +74,7 @@ class Tableberg_Admin
     /**
      * Add hook
      */
-    public function add_tableberg_admin_hook()
-    {
+    public function add_tableberg_admin_hook() {
         add_action('wp_ajax_toggle_control', array($this, 'update_toggle_control'));
         add_action('wp_ajax_block_properties', array($this, 'update_block_properties'));
     }
@@ -85,8 +82,7 @@ class Tableberg_Admin
     /**
      * Block properties control
      */
-    private function update_block_properties()
-    {
+    private function update_block_properties() {
         check_ajax_referer('block_properties');
 
         if (isset($_POST['value']) && isset($_POST['property_name'])) {
@@ -110,8 +106,7 @@ class Tableberg_Admin
     /**
      * Toggle control
      */
-    private function update_toggle_control()
-    {
+    private function update_toggle_control() {
         check_ajax_referer('toggle_control');
 
         if (isset($_POST['enable']) && isset($_POST['toggle_name'])) {
@@ -129,8 +124,7 @@ class Tableberg_Admin
      *
      * @return array filtered frontend data
      */
-    public function add_settings_menu_data($data)
-    {
+    public function add_settings_menu_data($data) {
         $data['assets'] = array(
             'logo' => trailingslashit($this->plugin_url) . 'includes/Admin/images/logos/menu-icon-colored.svg',
             'logoTransparent' => trailingslashit($this->plugin_url) . 'includes/Admin/images/logos/menu-icon-colored-transparent.svg',
@@ -186,8 +180,7 @@ class Tableberg_Admin
     /**
      * Enqueue admin scripts.
      */
-    public function enqueue_admin_script()
-    {
+    public function enqueue_admin_script() {
         $tableberg_assets = new Tableberg\Assets();
         $tableberg_assets->register_admin_assets();
     }
@@ -197,9 +190,8 @@ class Tableberg_Admin
      *
      * @return void
      */
-    public function main_menu_template_cb()
-    {
-?>
+    public function main_menu_template_cb() {
+        ?>
 <div id="tableberg-admin-menu"></div>
 <?php
     }
@@ -207,8 +199,7 @@ class Tableberg_Admin
     /**
      * Register Setting Pages for the admin area.
      */
-    public function register_admin_menus()
-    {
+    public function register_admin_menus() {
 
         // assign global variables.
         global $menu_page;
@@ -230,27 +221,26 @@ class Tableberg_Admin
      *
      * @since 2.1.6
      */
-     public static function tableberg_review_notice()
-     {
-         $install_date = get_option('tableberg_installDate');
-         $display_date = date('Y-m-d h:i:s');
-         $datetime1    = new \DateTime($install_date);
-         $datetime2    = new \DateTime($display_date);
-         $diff_interval = round(($datetime2->format('U') - $datetime1->format('U')) / (60 * 60 * 24));
-     
-         if ($diff_interval >= 21 && get_option('tableberg_review_notify') == 'no') {
-             ?>
+    public static function tableberg_review_notice() {
+        $install_date = get_option('tableberg_installDate');
+        $display_date = date('Y-m-d h:i:s');
+        $datetime1    = new \DateTime($install_date);
+        $datetime2    = new \DateTime($display_date);
+        $diff_interval = round(($datetime2->format('U') - $datetime1->format('U')) / (60 * 60 * 24));
+
+        if ($diff_interval >= 21 && get_option('tableberg_review_notify') == 'no') {
+            ?>
              <div class="tableberg-review-notice notice notice-info" style="display: inline-block; position: relative; padding:0.5rem 1.5rem">
                  <button type="button" class="notice-dismiss Tableberg_HideReview_Notice" style="position: absolute; top: 2px; right: 2px;">
                      <span class="screen-reader-text">Dismiss this notice.</span>
                  </button>
                  <p style="font-size: 14px; line-height: 2;padding-right:2rem">
                      <?php
-                     _e(
-                         'Hello! Seems like you\'ve been using <strong>Tableberg</strong> for a while on your website. That\'s awesome!<br>If you can spare a few moments to rate it on wordpress.org, it would help us a lot (and boost my motivation).<br>Imtiaz Rayhan, developer of Tableberg',
-                         'tableberg'
-                     );
-                     ?>
+                    _e(
+                        'Hello! Seems like you\'ve been using <strong>Tableberg</strong> for a while on your website. That\'s awesome!<br>If you can spare a few moments to rate it on wordpress.org, it would help us a lot (and boost my motivation).<br>Imtiaz Rayhan, developer of Tableberg',
+                        'tableberg'
+                    );
+            ?>
                  </p>
                  <ul style="list-style-type: none; padding: 0;">
                      <li>
@@ -281,17 +271,16 @@ class Tableberg_Admin
                  });
              </script>
              <?php
-         }
-     }
-     
+        }
+    }
+
 
     /**
      * Hides the review notice.
      *
      * @since 2.1.6
      */
-    public function tableberg_hide_review_notify()
-    {
+    public function tableberg_hide_review_notify() {
         update_option('tableberg_review_notify', 'yes');
         echo json_encode(array('success'));
         exit;

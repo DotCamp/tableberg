@@ -16,7 +16,7 @@ import {
     __experimentalToolsPanelItem as ToolsPanelItem,
     TextareaControl,
     ToggleControl,
-    PanelBody
+    PanelBody,
 } from "@wordpress/components";
 import { useInstanceId } from "@wordpress/compose";
 import { BlockEditProps, registerBlockType } from "@wordpress/blocks";
@@ -48,7 +48,7 @@ function edit({
     attributes,
     setAttributes,
     clientId,
-    isSelected
+    isSelected,
 }: BlockEditProps<HtmlBlockProps>) {
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const iframeRef = useRef<HTMLIFrameElement>();
@@ -77,10 +77,11 @@ function edit({
     );
 
     const styles = useMemo(
-        () => [
-            DEFAULT_STYLES,
-            ...transformStyles(settingStyles.filter((style) => style.css)),
-        ].join(''),
+        () =>
+            [
+                DEFAULT_STYLES,
+                ...transformStyles(settingStyles.filter((style) => style.css)),
+            ].join(""),
         [settingStyles],
     );
 
@@ -91,8 +92,8 @@ function edit({
         }
         const iframeDocument = iframe.contentWindow!.document!;
         iframeDocument.head.innerHTML = `<style>${styles}</style>`;
-        iframeDocument.body.innerHTML = attributes.content ?
-            `<div
+        iframeDocument.body.innerHTML = attributes.content
+            ? `<div
                 style="width: max-content; overflow: hidden;"
                 data-tableberg-${clientId}
                 class="editor-styles-wrapper"
@@ -105,33 +106,35 @@ function edit({
                 class="editor-styles-wrapper"
             >
                 Empty custom HTML block
-            </div>`
+            </div>`;
 
         const contentRect = iframeDocument
             .querySelector(`[data-tableberg-${clientId}]`)!
             .getBoundingClientRect();
         iframe.height = `${Math.ceil(contentRect.height) + 1}px`;
         iframe.width = `${Math.ceil(contentRect.width) + 1}px`;
-    }
+    };
 
     useEffect(renderIframeContent, [styles, isPreview, attributes.content]);
 
     if (!isSelected && attributes.previewOnDeselect) {
-        return <div {...blockProps}>
-            <VisuallyHidden id={instanceId}>
-                {__(
-                    "HTML preview is not yet fully accessible. Please switch screen reader to virtualized mode to navigate the below iFrame.",
-                    "tableberg-pro",
-                )}
-            </VisuallyHidden>
-            <iframe
-                ref={iframeRef as any}
-                title={__("Custom HTML Preview", "tableberg-pro")}
-                tabIndex={-1}
-                sandbox="allow-same-origin"
-                onLoad={renderIframeContent}
-            />
-        </div>
+        return (
+            <div {...blockProps}>
+                <VisuallyHidden id={instanceId}>
+                    {__(
+                        "HTML preview is not yet fully accessible. Please switch screen reader to virtualized mode to navigate the below iFrame.",
+                        "tableberg-pro",
+                    )}
+                </VisuallyHidden>
+                <iframe
+                    ref={iframeRef as any}
+                    title={__("Custom HTML Preview", "tableberg-pro")}
+                    tabIndex={-1}
+                    sandbox="allow-same-origin"
+                    onLoad={renderIframeContent}
+                />
+            </div>
+        );
     }
 
     return (
@@ -157,20 +160,17 @@ function edit({
                 </ToolbarGroup>
             </BlockControls>
             <InspectorControls>
-                <ToolsPanel
-                    label={__('Settings')}
-                    resetAll={() => { }}
-                >
+                <ToolsPanel label={__("Settings")} resetAll={() => {}}>
                     <ToolsPanelItem
                         label={__("HTML Code")}
                         isShownByDefault
                         hasValue={() => false}
-                        onDeselect={() => { }}
+                        onDeselect={() => {}}
                     >
                         <TextareaControl
                             label={__("HTML Code")}
                             value={attributes.content}
-                            onChange={content => setAttributes({ content })}
+                            onChange={(content) => setAttributes({ content })}
                             help="Write the HTML code here"
                             __nextHasNoMarginBottom
                         />
@@ -180,9 +180,11 @@ function edit({
                     <ToggleControl
                         label="Show render preview when block is deselected (only in editor)"
                         checked={attributes.previewOnDeselect}
-                        onChange={(val) => setAttributes({
-                            previewOnDeselect: val
-                        })}
+                        onChange={(val) =>
+                            setAttributes({
+                                previewOnDeselect: val,
+                            })
+                        }
                     />
                 </PanelBody>
             </InspectorControls>

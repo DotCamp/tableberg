@@ -66,7 +66,7 @@ export default function SizeControl({
     value,
     rangeConfig = {},
     initialPosition,
-    disabled
+    disabled,
 }: SizeControlProps) {
     const customRangeValue = parseFloat(value || "0");
 
@@ -165,9 +165,7 @@ export default function SizeControl({
                 <FlexItem isBlock>
                     <Spacer marginX={2} marginBottom={0}>
                         <RangeControl
-                            value={
-                                !value ? undefined : customRangeValue
-                            }
+                            value={!value ? undefined : customRangeValue}
                             min={minVal}
                             max={maxVal}
                             step={stepVal}

@@ -52,4 +52,3 @@ if (!TABLEBERG_CFG.IS_PRO) {
     register(RibbonMeta, RibbonIcon);
     register(StarRatingMeta, StarRatingIcon);
 }
-

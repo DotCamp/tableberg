@@ -123,10 +123,7 @@ export const getBorderRadiusCSS = (object: any): StyleAttr => {
     return css;
 };
 
-export const getBorderRadiusVar = (
-    object: any,
-    prefix: string,
-): StyleAttr => {
+export const getBorderRadiusVar = (object: any, prefix: string): StyleAttr => {
     if (!object) {
         return {};
     }

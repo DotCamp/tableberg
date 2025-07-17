@@ -6,7 +6,12 @@
         "start": "pnpm --recursive --parallel run start",
         "build": "pnpm --recursive --parallel run build",
         "export": "pnpm --recursive --parallel run export",
-        "patterns:get": "node ./scripts/export-patterns.js"
+        "patterns:get": "node ./scripts/export-patterns.js",
+        "format": "pnpm run format:js && pnpm run format:php",
+        "format:js": "prettier --write \"packages/**/*.{js,jsx,ts,tsx,scss,css}\"",
+        "format:php": "composer run format",
+        "check:js": "prettier --check \"packages/**/*.{js,jsx,ts,tsx,scss,css}\"",
+        "check:php": "composer run check"
     },
     "keywords": [],
     "author": "Dotcamp",
@@ -22,7 +27,8 @@
         "@wordpress/base-styles": "^4.39.0",
         "@wordpress/hooks": "^3.57.0",
         "@wordpress/scripts": "^26.6.0",
-        "dotenv": "^16.4.1"
+        "dotenv": "^16.4.1",
+        "prettier": "^3.0.0"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.5.1",
