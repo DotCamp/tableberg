@@ -13,3 +13,4 @@ tableberg-pro.zip
 .DS_Store
 .env
 packages/tableberg/includes/Admin/assets
+.php-cs-fixer.cache
