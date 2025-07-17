@@ -8,6 +8,7 @@ return (new PhpCsFixer\Config())
             'functions_opening_brace' => 'same_line',
             'classes_opening_brace' => 'same_line',
         ],
+        'visibility_required' => false,
     ])
     ->setIndent('    ') // 4 spaces
     ->setLineEnding("\n") // LF line endings
@@ -18,4 +19,4 @@ return (new PhpCsFixer\Config())
             ->exclude('node_modules')
             ->exclude('packages/tableberg/includes/freemius')
             ->exclude('packages/pro/includes/freemius')
-    ); 
+    );
