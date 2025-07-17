@@ -68,7 +68,7 @@ class AI_Table_Service {
                 'Content-Type' => 'application/json',
             ),
             'body' => json_encode(array(
-                'model' => 'gpt-3.5-turbo',
+                'model' => 'gpt-4',
                 'messages' => array(
                     array(
                         'role' => 'system',
@@ -79,8 +79,8 @@ class AI_Table_Service {
                         'content' => $enhanced_prompt
                     )
                 ),
-                'temperature' => 0.7,
-                'max_tokens' => 1000,
+                'temperature' => 0.3,
+                'max_tokens' => 2000,
             )),
         ));
         

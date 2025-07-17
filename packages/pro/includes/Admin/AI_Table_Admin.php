@@ -104,7 +104,7 @@ class AI_Table_Admin {
                 'Content-Type' => 'application/json',
             ),
             'body' => json_encode(array(
-                'model' => 'gpt-3.5-turbo',
+                'model' => 'gpt-4',
                 'messages' => array(
                     array(
                         'role' => 'user',
