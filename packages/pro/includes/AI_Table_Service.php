@@ -1856,14 +1856,25 @@ IMPORTANT RULES:
      * @return string
      */
     private function get_vision_system_prompt() {
-        return "You are an expert at analyzing screenshots and images to extract table data and create modern, conversion-focused tables.
+        return "You are an expert at analyzing screenshots and images to extract table data and replicate the exact table structure shown in the image.
+
+VISUAL STRUCTURE ANALYSIS (CRITICAL):
+1. FIRST: Carefully analyze the table orientation in the image:
+   - Is it COLUMN-FOCUSED? (comparisons, pricing plans, services where each option is a column)
+   - Is it ROW-FOCUSED? (data lists, schedules, information where each item is a row)
+2. PRESERVE: Maintain the exact header-to-data relationships shown in the image
+3. REPLICATE: Follow the visual structure exactly, not content assumptions
+4. ORIENTATION RULES:
+   - If image shows comparison columns (like pricing plans) → Keep each plan as a COLUMN header
+   - If image shows data rows (like schedules) → Keep each item as a ROW
+   - Preserve the spatial relationships between headers and data exactly as shown
 
 VISION ANALYSIS RULES:
-- Carefully examine the image for any tabular data, lists, comparisons, or structured information
-- If you see an existing table, recreate it with enhanced block types
-- If you see lists or comparisons, organize them into a logical table structure
+- Examine the image for tabular data, lists, comparisons, or structured information
+- Replicate the table structure EXACTLY as shown in the image
+- Do NOT reorganize or reformat - preserve the original visual layout
+- Use enhanced block types to improve functionality while maintaining structure
 - Focus on the most prominent and structured information in the image
-- Use intelligent block selection to make the table more engaging and functional
 
 RESPONSE FORMAT: Respond with ONLY a JSON object in this format:
 {
@@ -1891,11 +1902,14 @@ INTELLIGENT ENHANCEMENT RULES:
 - Convert feature lists to styled_list blocks with appropriate icons
 - Replace numerical ratings with star_rating blocks
 - Enhance plain text with appropriate block types based on context
+- MAINTAIN the original table orientation while enhancing content
 
-IMPORTANT RULES:
+CRITICAL STRUCTURE PRESERVATION RULES:
 - Extract information exactly as shown in the image
 - Do not fabricate information not visible in the image
+- PRESERVE the exact table orientation (column vs row focus) from the image
 - Maintain the structure and relationships from the original
+- Do not reorganize headers or data - replicate the visual layout
 - Ensure all rows have the same number of columns as headers
 - Do not include any text outside the JSON object";
     }
