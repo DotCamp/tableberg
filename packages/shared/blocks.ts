@@ -4,6 +4,7 @@ import ListBlockIcon from "./icons/styled-list";
 import RibbonBlockIcon from "./icons/ribbon";
 import blockIcon from "./icons/tableberg";
 import { BlockIcon as StarBlockIcon } from "./icons/star-rating";
+import { AITableIcon } from "./icons/table-creation";
 import { image, button, paragraph, list } from "@wordpress/icons";
 
 export default [
@@ -83,6 +84,14 @@ export default [
         upsellText:
             "Add customizable star ratings, perfect for reviews and comparison tables.",
         demoUrl:"https://tableberg.com/docs/how-to-add-star-rating-in-wordpress/",
+    },
+    {
+        name: "ai-table",
+        title: "AI Table",
+        icon: AITableIcon,
+        isPro: true,
+        upsellText:
+            "Generate tables instantly using AI from any content. Simply provide text, URLs, or prompts and let AI create structured tables for you.",
     },
 ];
 

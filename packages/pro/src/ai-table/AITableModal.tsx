@@ -10,7 +10,7 @@ import apiFetch from "@wordpress/api-fetch";
 import { createBlock } from "@wordpress/blocks";
 import LoadingState from "./components/LoadingState";
 import PromptInput from "./components/PromptInput";
-import CustomModal from "../../components/CustomModal";
+import CustomModal from "../../../tableberg/src/components/CustomModal";
 import "./ai-table-modal.scss";
 
 interface Props {
@@ -991,6 +991,30 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                         </div>
                     </div>
                     
+                    <div className="tableberg-ai-tips">
+                        <div className="tableberg-ai-tips-header">
+                            ✏️ <strong>{__("Content Optimization Tips:", "tableberg")}</strong>
+                        </div>
+                        <div className="tableberg-ai-tips-content">
+                            <div className="tableberg-ai-tip">
+                                <span className="tableberg-ai-tip-label">{__("Remove extras:", "tableberg")}</span>
+                                <span className="tableberg-ai-tip-text">{__("Delete navigation, ads, and irrelevant content to focus AI on table-worthy data", "tableberg")}</span>
+                            </div>
+                            <div className="tableberg-ai-tip">
+                                <span className="tableberg-ai-tip-label">{__("Keep structured data:", "tableberg")}</span>
+                                <span className="tableberg-ai-tip-text">{__("Preserve lists, comparisons, statistics, and organized information", "tableberg")}</span>
+                            </div>
+                            <div className="tableberg-ai-tip">
+                                <span className="tableberg-ai-tip-label">{__("Optimize length:", "tableberg")}</span>
+                                <span className="tableberg-ai-tip-text">{__("Shorter, focused content (under 1000 words) generates faster and more accurate results", "tableberg")}</span>
+                            </div>
+                            <div className="tableberg-ai-tip">
+                                <span className="tableberg-ai-tip-label">{__("Include context:", "tableberg")}</span>
+                                <span className="tableberg-ai-tip-text">{__("Keep headers and descriptions that help AI understand data relationships", "tableberg")}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div className="tableberg-ai-modal-content-actions">
                         <Button
                             variant="secondary"
@@ -998,13 +1022,6 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                             disabled={isGenerating}
                         >
                             {__("Re-extract from Post", "tableberg")}
-                        </Button>
-                        <Button
-                            variant="primary"
-                            onClick={generateTable}
-                            disabled={isGenerating || !extractedContent.content.trim()}
-                        >
-                            {isGenerating ? __("Generating...", "tableberg") : __("Generate Table", "tableberg")}
                         </Button>
                     </div>
                 </div>
@@ -1243,19 +1260,21 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                         }
                     })()}
                 </div>
-                <div className="tableberg-ai-modal-footer">
-                    <Button
-                        variant="primary"
-                        onClick={generateTable}
-                        disabled={isGenerating || 
-                            (method === "prompt" && !prompt.trim()) || 
-                            (method === "content" && !extractedContent.content.trim())}
-                    >
-                        {isGenerating
-                            ? __("Generating...", "tableberg")
-                            : __("Generate & Insert Table", "tableberg")}
-                    </Button>
-                </div>
+                {state !== "method-selection" && state !== "processing" && state !== "completed" && state !== "error" && (
+                    <div className="tableberg-ai-modal-footer">
+                        <Button
+                            variant="primary"
+                            onClick={generateTable}
+                            disabled={isGenerating || 
+                                (method === "prompt" && !prompt.trim()) || 
+                                (method === "content" && !extractedContent.content.trim())}
+                        >
+                            {isGenerating
+                                ? __("Generating...", "tableberg")
+                                : __("Generate & Insert Table", "tableberg")}
+                        </Button>
+                    </div>
+                )}
             </>
         );
     };

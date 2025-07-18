@@ -10,12 +10,28 @@
     box-shadow: none;
   }
 
-  &-flex {
+  &-container {
     width: 100%;
     display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  &-left,
+  &-right {
+    display: flex;
     align-items: start;
-    justify-content: space-around;
+    justify-content: flex-start;
     flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  &-left {
+    flex: 1;
+  }
+
+  &-right {
+    flex: 0 0 auto;
   }
 
   &-btn {

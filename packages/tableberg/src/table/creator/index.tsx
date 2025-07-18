@@ -24,12 +24,18 @@ import { useDispatch } from "@wordpress/data";
 import { useState } from "react";
 import metadata from "../../block.json";
 import PatternsLibrary from "./Patterns";
-import AITableModal from "./AITableModal";
 import UpsellModal from "../../components/UpsellModal";
 
 interface Props {
     clientId: string;
-    proProps?: any;
+    proProps?: {
+        onCreateWooTable: (storeActions: any) => void;
+        AITableModal?: React.ComponentType<{
+            onClose: () => void;
+            onInsert: (block: any) => void;
+            currentBlockId: string;
+        }>;
+    };
 }
 
 export default function TableCreator({ clientId, proProps }: Props) {
@@ -104,55 +110,59 @@ export default function TableCreator({ clientId, proProps }: Props) {
                 <p className="tableberg-divider">
                     <span>or</span>
                 </p>
-                <div className="tableberg-table-creator-flex">
-                    <button
-                        className="tableberg-table-creator-btn"
-                        onClick={() => setModal("patterns")}
-                    >
-                        <div className="tableberg-table-creator-btn-icon">
-                            {PreBuiltTableIcon}
-                        </div>
-                        <span>Pre-Built Table</span>
-                    </button>
-                    <button
-                        className="tableberg-table-creator-btn"
-                        onClick={() => proProps.onCreateWooTable(storeActions)}
-                    >
-                        <div className="tableberg-table-creator-btn-icon">
-                            {WooTableIcon}
-                        </div>
-                        <span>WooCommerce Table</span>
-                    </button>
-                    <button className="tableberg-table-creator-btn tableberg-upcoming">
-                        <div className="tableberg-table-creator-btn-icon">
-                            {DataTableIcon}
-                        </div>
-                        <span>Data Table (CSV, XML)</span>
-                    </button>
-                    <button 
-                        className={`tableberg-table-creator-btn ${!TABLEBERG_CFG.IS_PRO ? 'tableberg-pro-feature' : ''}`}
-                        onClick={() => {
-                            if (TABLEBERG_CFG.IS_PRO) {
-                                setModal("ai");
-                            } else {
-                                setModal("ai-upsell");
-                            }
-                        }}
-                    >
-                        <div className="tableberg-table-creator-btn-icon">
-                            {AITableIcon}
-                        </div>
-                        <span>AI Table</span>
-                        {TABLEBERG_CFG.IS_PRO && (
-                            <span className="tableberg-table-creator-btn-badge">Pro</span>
-                        )}
-                    </button>
-                    <button className="tableberg-table-creator-btn tableberg-upcoming">
-                        <div className="tableberg-table-creator-btn-icon">
-                            {PostsTableIcon}
-                        </div>
-                        <span>Posts Table</span>
-                    </button>
+                <div className="tableberg-table-creator-container">
+                    <div className="tableberg-table-creator-left">
+                        <button
+                            className="tableberg-table-creator-btn"
+                            onClick={() => setModal("patterns")}
+                        >
+                            <div className="tableberg-table-creator-btn-icon">
+                                {PreBuiltTableIcon}
+                            </div>
+                            <span>Pre-Built Table</span>
+                        </button>
+                        <button
+                            className="tableberg-table-creator-btn"
+                            onClick={() => proProps.onCreateWooTable(storeActions)}
+                        >
+                            <div className="tableberg-table-creator-btn-icon">
+                                {WooTableIcon}
+                            </div>
+                            <span>WooCommerce Table</span>
+                        </button>
+                        <button 
+                            className={`tableberg-table-creator-btn ${!TABLEBERG_CFG.IS_PRO || !proProps?.AITableModal ? 'tableberg-pro-feature' : ''}`}
+                            onClick={() => {
+                                if (TABLEBERG_CFG.IS_PRO && proProps?.AITableModal) {
+                                    setModal("ai");
+                                } else {
+                                    setModal("ai-upsell");
+                                }
+                            }}
+                        >
+                            <div className="tableberg-table-creator-btn-icon">
+                                {AITableIcon}
+                            </div>
+                            <span>AI Table</span>
+                            {TABLEBERG_CFG.IS_PRO && (
+                                <span className="tableberg-table-creator-btn-badge">Pro</span>
+                            )}
+                        </button>
+                    </div>
+                    <div className="tableberg-table-creator-right">
+                        <button className="tableberg-table-creator-btn tableberg-upcoming">
+                            <div className="tableberg-table-creator-btn-icon">
+                                {DataTableIcon}
+                            </div>
+                            <span>Data Table (CSV, XML)</span>
+                        </button>
+                        <button className="tableberg-table-creator-btn tableberg-upcoming">
+                            <div className="tableberg-table-creator-btn-icon">
+                                {PostsTableIcon}
+                            </div>
+                            <span>Posts Table</span>
+                        </button>
+                    </div>
                 </div>
             </Placeholder>
             {modal === "patterns" && (
@@ -163,8 +173,8 @@ export default function TableCreator({ clientId, proProps }: Props) {
                     }
                 />
             )}
-            {modal === "ai" && (
-                <AITableModal
+            {modal === "ai" && proProps?.AITableModal && (
+                <proProps.AITableModal
                     onClose={() => setModal(null)}
                     onInsert={(block) => {
                         storeActions.replaceBlock(clientId, block);
