@@ -256,6 +256,66 @@ class AI_Table_Service {
     }
     
     /**
+     * Generate table from image screenshot
+     *
+     * @param array  $file_data File upload data ($_FILES format or base64)
+     * @param array  $options Additional options
+     * @return array|WP_Error Generated table data or error
+     */
+    public function generate_table_from_image($file_data, $options = array()) {
+        $api_key = $this->get_api_key();
+        
+        if (!$api_key) {
+            return new \WP_Error('no_api_key', __('OpenAI API key not configured', 'tableberg'));
+        }
+        
+        // Validate and process the image
+        $image_result = $this->process_uploaded_image($file_data);
+        if (is_wp_error($image_result)) {
+            return $image_result;
+        }
+        
+        $base64_image = $image_result['base64'];
+        $mime_type = $image_result['mime_type'];
+        
+        // Create vision-specific prompt
+        $system_prompt = $this->get_vision_system_prompt();
+        $user_prompt = $this->create_vision_prompt($options);
+        
+        // Make Vision API request
+        $response = $this->make_vision_api_request($api_key, $system_prompt, $user_prompt, $base64_image, $mime_type);
+        
+        if (is_wp_error($response)) {
+            return $response;
+        }
+        
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+        
+        if (wp_remote_retrieve_response_code($response) !== 200) {
+            $error_message = isset($data['error']['message']) 
+                ? $data['error']['message'] 
+                : __('Failed to generate table from image', 'tableberg');
+                
+            return new \WP_Error('api_error', $error_message);
+        }
+        
+        if (!isset($data['choices'][0]['message']['content'])) {
+            return new \WP_Error('invalid_response', __('Invalid API response', 'tableberg'));
+        }
+        
+        // Parse the AI response
+        $table_data = $this->parse_ai_response($data['choices'][0]['message']['content']);
+        
+        if (is_wp_error($table_data)) {
+            return $table_data;
+        }
+        
+        // Convert to Tableberg blocks
+        return $this->convert_to_blocks($table_data);
+    }
+
+    /**
      * Generate table from user prompt
      *
      * @param string $prompt User's table description
@@ -618,6 +678,62 @@ IMPORTANT RULES:
     }
     
     /**
+     * Safely extract text content from various data types
+     *
+     * @param mixed $data Data to extract text from (string, array, object)
+     * @return string Extracted text content
+     */
+    private function safe_extract_text($data) {
+        if (is_string($data)) {
+            return trim($data);
+        }
+        
+        if (is_array($data)) {
+            // Try common text fields first
+            $text_fields = array('content', 'text', 'value', 'label', 'title', 'name');
+            foreach ($text_fields as $field) {
+                if (isset($data[$field]) && is_string($data[$field])) {
+                    return trim($data[$field]);
+                }
+            }
+            
+            // If no text fields found, try to find the first string value
+            foreach ($data as $value) {
+                if (is_string($value) && !empty(trim($value))) {
+                    return trim($value);
+                }
+            }
+            
+            // Last resort: convert array to string representation
+            $text_parts = array();
+            foreach ($data as $key => $value) {
+                if (is_string($value) && !empty(trim($value))) {
+                    $text_parts[] = trim($value);
+                } elseif (is_scalar($value)) {
+                    $text_parts[] = (string) $value;
+                }
+            }
+            
+            if (!empty($text_parts)) {
+                return implode(' ', $text_parts);
+            }
+            
+            return 'List Item'; // Fallback
+        }
+        
+        if (is_object($data)) {
+            // Convert object to array and process
+            return $this->safe_extract_text((array) $data);
+        }
+        
+        if (is_scalar($data)) {
+            return trim((string) $data);
+        }
+        
+        return 'List Item'; // Final fallback
+    }
+    
+    /**
      * Extract and normalize list items from various formats
      *
      * @param array $block_data Block data from AI
@@ -632,21 +748,14 @@ IMPORTANT RULES:
             if (is_array($block_data['content'])) {
                 // Handle array of objects
                 foreach ($block_data['content'] as $item) {
-                    if (is_array($item)) {
-                        // Handle nested objects with icon and content
-                        if (isset($item['content'])) {
-                            $items[] = $item['content'];
-                        } elseif (isset($item['text'])) {
-                            $items[] = $item['text'];
-                        }
-                        
-                        // Extract icon from first item if available and not already set
-                        if (count($items) === 1 && isset($item['icon'])) {
-                            $icon = $item['icon'];
-                        }
-                    } else {
-                        // Handle simple string items
-                        $items[] = $item;
+                    $extracted_text = $this->safe_extract_text($item);
+                    if (!empty($extracted_text)) {
+                        $items[] = $extracted_text;
+                    }
+                    
+                    // Extract icon from first item if available and not already set
+                    if (count($items) === 1 && is_array($item) && isset($item['icon'])) {
+                        $icon = $item['icon'];
                     }
                 }
             } elseif (is_string($block_data['content'])) {
@@ -657,7 +766,13 @@ IMPORTANT RULES:
         
         // Fallback to 'items' field (existing format)
         if (empty($items) && isset($block_data['items']) && is_array($block_data['items'])) {
-            $items = $block_data['items'];
+            // Safely extract text from each item
+            foreach ($block_data['items'] as $item) {
+                $extracted_text = $this->safe_extract_text($item);
+                if (!empty($extracted_text)) {
+                    $items[] = $extracted_text;
+                }
+            }
         }
         
         // If still no items, use default
@@ -1429,10 +1544,13 @@ IMPORTANT RULES:
         
         // Add list items as inner blocks
         foreach ($data['items'] as $item) {
+            // Safely extract text content from potentially complex data structures
+            $item_text = $this->safe_extract_text($item);
+            
             $list_block['innerBlocks'][] = array(
                 'name' => 'tableberg/styled-list-item',
                 'attributes' => array(
-                    'text' => esc_html(trim($item))
+                    'text' => esc_html($item_text)
                 ),
                 'innerBlocks' => array()
             );
@@ -1669,6 +1787,191 @@ IMPORTANT RULES:
         }, $content);
         
         return $content;
+    }
+    
+    /**
+     * Process uploaded image for Vision API
+     *
+     * @param array $file_data File upload data
+     * @return array|WP_Error Processed image data or error
+     */
+    private function process_uploaded_image($file_data) {
+        // Handle different input formats
+        if (isset($file_data['base64'])) {
+            // Direct base64 input
+            return array(
+                'base64' => $file_data['base64'],
+                'mime_type' => $file_data['mime_type'] ?? 'image/png'
+            );
+        }
+        
+        // Handle WordPress upload format
+        if (isset($file_data['tmp_name'])) {
+            $tmp_name = $file_data['tmp_name'];
+            $file_type = $file_data['type'] ?? '';
+            $file_size = $file_data['size'] ?? 0;
+        } else {
+            return new \WP_Error('invalid_file_data', __('Invalid file data provided', 'tableberg'));
+        }
+        
+        // Validate file exists
+        if (!file_exists($tmp_name)) {
+            return new \WP_Error('file_not_found', __('Uploaded file not found', 'tableberg'));
+        }
+        
+        // Validate file size (10MB max)
+        if ($file_size > 10 * 1024 * 1024) {
+            return new \WP_Error('file_too_large', __('File size must be under 10MB', 'tableberg'));
+        }
+        
+        // Validate MIME type
+        $allowed_types = array('image/png', 'image/jpeg', 'image/jpg', 'image/webp');
+        $actual_mime_type = wp_check_filetype($tmp_name)['type'];
+        
+        if (!$actual_mime_type) {
+            $actual_mime_type = mime_content_type($tmp_name);
+        }
+        
+        if (!in_array($actual_mime_type, $allowed_types)) {
+            return new \WP_Error('invalid_file_type', __('Only PNG, JPEG, and WebP images are supported', 'tableberg'));
+        }
+        
+        // Read and encode image
+        $image_data = file_get_contents($tmp_name);
+        if ($image_data === false) {
+            return new \WP_Error('file_read_error', __('Failed to read uploaded file', 'tableberg'));
+        }
+        
+        $base64_image = base64_encode($image_data);
+        
+        return array(
+            'base64' => $base64_image,
+            'mime_type' => $actual_mime_type
+        );
+    }
+    
+    /**
+     * Get vision-specific system prompt
+     *
+     * @return string
+     */
+    private function get_vision_system_prompt() {
+        return "You are an expert at analyzing screenshots and images to extract table data and create modern, conversion-focused tables.
+
+VISION ANALYSIS RULES:
+- Carefully examine the image for any tabular data, lists, comparisons, or structured information
+- If you see an existing table, recreate it with enhanced block types
+- If you see lists or comparisons, organize them into a logical table structure
+- Focus on the most prominent and structured information in the image
+- Use intelligent block selection to make the table more engaging and functional
+
+RESPONSE FORMAT: Respond with ONLY a JSON object in this format:
+{
+    \"headers\": [\"Column 1\", \"Column 2\", \"Column 3\"],
+    \"rows\": [
+        [
+            {\"type\": \"text\", \"content\": \"Content from image\"},
+            {\"type\": \"button\", \"text\": \"Buy Now\", \"style\": \"primary\"},
+            {\"type\": \"icon\", \"icon\": \"check\", \"color\": \"green\"}
+        ]
+    ]
+}
+
+AVAILABLE BLOCK TYPES:
+1. \"text\" - Regular content from the image
+2. \"button\" - Call-to-action buttons (for pricing, purchasing, contact actions)
+3. \"image\" - Product photos, logos, avatars (include alt text and width)
+4. \"styled_list\" - Feature lists, specifications (include icon type)
+5. \"icon\" - Yes/no indicators, status symbols (specify icon name and color)
+6. \"star_rating\" - Reviews, quality scores (include rating value and max stars)
+
+INTELLIGENT ENHANCEMENT RULES:
+- Convert pricing information to button blocks with compelling text
+- Transform yes/no or check/x marks to icon blocks
+- Convert feature lists to styled_list blocks with appropriate icons
+- Replace numerical ratings with star_rating blocks
+- Enhance plain text with appropriate block types based on context
+
+IMPORTANT RULES:
+- Extract information exactly as shown in the image
+- Do not fabricate information not visible in the image
+- Maintain the structure and relationships from the original
+- Ensure all rows have the same number of columns as headers
+- Do not include any text outside the JSON object";
+    }
+    
+    /**
+     * Create vision-specific user prompt
+     *
+     * @param array $options Additional options
+     * @return string
+     */
+    private function create_vision_prompt($options = array()) {
+        $prompt = "Please analyze this screenshot/image and extract any tabular data, lists, or structured information to create a modern table.";
+        
+        // Add specific instructions based on options
+        if (isset($options['focus']) && $options['focus'] === 'pricing') {
+            $prompt .= " Focus on pricing information and convert it into a comparison table with action buttons.";
+        } elseif (isset($options['focus']) && $options['focus'] === 'features') {
+            $prompt .= " Focus on feature comparisons and use icons and styled lists for better visual presentation.";
+        } elseif (isset($options['focus']) && $options['focus'] === 'data') {
+            $prompt .= " Focus on data tables and enhance them with appropriate visual elements.";
+        }
+        
+        $prompt .= "\n\nRemember to respond with ONLY the JSON object, no additional text.";
+        
+        return $prompt;
+    }
+    
+    /**
+     * Make Vision API request to OpenAI
+     *
+     * @param string $api_key OpenAI API key
+     * @param string $system_prompt System prompt
+     * @param string $user_prompt User prompt
+     * @param string $base64_image Base64 encoded image
+     * @param string $mime_type Image MIME type
+     * @return array|WP_Error API response or error
+     */
+    private function make_vision_api_request($api_key, $system_prompt, $user_prompt, $base64_image, $mime_type) {
+        $messages = array(
+            array(
+                'role' => 'system',
+                'content' => $system_prompt
+            ),
+            array(
+                'role' => 'user',
+                'content' => array(
+                    array(
+                        'type' => 'text',
+                        'text' => $user_prompt
+                    ),
+                    array(
+                        'type' => 'image_url',
+                        'image_url' => array(
+                            'url' => "data:{$mime_type};base64,{$base64_image}",
+                            'detail' => 'high'
+                        )
+                    )
+                )
+            )
+        );
+        
+        $response = wp_remote_post(self::API_ENDPOINT, array(
+            'timeout' => 120, // Vision requests may take longer
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $api_key,
+                'Content-Type' => 'application/json',
+            ),
+            'body' => json_encode(array(
+                'model' => 'gpt-4o', // GPT-4o supports vision
+                'messages' => $messages,
+                'temperature' => 0.2,
+                'max_tokens' => 2000,
+            )),
+        ));
+        
+        return $response;
     }
     
     /**

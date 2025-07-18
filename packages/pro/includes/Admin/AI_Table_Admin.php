@@ -332,6 +332,23 @@ class AI_Table_Admin {
                     'type' => 'integer',
                     'sanitize_callback' => 'absint',
                 ),
+                'image_data' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'description' => 'Base64 encoded image data for image method',
+                ),
+                'mime_type' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => 'image/png',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'focus' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                    'description' => 'Focus area for image analysis (pricing, features, data)',
+                ),
             ),
         ));
         
@@ -368,6 +385,9 @@ class AI_Table_Admin {
         $method = $request->get_param('method');
         $content = $request->get_param('content');
         $post_id = $request->get_param('post_id');
+        $image_data = $request->get_param('image_data');
+        $mime_type = $request->get_param('mime_type');
+        $focus = $request->get_param('focus');
         
         // Validate input based on method
         if ($method === 'prompt' && empty($prompt)) {
@@ -382,6 +402,14 @@ class AI_Table_Admin {
             return new \WP_Error(
                 'missing_content',
                 __('Please provide content or post ID for content-based generation', 'tableberg'),
+                array('status' => 400)
+            );
+        }
+        
+        if ($method === 'image' && empty($image_data)) {
+            return new \WP_Error(
+                'missing_image',
+                __('Please provide image data for image-based generation', 'tableberg'),
                 array('status' => 400)
             );
         }
@@ -421,10 +449,26 @@ class AI_Table_Admin {
                 $result = $service->generate_table_from_content($content, $post_id);
                 break;
                 
+            case 'image':
+                // Prepare file data for the service
+                $file_data = array(
+                    'base64' => $image_data,
+                    'mime_type' => $mime_type ?: 'image/png'
+                );
+                
+                // Prepare options
+                $options = array();
+                if (!empty($focus)) {
+                    $options['focus'] = $focus;
+                }
+                
+                $result = $service->generate_table_from_image($file_data, $options);
+                break;
+                
             default:
                 return new \WP_Error(
                     'invalid_method',
-                    __('Invalid generation method', 'tableberg'),
+                    __('Invalid generation method. Supported methods: prompt, content, image', 'tableberg'),
                     array('status' => 400)
                 );
         }

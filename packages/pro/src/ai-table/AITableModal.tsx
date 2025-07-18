@@ -63,6 +63,20 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
         wordCount: 0,
         isWithinLimits: true
     });
+    const [imageData, setImageData] = useState<{
+        file: File | null;
+        base64: string;
+        preview: string;
+        mimeType: string;
+        focus?: string;
+    }>({
+        file: null,
+        base64: "",
+        preview: "",
+        mimeType: "",
+        focus: undefined
+    });
+    const [isDragOver, setIsDragOver] = useState(false);
 
     // Check AI configuration status on mount
     useEffect(() => {
@@ -735,6 +749,11 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
             setError(__("Please provide content for analysis", "tableberg"));
             return;
         }
+        
+        if (method === "image" && !imageData.base64) {
+            setError(__("Please upload an image to analyze", "tableberg"));
+            return;
+        }
 
         setState("processing");
         setIsGenerating(true);
@@ -753,6 +772,12 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                 const postId = (window as any).wp?.data?.select('core/editor')?.getCurrentPostId?.();
                 if (postId) {
                     requestData.post_id = postId;
+                }
+            } else if (method === "image") {
+                requestData.image_data = imageData.base64;
+                requestData.mime_type = imageData.mimeType;
+                if (imageData.focus) {
+                    requestData.focus = imageData.focus;
                 }
             }
 
@@ -932,9 +957,11 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                 </button>
 
                 <button
-                    className="tableberg-ai-modal-method tableberg-ai-modal-method--disabled"
-                    disabled
-                    title={__("Coming soon", "tableberg")}
+                    className="tableberg-ai-modal-method"
+                    onClick={() => {
+                        setMethod("image");
+                        setState("input");
+                    }}
                 >
                     <span className="tableberg-ai-modal-method-icon">🖼️</span>
                     <span className="tableberg-ai-modal-method-title">
@@ -1028,8 +1055,213 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
             );
         }
 
+        if (method === "image") {
+            return renderImageInput();
+        }
+
         return null;
     };
+
+    // Handle file upload and validation
+    const handleFileUpload = async (file: File) => {
+        // Validate file type
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            setError(__("Only PNG, JPEG, and WebP images are supported", "tableberg"));
+            return;
+        }
+
+        // Validate file size (10MB max)
+        if (file.size > 10 * 1024 * 1024) {
+            setError(__("File size must be under 10MB", "tableberg"));
+            return;
+        }
+
+        try {
+            // Convert to base64
+            const base64 = await fileToBase64(file);
+            const preview = URL.createObjectURL(file);
+
+            setImageData({
+                file,
+                base64: base64.split(',')[1], // Remove data:image/png;base64, prefix
+                preview,
+                mimeType: file.type,
+                focus: imageData.focus
+            });
+            setError(null);
+        } catch (err) {
+            console.error('Error processing image:', err);
+            setError(__("Failed to process image. Please try another file.", "tableberg"));
+        }
+    };
+
+    // Convert file to base64
+    const fileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    // Handle drag and drop events
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragOver(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragOver(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragOver(false);
+
+        const files = Array.from(e.dataTransfer.files);
+        if (files.length > 0) {
+            handleFileUpload(files[0]);
+        }
+    };
+
+    // Handle file input change
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            handleFileUpload(files[0]);
+        }
+    };
+
+    // Remove uploaded image
+    const removeImage = () => {
+        if (imageData.preview) {
+            URL.revokeObjectURL(imageData.preview);
+        }
+        setImageData({
+            file: null,
+            base64: "",
+            preview: "",
+            mimeType: "",
+            focus: undefined
+        });
+    };
+
+    // Render image upload interface
+    const renderImageInput = () => (
+        <div className="tableberg-ai-modal-image-input">
+            <h3>{__("Generate Table from Image", "tableberg")}</h3>
+            <p>{__("Upload a screenshot or image containing table data. AI will analyze and recreate it as an interactive table.", "tableberg")}</p>
+
+            {!imageData.preview ? (
+                <div 
+                    className={`tableberg-ai-modal-upload-area ${isDragOver ? 'drag-over' : ''}`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                >
+                    <div className="tableberg-ai-modal-upload-content">
+                        <span className="tableberg-ai-modal-upload-icon">📁</span>
+                        <h4>{__("Drop your image here", "tableberg")}</h4>
+                        <p>{__("or click to browse files", "tableberg")}</p>
+                        <Button
+                            variant="secondary"
+                            onClick={() => document.getElementById('tableberg-image-upload')?.click()}
+                        >
+                            {__("Choose File", "tableberg")}
+                        </Button>
+                        <input
+                            id="tableberg-image-upload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            style={{ display: 'none' }}
+                        />
+                    </div>
+                    <div className="tableberg-ai-modal-upload-requirements">
+                        <small>
+                            {__("Supported formats: PNG, JPEG, WebP • Max size: 10MB", "tableberg")}
+                        </small>
+                    </div>
+                </div>
+            ) : (
+                <div className="tableberg-ai-modal-image-preview">
+                    <div className="tableberg-ai-modal-image-container">
+                        <img 
+                            src={imageData.preview} 
+                            alt={__("Uploaded image", "tableberg")}
+                            className="tableberg-ai-modal-preview-image"
+                        />
+                        <Button
+                            variant="secondary"
+                            onClick={removeImage}
+                            className="tableberg-ai-modal-remove-image"
+                        >
+                            ✕
+                        </Button>
+                    </div>
+                    
+                    <div className="tableberg-ai-modal-focus-options">
+                        <label>
+                            <strong>{__("Focus Area (Optional):", "tableberg")}</strong>
+                        </label>
+                        <div className="tableberg-ai-modal-focus-grid">
+                            <Button
+                                variant={imageData.focus === "pricing" ? "primary" : "secondary"}
+                                onClick={() => setImageData(prev => ({ ...prev, focus: prev.focus === "pricing" ? undefined : "pricing" }))}
+                                size="small"
+                            >
+                                💰 {__("Pricing", "tableberg")}
+                            </Button>
+                            <Button
+                                variant={imageData.focus === "features" ? "primary" : "secondary"}
+                                onClick={() => setImageData(prev => ({ ...prev, focus: prev.focus === "features" ? undefined : "features" }))}
+                                size="small"
+                            >
+                                ✨ {__("Features", "tableberg")}
+                            </Button>
+                            <Button
+                                variant={imageData.focus === "data" ? "primary" : "secondary"}
+                                onClick={() => setImageData(prev => ({ ...prev, focus: prev.focus === "data" ? undefined : "data" }))}
+                                size="small"
+                            >
+                                📊 {__("Data", "tableberg")}
+                            </Button>
+                        </div>
+                        <small className="tableberg-ai-modal-focus-help">
+                            {__("Tell AI what type of information to focus on when analyzing the image", "tableberg")}
+                        </small>
+                    </div>
+                </div>
+            )}
+
+            <div className="tableberg-ai-tips">
+                <div className="tableberg-ai-tips-header">
+                    🖼️ <strong>{__("Image Tips for Best Results:", "tableberg")}</strong>
+                </div>
+                <div className="tableberg-ai-tips-content">
+                    <div className="tableberg-ai-tip">
+                        <span className="tableberg-ai-tip-label">{__("Clear & readable:", "tableberg")}</span>
+                        <span className="tableberg-ai-tip-text">{__("Use high-resolution screenshots with readable text", "tableberg")}</span>
+                    </div>
+                    <div className="tableberg-ai-tip">
+                        <span className="tableberg-ai-tip-label">{__("Table-focused:", "tableberg")}</span>
+                        <span className="tableberg-ai-tip-text">{__("Crop images to focus on the table or structured data area", "tableberg")}</span>
+                    </div>
+                    <div className="tableberg-ai-tip">
+                        <span className="tableberg-ai-tip-label">{__("Good contrast:", "tableberg")}</span>
+                        <span className="tableberg-ai-tip-text">{__("Ensure text has good contrast against the background", "tableberg")}</span>
+                    </div>
+                    <div className="tableberg-ai-tip">
+                        <span className="tableberg-ai-tip-label">{__("Complete data:", "tableberg")}</span>
+                        <span className="tableberg-ai-tip-text">{__("Include headers and labels for better AI understanding", "tableberg")}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 
     const renderHeader = () => {
         if (isCheckingStatus || !aiStatus?.is_pro || !aiStatus?.configured) {
@@ -1267,7 +1499,8 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                             onClick={generateTable}
                             disabled={isGenerating || 
                                 (method === "prompt" && !prompt.trim()) || 
-                                (method === "content" && !extractedContent.content.trim())}
+                                (method === "content" && !extractedContent.content.trim()) ||
+                                (method === "image" && !imageData.base64)}
                         >
                             {isGenerating
                                 ? __("Generating...", "tableberg")

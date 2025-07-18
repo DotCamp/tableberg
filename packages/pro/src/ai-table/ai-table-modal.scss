@@ -862,3 +862,202 @@
         }
     }
 }
+
+// Image input styles
+.tableberg-ai-modal-image-input {
+    h3 {
+        margin: 0 0 8px 0;
+        font-size: 18px;
+        color: #1e1e1e;
+        font-weight: 500;
+    }
+    
+    p {
+        margin: 0 0 20px 0;
+        color: #757575;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+}
+
+// Upload area
+.tableberg-ai-modal-upload-area {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    background: #fafafa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    
+    &:hover, &.drag-over {
+        border-color: var(--wp-admin-theme-color);
+        background: #f0f8ff;
+        
+        .tableberg-ai-modal-upload-icon {
+            transform: scale(1.1);
+        }
+    }
+    
+    &.drag-over {
+        border-style: solid;
+        background: #e3f2fd;
+    }
+}
+
+.tableberg-ai-modal-upload-content {
+    h4 {
+        margin: 16px 0 8px;
+        font-size: 16px;
+        color: #1e1e1e;
+        font-weight: 500;
+    }
+    
+    p {
+        margin: 0 0 20px;
+        font-size: 14px;
+        color: #757575;
+    }
+}
+
+.tableberg-ai-modal-upload-icon {
+    font-size: 48px;
+    transition: transform 0.3s ease;
+    opacity: 0.7;
+}
+
+.tableberg-ai-modal-upload-requirements {
+    margin-top: 16px;
+    color: #757575;
+    font-size: 12px;
+}
+
+// Image preview
+.tableberg-ai-modal-image-preview {
+    margin-bottom: 20px;
+}
+
+.tableberg-ai-modal-image-container {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tableberg-ai-modal-preview-image {
+    max-width: 100%;
+    max-height: 300px;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+}
+
+.tableberg-ai-modal-remove-image {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    min-width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        background: #fff;
+        color: #d93025;
+        border-color: #d93025;
+        transform: scale(1.1);
+    }
+}
+
+// Focus options
+.tableberg-ai-modal-focus-options {
+    label {
+        display: block;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #1e1e1e;
+    }
+}
+
+.tableberg-ai-modal-focus-grid {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    
+    .components-button {
+        font-size: 13px;
+        height: 36px;
+        padding: 0 12px;
+        border-radius: 18px;
+        border: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        
+        &.is-primary {
+            background: var(--wp-admin-theme-color);
+            border-color: var(--wp-admin-theme-color);
+            color: #fff;
+        }
+        
+        &.is-secondary {
+            background: #fff;
+            color: #555;
+            
+            &:hover:not(:disabled) {
+                border-color: var(--wp-admin-theme-color);
+                color: var(--wp-admin-theme-color);
+            }
+        }
+    }
+}
+
+.tableberg-ai-modal-focus-help {
+    font-size: 12px;
+    color: #757575;
+    line-height: 1.4;
+}
+
+// Mobile responsive adjustments
+@media (max-width: 768px) {
+    .tableberg-ai-modal-upload-area {
+        padding: 30px 15px;
+        
+        .tableberg-ai-modal-upload-icon {
+            font-size: 36px;
+        }
+        
+        h4 {
+            font-size: 14px;
+        }
+        
+        p {
+            font-size: 13px;
+        }
+    }
+    
+    .tableberg-ai-modal-focus-grid {
+        .components-button {
+            flex: 1;
+            justify-content: center;
+        }
+    }
+    
+    .tableberg-ai-modal-preview-image {
+        max-height: 200px;
+    }
+}
