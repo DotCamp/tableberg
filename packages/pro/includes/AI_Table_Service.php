@@ -547,38 +547,67 @@ IMPORTANT RULES:
      * @return array|WP_Error Parsed table data or error
      */
     private function parse_ai_response($response) {
+        error_log('=== TABLEBERG AI RESPONSE DEBUG START ===');
+        error_log('TableBerg AI: Raw AI response received: ' . substr($response, 0, 1000) . (strlen($response) > 1000 ? '... (truncated)' : ''));
+        
         // Try to extract JSON from the response
         $json_start = strpos($response, '{');
         $json_end = strrpos($response, '}');
         
         if ($json_start === false || $json_end === false) {
+            error_log('TableBerg AI: ERROR - No JSON found in response');
             return new \WP_Error('parse_error', __('Could not find JSON in response', 'tableberg'));
         }
         
         $json_string = substr($response, $json_start, $json_end - $json_start + 1);
+        error_log('TableBerg AI: Extracted JSON string: ' . $json_string);
+        
         $data = json_decode($json_string, true);
         
         if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('TableBerg AI: ERROR - JSON decode failed: ' . json_last_error_msg());
             return new \WP_Error('json_error', __('Invalid JSON in response', 'tableberg'));
+        }
+        
+        error_log('TableBerg AI: Successfully parsed JSON structure: ' . json_encode($data, JSON_PRETTY_PRINT));
+        
+        // Check for styling data specifically
+        if (isset($data['styling'])) {
+            error_log('TableBerg AI: Styling data found in AI response: ' . json_encode($data['styling'], JSON_PRETTY_PRINT));
+        } else {
+            error_log('TableBerg AI: WARNING - No styling data found in AI response');
         }
         
         // Validate structure
         if (!isset($data['headers']) || !isset($data['rows'])) {
+            error_log('TableBerg AI: ERROR - Missing headers or rows in response');
             return new \WP_Error('invalid_structure', __('Missing headers or rows in response', 'tableberg'));
         }
         
         if (!is_array($data['headers']) || !is_array($data['rows'])) {
+            error_log('TableBerg AI: ERROR - Headers and rows must be arrays');
             return new \WP_Error('invalid_types', __('Headers and rows must be arrays', 'tableberg'));
         }
         
+        error_log('TableBerg AI: Basic validation passed - headers: ' . count($data['headers']) . ', rows: ' . count($data['rows']));
+        
         // Process enhanced format with block types
         $data = $this->process_enhanced_table_data($data);
+        error_log('TableBerg AI: Enhanced table data processed');
+        
+        // Process styling information if present
+        $data = $this->process_styling_data($data);
+        error_log('TableBerg AI: Styling data processed');
         
         // Validate processed data
         $validation_result = $this->validate_table_data($data);
         if (is_wp_error($validation_result)) {
+            error_log('TableBerg AI: ERROR - Data validation failed: ' . $validation_result->get_error_message());
             return $validation_result;
         }
+        
+        error_log('TableBerg AI: Final parsed data: ' . json_encode($data, JSON_PRETTY_PRINT));
+        error_log('=== TABLEBERG AI RESPONSE DEBUG END ===');
         
         return $data;
     }
@@ -590,6 +619,16 @@ IMPORTANT RULES:
      * @return array Processed table data
      */
     private function process_enhanced_table_data($data) {
+        error_log('TableBerg AI: Processing enhanced table data...');
+        
+        // CRITICAL: Preserve styling data during processing
+        $styling = isset($data['styling']) ? $data['styling'] : null;
+        if ($styling) {
+            error_log('TableBerg AI: Styling data found during enhanced processing: ' . json_encode($styling));
+        } else {
+            error_log('TableBerg AI: No styling data found during enhanced processing');
+        }
+        
         // Normalize headers (they should remain as simple strings)
         $processed_data = array(
             'headers' => $data['headers'],
@@ -611,6 +650,12 @@ IMPORTANT RULES:
             }
             
             $processed_data['rows'][] = $processed_row;
+        }
+        
+        // CRITICAL FIX: Preserve styling data in processed output
+        if ($styling) {
+            $processed_data['styling'] = $styling;
+            error_log('TableBerg AI: Styling data preserved in enhanced processing: ' . json_encode($styling));
         }
         
         return $processed_data;
@@ -882,6 +927,114 @@ IMPORTANT RULES:
     }
 
     /**
+     * Process styling data from AI response
+     *
+     * @param array $data Table data from AI
+     * @return array Table data with processed styling
+     */
+    private function process_styling_data($data) {
+        // If no styling data is provided, return original data
+        if (!isset($data['styling']) || !is_array($data['styling'])) {
+            error_log('TableBerg AI: No styling data found in AI response');
+            return $data;
+        }
+        
+        $styling = $data['styling'];
+        $processed_styling = array();
+        
+        error_log('TableBerg AI: Raw styling data: ' . json_encode($styling));
+        
+        // Validate and sanitize color values
+        $color_fields = array(
+            'headerBackgroundColor',
+            'footerBackgroundColor', 
+            'evenRowBackgroundColor',
+            'oddRowBackgroundColor'
+        );
+        
+        foreach ($color_fields as $field) {
+            if (isset($styling[$field])) {
+                $color = $this->validate_color($styling[$field]);
+                if ($color) {
+                    $processed_styling[$field] = $color;
+                    error_log("TableBerg AI: Validated color for {$field}: {$color}");
+                } else {
+                    error_log("TableBerg AI: Invalid color for {$field}: {$styling[$field]}");
+                }
+            }
+        }
+        
+        // Store processed styling in the data
+        $data['styling'] = $processed_styling;
+        
+        error_log('TableBerg AI: Final processed styling: ' . json_encode($processed_styling));
+        
+        return $data;
+    }
+
+    /**
+     * Validate and sanitize color value
+     *
+     * @param string $color Color value to validate
+     * @return string|false Validated color or false if invalid
+     */
+    private function validate_color($color) {
+        if (empty($color) || !is_string($color)) {
+            error_log("TableBerg AI: Color validation failed - empty or non-string: " . var_export($color, true));
+            return false;
+        }
+        
+        $color = trim($color);
+        $original_color = $color;
+        
+        // Check for hex color (with or without #)
+        if (preg_match('/^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/', $color)) {
+            // Add # if missing
+            $validated = (strpos($color, '#') === 0) ? $color : '#' . $color;
+            error_log("TableBerg AI: Validated hex color '{$original_color}' as '{$validated}'");
+            return $validated;
+        }
+        
+        // Check for rgb/rgba format (more permissive)
+        if (preg_match('/^rgba?\(\s*[0-9\s,\.%]+\s*\)$/i', $color)) {
+            error_log("TableBerg AI: Validated RGB color '{$original_color}'");
+            return $color;
+        }
+        
+        // Check for hsl/hsla format
+        if (preg_match('/^hsla?\(\s*[0-9\s,\.%deg]+\s*\)$/i', $color)) {
+            error_log("TableBerg AI: Validated HSL color '{$original_color}'");
+            return $color;
+        }
+        
+        // Check for standard web color names (expanded list)
+        $standard_colors = array(
+            'red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'brown',
+            'black', 'white', 'gray', 'grey', 'silver', 'navy', 'teal', 'olive',
+            'maroon', 'lime', 'aqua', 'fuchsia', 'transparent', 'inherit', 'initial',
+            'darkred', 'darkgreen', 'darkblue', 'lightgray', 'lightgrey', 'lightblue',
+            'lightgreen', 'darkgray', 'darkgrey', 'cyan', 'magenta', 'crimson', 
+            'gold', 'coral', 'salmon', 'tomato', 'orange', 'skyblue', 'steelblue'
+        );
+        
+        if (in_array(strtolower($color), $standard_colors)) {
+            $validated = strtolower($color);
+            error_log("TableBerg AI: Validated color name '{$original_color}' as '{$validated}'");
+            return $validated;
+        }
+        
+        // Try to extract hex from common AI color descriptions
+        if (preg_match('/#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})/', $color, $matches)) {
+            $validated = '#' . $matches[1];
+            error_log("TableBerg AI: Extracted hex from '{$original_color}' as '{$validated}'");
+            return $validated;
+        }
+        
+        error_log("TableBerg AI: Color validation failed for '{$original_color}' - no valid format found");
+        return false;
+    }
+
+    /**
      * Normalize block data from AI response
      *
      * @param array $block_data Block data from AI
@@ -891,18 +1044,54 @@ IMPORTANT RULES:
         // Ensure required fields exist for each block type
         switch ($block_data['type']) {
             case 'button':
-                return array(
+                $button_data = array(
                     'type' => 'button',
                     'text' => isset($block_data['text']) ? $block_data['text'] : 'Click Here',
                     'style' => isset($block_data['style']) ? $block_data['style'] : 'primary'
                 );
                 
+                // Add extracted colors if provided
+                if (isset($block_data['backgroundColor'])) {
+                    $color = $this->validate_color($block_data['backgroundColor']);
+                    if ($color) {
+                        $button_data['backgroundColor'] = $color;
+                        error_log("TableBerg AI: Applied button backgroundColor: {$color}");
+                    } else {
+                        error_log("TableBerg AI: Invalid button backgroundColor: {$block_data['backgroundColor']}");
+                    }
+                }
+                
+                if (isset($block_data['textColor'])) {
+                    $color = $this->validate_color($block_data['textColor']);
+                    if ($color) {
+                        $button_data['textColor'] = $color;
+                        error_log("TableBerg AI: Applied button textColor: {$color}");
+                    } else {
+                        error_log("TableBerg AI: Invalid button textColor: {$block_data['textColor']}");
+                    }
+                }
+                
+                return $button_data;
+                
             case 'icon':
-                return array(
+                $icon_data = array(
                     'type' => 'icon',
                     'icon' => isset($block_data['icon']) ? $block_data['icon'] : 'check',
-                    'color' => isset($block_data['color']) ? $block_data['color'] : 'green'
+                    'color' => 'green' // default color
                 );
+                
+                // Use extracted color if provided and valid
+                if (isset($block_data['color'])) {
+                    $color = $this->validate_color($block_data['color']);
+                    if ($color) {
+                        $icon_data['color'] = $color;
+                        error_log("TableBerg AI: Applied icon color: {$color}");
+                    } else {
+                        error_log("TableBerg AI: Invalid icon color: {$block_data['color']}");
+                    }
+                }
+                
+                return $icon_data;
                 
             case 'star_rating':
                 return array(
@@ -913,11 +1102,24 @@ IMPORTANT RULES:
                 
             case 'styled_list':
                 $extracted = $this->extract_styled_list_items($block_data);
-                return array(
+                $list_data = array(
                     'type' => 'styled_list',
                     'items' => $extracted['items'],
                     'icon' => $extracted['icon']
                 );
+                
+                // Add extracted icon color if provided
+                if (isset($block_data['color'])) {
+                    $color = $this->validate_color($block_data['color']);
+                    if ($color) {
+                        $list_data['color'] = $color;
+                        error_log("TableBerg AI: Applied styled list color: {$color}");
+                    } else {
+                        error_log("TableBerg AI: Invalid styled list color: {$block_data['color']}");
+                    }
+                }
+                
+                return $list_data;
                 
             case 'image':
                 return array(
@@ -1317,11 +1519,23 @@ IMPORTANT RULES:
      * @return array Block structure
      */
     private function convert_to_blocks($table_data) {
+        error_log('=== TABLEBERG BLOCK CONVERSION DEBUG START ===');
+        
         $headers = $table_data['headers'];
         $rows = $table_data['rows'];
         
+        error_log('TableBerg AI: Converting to blocks - headers: ' . count($headers) . ', rows: ' . count($rows));
+        
+        // Check if styling data is present
+        if (isset($table_data['styling'])) {
+            error_log('TableBerg AI: Styling data available for block conversion: ' . json_encode($table_data['styling'], JSON_PRETTY_PRINT));
+        } else {
+            error_log('TableBerg AI: WARNING - No styling data available for block conversion');
+        }
+        
         // Validate data structure
         if (empty($headers) || empty($rows)) {
+            error_log('TableBerg AI: ERROR - Empty headers or rows in convert_to_blocks');
             return new \WP_Error('empty_data', __('Table data is empty', 'tableberg'));
         }
         
@@ -1329,6 +1543,8 @@ IMPORTANT RULES:
         $num_cols = count($headers);
         $num_rows = count($rows) + 1; // +1 for header row
         $total_cells = $num_cols * $num_rows;
+        
+        error_log("TableBerg AI: Table dimensions - cols: {$num_cols}, rows: {$num_rows}, cells: {$total_cells}");
         
         // Create the main table block
         $table_block = array(
@@ -1344,6 +1560,40 @@ IMPORTANT RULES:
             ),
             'innerBlocks' => array()
         );
+        
+        error_log('TableBerg AI: Base table block created with attributes: ' . json_encode($table_block['attributes'], JSON_PRETTY_PRINT));
+        
+        // Apply styling attributes if provided
+        if (isset($table_data['styling']) && is_array($table_data['styling'])) {
+            $styling = $table_data['styling'];
+            
+            error_log('TableBerg AI: Applying styling attributes to table block...');
+            
+            // Add table-level background colors
+            if (isset($styling['headerBackgroundColor'])) {
+                $table_block['attributes']['headerBackgroundColor'] = $styling['headerBackgroundColor'];
+                error_log("TableBerg AI: Applied headerBackgroundColor: {$styling['headerBackgroundColor']}");
+            }
+            
+            if (isset($styling['footerBackgroundColor'])) {
+                $table_block['attributes']['footerBackgroundColor'] = $styling['footerBackgroundColor'];
+                error_log("TableBerg AI: Applied footerBackgroundColor: {$styling['footerBackgroundColor']}");
+            }
+            
+            if (isset($styling['evenRowBackgroundColor'])) {
+                $table_block['attributes']['evenRowBackgroundColor'] = $styling['evenRowBackgroundColor'];
+                error_log("TableBerg AI: Applied evenRowBackgroundColor: {$styling['evenRowBackgroundColor']}");
+            }
+            
+            if (isset($styling['oddRowBackgroundColor'])) {
+                $table_block['attributes']['oddRowBackgroundColor'] = $styling['oddRowBackgroundColor'];
+                error_log("TableBerg AI: Applied oddRowBackgroundColor: {$styling['oddRowBackgroundColor']}");
+            }
+            
+            error_log('TableBerg AI: Final table attributes after styling: ' . json_encode($table_block['attributes'], JSON_PRETTY_PRINT));
+        } else {
+            error_log('TableBerg AI: No styling data to apply to table block');
+        }
         
         // Add header cells
         foreach ($headers as $col_index => $header) {
@@ -1376,6 +1626,9 @@ IMPORTANT RULES:
                 );
             }
         }
+        
+        error_log('TableBerg AI: FINAL COMPLETE TABLE BLOCK: ' . json_encode($table_block, JSON_PRETTY_PRINT));
+        error_log('=== TABLEBERG BLOCK CONVERSION DEBUG END ===');
         
         return $table_block;
     }
@@ -1459,13 +1712,21 @@ IMPORTANT RULES:
      * @return array Button block structure
      */
     private function create_button_block($data) {
+        // Default colors based on style
+        $default_bg = $data['style'] === 'primary' ? '#0073aa' : '#f0f0f0';
+        $default_text = $data['style'] === 'primary' ? '#ffffff' : '#333333';
+        
+        // Use extracted colors if provided, otherwise use defaults
+        $background_color = isset($data['backgroundColor']) ? $data['backgroundColor'] : $default_bg;
+        $text_color = isset($data['textColor']) ? $data['textColor'] : $default_text;
+        
         return array(
             'name' => 'tableberg/button',
             'attributes' => array(
                 'text' => esc_html($data['text']),
                 'align' => 'center',
-                'backgroundColor' => $data['style'] === 'primary' ? '#0073aa' : '#f0f0f0',
-                'textColor' => $data['style'] === 'primary' ? '#ffffff' : '#333333',
+                'backgroundColor' => $background_color,
+                'textColor' => $text_color,
                 'width' => 80
             ),
             'innerBlocks' => array()
@@ -1482,6 +1743,9 @@ IMPORTANT RULES:
         // Get the appropriate icon structure based on icon name
         $icon_svg = $this->get_icon_svg($data['icon']);
         
+        // Use extracted color if provided, otherwise use default
+        $icon_color = isset($data['color']) ? $data['color'] : 'green';
+        
         return array(
             'name' => 'tableberg/icon',
             'attributes' => array(
@@ -1492,7 +1756,7 @@ IMPORTANT RULES:
                 ),
                 'size' => '24px',
                 'justify' => 'center',
-                'color' => $data['color']
+                'color' => $icon_color
             ),
             'innerBlocks' => array()
         );
@@ -1527,6 +1791,9 @@ IMPORTANT RULES:
     private function create_styled_list_block($data) {
         $icon_svg = $this->get_icon_svg($data['icon']);
         
+        // Use extracted color if provided, otherwise use default black
+        $icon_color = isset($data['color']) ? $data['color'] : '#000000';
+        
         $list_block = array(
             'name' => 'tableberg/styled-list',
             'attributes' => array(
@@ -1536,7 +1803,7 @@ IMPORTANT RULES:
                     'icon' => $icon_svg
                 ),
                 'iconSize' => '16px',
-                'iconColor' => '#000000',
+                'iconColor' => $icon_color,
                 'alignment' => 'left'
             ),
             'innerBlocks' => array()
@@ -1856,7 +2123,7 @@ IMPORTANT RULES:
      * @return string
      */
     private function get_vision_system_prompt() {
-        return "You are an expert at analyzing screenshots and images to extract table data and replicate the exact table structure shown in the image.
+        return "You are an expert at analyzing screenshots and images to extract table data and replicate the exact table structure AND visual styling shown in the image.
 
 VISUAL STRUCTURE ANALYSIS (CRITICAL):
 1. FIRST: Carefully analyze the table orientation in the image:
@@ -1868,6 +2135,32 @@ VISUAL STRUCTURE ANALYSIS (CRITICAL):
    - If image shows comparison columns (like pricing plans) → Keep each plan as a COLUMN header
    - If image shows data rows (like schedules) → Keep each item as a ROW
    - Preserve the spatial relationships between headers and data exactly as shown
+
+COLOR AND STYLE ANALYSIS (CRITICAL):
+1. ANALYZE TABLE ROW COLORS: This is ESSENTIAL - carefully examine each row for background colors:
+   - HEADER ROW: Look for distinct background color (often darker or colored)
+   - ROW PATTERN ANALYSIS: Examine if rows alternate between different background colors
+   - EVEN ROWS: Identify the background color of even-numbered data rows (rows 2, 4, 6, etc.)
+   - ODD ROWS: Identify the background color of odd-numbered data rows (rows 1, 3, 5, etc.)
+   - COLOR DETECTION: Look for subtle differences like white (#ffffff) vs light gray (#f8f9fa) vs light blue (#ebf7ff)
+   - PATTERN RECOGNITION: Many tables use alternating patterns like white/light-gray or light-blue/white
+   
+2. ROW COLOR EXTRACTION EXAMPLES:
+   - When header is blue and rows alternate white/light-gray: headerBackgroundColor=\"#1e73be\", evenRowBackgroundColor=\"#f8f9fa\", oddRowBackgroundColor=\"#ffffff\"
+   - When header is dark and rows alternate light-blue/white: headerBackgroundColor=\"#333333\", evenRowBackgroundColor=\"#ebf7ff\", oddRowBackgroundColor=\"#ffffff\"
+   - Subtle differences matter: #ffffff (pure white) vs #f9f9f9 (very light gray)
+   
+3. EXTRACT BUTTON COLORS: For any buttons or call-to-action elements:
+   - Button background colors (exact hex values if possible)
+   - Button text colors
+   - Different button styles for primary vs secondary actions
+   
+4. IDENTIFY ICON COLORS: For checkmarks, icons, or symbols:
+   - Exact colors used for positive indicators (checkmarks, thumbs up)
+   - Colors used for negative indicators (X marks, close icons)
+   - Colors used for neutral indicators (stars, gears)
+   
+5. DETECT TEXT COLORS: Note any text color variations from default black
 
 VISION ANALYSIS RULES:
 - Examine the image for tabular data, lists, comparisons, or structured information
@@ -1882,32 +2175,51 @@ RESPONSE FORMAT: Respond with ONLY a JSON object in this format:
     \"rows\": [
         [
             {\"type\": \"text\", \"content\": \"Content from image\"},
-            {\"type\": \"button\", \"text\": \"Buy Now\", \"style\": \"primary\"},
-            {\"type\": \"icon\", \"icon\": \"check\", \"color\": \"green\"}
+            {\"type\": \"button\", \"text\": \"Buy Now\", \"backgroundColor\": \"#007cba\", \"textColor\": \"#ffffff\"},
+            {\"type\": \"icon\", \"icon\": \"check\", \"color\": \"#28a745\"}
         ]
-    ]
+    ],
+    \"styling\": {
+        \"headerBackgroundColor\": \"#0693e3\",
+        \"evenRowBackgroundColor\": \"#ebf7ff\",
+        \"oddRowBackgroundColor\": \"#bddfff\",
+        \"footerBackgroundColor\": \"#e9ecef\"
+    }
 }
 
 AVAILABLE BLOCK TYPES:
 1. \"text\" - Regular content from the image
-2. \"button\" - Call-to-action buttons (for pricing, purchasing, contact actions)
+2. \"button\" - Call-to-action buttons (include backgroundColor and textColor from image)
 3. \"image\" - Product photos, logos, avatars (include alt text and width)
-4. \"styled_list\" - Feature lists, specifications (include icon type)
-5. \"icon\" - Yes/no indicators, status symbols (specify icon name and color)
+4. \"styled_list\" - Feature lists, specifications (include icon type and color)
+5. \"icon\" - Yes/no indicators, status symbols (specify icon name and exact color from image)
 6. \"star_rating\" - Reviews, quality scores (include rating value and max stars)
 
 INTELLIGENT ENHANCEMENT RULES:
-- Convert pricing information to button blocks with compelling text
-- Transform yes/no or check/x marks to icon blocks
-- Convert feature lists to styled_list blocks with appropriate icons
+- Convert pricing information to button blocks with exact colors from image
+- Transform yes/no or check/x marks to icon blocks with exact colors
+- Convert feature lists to styled_list blocks with appropriate icons and colors
 - Replace numerical ratings with star_rating blocks
 - Enhance plain text with appropriate block types based on context
 - MAINTAIN the original table orientation while enhancing content
+- PRESERVE all visual styling and colors from the original image
+
+STYLING EXTRACTION RULES:
+- Use hex color codes when possible (e.g., #007cba, #28a745, #dc3545)
+- When unable to determine exact hex, use standard web colors (e.g., blue, green, red)
+- ALWAYS examine row backgrounds - even when they look white they may be light gray (#f8f9fa) or light blue (#ebf7ff)
+- REQUIRED: Always include evenRowBackgroundColor and oddRowBackgroundColor if ANY row pattern is visible
+- For alternating rows: extract both even and odd row background colors even if subtle
+- For solid row colors: set both evenRowBackgroundColor and oddRowBackgroundColor to same value
+- For buttons: always include backgroundColor and textColor if visible
+- For icons: always include the color property with the exact color from image
+- Header color detection: Look for any background color difference in the first row
 
 CRITICAL STRUCTURE PRESERVATION RULES:
 - Extract information exactly as shown in the image
 - Do not fabricate information not visible in the image
 - PRESERVE the exact table orientation (column vs row focus) from the image
+- PRESERVE all visual styling and colors from the image
 - Maintain the structure and relationships from the original
 - Do not reorganize headers or data - replicate the visual layout
 - Ensure all rows have the same number of columns as headers
