@@ -85,7 +85,7 @@ class AI_Table_Service {
                         )
                     ),
                     'temperature' => 0.3,
-                    'max_tokens' => 2000,
+                    'max_tokens' => 4096,
                 )),
             ));
             
@@ -598,6 +598,10 @@ IMPORTANT RULES:
         // Process styling information if present
         $data = $this->process_styling_data($data);
         error_log('TableBerg AI: Styling data processed');
+        
+        // Normalize column counts before validation
+        $data = $this->normalize_table_columns($data);
+        error_log('TableBerg AI: Column normalization completed');
         
         // Validate processed data
         $validation_result = $this->validate_table_data($data);
@@ -1135,6 +1139,67 @@ IMPORTANT RULES:
                                (isset($block_data['text']) ? $block_data['text'] : 'Content')
                 );
         }
+    }
+    
+    /**
+     * Normalize table columns to ensure consistent column count
+     *
+     * @param array $data Table data with potential column mismatches
+     * @return array Normalized table data with consistent column counts
+     */
+    private function normalize_table_columns($data) {
+        if (!isset($data['headers']) || !isset($data['rows'])) {
+            return $data;
+        }
+        
+        $expected_cols = count($data['headers']);
+        $normalized_rows = array();
+        $modifications_made = false;
+        
+        error_log("TableBerg AI: Normalizing table columns - Expected columns: {$expected_cols}");
+        
+        foreach ($data['rows'] as $row_index => $row) {
+            if (!is_array($row)) {
+                $normalized_rows[] = $row;
+                continue;
+            }
+            
+            $current_cols = count($row);
+            
+            if ($current_cols === $expected_cols) {
+                // Row is already correct
+                $normalized_rows[] = $row;
+            } elseif ($current_cols < $expected_cols) {
+                // Row is too short - pad with empty cells
+                $padded_row = $row;
+                $cells_to_add = $expected_cols - $current_cols;
+                
+                for ($i = 0; $i < $cells_to_add; $i++) {
+                    $padded_row[] = array(
+                        'type' => 'text',
+                        'content' => ''
+                    );
+                }
+                
+                $normalized_rows[] = $padded_row;
+                $modifications_made = true;
+                error_log("TableBerg AI: Padded row {$row_index} from {$current_cols} to {$expected_cols} columns");
+                
+            } elseif ($current_cols > $expected_cols) {
+                // Row is too long - truncate to expected length
+                $truncated_row = array_slice($row, 0, $expected_cols);
+                $normalized_rows[] = $truncated_row;
+                $modifications_made = true;
+                error_log("TableBerg AI: Truncated row {$row_index} from {$current_cols} to {$expected_cols} columns");
+            }
+        }
+        
+        if ($modifications_made) {
+            error_log("TableBerg AI: Column normalization completed - {$modifications_made} modifications made");
+        }
+        
+        $data['rows'] = $normalized_rows;
+        return $data;
     }
     
     /**

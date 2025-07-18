@@ -897,6 +897,13 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                         "tableberg",
                     ),
                 );
+            } else if (err.code === "column_mismatch") {
+                setError(
+                    __(
+                        "The AI detected inconsistent table columns. This has been automatically corrected. Please try again.",
+                        "tableberg",
+                    ),
+                );
             } else {
                 // Generic error with helpful context
                 const contextMessage = method === "content" 
@@ -1447,6 +1454,9 @@ export default function AITableModal({ onClose, onInsert, currentBlockId }: Prop
                                                     )}
                                                     {error?.includes("connection") && (
                                                         <li>{__("Check your internet connection", "tableberg")}</li>
+                                                    )}
+                                                    {error?.includes("column") && (
+                                                        <li>{__("The table structure has been automatically fixed - try generating again", "tableberg")}</li>
                                                     )}
                                                     <li>{__("Try a different generation method", "tableberg")}</li>
                                                     <li>{__("Simplify your request and try again", "tableberg")}</li>
