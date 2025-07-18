@@ -3,7 +3,6 @@ import Route, { generateRouteArray } from "./Route";
 import WelcomePage from "../pages/WelcomePage";
 import BlocksPage from "../pages/BlocksPage";
 import SettingsContent from "../containers/SettingsContent";
-import AIDebugPage from "../pages/AIDebugPage";
 
 /**
  * Routes for admin menu.
@@ -27,12 +26,6 @@ const routes = [
         path: "settings",
         title: "Settings",
         element: <SettingsContent />,
-    },
-    {
-        path: "ai-debug",
-        title: "AI Debug",
-        element: <AIDebugPage />,
-        requiresPro: true,
     },
     {
         path: "404",

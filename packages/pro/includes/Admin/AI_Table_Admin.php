@@ -7,7 +7,6 @@
 
 namespace Tableberg\Pro\Admin;
 
-use Tableberg\Pro\Debug\AI_Debug_Logger;
 
 /**
  * AI Table Admin Class
@@ -27,10 +26,6 @@ class AI_Table_Admin {
         add_action('wp_ajax_tableberg_test_ai_connection', array($this, 'test_ai_connection'));
         add_action('wp_ajax_tableberg_save_ai_settings', array($this, 'save_ai_settings'));
         add_action('wp_ajax_tableberg_generate_ai_table', array($this, 'generate_ai_table'));
-        add_action('wp_ajax_tableberg_get_ai_debug_logs', array($this, 'get_ai_debug_logs'));
-        add_action('wp_ajax_tableberg_clear_ai_debug_logs', array($this, 'clear_ai_debug_logs'));
-        add_action('wp_ajax_tableberg_toggle_ai_debug', array($this, 'toggle_ai_debug'));
-        add_action('wp_ajax_tableberg_get_ai_debug_stats', array($this, 'get_ai_debug_stats'));
         add_filter('tableberg/filter/admin_settings_menu_data', array($this, 'add_ai_settings_data'), 10, 1);
         // Register REST routes with high priority to ensure they're available early
         add_action('rest_api_init', array($this, 'register_rest_routes'), 5);
@@ -77,26 +72,6 @@ class AI_Table_Admin {
                         'url'    => admin_url('admin-ajax.php'),
                         'action' => 'tableberg_generate_ai_table',
                         'nonce'  => wp_create_nonce('tableberg_generate_ai_table'),
-                    ),
-                    'debugLogs' => array(
-                        'url'    => admin_url('admin-ajax.php'),
-                        'action' => 'tableberg_get_ai_debug_logs',
-                        'nonce'  => wp_create_nonce('tableberg_get_ai_debug_logs'),
-                    ),
-                    'clearDebugLogs' => array(
-                        'url'    => admin_url('admin-ajax.php'),
-                        'action' => 'tableberg_clear_ai_debug_logs',
-                        'nonce'  => wp_create_nonce('tableberg_clear_ai_debug_logs'),
-                    ),
-                    'toggleDebug' => array(
-                        'url'    => admin_url('admin-ajax.php'),
-                        'action' => 'tableberg_toggle_ai_debug',
-                        'nonce'  => wp_create_nonce('tableberg_toggle_ai_debug'),
-                    ),
-                    'debugStats' => array(
-                        'url'    => admin_url('admin-ajax.php'),
-                        'action' => 'tableberg_get_ai_debug_stats',
-                        'nonce'  => wp_create_nonce('tableberg_get_ai_debug_stats'),
                     ),
                 ),
             ));
@@ -891,82 +866,4 @@ class AI_Table_Admin {
         return $content;
     }
     
-    /**
-     * Get AI debug logs
-     */
-    public function get_ai_debug_logs() {
-        check_ajax_referer('tableberg_get_ai_debug_logs');
-        
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Unauthorized', 'tableberg'));
-        }
-        
-        $debug_logger = AI_Debug_Logger::get_instance();
-        $limit = isset($_POST['limit']) ? intval($_POST['limit']) : 20;
-        $offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
-        
-        $logs = $debug_logger->get_logs($limit, $offset);
-        $total_count = $debug_logger->get_logs_count();
-        
-        wp_send_json_success(array(
-            'logs' => $logs,
-            'total_count' => $total_count,
-            'debug_enabled' => $debug_logger->is_debug_enabled()
-        ));
-    }
-    
-    /**
-     * Clear AI debug logs
-     */
-    public function clear_ai_debug_logs() {
-        check_ajax_referer('tableberg_clear_ai_debug_logs');
-        
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Unauthorized', 'tableberg'));
-        }
-        
-        $debug_logger = AI_Debug_Logger::get_instance();
-        $debug_logger->clear_logs();
-        
-        wp_send_json_success(array(
-            'message' => __('Debug logs cleared successfully', 'tableberg')
-        ));
-    }
-    
-    /**
-     * Toggle AI debug mode
-     */
-    public function toggle_ai_debug() {
-        check_ajax_referer('tableberg_toggle_ai_debug');
-        
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Unauthorized', 'tableberg'));
-        }
-        
-        $debug_logger = AI_Debug_Logger::get_instance();
-        $new_state = $debug_logger->toggle_debug();
-        
-        wp_send_json_success(array(
-            'debug_enabled' => $new_state,
-            'message' => $new_state ? 
-                __('Debug mode enabled', 'tableberg') : 
-                __('Debug mode disabled', 'tableberg')
-        ));
-    }
-    
-    /**
-     * Get AI debug statistics
-     */
-    public function get_ai_debug_stats() {
-        check_ajax_referer('tableberg_get_ai_debug_stats');
-        
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Unauthorized', 'tableberg'));
-        }
-        
-        $debug_logger = AI_Debug_Logger::get_instance();
-        $stats = $debug_logger->get_debug_statistics();
-        
-        wp_send_json_success($stats);
-    }
 }

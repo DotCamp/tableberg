@@ -8,7 +8,6 @@
 namespace Tableberg\Pro;
 
 use Tableberg\Pro\Admin\AI_Table_Admin;
-use Tableberg\Pro\Debug\AI_Debug_Logger;
 
 /**
  * AI Table Service Class
@@ -52,24 +51,12 @@ class AI_Table_Service {
      * @return array|WP_Error API response or error
      */
     private function make_api_request($api_key, $system_prompt, $user_prompt, $max_retries = 2, $type = 'prompt') {
-        $debug_logger = AI_Debug_Logger::get_instance();
         $start_time = microtime(true);
         
-        // Log the request start
         $messages = [
             ['role' => 'system', 'content' => $system_prompt],
             ['role' => 'user', 'content' => $user_prompt]
         ];
-        
-        $log_id = $debug_logger->log_ai_request([
-            'type' => $type,
-            'prompt' => $user_prompt,
-            'content' => $type === 'content' ? $user_prompt : '',
-            'model' => 'gpt-4o',
-            'max_tokens' => 2000,
-            'temperature' => 0.3,
-            'full_messages' => $messages
-        ]);
         
         $attempt = 0;
         
@@ -153,24 +140,12 @@ class AI_Table_Service {
             $end_time = microtime(true);
             $duration_ms = round(($end_time - $start_time) * 1000);
             
-            // Log response
             if (is_wp_error($response)) {
-                $debug_logger->log_ai_response($log_id, [
-                    'success' => false,
-                    'error' => $response->get_error_message(),
-                    'duration_ms' => $duration_ms,
-                    'table_generated' => false
-                ]);
+                // Continue to next attempt on error
             } else {
                 $body = wp_remote_retrieve_body($response);
                 $data = json_decode($body, true);
                 
-                $debug_logger->log_ai_response($log_id, [
-                    'success' => wp_remote_retrieve_response_code($response) === 200,
-                    'response' => $data,
-                    'duration_ms' => $duration_ms,
-                    'table_generated' => wp_remote_retrieve_response_code($response) === 200 && isset($data['choices'][0]['message']['content'])
-                ]);
             }
             
             return $response;
@@ -185,12 +160,6 @@ class AI_Table_Service {
             __('Maximum retry attempts reached. Please try again later.', 'tableberg')
         );
         
-        $debug_logger->log_ai_response($log_id, [
-            'success' => false,
-            'error' => $error->get_error_message(),
-            'duration_ms' => $duration_ms,
-            'table_generated' => false
-        ]);
         
         return $error;
     }
